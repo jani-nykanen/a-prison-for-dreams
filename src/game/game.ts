@@ -57,7 +57,7 @@ export class Game implements Scene {
     public redraw(canvas : Canvas, assets : Assets) : void {
 
         canvas.moveTo();
-        canvas.clear(109, 182, 255);
+        // canvas.clear(109, 182, 255);
         canvas.setColor();
 
         canvas.transform.setTarget(TransformTarget.Camera);
@@ -66,10 +66,12 @@ export class Game implements Scene {
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();
 
+        this.stage.drawBackground(canvas, assets, this.camera);
+
         this.camera.apply(canvas);
         this.stage.draw(canvas, assets, this.camera);
         this.objects.draw(canvas, assets);
-        this.stage.drawForegroundLayer(canvas, assets, this.camera);
+        this.stage.drawForeground(canvas, assets, this.camera);
 
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();

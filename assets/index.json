@@ -10,7 +10,12 @@
         {"name": "projectiles", "path": "projectiles.png"},
         {"name": "particles_1", "path": "particles_1.png"},
         {"name": "muzzle_flash", "path": "muzzle_flash.png"},
+
         {"name": "water", "path": "water.png"},
+        {"name": "clouds_1", "path": "clouds_1.png"},
+        {"name": "sun", "path": "sun.png"},
+        {"name": "stars", "path": "stars.png", "repeatx": "true", "repeaty": "true"},
+
 
         {"name": "player", "path": "player.png"},
         {"name": "weapons", "path": "weapons.png"}

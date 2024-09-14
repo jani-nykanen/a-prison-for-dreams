@@ -22,6 +22,7 @@ export class Stage {
 
     private waterSprite : Sprite;
     private waterLevel : number = 0;
+    private cloudPos : number = 0;
 
     public readonly width : number;
     public readonly height : number;
@@ -61,22 +62,6 @@ export class Stage {
                 }
             }
         }
-    }
-
-
-    private generateWaterSpriteBatch(canvas : Canvas, bmp : Bitmap, wave : number) : void {
-
-        const AMPLITUDE : number = 2.0;
-
-        const waveFunction : (t : number) => number = t => 
-            Math.round(Math.sin(wave + (Math.PI*2)/32*t)*AMPLITUDE + Math.sin(Math.PI/8*t));
-
-        canvas.beginSpriteBatching(bmp);
-        for (let x = 0; x < 32; ++ x) {
-
-            canvas.drawBitmap(bmp, Flip.None, x, waveFunction(x), (x % 16), 0, 1, bmp.height);
-        }
-        canvas.endSpriteBatching();
     }
 
 
@@ -128,8 +113,47 @@ export class Stage {
     public update(event : ProgramEvent) : void {
 
         const WATER_ANIMATION_SPEED : number = 8;
+        const CLOUD_SPEED : number = 1.0/1024.0;
 
         this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
+
+        this.cloudPos = (this.cloudPos + CLOUD_SPEED*event.tick) % 1.0;
+    }
+
+
+    public drawBackground(canvas : Canvas, assets : Assets, camera : Camera) : void {
+
+        const bmpStars : Bitmap = assets.getBitmap("stars");
+        canvas.drawBitmap(bmpStars, Flip.None, 0, 0, 0, 0, canvas.width, canvas.height, canvas.width, canvas.height);
+
+        const bmpSun : Bitmap = assets.getBitmap("sun");
+        if (bmpSun !== undefined) {
+
+            canvas.drawBitmap(bmpSun, Flip.None, canvas.width - bmpSun.width - 16, 16);
+        }
+
+        const bmpClouds : Bitmap = assets.getBitmap("clouds_1");
+        if (bmpClouds === undefined) {
+
+            return;
+        }
+
+        const camPos : Vector = camera.getCorner();
+        const count : number = Math.floor(canvas.width/bmpClouds.width) + 2;
+
+        const shiftx : number = -((camPos.x/8 + this.cloudPos*bmpClouds.width) % bmpClouds.width);
+        const dy : number = 80 - camPos.y/8;
+        for (let x = -1; x < count; ++ x) {
+
+            canvas.drawBitmap(bmpClouds, Flip.None, x*bmpClouds.width + shiftx, dy);
+        }  
+        const bottomHeight : number = this.height*TILE_HEIGHT - (dy + bmpClouds.height);
+        if (bottomHeight > 0) {
+
+            canvas.setColor(73, 146, 219);
+            canvas.fillRect(0, dy + bmpClouds.height, canvas.width, bottomHeight);
+            canvas.setColor();
+        }
     }
 
 
@@ -139,7 +163,7 @@ export class Stage {
     }
 
 
-    public drawForegroundLayer(canvas : Canvas, assets : Assets, camera : Camera) : void {
+    public drawForeground(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
         if (this.waterLevel > 0) {
 

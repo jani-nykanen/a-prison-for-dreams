@@ -230,7 +230,7 @@ export class Player extends CollisionObject {
 
     private controlAttacking(event : ProgramEvent) : void {
 
-        if (this.attacking) {
+        if (this.attacking || this.highJumping) {
 
             return;
         }
@@ -599,14 +599,14 @@ export class Player extends CollisionObject {
         const flicker : boolean = this.knockbackTimer <= 0 &&
              this.hurtTimer > 0 && 
              Math.floor(this.hurtTimer/4) % 2 != 0;
+        if (flicker) {
+
+            // canvas.setColor(255.0, 255.0, 255.0, FLICKER_ALPHA);
+            return;
+        }
 
         const crouchJumpFlicker : boolean = (this.isFullyDown() && this.crouchFlickerTimer >= 0.5);
         const chargeFlicker : boolean = this.chargingGun && this.chargeFlickerTimer < 0.5;
-
-        if (flicker) {
-
-            canvas.setColor(255.0, 255.0, 255.0, FLICKER_ALPHA);
-        }
 
         if (crouchJumpFlicker) {
 
