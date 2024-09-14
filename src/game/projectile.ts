@@ -30,12 +30,13 @@ export class Projectile extends CollisionObject {
 
         super(0, 0, false);
 
-        this.sprite = new Sprite(32, 32);
+        this.sprite = new Sprite(24, 24);
 
-        this.hitbox = new Rectangle(0, 0, 8, 8);
-        this.collisionBox = new Rectangle(0, 0, 4, 4);
+        // TODO: Different hitboxes for different type of projectiles
+        this.hitbox = new Rectangle(0, 0, 4, 4);
+        this.collisionBox = new Rectangle(0, 0, 2, 2);
 
-        this.cameraCheckArea = new Vector(32, 32);
+        this.cameraCheckArea = new Vector(24, 24);
 
         this.checkVerticalSlope = true;
         this.ignoreBottomLayer = true;
@@ -45,7 +46,7 @@ export class Projectile extends CollisionObject {
 
     protected die(event : ProgramEvent) : boolean {
         
-        const DEATH_SPEED : number = 4;
+        const DEATH_SPEED : number = 3;
 
         const lastFrame : number = LAST_ANIMATION_FRAME[this.id] ?? 0; 
 

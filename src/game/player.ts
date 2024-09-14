@@ -162,10 +162,10 @@ export class Player extends CollisionObject {
 
     private shootBullet(type : number, event : ProgramEvent) : void {
 
-        const BULLET_SPEED : number[] = [5.0, 3.5];
+        const BULLET_SPEED : number[] = [4.0, 3.0];
 
-        const BULLET_YOFF : number = 4;
-        const BULLET_XOFF : number = 10;
+        const BULLET_YOFF : number = 3;
+        const BULLET_XOFF : number = 8;
 
         const BULLET_SPEED_FACTOR_X : number = 0.5;
         const BULLET_SPEED_FACTOR_Y : number = 0.0; // Makes collisions work better...
@@ -440,10 +440,10 @@ export class Player extends CollisionObject {
 
     private drawMuzzleFlash(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
-        const X_OFFSET : number = 13;
-        const Y_OFFSET : number = 4;
+        const X_OFFSET : number = 10;
+        const Y_OFFSET : number = 3;
 
-        const frame : number = Math.floor(this.shootWait/SHOOT_WAIT_TIME*4);
+        const frame : number = Math.floor((1.0 - this.shootWait/SHOOT_WAIT_TIME)*4);
 
         const dx : number = this.pos.x + this.faceDir*X_OFFSET - 8;
         const dy : number = this.pos.y + Y_OFFSET - 8;
@@ -542,11 +542,6 @@ export class Player extends CollisionObject {
             canvas.applyEffect(Effect.InvertColors);
         }
 
-        if (this.shooting && !this.crouching && this.shootWait > 0) {
-
-            this.drawMuzzleFlash(canvas, assets.getBitmap("muzzle_flash"));
-        }
-
         const bmp : Bitmap | undefined = assets.getBitmap("player");
         this.sprite.draw(canvas, bmp, px, py, this.flip);
 
@@ -558,6 +553,12 @@ export class Player extends CollisionObject {
         if (crouchJumpFlicker || chargeFlicker) {
 
             canvas.applyEffect(Effect.None);
+        }
+
+
+        if (this.shooting && !this.crouching && this.shootWait > 0) {
+
+            this.drawMuzzleFlash(canvas, assets.getBitmap("muzzle_flash"));
         }
     }
 
