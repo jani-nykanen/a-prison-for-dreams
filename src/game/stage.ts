@@ -20,7 +20,7 @@ export class Stage {
     private bottomRow : boolean[];
     private objectLayer : number[] | undefined;
 
-    private lavaWave : number = 0.0;
+    private waterSprite : Sprite;
     private waterLevel : number = 0;
 
     public readonly width : number;
@@ -41,6 +41,8 @@ export class Stage {
         this.objectLayer = baseMap.cloneLayer("objects");
 
         this.waterLevel = Number(baseMap.getProperty("water_level") ?? "0");
+
+        this.waterSprite = new Sprite(32, 16);
     }
 
 
@@ -81,6 +83,7 @@ export class Stage {
     private drawWater(canvas : Canvas, assets : Assets, camera : Camera, isLava : boolean = false) : void {
 
         const WATER_OPACITY : number = 0.75;
+        const WATER_WIDTH : number = 32;
 
         if (this.waterLevel <= 0) {
 
@@ -92,8 +95,6 @@ export class Stage {
 
             return;
         }
-        
-        this.generateWaterSpriteBatch(canvas, bmpWater, this.lavaWave);
 
         const camPos : Vector = camera.getCorner();
         const dy : number = (this.height - this.waterLevel)*TILE_HEIGHT - TILE_HEIGHT/2;
@@ -103,24 +104,32 @@ export class Stage {
             return;
         }
 
-        const width : number = TILE_WIDTH*2;
-        const startx : number = Math.floor(camPos.x/width) - 1;
-        const endx : number = startx + Math.ceil(camera.width/width) + 2;
+        const startx : number = Math.floor(camPos.x/WATER_WIDTH) - 1;
+        const endx : number = startx + Math.ceil(camera.width/WATER_WIDTH) + 2;
 
         canvas.setAlpha(WATER_OPACITY);
         for (let x = startx; x < endx; ++ x) {
 
-            canvas.drawSpriteBatch(x*width, dy);
+            this.waterSprite.draw(canvas, bmpWater, x*WATER_WIDTH, dy);
         }  
         canvas.setAlpha();
+
+        const bottomHeight : number = this.height*TILE_HEIGHT - (dy + 16);
+        if (bottomHeight > 0) {
+
+            canvas.setColor(30, 109, 219, WATER_OPACITY);
+            canvas.fillRect(camPos.x, dy + 16, canvas.width, bottomHeight);
+            canvas.setColor();
+        }
+        
     }
 
 
     public update(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/60.0;
+        const WATER_ANIMATION_SPEED : number = 8;
 
-        this.lavaWave = (this.lavaWave + WAVE_SPEED*event.tick) % (Math.PI*2);
+        this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
     }
 
 
@@ -132,7 +141,10 @@ export class Stage {
 
     public drawForegroundLayer(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        this.drawWater(canvas, assets, camera);
+        if (this.waterLevel > 0) {
+
+            this.drawWater(canvas, assets, camera);
+        }
     }
 
 

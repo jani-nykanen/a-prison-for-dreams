@@ -9,7 +9,7 @@ import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 3, 3
+    3, 2, 3
 ];
 
 const ANIMATION_SPEED : number[] = [
@@ -48,7 +48,7 @@ export class Projectile extends CollisionObject {
         
         const DEATH_SPEED : number = 3;
 
-        const lastFrame : number = LAST_ANIMATION_FRAME[this.id] ?? 0; 
+        const lastFrame : number = Math.max(3, LAST_ANIMATION_FRAME[this.id] ?? 0); 
 
         this.sprite.animate(this.sprite.getRow(), lastFrame + 1, lastFrame + 5, DEATH_SPEED, event.tick);
 
