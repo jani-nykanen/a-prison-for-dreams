@@ -12,7 +12,9 @@
         {"name": "muzzle_flash", "path": "muzzle_flash.png"},
         {"name": "water", "path": "water.png"},
 
-        {"name": "player", "path": "player.png"}
+        {"name": "player", "path": "player.png"},
+        {"name": "weapons", "path": "weapons.png"}
+
     ],
 
     "tilemapPath": "assets/tilemaps/",

@@ -37,7 +37,7 @@ export class Player extends CollisionObject {
     private shootWait : number = 0.0;
     private flashType : number = 0;
 
-    private charging : boolean = false;
+    private chargingGun : boolean = false;
     private chargeFlickerTimer : number = 0;
 
     private hurtTimer : number = 0.0;
@@ -45,6 +45,8 @@ export class Player extends CollisionObject {
 
     private crouching : boolean = false;
     private crouchFlickerTimer : number = 0;
+
+    private attacking : boolean = false;
 
     private faceDir : -1 | 1 = 1;
     private sprite : Sprite;
@@ -85,6 +87,11 @@ export class Player extends CollisionObject {
 
         const STICK_THRESHOLD : number = 0.01;
 
+        if (this.attacking) {
+
+            return;
+        }
+
         const stick : Vector = event.input.stick;
         if (Math.abs(stick.x) > STICK_THRESHOLD) {
 
@@ -97,12 +104,17 @@ export class Player extends CollisionObject {
 
         const THRESHOLD : number = 0.5;
 
+        if (this.attacking) {
+
+            return;
+        }
+
         const wasCrouching : boolean = this.crouching;
 
         this.crouching = this.touchSurface && event.input.stick.y > THRESHOLD;
         if (this.crouching && !wasCrouching) {
 
-            this.charging = false;
+            this.chargingGun = false;
 
             this.sprite.setFrame(3, 3);
             this.crouchFlickerTimer = 0;
@@ -138,6 +150,11 @@ export class Player extends CollisionObject {
         const JUMP_TIME_BASE : number = 13.0;
         const JUMP_TIME_HIGH : number = 13.0;
 
+        if (this.attacking) {
+
+            return;
+        }
+
         const jumpButton : InputState = event.input.getAction("jump");
 
         if (jumpButton == InputState.Pressed) {
@@ -162,7 +179,7 @@ export class Player extends CollisionObject {
 
     private shootBullet(type : number, event : ProgramEvent) : void {
 
-        const BULLET_SPEED : number[] = [4.0, 3.0];
+        const BULLET_SPEED : number[] = [4.0, 2.5];
 
         const BULLET_YOFF : number = 3;
         const BULLET_XOFF : number = 8;
@@ -183,34 +200,62 @@ export class Player extends CollisionObject {
 
     private controlShooting(event : ProgramEvent) : void {
 
-        if (this.highJumping || this.shootWait > 0 || this.crouching) {
+        if (this.attacking || 
+            this.highJumping || 
+            this.shootWait > 0 || 
+            this.crouching) {
 
             return;
         }
 
         const shootButton : InputState = event.input.getAction("shoot");
         if (shootButton == InputState.Pressed || 
-            this.charging && (shootButton & InputState.DownOrPressed) == 0) {
+            this.chargingGun && (shootButton & InputState.DownOrPressed) == 0) {
 
             this.shooting = true;
             this.shootTimer = SHOOT_BASE_TIME + SHOOT_RELEASE_TIME;
             this.shootWait = SHOOT_WAIT_TIME;
            
-            this.flashType = this.charging ? 1 : 0;
+            this.flashType = this.chargingGun ? 1 : 0;
 
             this.sprite.setFrame(this.sprite.getColumn(), 2 + (this.sprite.getRow() % 2), true);
 
             this.shootBullet(this.flashType, event);
 
-            this.charging = false;
+            this.chargingGun = false;
             this.chargeFlickerTimer = 0.0;
         }
     }
 
 
+    private controlAttacking(event : ProgramEvent) : void {
+
+        if (this.attacking) {
+
+            return;
+        }
+
+        const attackButton : InputState = event.input.getAction("attack");
+        if (attackButton == InputState.Pressed) {
+
+            this.attacking = true;
+            // this.attackDir = this.faceDir;
+
+            this.crouching = false;
+            this.shooting = false;
+            this.chargingGun = false;
+
+            this.sprite.setFrame(3, 1);
+        }
+
+        // TODO: Charge attack?
+    }
+
+
     private control(event : ProgramEvent) : void {
 
-        if (this.knockbackTimer > 0) {
+        if (this.knockbackTimer > 0 ||
+            (this.attacking && this.touchSurface)) {
 
             this.target.x = 0.0;
             this.target.y = GRAVITY_MAGNITUDE;
@@ -222,6 +267,7 @@ export class Player extends CollisionObject {
         this.updateBaseMovement(event);
         this.controlJumping(event);
         this.controlShooting(event);
+        this.controlAttacking(event);
     }
 
 
@@ -274,6 +320,22 @@ export class Player extends CollisionObject {
         }
     }
 
+
+    private animateAttacking(event : ProgramEvent) : void {
+
+        const BASE_ATTACK_SPEED : number = 4;
+        const LAST_FRAME : number = 8;
+
+        this.sprite.animate(1, 3, LAST_FRAME, 
+            this.sprite.getColumn() == LAST_FRAME - 1 ? BASE_ATTACK_SPEED*2 : BASE_ATTACK_SPEED, 
+            event.tick);
+        if (this.sprite.getColumn() == LAST_FRAME) {
+
+            this.attacking = false;
+            this.sprite.setFrame(0, 0);
+        }
+    }   
+
     
     private animate(event : ProgramEvent) : void {
 
@@ -282,6 +344,12 @@ export class Player extends CollisionObject {
         if (this.knockbackTimer > 0) {
 
             this.sprite.setFrame(5, 0);
+            return;
+        }
+
+        if (this.attacking) {
+
+            this.animateAttacking(event);
             return;
         }
 
@@ -337,7 +405,7 @@ export class Player extends CollisionObject {
                 this.shooting = false;
                 if (this.shootTimer <= 0) {
                     
-                    this.charging = true;
+                    this.chargingGun = true;
                     // TODO: Sound effect
                 }
                 this.shootTimer = 0;
@@ -377,7 +445,7 @@ export class Player extends CollisionObject {
             this.crouchFlickerTimer = (this.crouchFlickerTimer + CROUCH_FLICKER_SPEED*event.tick) % 1.0;
         }
 
-        if (this.charging) {
+        if (this.chargingGun) {
 
             this.chargeFlickerTimer = (this.chargeFlickerTimer + CHARGE_FLICKER_SPEED*event.tick) % 1.0;
         }
@@ -423,7 +491,8 @@ export class Player extends CollisionObject {
         this.shooting = false;
         this.shootTimer = 0;
         this.jumpTimer = 0;
-        this.charging = false;
+        this.chargingGun = false;
+        this.attacking = false;
 
         this.hurtTimer = HURT_TIME;
     }
@@ -449,6 +518,14 @@ export class Player extends CollisionObject {
         const dy : number = this.pos.y + Y_OFFSET - 8;
 
         canvas.drawBitmap(bmp, this.flip, dx, dy, frame*16, this.flashType*16, 16, 16);
+    }
+
+
+    private drawWeapon(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const frame : number = this.sprite.getColumn() - 3;
+
+        canvas.drawBitmap(bmp, this.flip, this.pos.x - 16 + this.faceDir*10, this.pos.y - 14, frame*32, 0, 32, 32);
     }
 
 
@@ -524,7 +601,7 @@ export class Player extends CollisionObject {
              Math.floor(this.hurtTimer/4) % 2 != 0;
 
         const crouchJumpFlicker : boolean = (this.isFullyDown() && this.crouchFlickerTimer >= 0.5);
-        const chargeFlicker : boolean = this.charging && this.chargeFlickerTimer < 0.5;
+        const chargeFlicker : boolean = this.chargingGun && this.chargeFlickerTimer < 0.5;
 
         if (flicker) {
 
@@ -542,6 +619,11 @@ export class Player extends CollisionObject {
             canvas.applyEffect(Effect.InvertColors);
         }
 
+        if (this.attacking) {
+
+            this.drawWeapon(canvas, assets.getBitmap("weapons"));
+        }
+
         const bmp : Bitmap | undefined = assets.getBitmap("player");
         this.sprite.draw(canvas, bmp, px, py, this.flip);
 
@@ -554,7 +636,6 @@ export class Player extends CollisionObject {
 
             canvas.applyEffect(Effect.None);
         }
-
 
         if (this.shooting && !this.crouching && this.shootWait > 0) {
 
