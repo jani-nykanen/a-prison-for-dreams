@@ -32,6 +32,10 @@ export class Player extends CollisionObject {
     // TODO: Maybe add "JumpType" enum instead?
     private highJumping : boolean = false;
 
+    private canUseRocketPack : boolean = false;
+    private rocketPackActive : boolean = false; 
+    private rocketPackReleased : boolean = false;
+
     private shooting : boolean = false;
     private shootTimer : number = 0.0;
     private shootWait : number = 0.0;
@@ -149,6 +153,8 @@ export class Player extends CollisionObject {
 
         const JUMP_TIME_BASE : number = 13.0;
         const JUMP_TIME_HIGH : number = 13.0;
+        const ROCKET_PACK_JUMP : number = 45;
+        const MINIMUM_ROCKET_JUMP_SPEED : number = 1.5;
 
         if (this.attacking) {
 
@@ -157,7 +163,7 @@ export class Player extends CollisionObject {
 
         const jumpButton : InputState = event.input.getAction("jump");
 
-        if (jumpButton == InputState.Pressed) {
+        if (jumpButton == InputState.Pressed && !this.highJumping) {
 
             if (this.ledgeTimer > 0) {
 
@@ -168,11 +174,28 @@ export class Player extends CollisionObject {
 
                 this.crouching = false;
             }
+            else if (this.canUseRocketPack) {
+
+                this.canUseRocketPack = false;
+
+                this.rocketPackReleased = false;
+                this.rocketPackActive = true;
+
+                this.jumpTimer = ROCKET_PACK_JUMP;
+
+                this.speed.y = Math.min(MINIMUM_ROCKET_JUMP_SPEED, this.speed.y);
+            }
+            else if (this.rocketPackReleased) {
+
+                this.jumpTimer = 0;
+                this.rocketPackActive = true;
+            }
         }
         else if ((jumpButton & InputState.DownOrPressed) == 0) {
 
             this.jumpTimer = 0;
-            // this.highJumping = false;
+            this.rocketPackActive = false;
+            this.rocketPackReleased = true;
         }
     }
 
@@ -245,6 +268,13 @@ export class Player extends CollisionObject {
             this.shooting = false;
             this.chargingGun = false;
 
+            if (this.rocketPackActive) {
+
+                this.jumpTimer = 0;
+            }
+            this.rocketPackActive = false;
+            this.rocketPackReleased = true;
+
             this.sprite.setFrame(3, 1);
         }
 
@@ -289,6 +319,12 @@ export class Player extends CollisionObject {
         else if (this.speed.y > JUMP_ANIM_THRESHOLD) {
 
             ++ frame;
+        }
+
+        if (this.rocketPackActive) {
+
+            this.sprite.setFrame(6 + frame, rowModifier);
+            return;
         }
         this.sprite.setFrame(frame, 1 + rowModifier);
     }
@@ -374,6 +410,15 @@ export class Player extends CollisionObject {
         const JUMP_SPEED_BASE : number = -2.25;
         const JUMP_SPEED_HIGH : number = -3.0;
         const MAX_HIGH_JUMP_SPEED : number = 1.0;
+        const ROCKET_PACK_DELTA : number = -0.20;
+        const ROCKET_PACK_MIN : number = -2.0;
+        const ROCKET_PACK_LANDING_SPEED : number = 0.5;
+
+        if (this.rocketPackActive && this.jumpTimer <= 0) {
+
+            this.speed.y = Math.min(ROCKET_PACK_LANDING_SPEED, this.speed.y);
+            return;
+        }
 
         if (this.highJumping && this.speed.y > MAX_HIGH_JUMP_SPEED) {
 
@@ -382,13 +427,22 @@ export class Player extends CollisionObject {
 
         if (this.jumpTimer <= 0) {
             
+            if (this.rocketPackActive) {
+
+                this.rocketPackReleased = true;
+            }
+            return;
+        }
+        this.jumpTimer -= event.tick;
+
+        if (this.rocketPackActive) {
+
+            this.speed.y = Math.max(ROCKET_PACK_MIN, this.speed.y + ROCKET_PACK_DELTA*event.tick);
             return;
         }
 
         this.speed.y = this.highJumping ? JUMP_SPEED_HIGH : JUMP_SPEED_BASE;
         this.target.y = this.speed.y;
-        
-        this.jumpTimer -= event.tick;
     }
 
 
@@ -466,22 +520,47 @@ export class Player extends CollisionObject {
         const X_OFFSET : number = -4;
         const Y_OFFSET : number = 7;
         const DUST_TIME : number = 10.0;
+        const ROCKET_PACK_DUST_TIME : number = 4.0;
+        const ROCKET_PACK_LANDING_DUST_TIME : number = 6.0;
         const MIN_SPEED : number = 0.1;
+        const ROCKET_PACK_DUST_SPEED_Y : number = 0.5;
+        const ROCKET_PACK_DUST_LANDING_SPEED_Y : number = 1.0;
 
-        if (this.knockbackTimer <= 0 &&
+
+        if ((this.knockbackTimer <= 0 &&
             this.touchSurface && 
-            Math.abs(this.speed.x) > MIN_SPEED) {
+            Math.abs(this.speed.x) > MIN_SPEED) ||
+            this.rocketPackActive) {
 
             this.dustTimer -= event.tick;
         }
 
         if (this.dustTimer <= 0) {
 
+            this.dustTimer = DUST_TIME;
+
+            let speedy : number = 0;
+            let id : number = 0;
+            if (this.rocketPackActive) {
+                
+                id = 1;
+                if (this.jumpTimer > 0) {
+
+                    speedy = ROCKET_PACK_DUST_SPEED_Y;
+                    this.dustTimer = ROCKET_PACK_DUST_TIME;
+                }
+                else {
+
+                    speedy = ROCKET_PACK_DUST_LANDING_SPEED_Y;
+                    this.dustTimer = ROCKET_PACK_LANDING_DUST_TIME;
+                }
+            }
+
             this.particles.spawn(
                 this.pos.x + X_OFFSET*this.faceDir,
                 this.pos.y + Y_OFFSET,
-                0.0, 0.0, 0, Flip.None);
-            this.dustTimer = DUST_TIME;
+                0.0, speedy, id, Flip.None);
+            
         }
     } 
 
@@ -551,10 +630,15 @@ export class Player extends CollisionObject {
             this.touchSurface = true;
             this.highJumping = false;
 
+            this.canUseRocketPack = true;
+            this.rocketPackActive = false;
+            this.rocketPackReleased = false;
+
             return;
         }
         
         this.jumpTimer = 0;
+        this.rocketPackReleased = true;
     }
 
 
@@ -591,8 +675,6 @@ export class Player extends CollisionObject {
 
     public draw(canvas : Canvas, assets : Assets): void {
         
-        const FLICKER_ALPHA : number = 0.25;
-
         const px : number = this.pos.x - 12;
         const py : number = this.pos.y - 11;
 

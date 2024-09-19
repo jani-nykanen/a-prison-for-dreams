@@ -9,12 +9,12 @@ import { Camera } from "./camera.js";
 
 
 const ANIMATION_LENGTH : number[] = [
-    4
+    4, 4,
 ];
 
 
 const ANIMATION_SPEED : number[] = [
-    8
+    8, 8
 ];
 
 
