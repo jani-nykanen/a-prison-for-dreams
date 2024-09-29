@@ -84,8 +84,11 @@ export class CollisionObject extends GameObject {
     protected slopeCollisionEvent?(direction : -1 | 1, event : ProgramEvent) : void;
     protected wallCollisionEvent?(direction : -1 | 1, event : ProgramEvent) : void;
 
+    
     public hurtCollision?(x : number, y : number, w : number, h : number, 
         event : ProgramEvent, direction? : -1 | 0 | 1, damage? : number) : boolean;
+    public waterCollision?(x : number, y : number, w : number, h : number,
+        event : ProgramEvent, surface? : boolean) : boolean;
 
 
     public slopeCollision(

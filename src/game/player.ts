@@ -826,6 +826,15 @@ export class Player extends CollisionObject {
     }
 
 
+    public waterCollision(x : number, y : number, w : number, h : number, 
+        event : ProgramEvent, surface : boolean = false) : boolean {
+        
+        // TODO: Element
+
+        return false;
+    }
+
+
     public draw(canvas : Canvas, assets : Assets): void {
         
         const px : number = this.pos.x - 12;
