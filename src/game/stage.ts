@@ -174,17 +174,24 @@ export class Stage {
 
     public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
 
-        const LAVA_OFFSET_Y : number = 8;
+        const WATER_OFFSET_Y : number = 0;
         const EDGE_OFFSET_Y : number = -256;
 
         this.collisions.objectCollision(o, event);
 
         const totalWidth : number = this.width*TILE_WIDTH;
         const totalHeight : number = this.height*TILE_HEIGHT;
-        const lavaPos : number = Math.min(totalHeight, (this.height - this.waterLevel)*TILE_HEIGHT + LAVA_OFFSET_Y);
+        const waterSurface : number = Math.min(totalHeight, (this.height - this.waterLevel)*TILE_HEIGHT + WATER_OFFSET_Y);
 
-        o.slopeCollision(0, lavaPos, totalWidth, lavaPos, 1, event);
-        o.hurtCollision?.(0, lavaPos, totalWidth, 999, event, 0, 999);
+        if (waterSurface > 0 && o.waterCollision !== undefined) {
+            
+            const opos : Vector = o.getPosition();
+            o.waterCollision(opos.x - 16, waterSurface, 32, this.height*TILE_HEIGHT - waterSurface, event);
+            o.slopeCollision(
+                opos.x - 16, this.height*TILE_HEIGHT, 
+                opos.x  + 32, this.height*TILE_HEIGHT, 
+                1, event);
+        }
 
         o.wallCollision(0, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, -1, event);
         o.wallCollision(totalWidth, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, 1, event);

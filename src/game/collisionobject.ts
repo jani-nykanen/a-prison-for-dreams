@@ -84,6 +84,15 @@ export class CollisionObject extends GameObject {
     protected slopeCollisionEvent?(direction : -1 | 1, event : ProgramEvent) : void;
     protected wallCollisionEvent?(direction : -1 | 1, event : ProgramEvent) : void;
 
+
+    protected overlayCollisionArea(x : number, y : number, w : number, h : number) : boolean {
+
+        return this.pos.x + this.collisionBox.x + this.collisionBox.w/2 >= x &&
+               this.pos.x + this.collisionBox.x - this.collisionBox.w/2 <= x + w && 
+               this.pos.y + this.collisionBox.y + this.collisionBox.h/2 >= y &&
+               this.pos.y + this.collisionBox.y - this.collisionBox.h/2 <= y + h;
+    }
+
     
     public hurtCollision?(x : number, y : number, w : number, h : number, 
         event : ProgramEvent, direction? : -1 | 0 | 1, damage? : number) : boolean;

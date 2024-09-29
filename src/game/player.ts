@@ -14,6 +14,7 @@ import { AnimatedParticle } from "./animatedparticle.js";
 
 
 const GRAVITY_MAGNITUDE : number = 5.0;
+const UNDERWATER_GRAVITY : number = 0.75;
 
 const SHOOT_RELEASE_TIME : number = 20;
 const SHOOT_BASE_TIME : number = 20;
@@ -28,7 +29,7 @@ const enum ChargeType {
     None = 0,
     Sword = 1,
     Gun = 2,
-}
+};
 
 
 export class Player extends CollisionObject {
@@ -58,6 +59,8 @@ export class Player extends CollisionObject {
 
     private crouching : boolean = false;
     private crouchFlickerTimer : number = 0;
+
+    private underWater : boolean = false;
 
     private attacking : boolean = false;
     private downAttacking : boolean = false;
@@ -92,6 +95,9 @@ export class Player extends CollisionObject {
         this.projectiles = projectiles;
         this.particles = particles;
     }
+
+
+    private getGravity = () : number => this.underWater ? UNDERWATER_GRAVITY : GRAVITY_MAGNITUDE;
 
 
     private isFullyDown = () : boolean => this.crouching && 
@@ -141,6 +147,7 @@ export class Player extends CollisionObject {
     private updateBaseMovement(event : ProgramEvent) : void {
 
         const RUN_SPEED : number = 1.0;
+        const SWIM_SPEED : number = 0.75;
 
         const SLOWDOWN_FACTOR : number = 0.10;
         const SPEEDUP_FACTOR : number = 0.20;
@@ -150,14 +157,15 @@ export class Player extends CollisionObject {
 
         const stick : Vector = event.input.stick;
 
-        this.target.y = GRAVITY_MAGNITUDE;
+        this.target.y = this.getGravity();
         if (this.crouching) {
 
             this.target.x = 0.0;
             return;
         }
 
-        this.target.x = stick.x*(1.0 - baseFactor*speedFactor)*RUN_SPEED;
+        const speedx : number = this.underWater ? SWIM_SPEED : RUN_SPEED;
+        this.target.x = stick.x*(1.0 - baseFactor*speedFactor)*speedx;
     }
 
 
@@ -174,10 +182,9 @@ export class Player extends CollisionObject {
         }
 
         const jumpButton : InputState = event.input.getAction("jump");
-
         if (jumpButton == InputState.Pressed && !this.highJumping) {
 
-            if (this.ledgeTimer > 0) {
+            if (this.ledgeTimer > 0 || this.underWater) {
 
                 this.highJumping = this.isFullyDown();
 
@@ -350,7 +357,7 @@ export class Player extends CollisionObject {
         this.target.x = this.faceDir*RUSH_SPEED;
         this.speed.x = this.target.x;
 
-        this.target.y = this.touchSurface ? GRAVITY_MAGNITUDE : 0.0;
+        this.target.y = this.touchSurface ? this.getGravity() : 0.0;
     }
 
 
@@ -358,6 +365,21 @@ export class Player extends CollisionObject {
 
         this.friction.x = 0.15;
         this.friction.y = 0.125;
+        if (this.underWater) {
+
+            this.friction.x /= 2.0;
+            this.friction.y /= 2.0;
+        }
+    }
+
+
+    private updateWaterMovement(event : ProgramEvent) : void {
+
+        if ( this.speed.y > UNDERWATER_GRAVITY) {
+
+            this.speed.y = UNDERWATER_GRAVITY;
+            // TODO: Splash sound?
+        }
     }
 
 
@@ -365,11 +387,16 @@ export class Player extends CollisionObject {
 
         this.setDefaultFriction();
 
+        if (this.underWater) {
+            
+            this.updateWaterMovement(event);
+        }
+
         if (this.knockbackTimer > 0 ||
             (this.attacking && this.touchSurface)) {
 
             this.target.x = 0.0;
-            this.target.y = GRAVITY_MAGNITUDE;
+            this.target.y = this.getGravity();
             return;
         }
 
@@ -539,6 +566,7 @@ export class Player extends CollisionObject {
     private updateJumping(event : ProgramEvent) : void {
 
         const JUMP_SPEED_BASE : number = -2.25;
+        const JUMP_UNDERWATER_SPEED : number = -1.25;
         const JUMP_SPEED_HIGH : number = -3.0;
         const MAX_HIGH_JUMP_SPEED : number = 1.0;
         const ROCKET_PACK_DELTA : number = -0.20;
@@ -573,6 +601,11 @@ export class Player extends CollisionObject {
         }
 
         this.speed.y = this.highJumping ? JUMP_SPEED_HIGH : JUMP_SPEED_BASE;
+        if (this.underWater) {
+
+            this.speed.y = JUMP_UNDERWATER_SPEED;
+        }
+
         this.target.y = this.speed.y;
     }
 
@@ -641,6 +674,7 @@ export class Player extends CollisionObject {
     private updateFlags() : void {
 
         this.touchSurface = false;
+        this.underWater = false;
 
         // Ignore the bottom layer slopes if dashing.
         // this.ignoreBottomLayer = this.dashWait <= 0 && this.dashing;
@@ -709,15 +743,6 @@ export class Player extends CollisionObject {
         this.powerAttackTimer = 0;
 
         this.hurtTimer = HURT_TIME;
-    }
-
-
-    private overlayCollisionArea(x : number, y : number, w : number, h : number) : boolean {
-
-        return this.pos.x + this.collisionBox.x + this.collisionBox.w/2 >= x &&
-               this.pos.x + this.collisionBox.x - this.collisionBox.w/2 <= x + w && 
-               this.pos.y + this.collisionBox.y + this.collisionBox.h/2 >= y &&
-               this.pos.y + this.collisionBox.y - this.collisionBox.h/2 <= y + h;
     }
 
 
@@ -829,8 +854,20 @@ export class Player extends CollisionObject {
     public waterCollision(x : number, y : number, w : number, h : number, 
         event : ProgramEvent, surface : boolean = false) : boolean {
         
-        // TODO: Element
+        if (!this.isActive() || this.hurtTimer > 0) {
 
+            return false;
+        }
+    
+        if (this.overlayCollisionArea(x - 1, y - 1, w + 2, h + 2)) {
+            
+            this.underWater = true;
+            this.ledgeTimer = 1;
+            this.canUseRocketPack = true;
+            this.rocketPackActive = false;
+            this.rocketPackReleased = false;
+            return true;
+        }
         return false;
     }
 
