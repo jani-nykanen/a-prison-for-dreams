@@ -518,6 +518,21 @@ export class Player extends CollisionObject {
         this.sprite.setFrame(5, 2);
     }
 
+
+    private animateSwimming(rowModifier : number, event : ProgramEvent) : void {
+        
+        const EPS : number = 0.01;
+
+        const row : number = rowModifier + (this.jumpTimer > 0 ? 1 : 0);
+
+        if (Math.abs(this.target.x) > EPS) {
+
+            this.sprite.animate(row, 9, 10, 8, event.tick);
+            return;
+        }
+        this.sprite.setFrame(9, row);
+    }
+
     
     private animate(event : ProgramEvent) : void {
 
@@ -554,6 +569,13 @@ export class Player extends CollisionObject {
         }
 
         const rowModifier : number = this.shooting ? 2 : 0;
+
+        if (this.underWater) {
+
+            this.animateSwimming(rowModifier, event);
+            return;
+        }
+
         if (!this.touchSurface) {
 
             this.animateJumping(rowModifier, event);

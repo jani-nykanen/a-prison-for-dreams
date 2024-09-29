@@ -16,6 +16,7 @@
         {"name": "sun", "path": "sun.png"},
         {"name": "stars", "path": "stars.png", "repeatx": "true", "repeaty": "true"},
 
+        {"name": "breakable", "path": "breakable.png"},
 
         {"name": "player", "path": "player.png"},
         {"name": "weapons", "path": "weapons.png"}

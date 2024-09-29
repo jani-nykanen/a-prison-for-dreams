@@ -6,6 +6,7 @@ import { Player } from "./player.js";
 import { Stage } from "./stage.js";
 import { Assets } from "../core/assets.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
+import { Breakable } from "./breakable.js";
 
 
 export class ProjectileGenerator {
@@ -70,6 +71,16 @@ export class ProjectileGenerator {
         for (let p of this.projectiles) {
 
             p.draw(canvas, undefined, bmp);
+        }
+    }
+
+
+    // TODO: This versus iterate over?
+    public breakableCollision(o : Breakable, event : ProgramEvent) : void {
+
+        for (let p of this.projectiles) {
+
+            o.objectCollision(p, event, false, true);
         }
     }
 }
