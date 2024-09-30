@@ -11,6 +11,7 @@ import { Projectile } from "./projectile.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
 import { ParticleGenerator } from "./particlegenerator.js";
 import { AnimatedParticle } from "./animatedparticle.js";
+import { GameObject } from "./gameobject.js";
 
 
 const GRAVITY_MAGNITUDE : number = 5.0;
@@ -62,10 +63,12 @@ export class Player extends CollisionObject {
 
     private underWater : boolean = false;
 
+    private attackID : number = 0;
     private attacking : boolean = false;
     private downAttacking : boolean = false;
     private downAttackWait : number = 0;
     private powerAttackTimer : number = 0;
+    private swordHitbox : Rectangle;
 
     private faceDir : -1 | 1 = 1;
     private sprite : Sprite;
@@ -94,6 +97,8 @@ export class Player extends CollisionObject {
 
         this.projectiles = projectiles;
         this.particles = particles;
+
+        this.swordHitbox = new Rectangle();
     }
 
 
@@ -103,6 +108,30 @@ export class Player extends CollisionObject {
     private isFullyDown = () : boolean => this.crouching && 
         this.sprite.getRow() == 3 &&
         this.sprite.getColumn() == 5;
+
+
+    private computeSwordHitbox() : void {
+
+        if (!this.attacking && this.powerAttackTimer <= 0) {
+
+            return;
+        }
+
+        const SWORD_OFFSET_X : number = 16;
+        const SWORD_OFFSET_Y : number = 0;
+
+        const SWORD_ATTACK_BASE_WIDTH : number = 16;
+        const SWORD_ATTACK_BASE_HEIGHT : number = 16;
+
+        const SWORD_ATTACK_SPECIAL_WIDTH : number = 24;
+        const SWORD_ATTACK_SPECIAL_HEIGHT : number = 20;
+
+        this.swordHitbox.x = this.pos.x + this.faceDir*SWORD_OFFSET_X;
+        this.swordHitbox.y = this.pos.y + SWORD_OFFSET_Y;
+
+        this.swordHitbox.w = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_WIDTH : SWORD_ATTACK_BASE_WIDTH;
+        this.swordHitbox.h = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_HEIGHT : SWORD_ATTACK_BASE_HEIGHT;
+    }
 
 
     private computeFaceDirection(event : ProgramEvent) : void {
@@ -285,6 +314,8 @@ export class Player extends CollisionObject {
             this.charging = false;
 
             this.speed.zeros();
+            
+            ++ this.attackID;
 
             return;
         }
@@ -296,7 +327,8 @@ export class Player extends CollisionObject {
         
         if (attackButton == InputState.Pressed) {
 
-            if (!this.touchSurface && event.input.stick.y >= DOWN_ATTACK_STICK_Y_THRESHOLD) {
+            if (!this.touchSurface && 
+                event.input.stick.y >= DOWN_ATTACK_STICK_Y_THRESHOLD) {
 
                 this.attacking = false; // Possibly unnecessary
                 this.downAttacking = true;
@@ -320,6 +352,8 @@ export class Player extends CollisionObject {
             this.rocketPackReleased = true;
 
             this.sprite.setFrame(3, 1);
+
+            ++ this.attackID;
         }
 
         // TODO: Charge attack?
@@ -808,6 +842,7 @@ export class Player extends CollisionObject {
         this.updateDust(event);
 
         this.updateFlags();
+        this.computeSwordHitbox();
     }
 
 
@@ -968,5 +1003,19 @@ export class Player extends CollisionObject {
         this.pos.x = x;
         this.pos.y = y;
     }
+
+
+    public getAttackID = () : number => this.attackID;
+
+    
+    public overlaySwordAttackArea(o : GameObject) : boolean {
+
+        if ((!this.attacking && this.powerAttackTimer <= 0) ||
+             (this.attacking && this.sprite.getColumn() >= 6)) {
+
+            return false;
+        }
+        return o.overlayRect(new Vector(), this.swordHitbox);
+    } 
 }
 

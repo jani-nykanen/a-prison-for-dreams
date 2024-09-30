@@ -4,6 +4,7 @@ import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
 import { Rectangle } from "../math/rectangle.js";
 import { Vector } from "../math/vector.js";
 import { CollisionObject } from "./collisionobject.js";
+import { Player } from "./player.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
@@ -85,6 +86,20 @@ export class Breakable extends CollisionObject {
         this.slopeCollision(x1 + X_OFFSET, y2, x2 - X_OFFSET*2, y2, -1, event);
         this.wallCollision(x1, y1 + Y_OFFSET, y2 - y1 - Y_OFFSET*2, 1, event);
         this.wallCollision(x2, y1 + Y_OFFSET, y2 - y1 - Y_OFFSET*2, -1, event);
+    }
+
+
+    public playerCollision(player : Player, event : ProgramEvent) : void {
+
+        if (!this.isActive() || !player.isActive()) {
+
+            return;
+        }
+
+        if (player.overlaySwordAttackArea(this)) {
+
+            this.exist = false;
+        }
     }
 
 
