@@ -69,6 +69,7 @@ export class Player extends CollisionObject {
     private downAttackWait : number = 0;
     private powerAttackTimer : number = 0;
     private swordHitbox : Rectangle;
+    private swordHitBoxActive : boolean = false;
 
     private faceDir : -1 | 1 = 1;
     private sprite : Sprite;
@@ -112,25 +113,47 @@ export class Player extends CollisionObject {
 
     private computeSwordHitbox() : void {
 
-        if (!this.attacking && this.powerAttackTimer <= 0) {
+        const SWORD_OFFSET_X : number = 16;
+        const SWORD_OFFSET_Y : number = 0;
+
+        const SWORD_ATTACK_BASE_WIDTH : number = 14;
+        const SWORD_ATTACK_BASE_HEIGHT : number = 12;
+
+        const SWORD_ATTACK_SPECIAL_WIDTH : number = 24;
+        const SWORD_ATTACK_SPECIAL_HEIGHT : number = 20;
+
+        const DOWN_ATTACK_OFFSET_Y : number = 12;
+
+        const DOWN_ATTACK_WIDTH : number = 4;
+        const DOWN_ATTACK_HEIGHT : number = 10;
+
+        this.swordHitBoxActive = false;
+
+        if (this.downAttacking && this.downAttackWait <= 0) {
+
+            this.swordHitbox.x = this.pos.x;
+            this.swordHitbox.y = this.pos.y + DOWN_ATTACK_OFFSET_Y;
+
+            this.swordHitbox.w = DOWN_ATTACK_WIDTH;
+            this.swordHitbox.h = DOWN_ATTACK_HEIGHT;
+
+            this.swordHitBoxActive = true;
 
             return;
         }
 
-        const SWORD_OFFSET_X : number = 16;
-        const SWORD_OFFSET_Y : number = 0;
+        if (!this.attacking && this.powerAttackTimer <= 0) {
 
-        const SWORD_ATTACK_BASE_WIDTH : number = 16;
-        const SWORD_ATTACK_BASE_HEIGHT : number = 16;
-
-        const SWORD_ATTACK_SPECIAL_WIDTH : number = 24;
-        const SWORD_ATTACK_SPECIAL_HEIGHT : number = 20;
+            return;
+        }
 
         this.swordHitbox.x = this.pos.x + this.faceDir*SWORD_OFFSET_X;
         this.swordHitbox.y = this.pos.y + SWORD_OFFSET_Y;
 
         this.swordHitbox.w = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_WIDTH : SWORD_ATTACK_BASE_WIDTH;
         this.swordHitbox.h = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_HEIGHT : SWORD_ATTACK_BASE_HEIGHT;
+
+        this.swordHitBoxActive = true;
     }
 
 
@@ -1010,12 +1033,31 @@ export class Player extends CollisionObject {
     
     public overlaySwordAttackArea(o : GameObject) : boolean {
 
-        if ((!this.attacking && this.powerAttackTimer <= 0) ||
-             (this.attacking && this.sprite.getColumn() >= 6)) {
+        if (!this.swordHitBoxActive) {
 
             return false;
         }
         return o.overlayRect(new Vector(), this.swordHitbox);
     } 
+
+
+    public performDownAttackJump() : void {
+
+        const JUMP_SPEED : number = -3.0;
+
+        if (!this.downAttacking || this.downAttackWait > 0) {
+
+            return;
+        }
+
+        this.speed.y = JUMP_SPEED;
+        this.downAttacking = false;
+
+        this.swordHitBoxActive = false;
+
+        this.canUseRocketPack = true;
+        this.rocketPackReleased = false;
+        this.rocketPackActive = false;
+    }
 }
 

@@ -5,6 +5,7 @@ import { Rectangle } from "../math/rectangle.js";
 import { Vector } from "../math/vector.js";
 import { CollisionObject } from "./collisionobject.js";
 import { Player } from "./player.js";
+import { Projectile } from "./projectile.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
@@ -98,7 +99,26 @@ export class Breakable extends CollisionObject {
 
         if (player.overlaySwordAttackArea(this)) {
 
+            player.performDownAttackJump();
             this.exist = false;
+        }
+    }
+
+
+    public projectileCollision(p : Projectile, event : ProgramEvent) : void {
+
+        if (!this.isActive() || !p.isActive()) {
+
+            return;
+        }
+
+        if (p.overlayObject(this)) {
+
+            this.exist = false;
+            if (p.destroyOnTouch()) {
+
+                p.kill(event);
+            }
         }
     }
 

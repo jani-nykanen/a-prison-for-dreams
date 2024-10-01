@@ -80,7 +80,8 @@ export class ProjectileGenerator {
 
         for (let p of this.projectiles) {
 
-            o.objectCollision(p, event, false, true);
+            o.projectileCollision(p, event);
+            // o.objectCollision(p, event, false, true);
         }
     }
 }

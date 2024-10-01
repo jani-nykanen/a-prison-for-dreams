@@ -92,8 +92,8 @@ export class ObjectManager {
                 o1.objectCollision(o2, event, true);
             }, i + 1);
 
-            o1.objectCollision(this.player, event);
             o1.playerCollision(this.player, event);
+            o1.objectCollision(this.player, event);
             this.projectiles.breakableCollision(o1, event);
 
             if (!o1.doesExist()) {
