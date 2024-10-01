@@ -108,7 +108,7 @@ export class Projectile extends CollisionObject {
 
     public draw(canvas : Canvas, assets : Assets | undefined, bmp : Bitmap | undefined) : void {
 
-        if (!this.exist) {
+        if (!this.inCamera || !this.exist) {
 
             return;
         }
