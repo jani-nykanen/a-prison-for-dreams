@@ -9,6 +9,8 @@ import { Projectile } from "./projectile.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { SplinterGenerator } from "./splintergenerator.js";
 import { Splinter } from "./splinter.js";
+import { CollectableGenerator } from "./collectablegenerator.js";
+import { CollectableType } from "./collectable.js";
 
 
 const BASE_GRAVITY : number = 5.0;
@@ -27,17 +29,23 @@ export class Breakable extends CollisionObject {
     private type : BreakableType = BreakableType.Unknown;
 
     private readonly splinters : SplinterGenerator;
+    private readonly collectables : CollectableGenerator;
 
 
     constructor(x : number, y : number, type : BreakableType, 
-        splinters : SplinterGenerator) {
+        splinters : SplinterGenerator,
+        collectables : CollectableGenerator) {
 
         super(x, y, true);
 
         this.collisionBox = new Rectangle(0, -1, 16, 16);
         this.hitbox = this.collisionBox.clone();
 
-        this.cameraCheckArea = new Vector(32, 32);
+        // NOTE: as long as the stages are more horizontal than vertical, having
+        // high vertical check area fixes problems with a pile of crates
+        // (if the bottom-most crate is inactive, the one on the top of it will
+        //  fall through)
+        this.cameraCheckArea = new Vector(32, 1024);
 
         this.friction.y = 0.15;
         this.target.y = BASE_GRAVITY;
@@ -45,35 +53,57 @@ export class Breakable extends CollisionObject {
         this.type = type;
 
         this.splinters = splinters;
+        this.collectables = collectables;
     }
 
 
-    private spawnSplinters(event : ProgramEvent) : void {
+    private spawnSplinters() : void {
 
         const SHIFT_X : number[] = [4, -4, -4, 4];
         const SHIFT_Y : number[] = [-4, -4, 4, 4];
         const FRAME_LOOKUP : number[] = [1, 0, 2, 3];
 
-        const BASE_SPEED_MIN : number = 0.5;
-        const BASE_SPEED_MAX : number = 2.5;
-        const JUMP_Y : number = -1.5;
+        const BASE_SPEED_MIN : number = 1.0;
+        const BASE_SPEED_MAX : number = 2.0;
+        const JUMP_Y_MIN : number = 2.0;
+        const JUMP_Y_MAX : number = 1.0;
 
         for (let i : number = 0; i < 4; ++ i) {
 
             const angle : number = Math.PI/4 + Math.PI/2*i;
 
             const speed : number = BASE_SPEED_MIN + Math.random()*(BASE_SPEED_MAX - BASE_SPEED_MIN);
+            const jumpSpeed : number = JUMP_Y_MIN + Math.random()*(JUMP_Y_MAX - JUMP_Y_MIN);
             const speedx : number = Math.cos(angle)*speed;
-            const speedy : number = Math.sin(angle)*speed + JUMP_Y;
+            const speedy : number = Math.sin(angle)*speed - jumpSpeed;
 
             const dx : number = this.pos.x + SHIFT_X[i];
             const dy : number = this.pos.y + SHIFT_Y[i];
 
             const o : Splinter = this.splinters.next();
             o.spawn(dx, dy, speedx, speedy, 0, FRAME_LOOKUP[i]);
-
-            console.log(o);
         }
+    }
+
+
+    private spawnCollectables(dir : Vector) : void {
+
+        const LAUNCH_SPEED_X : number = 1.0;
+        const LAUNCH_SPEED_Y : number = 2.0;
+        const BASE_JUMP : number = -1.0;
+
+        this.collectables.next().spawn(this.pos.x, this.pos.y, 
+            dir.x*LAUNCH_SPEED_X, dir.y*LAUNCH_SPEED_Y + BASE_JUMP, 
+            CollectableType.SilverCoin);
+    }
+    
+
+    private breakSelf(dir : Vector, event : ProgramEvent) : void {
+
+        this.exist = false;
+        
+        this.spawnSplinters();
+        this.spawnCollectables(dir);
     }
 
 
@@ -126,7 +156,7 @@ export class Breakable extends CollisionObject {
 
         if (player.overlaySwordAttackArea(this)) {
 
-            this.spawnSplinters(event);
+            this.breakSelf(Vector.direction(player.getPosition(), this.pos), event);
 
             player.performDownAttackJump();
             this.exist = false;
@@ -143,7 +173,7 @@ export class Breakable extends CollisionObject {
 
         if (p.overlayObject(this)) {
 
-            this.spawnSplinters(event);
+            this.breakSelf(Vector.direction(p.getPosition(), this.pos),event);
             
             this.exist = false;
             if (p.destroyOnTouch()) {

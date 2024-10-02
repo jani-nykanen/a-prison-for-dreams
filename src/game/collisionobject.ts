@@ -17,12 +17,15 @@ export class CollisionObject extends GameObject {
 
     protected steepnessFactor : number = 0.0;
 
+    protected bounceFactor : Vector;
+
 
     constructor(x : number = 0, y : number = 0, exist : boolean = false) {
 
         super(x, y, exist);
 
         this.collisionBox = new Rectangle(0, 0, 16, 16);
+        this.bounceFactor = new Vector(0.0, 0.0);
     }
 
 
@@ -71,7 +74,7 @@ export class CollisionObject extends GameObject {
             oldX >= x0 - (SAFE_MARGIN_FAR + Math.abs(this.speed.x))*event.tick )) {
 
             this.pos.x = x0 - this.collisionBox.x - this.collisionBox.w/2*direction;
-            this.speed.x = 0.0;
+            this.speed.x *= -this.bounceFactor.x;
 
             this.slopeCollisionEvent?.(direction, event);
 
@@ -160,7 +163,7 @@ export class CollisionObject extends GameObject {
             oldY >= y0 - (safeMarginFar + totalSpeed)*event.tick )) {
 
             this.pos.y = y0 - this.collisionBox.y - this.collisionBox.h/2*direction;
-            this.speed.y = 0.0;
+            this.speed.y *= -this.bounceFactor.y;
 
             this.steepnessFactor = steepness;
                 
@@ -202,7 +205,7 @@ export class CollisionObject extends GameObject {
             oldX >= x - (SAFE_MARGIN_FAR + Math.abs(this.speed.x))*event.tick )) {
     
             this.pos.x = x - this.collisionBox.x - this.collisionBox.w/2*direction;
-            this.speed.x = 0.0;
+            this.speed.x *= -this.bounceFactor.x;
                 
             this.wallCollisionEvent?.(direction, event);
     

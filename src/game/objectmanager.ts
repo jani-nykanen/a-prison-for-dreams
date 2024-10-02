@@ -7,7 +7,7 @@ import { Assets } from "../core/assets.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
 import { ParticleGenerator } from "./particlegenerator.js";
-import { AnimatedParticle } from "./animatedparticle.js";
+import { CollectableGenerator } from "./collectablegenerator.js";
 import { Breakable, BreakableType } from "./breakable.js";
 import { VisibleObjectBuffer } from "./visibleobjectbuffer.js";
 import { SplinterGenerator } from "./splintergenerator.js";
@@ -18,7 +18,8 @@ export class ObjectManager {
 
     private projectiles : ProjectileGenerator;
     private splinters : SplinterGenerator;
-    private animatedParticles : ParticleGenerator<AnimatedParticle>
+    private collectables : CollectableGenerator;
+    private animatedParticles : ParticleGenerator
 
     private breakables : Breakable[];
     private visibleBreakables : VisibleObjectBuffer<Breakable>;
@@ -31,7 +32,8 @@ export class ObjectManager {
 
         this.projectiles = new ProjectileGenerator();
         this.splinters = new SplinterGenerator();
-        this.animatedParticles = new ParticleGenerator<AnimatedParticle> (AnimatedParticle);
+        this.animatedParticles = new ParticleGenerator ();
+        this.collectables = new CollectableGenerator();
 
         this.breakables = new Array<Breakable> ();
         this.visibleBreakables = new VisibleObjectBuffer<Breakable> ();
@@ -57,7 +59,8 @@ export class ObjectManager {
 
             // Crate
             case 2:
-                this.breakables.push(new Breakable(dx, dy, BreakableType.Crate, this.splinters));
+                this.breakables.push(new Breakable(dx, dy, BreakableType.Crate, 
+                    this.splinters, this.collectables));
                 break;
 
             default:
@@ -97,7 +100,10 @@ export class ObjectManager {
 
             o1.playerCollision(this.player, event);
             o1.objectCollision(this.player, event);
+
             this.projectiles.breakableCollision(o1, event);
+            this.splinters.breakableCollision(o1, event);
+            this.collectables.breakableCollision(o1, event);
 
             if (!o1.doesExist()) {
 
@@ -112,7 +118,6 @@ export class ObjectManager {
                 if (!this.breakables[i].doesExist()) {
 
                     this.breakables.splice(i, 1);
-                    // console.log("Index %d removed!", i);
                 }
             }
         }
@@ -126,22 +131,22 @@ export class ObjectManager {
         this.projectiles.update(this.player, stage, camera, event);
         this.animatedParticles.update(camera, event);
         this.splinters.update(stage, camera, event);
+        this.collectables.update(this.player, stage, camera, event);
     }
 
 
     public draw(canvas : Canvas, assets : Assets) : void {
-
-        const bmpParticles1 : Bitmap | undefined = assets.getBitmap("particles_1");
 
         for (let o of this.breakables) {
 
             const bmpBreakable : Bitmap | undefined = assets.getBitmap("breakable");
             o.draw(canvas, undefined, bmpBreakable);
         }
-        
-        this.animatedParticles.draw(canvas, bmpParticles1);
+
+        this.animatedParticles.draw(canvas, assets);
         this.splinters.draw(canvas, assets);
         this.player.draw(canvas, assets);
+        this.collectables.draw(canvas, assets);
         this.projectiles.draw(canvas, assets);
     }
 }

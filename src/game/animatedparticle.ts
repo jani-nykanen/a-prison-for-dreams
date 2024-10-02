@@ -1,4 +1,3 @@
-import { Particle } from "./particle.js";
 import { GameObject } from "./gameobject.js";
 import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
@@ -18,7 +17,7 @@ const ANIMATION_SPEED : number[] = [
 ];
 
 
-export class AnimatedParticle extends GameObject implements Particle  {
+export class AnimatedParticle extends GameObject {
 
 
     private sprite : Sprite;

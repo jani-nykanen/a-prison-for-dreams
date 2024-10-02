@@ -78,12 +78,12 @@ export class Player extends CollisionObject {
     private dustTimer : number = 0;
 
     private readonly projectiles : ProjectileGenerator;
-    private readonly particles : ParticleGenerator<AnimatedParticle>;
+    private readonly particles : ParticleGenerator;
 
 
     constructor(x : number, y : number, 
         projectiles : ProjectileGenerator,
-        particles : ParticleGenerator<AnimatedParticle>) {
+        particles : ParticleGenerator) {
 
         super(x, y, true);
 
@@ -92,7 +92,7 @@ export class Player extends CollisionObject {
         this.inCamera = true;
 
         this.collisionBox = new Rectangle(0, 2, 10, 12);
-        this.hitbox = new Rectangle(0, 0, 16, 16);
+        this.hitbox = new Rectangle(0, 2, 10, 12);
 
         this.sprite = new Sprite(24, 24);
 
@@ -332,6 +332,8 @@ export class Player extends CollisionObject {
         const attackButton : InputState = event.input.getAction("attack");
         if (this.charging && this.chargeType == ChargeType.Sword && 
             (attackButton & InputState.DownOrPressed) == 0) {
+
+            this.jumpTimer = 0;
 
             this.powerAttackTimer = POWER_ATTACK_TIME;
             this.charging = false;
@@ -801,7 +803,7 @@ export class Player extends CollisionObject {
                 }
             }
 
-            this.particles.spawn(
+            this.particles.next().spawn(
                 this.pos.x + X_OFFSET*this.faceDir,
                 this.pos.y + Y_OFFSET,
                 0.0, speedy, id, Flip.None);
