@@ -119,7 +119,10 @@ export class Breakable extends CollisionObject {
 
                 p.kill(event);
             }
+            return;
         }
+
+        this.objectCollision(p, event, false);
     }
 
 
