@@ -6,50 +6,31 @@ import { Stage } from "./stage.js";
 import { Assets } from "../core/assets.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
 import { Breakable } from "./breakable.js";
+import { ObjectGenerator } from "./objectgenerator.js";
 
 
-export class SplinterGenerator {
+export class SplinterGenerator extends ObjectGenerator<Splinter> {
 
-
-    private splinters : Splinter[];
 
 
     constructor() {
 
-        this.splinters = new Array<Splinter> ();
-    }
-
-
-    public spawn(x : number, y : number, speedx : number, speedy : number, 
-        row : number, frame : number) : Splinter {
-
-        let splinter : Splinter | undefined = next<Splinter> (this.splinters);
-        if (splinter === undefined) {
-
-            splinter = new Splinter();
-            this.splinters.push(splinter);
-        }
-
-        splinter.spawn(x, y, speedx, speedy, row, frame);
-        return splinter!;
+        super(Splinter);
     }
 
 
     public update(stage : Stage, camera : Camera, event : ProgramEvent) : void {
         
-        // TODO: Maybe remove nonexisting splinters to make collision checks faster?
+        for (let i : number = 0; i < this.objects.length; ++ i) {
 
-        for (let i : number = 0; i < this.splinters.length; ++ i) {
+            const o : Splinter = this.objects[i];
 
-            const o : Splinter = this.splinters[i];
-
-            /*
+            // TODO: Should be redundant
             if (!o.doesExist()) {
 
                 continue;
             }
-            */
-
+            
             o.cameraCheck(camera, event);
             o.update(event);
             if (o.isActive()) {
@@ -59,7 +40,7 @@ export class SplinterGenerator {
 
             if (!o.isActive()) {
 
-                this.splinters.splice(i, 1);
+                this.objects.splice(i, 1);
             }
         }
     }
@@ -68,7 +49,7 @@ export class SplinterGenerator {
     public draw(canvas : Canvas, assets : Assets) : void {
 
         const bmp : Bitmap | undefined = assets.getBitmap("splinter");
-        for (const p of this.splinters) {
+        for (const p of this.objects) {
 
             p.draw(canvas, undefined, bmp);
         }
@@ -77,9 +58,9 @@ export class SplinterGenerator {
 
     public breakableCollision(o : Breakable, event : ProgramEvent) : void {
 
-        for (const p of this.splinters) {
+        for (const p of this.objects) {
             
-            o.objectCollision(p, event, false, false);
+            o.objectCollision(p, event, false);
         }
     }
 }

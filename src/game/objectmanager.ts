@@ -10,14 +10,16 @@ import { ParticleGenerator } from "./particlegenerator.js";
 import { AnimatedParticle } from "./animatedparticle.js";
 import { Breakable, BreakableType } from "./breakable.js";
 import { VisibleObjectBuffer } from "./visibleobjectbuffer.js";
+import { SplinterGenerator } from "./splintergenerator.js";
 
 
 export class ObjectManager {
 
 
     private projectiles : ProjectileGenerator;
+    private splinters : SplinterGenerator;
     private animatedParticles : ParticleGenerator<AnimatedParticle>
-    
+
     private breakables : Breakable[];
     private visibleBreakables : VisibleObjectBuffer<Breakable>;
 
@@ -28,6 +30,7 @@ export class ObjectManager {
     constructor(stage : Stage, camera : Camera, event : ProgramEvent) {
 
         this.projectiles = new ProjectileGenerator();
+        this.splinters = new SplinterGenerator();
         this.animatedParticles = new ParticleGenerator<AnimatedParticle> (AnimatedParticle);
 
         this.breakables = new Array<Breakable> ();
@@ -54,7 +57,7 @@ export class ObjectManager {
 
             // Crate
             case 2:
-                this.breakables.push(new Breakable(dx, dy, BreakableType.Crate));
+                this.breakables.push(new Breakable(dx, dy, BreakableType.Crate, this.splinters));
                 break;
 
             default:
@@ -122,6 +125,7 @@ export class ObjectManager {
         this.updatePlayer(camera, stage, event);
         this.projectiles.update(this.player, stage, camera, event);
         this.animatedParticles.update(camera, event);
+        this.splinters.update(stage, camera, event);
     }
 
 
@@ -134,8 +138,9 @@ export class ObjectManager {
             const bmpBreakable : Bitmap | undefined = assets.getBitmap("breakable");
             o.draw(canvas, undefined, bmpBreakable);
         }
-
+        
         this.animatedParticles.draw(canvas, bmpParticles1);
+        this.splinters.draw(canvas, assets);
         this.player.draw(canvas, assets);
         this.projectiles.draw(canvas, assets);
     }

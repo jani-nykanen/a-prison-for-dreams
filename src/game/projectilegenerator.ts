@@ -7,40 +7,21 @@ import { Stage } from "./stage.js";
 import { Assets } from "../core/assets.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
 import { Breakable } from "./breakable.js";
+import { ObjectGenerator } from "./objectgenerator.js";
 
 
-export class ProjectileGenerator {
-
-
-    private projectiles : Projectile[];
+export class ProjectileGenerator extends ObjectGenerator<Projectile> {
 
 
     constructor() {
 
-        this.projectiles = new Array<Projectile> ();
-    }
-
-
-    public spawn(originx : number, originy : number,
-        x : number, y : number, 
-        speedx : number, speedy : number, 
-        id : number, friendly : boolean = true) : Projectile {
-
-        let projectile : Projectile | undefined = next<Projectile> (this.projectiles);
-        if (projectile === undefined) {
-
-            projectile = new Projectile();
-            this.projectiles.push(projectile);
-        }
-
-        projectile.spawn(originx, originy, x, y, speedx, speedy, id, friendly);
-        return projectile!;
+        super(Projectile);
     }
 
 
     public update(player : Player, stage : Stage, camera : Camera, event : ProgramEvent) : void {
         
-        for (let o of this.projectiles) {
+        for (let o of this.objects) {
 
             if (!o.doesExist()) {
 
@@ -68,7 +49,7 @@ export class ProjectileGenerator {
 
         const bmp : Bitmap | undefined = assets.getBitmap("projectiles");
 
-        for (let p of this.projectiles) {
+        for (let p of this.objects) {
 
             p.draw(canvas, undefined, bmp);
         }
@@ -78,7 +59,7 @@ export class ProjectileGenerator {
     // TODO: This versus iterate over?
     public breakableCollision(o : Breakable, event : ProgramEvent) : void {
 
-        for (let p of this.projectiles) {
+        for (let p of this.objects) {
 
             o.projectileCollision(p, event);
             // o.objectCollision(p, event, false, true);

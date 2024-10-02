@@ -7,6 +7,7 @@ import { CollisionObject } from "./collisionobject.js";
 
 
 const EXISTENCE_TIME : number = 300;
+const BASE_GRAVITY : number = 4.0;
 
 
 export class Splinter extends CollisionObject {
@@ -23,6 +24,14 @@ export class Splinter extends CollisionObject {
         super(0, 0, false);
 
         this.collisionBox = new Rectangle(0, 1, 6, 6);
+
+        this.target.x = 0;
+        this.target.y = BASE_GRAVITY;
+
+        this.friction.x = 0.025;
+        this.friction.y = 0.10;
+
+        this.cameraCheckArea = new Vector(8, 8);
     }
 
 
@@ -42,7 +51,7 @@ export class Splinter extends CollisionObject {
         this.oldPos = this.pos.clone();
 
         this.speed = new Vector(speedx, speedy);
-        this.target = this.speed.clone();
+        // this.target = this.speed.clone();
 
         this.row = row;
 

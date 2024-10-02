@@ -125,7 +125,7 @@ export class Player extends CollisionObject {
         const DOWN_ATTACK_OFFSET_Y : number = 12;
 
         const DOWN_ATTACK_WIDTH : number = 4;
-        const DOWN_ATTACK_HEIGHT : number = 10;
+        const DOWN_ATTACK_HEIGHT : number = 12;
 
         this.swordHitBoxActive = false;
 
@@ -284,7 +284,7 @@ export class Player extends CollisionObject {
         const dx = this.pos.x + BULLET_XOFF*this.faceDir;
         const dy = this.pos.y + BULLET_YOFF;
 
-        this.projectiles.spawn(
+        this.projectiles.next().spawn(
             this.pos.x, dy, dx, dy, 
             this.speed.x*BULLET_SPEED_FACTOR_X + (BULLET_SPEED[type] ?? 0)*this.faceDir, 
             -this.speed.y*BULLET_SPEED_FACTOR_Y, 
