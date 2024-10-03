@@ -908,11 +908,22 @@ export class Player extends CollisionObject {
     }
 
 
-    public hurtCollision(x : number, y : number, w : number, h : number,
-        event : ProgramEvent, direction : -1 | 0 | 1 = 0,  damage : number = 0) : boolean {
-        
+    public forceHurt(damage : number, direction : number, event : ProgramEvent) : void {
+
         const KNOCKBACK_SPEED : number = 2.5;
 
+        this.knockbackTimer = KNOCKBACK_TIME;
+
+        const knockbackDirection : number = direction == 0 ? (-this.faceDir) : direction;
+        this.speed.x = knockbackDirection*KNOCKBACK_SPEED;
+
+        this.hurt(damage, event);
+    }
+
+
+    public hurtCollision(x : number, y : number, w : number, h : number,
+        event : ProgramEvent, direction : number = 0,  damage : number = 0) : boolean {
+        
         if (!this.isActive() || this.hurtTimer > 0) {
 
             return false;
@@ -920,13 +931,7 @@ export class Player extends CollisionObject {
 
         if (this.overlayCollisionArea(x - 1, y - 1, w + 2, h + 2)) {
 
-            this.knockbackTimer = KNOCKBACK_TIME;
-
-            const knockbackDirection : number = direction == 0 ? (-this.faceDir) : direction;
-            this.speed.x = knockbackDirection*KNOCKBACK_SPEED;
-
-            this.hurt(damage, event);
-
+            this.forceHurt(damage, direction, event);
             return true;
         }
         return false;

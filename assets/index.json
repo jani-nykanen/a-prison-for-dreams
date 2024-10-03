@@ -19,6 +19,7 @@
         {"name": "breakable", "path": "breakable.png"},
         {"name": "splinter", "path": "splinter.png"},
         {"name": "collectables", "path": "collectables.png"},
+        {"name": "enemies", "path": "enemies.png"},
 
         {"name": "player", "path": "player.png"},
         {"name": "weapons", "path": "weapons.png"}
