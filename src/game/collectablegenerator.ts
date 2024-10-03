@@ -38,7 +38,7 @@ export class CollectableGenerator extends ObjectGenerator<Collectable> {
                 o.playerCollision(player, event);
             }
 
-            if (!o.isActive()) {
+            if (!o.doesExist() || !o.isInCamera()) {
 
                 this.objects.splice(i, 1);
             }
@@ -59,8 +59,8 @@ export class CollectableGenerator extends ObjectGenerator<Collectable> {
     public breakableCollision(o : Breakable, event : ProgramEvent) : void {
 
         for (const p of this.objects) {
-            
-            o.objectCollision(p, event, false);
+           
+            o.objectCollision(p, event, false, p.doesIgnoreCrates());
         }
     }
 }

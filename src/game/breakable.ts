@@ -108,7 +108,8 @@ export class Breakable extends CollisionObject {
 
 
     public objectCollision(o : CollisionObject, event : ProgramEvent, 
-        swapComparison : boolean = false) : void {
+        swapComparison : boolean = false,
+        ignoreBottom : boolean = false) : void {
 
         const X_OFFSET : number = 1;
         const Y_OFFSET : number = 1;
@@ -124,7 +125,10 @@ export class Breakable extends CollisionObject {
         let y2 : number = y1 + TILE_HEIGHT;
 
         o.slopeCollision(x1 + X_OFFSET, y1, x2 - X_OFFSET*2, y1, 1, event);
-        o.slopeCollision(x1 + X_OFFSET, y2, x2 - X_OFFSET*2, y2, -1, event);
+        if (!ignoreBottom) {
+            
+            o.slopeCollision(x1 + X_OFFSET, y2, x2 - X_OFFSET*2, y2, -1, event);
+        }
         o.wallCollision(x1, y1 + Y_OFFSET, y2 - y1 - Y_OFFSET*2, 1, event);
         o.wallCollision(x2, y1 + Y_OFFSET, y2 - y1 - Y_OFFSET*2, -1, event);
 

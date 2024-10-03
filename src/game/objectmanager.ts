@@ -145,8 +145,8 @@ export class ObjectManager {
 
         this.animatedParticles.draw(canvas, assets);
         this.splinters.draw(canvas, assets);
-        this.player.draw(canvas, assets);
         this.collectables.draw(canvas, assets);
+        this.player.draw(canvas, assets);
         this.projectiles.draw(canvas, assets);
     }
 }

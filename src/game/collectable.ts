@@ -10,6 +10,7 @@ import { Player } from "./player.js";
 
 const EXISTENCE_TIME : number = 300;
 const BASE_GRAVITY : number = 3.0;
+const IGNORE_CRATE_TIME : number = 30;
 
 
 export const enum CollectableType {
@@ -27,6 +28,8 @@ export class Collectable extends CollisionObject {
 
     private timer : number = 0;
 
+    private ignoreCratesTimer : number = 0;
+
 
     constructor() {
 
@@ -41,12 +44,22 @@ export class Collectable extends CollisionObject {
         this.friction.x = 0.025;
         this.friction.y = 0.075;
 
-        this.cameraCheckArea = new Vector(16, 16);
+        this.cameraCheckArea = new Vector(32, 32);
 
         this.bounceFactor.x = 1.0;
         this.bounceFactor.y = 0.80;
 
         this.sprite = new Sprite(16, 16);
+    }
+
+
+    protected die(event : ProgramEvent) : boolean {
+        
+        const ANIMATION_SPEED : number = 4;
+
+        this.sprite.animate(this.type - 1, 4, 8, ANIMATION_SPEED, event.tick);
+
+        return this.sprite.getColumn() >= 8;
     }
 
 
@@ -58,6 +71,11 @@ export class Collectable extends CollisionObject {
         if (this.timer <= 0) {
 
             this.exist = false;
+        }
+
+        if (this.ignoreCratesTimer > 0) {
+
+            this.ignoreCratesTimer -= event.tick;
         }
 
         this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
@@ -77,6 +95,7 @@ export class Collectable extends CollisionObject {
         this.sprite.setFrame(Math.floor(Math.random()*4), Math.min(0, type - 1));
 
         this.timer = EXISTENCE_TIME;
+        this.ignoreCratesTimer = IGNORE_CRATE_TIME;
 
         this.dying = false;
         this.exist = true;
@@ -106,7 +125,11 @@ export class Collectable extends CollisionObject {
 
         if (player.overlayObject(this)) {
 
-            this.exist = false;
+            this.dying = true;
+            this.sprite.setFrame(4, this.type - 1);
         }
     }
+
+
+    public doesIgnoreCrates = () : boolean => this.ignoreCratesTimer > 0;
 }
