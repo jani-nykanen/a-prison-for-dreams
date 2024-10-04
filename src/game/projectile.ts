@@ -137,6 +137,12 @@ export class Projectile extends CollisionObject {
     }
 
 
+    public getPower() : number {
+
+        return 3;
+    }
+
+
     public isFriendly = () : boolean => this.friendly;
     public getID = () : number => this.id;
     public destroyOnTouch = () : boolean => this.id != 1;

@@ -8,6 +8,7 @@ import { Assets } from "../core/assets.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
 import { Breakable } from "./breakable.js";
 import { ObjectGenerator } from "./objectgenerator.js";
+import { Enemy } from "./enemies/enemy.js";
 
 
 export class ProjectileGenerator extends ObjectGenerator<Projectile> {
@@ -59,10 +60,19 @@ export class ProjectileGenerator extends ObjectGenerator<Projectile> {
     // TODO: This versus iterate over?
     public breakableCollision(o : Breakable, event : ProgramEvent) : void {
 
-        for (let p of this.objects) {
+        for (const p of this.objects) {
 
             o.projectileCollision(p, event);
             // o.objectCollision(p, event, false, true);
+        }
+    }
+
+
+    public enemyCollision(e : Enemy, event : ProgramEvent) : void {
+
+        for (const p of this.objects) {
+
+            e.projectileCollision(p, event);
         }
     }
 }

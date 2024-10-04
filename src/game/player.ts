@@ -114,24 +114,25 @@ export class Player extends CollisionObject {
     private computeSwordHitbox() : void {
 
         const SWORD_OFFSET_X : number = 16;
-        const SWORD_OFFSET_Y : number = 0;
+        const SWORD_OFFSET_Y : number = 2;
 
         const SWORD_ATTACK_BASE_WIDTH : number = 14;
-        const SWORD_ATTACK_BASE_HEIGHT : number = 12;
+        const SWORD_ATTACK_BASE_HEIGHT : number = 14;
 
         const SWORD_ATTACK_SPECIAL_WIDTH : number = 24;
         const SWORD_ATTACK_SPECIAL_HEIGHT : number = 20;
 
-        const DOWN_ATTACK_OFFSET_Y : number = 12;
+        const DOWN_ATTACK_OFFSET_X : number = 1;
+        const DOWN_ATTACK_OFFSET_Y : number = 14;
 
-        const DOWN_ATTACK_WIDTH : number = 4;
-        const DOWN_ATTACK_HEIGHT : number = 12;
+        const DOWN_ATTACK_WIDTH : number = 6;
+        const DOWN_ATTACK_HEIGHT : number = 16;
 
         this.swordHitBoxActive = false;
 
         if (this.downAttacking && this.downAttackWait <= 0) {
 
-            this.swordHitbox.x = this.pos.x;
+            this.swordHitbox.x = this.pos.x + DOWN_ATTACK_OFFSET_X*this.faceDir;
             this.swordHitbox.y = this.pos.y + DOWN_ATTACK_OFFSET_Y;
 
             this.swordHitbox.w = DOWN_ATTACK_WIDTH;
@@ -354,6 +355,8 @@ export class Player extends CollisionObject {
 
             if (!this.touchSurface && 
                 event.input.stick.y >= DOWN_ATTACK_STICK_Y_THRESHOLD) {
+
+                ++ this.attackID;
 
                 this.attacking = false; // Possibly unnecessary
                 this.downAttacking = true;
@@ -1019,6 +1022,13 @@ export class Player extends CollisionObject {
 
             this.drawMuzzleFlash(canvas, assets.getBitmap("muzzle_flash"));
         }
+
+        /*
+        // Draws sword hitbox area
+        canvas.setColor(255, 0, 0);
+        canvas.fillRect(this.swordHitbox.x - this.swordHitbox.w/2, this.swordHitbox.y - this.swordHitbox.h/2, this.swordHitbox.w, this.swordHitbox.h);
+        canvas.setColor();
+        */
     }
 
 
@@ -1048,13 +1058,13 @@ export class Player extends CollisionObject {
     } 
 
 
-    public performDownAttackJump() : void {
+    public performDownAttackJump() : boolean {
 
         const JUMP_SPEED : number = -3.0;
 
         if (!this.downAttacking || this.downAttackWait > 0) {
 
-            return;
+            return false;
         }
 
         this.speed.y = JUMP_SPEED;
@@ -1065,6 +1075,17 @@ export class Player extends CollisionObject {
         this.canUseRocketPack = true;
         this.rocketPackReleased = false;
         this.rocketPackActive = false;
+
+        return true;
+    }
+
+
+    public isChargeAttacking = () : boolean => this.powerAttackTimer > 0;
+
+
+    public getAttackPower() : number {
+
+        return 5;
     }
 }
 

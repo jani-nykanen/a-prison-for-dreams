@@ -112,11 +112,14 @@ export class ObjectManager {
             }, i + 1);
 
             o1.playerCollision(this.player, event);
-
             if (!o1.doesExist()) {
 
                 somethingDied = true;
+                return;
             }
+
+            this.projectiles.enemyCollision(o1, event);
+
         });
 
         if (somethingDied) {
