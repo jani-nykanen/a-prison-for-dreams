@@ -6,9 +6,14 @@ import { Vector } from "../math/vector.js";
 import { CollisionObject } from "./collisionobject.js";
 import { Sprite } from "../gfx/sprite.js";
 import { Player } from "./player.js";
+import { ObjectGenerator } from "./objectgenerator.js";
+import { FlyingText, FlyingTextSymbol } from "./flyingtext.js";
+import { RGBA } from "../math/rgba.js";
 
 
 const EXISTENCE_TIME : number = 300;
+const FLICKER_TIME : number = 60;
+
 const BASE_GRAVITY : number = 3.0;
 const IGNORE_CRATE_TIME : number = 30;
 
@@ -29,6 +34,8 @@ export class Collectable extends CollisionObject {
     private timer : number = 0;
 
     private ignoreCratesTimer : number = 0;
+
+    private flyingText : ObjectGenerator<FlyingText> | undefined = undefined;
 
 
     constructor() {
@@ -82,7 +89,9 @@ export class Collectable extends CollisionObject {
     }
 
 
-    public spawn(x : number, y : number, speedx : number, speedy : number, type : CollectableType) : void {
+    public spawn(x : number, y : number, 
+        speedx : number, speedy : number, type : CollectableType,
+        flyingText :  ObjectGenerator<FlyingText>) : void {
 
         this.pos = new Vector(x, y);
         this.oldPos = this.pos.clone();
@@ -97,14 +106,17 @@ export class Collectable extends CollisionObject {
         this.timer = EXISTENCE_TIME;
         this.ignoreCratesTimer = IGNORE_CRATE_TIME;
 
+        this.flyingText = flyingText;
+
         this.dying = false;
         this.exist = true;
     }
 
 
-    public draw(canvas: Canvas, assets: Assets | undefined, bmp : Bitmap | undefined) : void {
+    public draw(canvas: Canvas, assets : Assets | undefined, bmp : Bitmap | undefined) : void {
         
-        if (!this.inCamera || !this.exist) {
+        if (!this.inCamera || !this.exist ||
+            (this.timer <= FLICKER_TIME && Math.floor(this.timer/4) % 2 != 0)) {
 
             return;
         }
@@ -127,6 +139,9 @@ export class Collectable extends CollisionObject {
 
             this.dying = true;
             this.sprite.setFrame(4, this.type - 1);
+
+            const ppos : Vector = player.getPosition();
+            this.flyingText?.next().spawn(ppos.x, ppos.y - 8, 1, FlyingTextSymbol.Coin, new RGBA(255, 255, 182));
         }
     }
 

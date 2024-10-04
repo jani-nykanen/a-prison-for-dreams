@@ -20,7 +20,7 @@ export class ProjectileGenerator extends ObjectGenerator<Projectile> {
     }
 
 
-    public update(player : Player, stage : Stage, camera : Camera, event : ProgramEvent) : void {
+    public update(event : ProgramEvent, camera : Camera, stage : Stage) : void {
         
         for (let o of this.objects) {
 
@@ -34,13 +34,6 @@ export class ProjectileGenerator extends ObjectGenerator<Projectile> {
             if (o.isActive()) {
 
                 stage.objectCollision(o, event);
-                
-                if (player.isActive()) {
-
-                    player.projectileCollision(o, event);
-                }
-            
-                // TODO: Enemy collisions somewhere!
             }
         }
     }
@@ -73,6 +66,19 @@ export class ProjectileGenerator extends ObjectGenerator<Projectile> {
         for (const p of this.objects) {
 
             e.projectileCollision(p, event);
+        }
+    }
+
+
+    public playerCollision(player : Player, event : ProgramEvent) : void {
+
+        for (let o of this.objects) {
+
+            if (!o.isActive()) {
+
+                continue;
+            }
+            player.projectileCollision(o, event);
         }
     }
 }

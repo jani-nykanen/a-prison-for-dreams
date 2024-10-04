@@ -21,6 +21,7 @@ export class Projectile extends CollisionObject {
 
 
     private id : number = 0;
+    private attackID : number = -1;
     private friendly : boolean = false;
 
     private sprite : Sprite;
@@ -88,7 +89,8 @@ export class Projectile extends CollisionObject {
     public spawn(originx : number, originy : number,
         x : number, y : number, 
         speedx : number, speedy : number, 
-        id : number, friendly : boolean = true) : void {
+        id : number, friendly : boolean = true,
+        attackID : number = -1) : void {
 
         this.oldPos = new Vector(originx, originy);
         this.pos = new Vector(x, y);
@@ -98,6 +100,7 @@ export class Projectile extends CollisionObject {
 
         this.id = id;
         this.friendly = friendly;
+        this.attackID = attackID;
 
         this.sprite.setFrame(0, this.id);
 
@@ -146,4 +149,5 @@ export class Projectile extends CollisionObject {
     public isFriendly = () : boolean => this.friendly;
     public getID = () : number => this.id;
     public destroyOnTouch = () : boolean => this.id != 1;
+    public getAttackID = () : number => this.attackID;
 }

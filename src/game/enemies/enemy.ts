@@ -7,6 +7,9 @@ import { Rectangle } from "../../math/rectangle.js";
 import { ProgramEvent } from "../../core/event.js";
 import { Player } from "../player.js";
 import { Projectile } from "../projectile.js";
+import { ObjectGenerator } from "../objectgenerator.js";
+import { FlyingText, FlyingTextSymbol } from "../flyingtext.js";
+import { RGBA } from "../../math/rgba.js";
 
 
 const HURT_TIME : number = 30;
@@ -20,6 +23,8 @@ export class Enemy extends CollisionObject {
 
     private hurtID : number = -1;
     private hurtTimer : number = 0;
+
+    private flyingText : ObjectGenerator<FlyingText> | undefined = undefined;
 
     protected sprite : Sprite;
     protected flip : Flip = Flip.None;
@@ -48,6 +53,8 @@ export class Enemy extends CollisionObject {
 
 
     private takeDamage(amount : number, event : ProgramEvent) : void {
+
+        this.flyingText?.next().spawn(this.pos.x, this.pos.y - 8, -amount, FlyingTextSymbol.None, new RGBA(255, 73, 0));
 
         this.health -= amount;
         if (this.health <= 0) {
@@ -160,14 +167,28 @@ export class Enemy extends CollisionObject {
         if (!this.isActive() || !p.isActive()) {
 
             return;
-        }
+        }   
 
-        if (p.overlayObject(this)) {
+        const attackID : number = p.getAttackID();
+        if (p.overlayObject(this) && (p.destroyOnTouch() || attackID != this.hurtID )) {
 
-            p.kill(event);
+            if (p.destroyOnTouch()) {
+                
+                p.kill(event);
+            }
+            else {
+
+                this.hurtID = attackID;
+            }
             this.speed.x = Math.sign(this.pos.x - p.getPosition().x)*KNOCKBACK_SPEED*(this.friction.x/0.10);
 
             this.takeDamage(p.getPower(), event);
         }
+    }
+
+
+    public passGenerators(flyingText : ObjectGenerator<FlyingText>) : void {
+
+        this.flyingText = flyingText;
     }
 }

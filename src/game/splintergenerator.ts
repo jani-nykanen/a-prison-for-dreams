@@ -19,7 +19,7 @@ export class SplinterGenerator extends ObjectGenerator<Splinter> {
     }
 
 
-    public update(stage : Stage, camera : Camera, event : ProgramEvent) : void {
+    public update(event : ProgramEvent, camera : Camera, stage : Stage) : void {
         
         for (let i : number = 0; i < this.objects.length; ++ i) {
 

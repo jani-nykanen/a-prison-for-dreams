@@ -92,7 +92,7 @@ export class Breakable extends CollisionObject {
         const LAUNCH_SPEED_Y : number = 2.0;
         const BASE_JUMP : number = -1.0;
 
-        this.collectables.next().spawn(this.pos.x, this.pos.y, 
+        this.collectables.spawn(this.pos.x, this.pos.y, 
             dir.x*LAUNCH_SPEED_X, dir.y*LAUNCH_SPEED_Y + BASE_JUMP, 
             CollectableType.SilverCoin);
     }

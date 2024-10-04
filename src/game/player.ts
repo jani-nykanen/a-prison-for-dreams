@@ -9,9 +9,9 @@ import { Sprite } from "../gfx/sprite.js";
 import { Assets } from "../core/assets.js";
 import { Projectile } from "./projectile.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
-import { ParticleGenerator } from "./particlegenerator.js";
 import { AnimatedParticle } from "./animatedparticle.js";
 import { GameObject } from "./gameobject.js";
+import { ObjectGenerator } from "./objectgenerator.js";
 
 
 const GRAVITY_MAGNITUDE : number = 5.0;
@@ -78,12 +78,12 @@ export class Player extends CollisionObject {
     private dustTimer : number = 0;
 
     private readonly projectiles : ProjectileGenerator;
-    private readonly particles : ParticleGenerator;
+    private readonly particles : ObjectGenerator<AnimatedParticle>;
 
 
     constructor(x : number, y : number, 
         projectiles : ProjectileGenerator,
-        particles : ParticleGenerator) {
+        particles : ObjectGenerator<AnimatedParticle>) {
 
         super(x, y, true);
 
@@ -288,8 +288,12 @@ export class Player extends CollisionObject {
         this.projectiles.next().spawn(
             this.pos.x, dy, dx, dy, 
             this.speed.x*BULLET_SPEED_FACTOR_X + (BULLET_SPEED[type] ?? 0)*this.faceDir, 
-            -this.speed.y*BULLET_SPEED_FACTOR_Y, 
-            type, true);
+            this.speed.y*BULLET_SPEED_FACTOR_Y, 
+            type, true, this.attackID);
+        if (type == 1) {
+
+            ++ this.attackID;
+        }
     }
 
 

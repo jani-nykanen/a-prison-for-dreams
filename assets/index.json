@@ -4,6 +4,7 @@
 
         {"name": "font", "path": "font.png"},
         {"name": "font_outlines", "path": "font_outlines.png"},
+        {"name": "font_tiny", "path": "font_tiny.png"},
 
         {"name": "tileset_1", "path": "tileset_1.png"},
 

@@ -6,22 +6,25 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Assets } from "../core/assets.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
 import { ProjectileGenerator } from "./projectilegenerator.js";
-import { ParticleGenerator } from "./particlegenerator.js";
 import { CollectableGenerator } from "./collectablegenerator.js";
 import { Breakable, BreakableType } from "./breakable.js";
 import { VisibleObjectBuffer } from "./visibleobjectbuffer.js";
 import { SplinterGenerator } from "./splintergenerator.js";
 import { Enemy } from "./enemies/enemy.js";
 import { getEnemyByID } from "./enemies/index.js";
+import { ObjectGenerator } from "./objectgenerator.js";
+import { FlyingText } from "./flyingtext.js";
+import { AnimatedParticle } from "./animatedparticle.js";
 
 
 export class ObjectManager {
 
 
+    private flyingText : ObjectGenerator<FlyingText>;
     private projectiles : ProjectileGenerator;
     private splinters : SplinterGenerator;
     private collectables : CollectableGenerator;
-    private animatedParticles : ParticleGenerator
+    private animatedParticles : ObjectGenerator<AnimatedParticle>;
 
     private breakables : Breakable[];
     private visibleBreakables : VisibleObjectBuffer<Breakable>;
@@ -35,10 +38,11 @@ export class ObjectManager {
 
     constructor(stage : Stage, camera : Camera, event : ProgramEvent) {
 
+        this.flyingText = new ObjectGenerator<FlyingText> (FlyingText);
         this.projectiles = new ProjectileGenerator();
         this.splinters = new SplinterGenerator();
-        this.animatedParticles = new ParticleGenerator ();
-        this.collectables = new CollectableGenerator();
+        this.animatedParticles = new ObjectGenerator<AnimatedParticle> (AnimatedParticle);
+        this.collectables = new CollectableGenerator(this.flyingText);
 
         this.breakables = new Array<Breakable> ();
         this.visibleBreakables = new VisibleObjectBuffer<Breakable> ();
@@ -75,7 +79,10 @@ export class ObjectManager {
                 
                 if (objID >= 17 && objID <= 48) {
 
-                    this.enemies.push(new (getEnemyByID(objID)).prototype.constructor(dx, dy));
+                    const o : Enemy = (new (getEnemyByID(objID)).prototype.constructor(dx, dy)) as Enemy;
+                    this.enemies.push(o);
+
+                    o.passGenerators(this.flyingText);
                 }
                 break;
             }
@@ -192,10 +199,16 @@ export class ObjectManager {
         this.updateEnemies(camera, stage, event);
         this.updateBreakables(camera, stage, event);
         this.updatePlayer(camera, stage, event);
-        this.projectiles.update(this.player, stage, camera, event);
-        this.animatedParticles.update(camera, event);
-        this.splinters.update(stage, camera, event);
-        this.collectables.update(this.player, stage, camera, event);
+
+        this.projectiles.update(event, camera, stage);
+        this.projectiles.playerCollision(this.player, event);
+
+        this.animatedParticles.update(event, camera);
+        this.splinters.update(event, camera, stage);
+        this.flyingText.update(event, camera);
+
+        this.collectables.update(event, camera, stage);
+        this.collectables.playerCollision(this.player, event);
     }
 
 
@@ -207,7 +220,7 @@ export class ObjectManager {
             o.draw(canvas, undefined, bmpBreakable);
         }
 
-        this.animatedParticles.draw(canvas, assets);
+        this.animatedParticles.draw(canvas, undefined, assets.getBitmap("particles_1"));
         this.splinters.draw(canvas, assets);
 
         for (let o of this.enemies) {
@@ -219,5 +232,7 @@ export class ObjectManager {
         this.collectables.draw(canvas, assets);
         this.player.draw(canvas, assets);
         this.projectiles.draw(canvas, assets);
+
+        this.flyingText.draw(canvas, undefined, assets.getBitmap("font_tiny"));
     }
 }
