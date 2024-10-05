@@ -139,6 +139,8 @@ export class Camera {
 
         this.pos = p.clone();
         this.targetPos = this.pos.clone();
+
+        this.computeCorner();
     }
 
 

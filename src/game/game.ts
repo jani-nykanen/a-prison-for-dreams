@@ -9,6 +9,8 @@ import { ObjectManager } from "./objectmanager.js";
 import { Assets } from "../core/assets.js";
 import { Progress } from "./progress.js";
 import { drawHUD } from "./hud.js";
+import { TransitionType } from "../core/transition.js";
+import { RGBA } from "../math/rgba.js";
 
 
 export class Game implements Scene {
@@ -35,10 +37,40 @@ export class Game implements Scene {
         this.progress = new Progress();
         this.objects = new ObjectManager(this.progress, this.stage, this.camera, event);
 
-        this.camera.forceCenter(this.objects.player.getPosition());
+        this.objects.centerCamera(this.camera);
     }
 
+
+    private limitCamera() : void {
+
+        this.camera.limit(0, this.stage.width*TILE_WIDTH, null, this.stage.height*TILE_HEIGHT);
+    }
+
+
+    private reset(event : ProgramEvent) : void {
+
+        this.progress.reset();
+        this.objects.reset(this.progress, this.stage, this.camera, event);
+
+        this.objects.centerCamera(this.camera);
+    }
+
+
+    private startGameOverTransition(event : ProgramEvent) : void {
+
+        event.transition.activate(true, TransitionType.Circle, 1.0/30.0,
+            event,
+            (event : ProgramEvent) : void => {
+
+                this.reset(event);
+                this.limitCamera();
+                
+                event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
+            },
+            new RGBA(0, 0, 0), this.objects.getRelativePlayerPosition(this.camera));
+    }
     
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         // ...
@@ -46,15 +78,24 @@ export class Game implements Scene {
 
 
     public update(event : ProgramEvent) : void {
-        
+
         this.stage.update(event);
 
-        if (event.transition.isActive())
+        if (event.transition.isActive()) {
+
+            this.objects.initialCameraCheck(this.camera, event);
             return;
+        }
 
         this.objects.update(this.camera, this.stage, event);
+        if (this.objects.hasPlayerDied()) {
+
+            this.startGameOverTransition(event);
+            // return;
+        }
+
         this.camera.update(event);
-        this.camera.limit(0, this.stage.width*TILE_WIDTH, null, this.stage.height*TILE_HEIGHT);
+        this.limitCamera();
     }
 
 

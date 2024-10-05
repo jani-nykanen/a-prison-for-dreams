@@ -55,4 +55,19 @@ export class ObjectGenerator<T extends GameObject> {
             o.draw(canvas, assets, bmp);
         }
     }
+
+
+    public clear() : void {
+
+        this.objects.length = 0;
+    }
+
+
+    public flush() : void {
+
+        for (const o of this.objects) {
+
+            o.forceKill();
+        }
+    }
 } 

@@ -26,6 +26,10 @@ const SHOOT_WAIT_TIME : number = 10.0;
 
 const HURT_TIME : number = 60;
 const KNOCKBACK_TIME : number = 20;
+const DEATH_TIME : number = 60;
+
+const POWER_ATTACK_TIME : number = 20;
+const POWER_ATTACK_HALT_TIME : number = 10;
 
 
 const enum ChargeType {
@@ -71,6 +75,7 @@ export class Player extends CollisionObject {
     private downAttacking : boolean = false;
     private downAttackWait : number = 0;
     private powerAttackTimer : number = 0;
+    private powerAttackStopped : boolean = false;
     private swordHitbox : Rectangle;
     private swordHitBoxActive : boolean = false;
 
@@ -79,6 +84,7 @@ export class Player extends CollisionObject {
     private flip : Flip;
 
     private dustTimer : number = 0;
+    private deathTimer : number = 0;
 
     private readonly projectiles : ProjectileGenerator;
     private readonly particles : ObjectGenerator<AnimatedParticle>;
@@ -127,10 +133,10 @@ export class Player extends CollisionObject {
         const SWORD_OFFSET_Y : number = 2;
 
         const SWORD_ATTACK_BASE_WIDTH : number = 14;
-        const SWORD_ATTACK_BASE_HEIGHT : number = 14;
+        const SWORD_ATTACK_BASE_HEIGHT : number = 20;
 
-        const SWORD_ATTACK_SPECIAL_WIDTH : number = 24;
-        const SWORD_ATTACK_SPECIAL_HEIGHT : number = 20;
+        const SWORD_ATTACK_SPECIAL_WIDTH : number = 18;
+        const SWORD_ATTACK_SPECIAL_HEIGHT : number = 16;
 
         const DOWN_ATTACK_OFFSET_X : number = 1;
         const DOWN_ATTACK_OFFSET_Y : number = 14;
@@ -344,8 +350,7 @@ export class Player extends CollisionObject {
 
         const DOWN_ATTACK_JUMP : number = -2.0;
         const DOWN_ATTACK_STICK_Y_THRESHOLD : number = 0.50;
-        const POWER_ATTACK_TIME : number = 20;
-
+        
         const attackButton : InputState = event.input.getAction("attack");
         if (this.charging && this.chargeType == ChargeType.Sword && 
             (attackButton & InputState.DownOrPressed) == 0) {
@@ -353,6 +358,7 @@ export class Player extends CollisionObject {
             this.jumpTimer = 0;
 
             this.powerAttackTimer = POWER_ATTACK_TIME;
+            this.powerAttackStopped = false;
             this.charging = false;
 
             this.speed.zeros();
@@ -426,7 +432,7 @@ export class Player extends CollisionObject {
         const RUSH_SPEED : number = 2.5;
 
         this.powerAttackTimer -= event.tick;
-        if (this.powerAttackTimer <= 0) {
+        if (this.powerAttackTimer <= 0 || this.powerAttackStopped) {
 
             this.speed.x = 0;
             return;
@@ -434,12 +440,12 @@ export class Player extends CollisionObject {
         
         this.target.x = this.faceDir*RUSH_SPEED;
         this.speed.x = this.target.x;
-
+        
         this.target.y = this.touchSurface ? this.getGravity() : 0.0;
     }
 
 
-    private setDefaultFriction() : void {
+    private setFriction() : void {
 
         this.friction.x = 0.15;
         this.friction.y = 0.125;
@@ -448,6 +454,12 @@ export class Player extends CollisionObject {
             this.friction.x /= 2.0;
             this.friction.y /= 2.0;
         }
+/*
+        if (this.powerAttackTimer > 0 && this.powerAttackStopped) {
+
+            this.friction.x = 0.025;
+        }
+*/
     }
 
 
@@ -463,7 +475,7 @@ export class Player extends CollisionObject {
 
     private control(event : ProgramEvent) : void {
 
-        this.setDefaultFriction();
+        this.setFriction();
 
         if (this.underWater) {
             
@@ -753,6 +765,11 @@ export class Player extends CollisionObject {
         if (this.knockbackTimer > 0) {
 
             this.knockbackTimer -= event.tick;
+            if (this.knockbackTimer <= 0 && this.stats.getHealth() <= 0) {
+
+                this.dying = true;
+                this.sprite.setFrame(4, 8);
+            }
         }
         else if (this.hurtTimer > 0) {
 
@@ -882,6 +899,28 @@ export class Player extends CollisionObject {
     }
 
 
+    private drawDeath(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const ORB_COUNT : number = 8;
+        const ORB_DISTANCE : number = 64;
+
+        const t : number = this.deathTimer / DEATH_TIME;
+        const step : number = Math.PI*2 / ORB_COUNT;
+
+        const dx : number = Math.round(this.pos.x);
+        const dy : number = Math.round(this.pos.y);
+
+        for (let i = 0; i < ORB_COUNT; ++ i) {
+
+            const angle : number = step*i;
+
+            this.sprite.draw(canvas, bmp,
+                dx + Math.round(Math.cos(angle)*t*ORB_DISTANCE) - 12,
+                dy + Math.round(Math.sin(angle)*t*ORB_DISTANCE) - 12);
+        }
+    }
+
+
     protected updateEvent(event: ProgramEvent) : void {
         
         this.control(event);
@@ -923,6 +962,17 @@ export class Player extends CollisionObject {
         
         this.jumpTimer = 0;
         this.rocketPackReleased = true;
+    }
+
+
+    protected die(event : ProgramEvent) : boolean {
+        
+        const ANIMATION_SPEED : number = 3;
+
+        this.deathTimer += event.tick;
+        this.sprite.animate(4, 8, 10, ANIMATION_SPEED, event.tick);
+
+        return this.deathTimer >= DEATH_TIME;
     }
 
 
@@ -990,17 +1040,30 @@ export class Player extends CollisionObject {
 
     public draw(canvas : Canvas, assets : Assets): void {
         
-        const px : number = this.pos.x - 12;
-        const py : number = this.pos.y - 11;
+        if (!this.exist) {
 
-        const flicker : boolean = this.knockbackTimer <= 0 &&
-             this.hurtTimer > 0 && 
-             Math.floor(this.hurtTimer/4) % 2 != 0;
+            return;
+        }
+
+        const bmp : Bitmap | undefined = assets.getBitmap("player");
+
+        if (this.dying) {
+
+            this.drawDeath(canvas, bmp);
+        }
+
+        const flicker : boolean = 
+            this.knockbackTimer <= 0 &&
+            this.hurtTimer > 0 && 
+            Math.floor(this.hurtTimer/4) % 2 != 0;
         if (flicker) {
 
             // canvas.setColor(255.0, 255.0, 255.0, FLICKER_ALPHA);
             return;
         }
+
+        const px : number = this.pos.x - 12;
+        const py : number = this.pos.y - 11;
 
         const crouchJumpFlicker : boolean = (this.isFullyDown() && this.crouchFlickerTimer >= 0.5);
         const chargeFlicker : boolean = this.charging && this.chargeFlickerTimer < 0.5;
@@ -1029,8 +1092,6 @@ export class Player extends CollisionObject {
 
             this.drawWeapon(canvas, assets.getBitmap("weapons"));
         }
-
-        const bmp : Bitmap | undefined = assets.getBitmap("player");
         this.sprite.draw(canvas, bmp, px, py, this.flip);
 
         if (crouchJumpFlicker || chargeFlicker) {
@@ -1049,12 +1110,14 @@ export class Player extends CollisionObject {
             this.drawMuzzleFlash(canvas, assets.getBitmap("muzzle_flash"));
         }
 
-        /*
+        
         // Draws sword hitbox area
-        canvas.setColor(255, 0, 0);
+        /*
+        canvas.setColor(255, 0, 0, 0.5);
         canvas.fillRect(this.swordHitbox.x - this.swordHitbox.w/2, this.swordHitbox.y - this.swordHitbox.h/2, this.swordHitbox.w, this.swordHitbox.h);
         canvas.setColor();
         */
+        
     }
 
 
@@ -1064,10 +1127,36 @@ export class Player extends CollisionObject {
     }
 
 
-    public setPosition(x : number, y : number) : void {
+    public setPosition(x : number, y : number, resetProperties : boolean = false) : void {
 
         this.pos.x = x;
         this.pos.y = y;
+        this.oldPos = this.pos.clone();
+
+        this.speed.zeros();
+        this.target.zeros();
+
+        if (!resetProperties) {
+
+            return;
+        }
+
+        this.dying = false;
+        this.exist = true;
+
+        this.attacking = false;
+        this.jumpTimer = 0;
+        this.touchSurface = true;
+        this.shooting = false;
+        this.charging = false;
+
+        this.hurtTimer = 0;
+        this.knockbackTimer = 0;
+        this.deathTimer = 0;
+
+        this.sprite.setFrame(6, 3);
+        this.flip = Flip.None;
+        this.faceDir = 1;
     }
 
 
@@ -1120,6 +1209,15 @@ export class Player extends CollisionObject {
             return this.stats.getChargeAttackPower();
         }
         return this.stats.getAttackPower();
+    }
+
+
+    public stopPowerAttack() : void {
+
+        this.powerAttackStopped = true;
+
+        this.target.zeros();
+        this.powerAttackTimer = Math.min(POWER_ATTACK_HALT_TIME, this.powerAttackTimer);
     }
 }
 

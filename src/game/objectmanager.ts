@@ -16,6 +16,8 @@ import { ObjectGenerator } from "./objectgenerator.js";
 import { FlyingText } from "./flyingtext.js";
 import { AnimatedParticle } from "./animatedparticle.js";
 import { Progress } from "./progress.js";
+import { Vector } from "../math/vector.js";
+import { negMod } from "../math/utility.js";
 
 
 export class ObjectManager {
@@ -33,9 +35,7 @@ export class ObjectManager {
     private enemies : Enemy[];
     private visibleEnemies : VisibleObjectBuffer<Enemy>;
 
-    
-    // For easier access this is public. Might change later.
-    public readonly player : Player;
+    private player : Player;
 
 
     constructor(progress : Progress, stage : Stage, camera : Camera, event : ProgramEvent) {
@@ -53,13 +53,15 @@ export class ObjectManager {
         this.visibleEnemies = new VisibleObjectBuffer<Enemy> ();
 
         this.player = new Player(0, 0, this.projectiles, this.animatedParticles, this.flyingText, progress);
-        this.createObjects(stage);
 
+        this.createObjects(stage);
         this.initialCameraCheck(camera, event);
+
+        progress.setCheckpointPosition(this.player.getPosition());
     }
 
 
-    private createObjects(stage : Stage) : void {
+    private createObjects(stage : Stage, resetPlayer : boolean = false) : void {
 
         stage.iterateObjectLayer((x : number, y : number, objID : number) : void => {
 
@@ -70,7 +72,11 @@ export class ObjectManager {
 
             // Player
             case 1:
-                this.player.setPosition(dx, dy);
+
+                if (!resetPlayer) {
+
+                    this.player.setPosition(dx, dy, resetPlayer);
+                }
                 break;
 
             // Crate
@@ -81,6 +87,7 @@ export class ObjectManager {
 
             default:
                 
+                // Enemies
                 if (objID >= 17 && objID <= 48) {
 
                     const o : Enemy = (new (getEnemyByID(objID)).prototype.constructor(dx, dy)) as Enemy;
@@ -232,7 +239,7 @@ export class ObjectManager {
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
-        for (let o of this.breakables) {
+        for (const o of this.breakables) {
 
             const bmpBreakable : Bitmap | undefined = assets.getBitmap("breakable");
             o.draw(canvas, undefined, bmpBreakable);
@@ -241,7 +248,7 @@ export class ObjectManager {
         this.animatedParticles.draw(canvas, undefined, assets.getBitmap("particles_1"));
         this.splinters.draw(canvas, assets);
 
-        for (let o of this.enemies) {
+        for (const o of this.enemies) {
 
             const bmpEnemies : Bitmap | undefined = assets.getBitmap("enemies");
             o.draw(canvas, undefined, bmpEnemies);
@@ -253,4 +260,50 @@ export class ObjectManager {
 
         this.flyingText.draw(canvas, undefined, assets.getBitmap("font_tiny"));
     }
+
+
+    public centerCamera(camera : Camera) : void {
+
+        camera.forceCenter(this.player.getPosition());
+    }
+
+
+    public getRelativePlayerPosition(camera : Camera) : Vector {
+
+        const v : Vector = new Vector();
+        const ppos : Vector = this.player.getPosition();
+        const camPos : Vector = camera.getCorner();
+
+        v.x = Math.max(0, ppos.x - camPos.x) % camera.width;
+        v.y = Math.max(0, ppos.y - camPos.y) % camera.height;
+
+        return v;
+    }
+
+
+    public reset(progress : Progress, stage : Stage, camera : Camera, event : ProgramEvent) : void {
+        
+        this.flyingText.flush();
+        this.projectiles.flush();
+        this.splinters.clear();
+        this.animatedParticles.flush();
+        this.collectables.clear();
+
+        this.breakables.length = 0;
+        this.visibleBreakables.clear();
+
+        this.enemies.length = 0;
+        this.visibleEnemies.clear();
+
+        this.createObjects(stage, true);
+    
+        const checkpoint : Vector = progress.getCheckpointPosition();
+        this.player.setPosition(checkpoint.x, checkpoint.y, true);
+
+        this.centerCamera(camera);
+        this.initialCameraCheck(camera, event);
+    }
+
+
+    public hasPlayerDied = () : boolean => !this.player.doesExist();
 }

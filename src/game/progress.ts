@@ -1,5 +1,6 @@
 import { Item } from "./items.js";
 import { clamp } from "../math/utility.js";
+import { Vector } from "../math/vector.js";
 
 
 export class Progress {
@@ -16,10 +17,13 @@ export class Progress {
 
     private obtainedItems : Map<Item, boolean>;
 
+    private checkpointPosition : Vector;
+
 
     constructor() {
 
         this.obtainedItems = new Map<Item, boolean> ();
+        this.checkpointPosition = new Vector();
     }
 
 
@@ -62,4 +66,19 @@ export class Progress {
     public getChargeAttackPower = () : number => Math.ceil(this.attackPower*1.33);
     public getChargeProjectilePower = () : number => Math.ceil(this.projectilePower*1.5);
     public getDownAttackPower = () : number => this.attackPower + 2;
+
+
+    public setCheckpointPosition(v : Vector) : void {
+
+        this.checkpointPosition = v.clone();
+    }
+
+
+    public getCheckpointPosition = () : Vector => this.checkpointPosition.clone();
+
+
+    public reset() : void {
+
+        this.health = this.maxHealth;
+    }
 }

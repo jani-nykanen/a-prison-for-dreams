@@ -35,4 +35,10 @@ export class VisibleObjectBuffer<T extends GameObject>  {
             func(this.objects[i], i);
         }
     }
+
+
+    public clear() : void {
+
+        this.size = 0;
+    }
 }

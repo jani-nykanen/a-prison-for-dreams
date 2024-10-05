@@ -47,7 +47,7 @@ export class Enemy extends CollisionObject {
         this.cameraCheckArea = new Vector(32, 32);
 
         this.collisionBox = new Rectangle(0, 1, 12, 12);
-        this.hitbox = new Rectangle(0, 0, 12, 12);
+        this.hitbox = new Rectangle(0, 1, 12, 12);
 
         this.target.y = BASE_GRAVITY;
 
@@ -143,6 +143,7 @@ export class Enemy extends CollisionObject {
     public playerCollision(player : Player, event : ProgramEvent) : void {
 
         const KNOCKBACK_SPEED : number = 1.5;
+        const POWER_ATTACK_KNOCK_MULTIPLIER : number = 1.5;
 
         if (!this.isActive() || !player.isActive()) {
 
@@ -167,7 +168,11 @@ export class Enemy extends CollisionObject {
             let knockback : number = KNOCKBACK_SPEED*(this.friction.x/0.10);
             if (player.isChargeAttacking()) {
 
-                knockback *= 2;
+                knockback *= POWER_ATTACK_KNOCK_MULTIPLIER;
+                if (!this.dying) {
+                
+                    player.stopPowerAttack();
+                }
             }
             this.speed.x = Math.sign(this.pos.x - ppos.x)*knockback;
         }
