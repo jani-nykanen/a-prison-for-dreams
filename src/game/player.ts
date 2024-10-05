@@ -12,6 +12,9 @@ import { ProjectileGenerator } from "./projectilegenerator.js";
 import { AnimatedParticle } from "./animatedparticle.js";
 import { GameObject } from "./gameobject.js";
 import { ObjectGenerator } from "./objectgenerator.js";
+import { FlyingText, FlyingTextSymbol } from "./flyingtext.js";
+import { RGBA } from "../math/rgba.js";
+import { Progress } from "./progress.js";
 
 
 const GRAVITY_MAGNITUDE : number = 5.0;
@@ -79,11 +82,16 @@ export class Player extends CollisionObject {
 
     private readonly projectiles : ProjectileGenerator;
     private readonly particles : ObjectGenerator<AnimatedParticle>;
+    private readonly flyingText : ObjectGenerator<FlyingText>;
+
+    public readonly stats : Progress;
 
 
     constructor(x : number, y : number, 
         projectiles : ProjectileGenerator,
-        particles : ObjectGenerator<AnimatedParticle>) {
+        particles : ObjectGenerator<AnimatedParticle>,
+        flyingText : ObjectGenerator<FlyingText>,
+        stats : Progress) {
 
         super(x, y, true);
 
@@ -98,6 +106,8 @@ export class Player extends CollisionObject {
 
         this.projectiles = projectiles;
         this.particles = particles;
+        this.flyingText = flyingText;
+        this.stats = stats;
 
         this.swordHitbox = new Rectangle();
     }
@@ -282,14 +292,16 @@ export class Player extends CollisionObject {
         const BULLET_SPEED_FACTOR_X : number = 0.5;
         const BULLET_SPEED_FACTOR_Y : number = 0.0; // Makes collisions work better...
 
-        const dx = this.pos.x + BULLET_XOFF*this.faceDir;
-        const dy = this.pos.y + BULLET_YOFF;
+        const dx : number = this.pos.x + BULLET_XOFF*this.faceDir;
+        const dy : number = this.pos.y + BULLET_YOFF;
+
+        const power : number = type == 1 ? this.stats.getChargeProjectilePower() : this.stats.getProjectilePower();
 
         this.projectiles.next().spawn(
             this.pos.x, dy, dx, dy, 
             this.speed.x*BULLET_SPEED_FACTOR_X + (BULLET_SPEED[type] ?? 0)*this.faceDir, 
             this.speed.y*BULLET_SPEED_FACTOR_Y, 
-            type, true, this.attackID);
+            type, power, true, this.attackID);
         if (type == 1) {
 
             ++ this.attackID;
@@ -831,6 +843,11 @@ export class Player extends CollisionObject {
         this.powerAttackTimer = 0;
 
         this.hurtTimer = HURT_TIME;
+
+        damage = -this.stats.updateHealth(-damage);
+        this.flyingText?.next()
+            .spawn(this.pos.x, this.pos.y - 8, 
+                -damage, FlyingTextSymbol.None, new RGBA(255, 73, 0));
     }
 
 
@@ -915,7 +932,12 @@ export class Player extends CollisionObject {
     }
 
 
-    public forceHurt(damage : number, direction : number, event : ProgramEvent) : void {
+    public applyDamage(damage : number, direction : number, event : ProgramEvent) : void {
+
+        if (!this.isActive() || this.hurtTimer > 0) {
+
+            return;
+        }
 
         const KNOCKBACK_SPEED : number = 2.5;
 
@@ -938,7 +960,7 @@ export class Player extends CollisionObject {
 
         if (this.overlayCollisionArea(x - 1, y - 1, w + 2, h + 2)) {
 
-            this.forceHurt(damage, direction, event);
+            this.applyDamage(damage, direction, event);
             return true;
         }
         return false;
@@ -1089,7 +1111,15 @@ export class Player extends CollisionObject {
 
     public getAttackPower() : number {
 
-        return 5;
+        if (this.downAttacking && this.downAttackWait <= 0) {
+
+            return this.stats.getDownAttackPower();
+        }
+        if (this.powerAttackTimer > 0) {
+
+            return this.stats.getChargeAttackPower();
+        }
+        return this.stats.getAttackPower();
     }
 }
 

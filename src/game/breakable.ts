@@ -94,7 +94,7 @@ export class Breakable extends CollisionObject {
 
         this.collectables.spawn(this.pos.x, this.pos.y, 
             dir.x*LAUNCH_SPEED_X, dir.y*LAUNCH_SPEED_Y + BASE_JUMP, 
-            CollectableType.SilverCoin);
+            CollectableType.Coin);
     }
     
 
@@ -162,7 +162,7 @@ export class Breakable extends CollisionObject {
 
             this.breakSelf(Vector.direction(player.getPosition(), this.pos), event);
 
-            player.performDownAttackJump();
+            // player.performDownAttackJump();
             this.exist = false;
         }
     }

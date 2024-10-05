@@ -15,6 +15,7 @@ import { getEnemyByID } from "./enemies/index.js";
 import { ObjectGenerator } from "./objectgenerator.js";
 import { FlyingText } from "./flyingtext.js";
 import { AnimatedParticle } from "./animatedparticle.js";
+import { Progress } from "./progress.js";
 
 
 export class ObjectManager {
@@ -32,11 +33,12 @@ export class ObjectManager {
     private enemies : Enemy[];
     private visibleEnemies : VisibleObjectBuffer<Enemy>;
 
+    
     // For easier access this is public. Might change later.
     public readonly player : Player;
 
 
-    constructor(stage : Stage, camera : Camera, event : ProgramEvent) {
+    constructor(progress : Progress, stage : Stage, camera : Camera, event : ProgramEvent) {
 
         this.flyingText = new ObjectGenerator<FlyingText> (FlyingText);
         this.projectiles = new ProjectileGenerator();
@@ -50,8 +52,10 @@ export class ObjectManager {
         this.enemies = new Array<Enemy> ();
         this.visibleEnemies = new VisibleObjectBuffer<Enemy> ();
 
-        this.player = new Player(0, 0, this.projectiles, this.animatedParticles);
+        this.player = new Player(0, 0, this.projectiles, this.animatedParticles, this.flyingText, progress);
         this.createObjects(stage);
+
+        this.initialCameraCheck(camera, event);
     }
 
 
@@ -82,7 +86,7 @@ export class ObjectManager {
                     const o : Enemy = (new (getEnemyByID(objID)).prototype.constructor(dx, dy)) as Enemy;
                     this.enemies.push(o);
 
-                    o.passGenerators(this.flyingText);
+                    o.passGenerators(this.flyingText, this.collectables);
                 }
                 break;
             }
@@ -209,6 +213,20 @@ export class ObjectManager {
 
         this.collectables.update(event, camera, stage);
         this.collectables.playerCollision(this.player, event);
+    }
+
+
+    public initialCameraCheck(camera : Camera, event : ProgramEvent) : void {
+
+        for (const o of this.breakables) {
+
+            o.cameraCheck(camera, event);
+        }
+
+        for (const o of this.enemies) {
+
+            o.cameraCheck(camera, event);
+        }
     }
 
 

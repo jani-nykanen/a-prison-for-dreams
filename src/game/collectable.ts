@@ -21,7 +21,7 @@ const IGNORE_CRATE_TIME : number = 30;
 export const enum CollectableType {
 
     Unknown = 0,
-    SilverCoin = 1,
+    Coin = 1,
 }
 
 
@@ -142,6 +142,17 @@ export class Collectable extends CollisionObject {
 
             const ppos : Vector = player.getPosition();
             this.flyingText?.next().spawn(ppos.x, ppos.y - 8, 1, FlyingTextSymbol.Coin, new RGBA(255, 255, 182));
+
+            switch (this.type) {
+
+            case CollectableType.Coin:
+
+                player.stats.updateMoney(1);
+                break;
+
+            default:
+                break;
+            }
         }
     }
 

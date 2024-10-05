@@ -7,6 +7,8 @@ import { Tilemap } from "../tilemap/tilemap.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { ObjectManager } from "./objectmanager.js";
 import { Assets } from "../core/assets.js";
+import { Progress } from "./progress.js";
+import { drawHUD } from "./hud.js";
 
 
 export class Game implements Scene {
@@ -14,6 +16,7 @@ export class Game implements Scene {
 
     private stage : Stage;
     private camera : Camera;
+    private progress : Progress;
     private objects : ObjectManager;
 
 
@@ -29,7 +32,8 @@ export class Game implements Scene {
 
         this.stage = new Stage(baseMap, collisionMap);
         this.camera = new Camera(0, 0, event);
-        this.objects = new ObjectManager(this.stage, this.camera, event);
+        this.progress = new Progress();
+        this.objects = new ObjectManager(this.progress, this.stage, this.camera, event);
 
         this.camera.forceCenter(this.objects.player.getPosition());
     }
@@ -77,6 +81,8 @@ export class Game implements Scene {
         canvas.transform.loadIdentity();
         canvas.transform.apply();
         canvas.moveTo();
+
+        drawHUD(canvas, assets, this.progress);
     }
 
 
