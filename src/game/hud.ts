@@ -10,10 +10,13 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
     const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
 
     // Health
-    const str : string = String(stats.getHealth()) + "/" + String(stats.getMaxHealth());
-    canvas.drawText(bmpFontOutlines, "H:" + str, -1, -1, -7, 0);
-
+    const strHealth : string = String(stats.getHealth()) + "/" + String(stats.getMaxHealth());
+    canvas.drawText(bmpFontOutlines, "H:" + strHealth, -1, -1, -7, 0);
 
     // Money
     canvas.drawText(bmpFontOutlines, "$" + String(stats.getMoney()), canvas.width, -1, -7, 0, Align.Right);
+
+    // Ammo
+    const strAmmo : string = String(stats.getBulletCount()) + "/" + String(stats.getMaxBulletCount());
+    canvas.drawText(bmpFontOutlines, "A:" + strAmmo, -1, canvas.height - 14, -7, 0);
 }

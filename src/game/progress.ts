@@ -9,6 +9,9 @@ export class Progress {
     private health : number = 10;
     private maxHealth : number = 10;
 
+    private bullets : number = 15;
+    private maxBullets : number = 15;
+
     private attackPower : number = 5;
     private projectilePower : number = 3;
     private armor : number = 0;
@@ -57,6 +60,16 @@ export class Progress {
 
         this.money = Math.max(0, this.money + change);
     }
+
+
+    public getBulletCount = () : number => this.bullets;
+    public getMaxBulletCount = () : number => this.maxBullets;
+    
+
+    public updateBulletCount(change : number) : void {
+
+        this.bullets = clamp(this.bullets + change, 0, this.maxBullets);
+    }
     
 
     public getAttackPower = () : number => this.attackPower;
@@ -80,5 +93,6 @@ export class Progress {
     public reset() : void {
 
         this.health = this.maxHealth;
+        this.bullets = this.maxBullets;
     }
 }

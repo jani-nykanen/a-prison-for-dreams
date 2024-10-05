@@ -298,6 +298,12 @@ export class Player extends CollisionObject {
         const BULLET_SPEED_FACTOR_X : number = 0.5;
         const BULLET_SPEED_FACTOR_Y : number = 0.0; // Makes collisions work better...
 
+        if (this.stats.getBulletCount() <= 0) {
+
+            // TODO: Play error sound
+            return;
+        }
+
         const dx : number = this.pos.x + BULLET_XOFF*this.faceDir;
         const dy : number = this.pos.y + BULLET_YOFF;
 
@@ -312,6 +318,8 @@ export class Player extends CollisionObject {
 
             ++ this.attackID;
         }
+
+        this.stats.updateBulletCount(-1);
     }
 
 
