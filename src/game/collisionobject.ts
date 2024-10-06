@@ -18,6 +18,9 @@ export class CollisionObject extends GameObject {
     protected steepnessFactor : number = 0.0;
 
     protected bounceFactor : Vector;
+    protected touchSurface : boolean = false;
+
+    protected dir : number = 0;
 
 
     constructor(x : number = 0, y : number = 0, exist : boolean = false) {
@@ -96,6 +99,18 @@ export class CollisionObject extends GameObject {
                this.pos.y + this.collisionBox.y - this.collisionBox.h/2 <= y + h;
     }
 
+
+    protected computeSlopeSpeedFactor() : number {
+
+        const SLOWDOWN_FACTOR : number = 0.10;
+        const SPEEDUP_FACTOR : number = 0.20;
+
+        const baseFactor : number = this.touchSurface ? -this.dir*this.steepnessFactor : 0.0;
+        const speedFactor : number = baseFactor < 0 ? SLOWDOWN_FACTOR : SPEEDUP_FACTOR;
+
+        return 1.0 - baseFactor*speedFactor;
+    }
+
     
     public hurtCollision?(x : number, y : number, w : number, h : number, 
         event : ProgramEvent, direction? : -1 | 0 | 1, damage? : number) : boolean;
@@ -166,6 +181,7 @@ export class CollisionObject extends GameObject {
             this.speed.y *= -this.bounceFactor.y;
 
             this.steepnessFactor = steepness;
+            this.touchSurface = true;
                 
             this.slopeCollisionEvent?.(direction, event);
 

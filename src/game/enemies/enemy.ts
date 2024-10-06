@@ -37,7 +37,8 @@ export class Enemy extends CollisionObject {
     protected health : number = 5;
     protected dropProbability : number = 0.5;
 
-    protected touchSurface : boolean = false;
+    protected canBeMoved : boolean = true;
+    protected radius : number = 6;
 
 
     constructor(x : number, y : number) {
@@ -95,6 +96,7 @@ export class Enemy extends CollisionObject {
 
     protected updateLogic?(event : ProgramEvent) : void;
     protected playerEvent?(player : Player, event : ProgramEvent) : void;
+    protected enemyCollisionEvent?(enemy : Enemy, event : ProgramEvent) : void;
 
 
     protected die(event: ProgramEvent): boolean {
@@ -152,6 +154,7 @@ export class Enemy extends CollisionObject {
 
         const KNOCKBACK_SPEED : number = 1.5;
         const POWER_ATTACK_KNOCK_MULTIPLIER : number = 1.5;
+        const POWER_ATTACK_PICKUP_SPEED_FACTOR : number = 1.5;
 
         if (!this.isActive() || !player.isActive()) {
 
@@ -164,23 +167,26 @@ export class Enemy extends CollisionObject {
         if (this.hurtID != attackID && player.overlaySwordAttackArea(this)) {
            
             const ppos : Vector = player.getPosition();
-
-            this.hurtID = attackID;
-            this.takeDamage(player.getAttackPower(), player.stats, event, Vector.direction(ppos, this.pos));
-
-            if (player.performDownAttackJump()) {
-
-                return;
-            }
+            const dir : Vector = Vector.direction(ppos, this.pos);
 
             let knockback : number = KNOCKBACK_SPEED*(this.friction.x/0.10);
             if (player.isChargeAttacking()) {
 
                 knockback *= POWER_ATTACK_KNOCK_MULTIPLIER;
-                // if (!this.dying) {
+
+                dir.x *= POWER_ATTACK_PICKUP_SPEED_FACTOR;
+                dir.y *= POWER_ATTACK_PICKUP_SPEED_FACTOR;
+            }
+            this.hurtID = attackID;
+            this.takeDamage(player.getAttackPower(), player.stats, event, dir);
+            if (!this.dying) {
                 
-                    player.stopPowerAttack();
-                // }
+                player.stopPowerAttack();
+            }
+
+            if (player.performDownAttackJump()) {
+
+                return;
             }
             this.speed.x = Math.sign(this.pos.x - ppos.x)*knockback;
         }
@@ -217,6 +223,42 @@ export class Enemy extends CollisionObject {
             this.speed.x = Math.sign(this.pos.x - p.getPosition().x)*KNOCKBACK_SPEED*(this.friction.x/0.10);
 
             this.takeDamage(p.getPower(), p.stats, event, Vector.direction(ppos, this.pos));
+        }
+    }
+
+
+    public enemyCollision(enemy : Enemy, event : ProgramEvent) : void {
+
+        if (!this.isActive() || !enemy.isActive()) {
+
+            return;
+        }
+
+        const dist : number = Vector.distance(enemy.pos, this.pos);
+        const collisionDistance : number = this.radius + enemy.radius;
+
+        if (dist >= collisionDistance) {
+
+            return;
+        }
+            
+        const dir : Vector = Vector.direction(enemy.pos, this.pos);
+        const div : number = Number(this.canBeMoved) + Number(enemy.canBeMoved);
+
+        if (this.canBeMoved) {
+
+            this.pos.x += dir.x*(collisionDistance - dist)/div;
+            this.pos.y += dir.y*(collisionDistance - dist)/div;
+
+            this.enemyCollisionEvent?.(enemy, event);
+        }
+
+        if (enemy.canBeMoved) {
+
+            enemy.pos.x -= dir.x*(collisionDistance - dist)/div;
+            enemy.pos.x -= dir.y*(collisionDistance - dist)/div;
+
+            enemy.enemyCollisionEvent?.(this, event);
         }
     }
 

@@ -90,7 +90,7 @@ export class ObjectManager {
                 // Enemies
                 if (objID >= 17 && objID <= 48) {
 
-                    const o : Enemy = (new (getEnemyByID(objID)).prototype.constructor(dx, dy)) as Enemy;
+                    const o : Enemy = (new (getEnemyByID(objID - 17)).prototype.constructor(dx, dy)) as Enemy;
                     this.enemies.push(o);
 
                     o.passGenerators(this.flyingText, this.collectables);
@@ -126,7 +126,8 @@ export class ObjectManager {
 
             this.visibleEnemies.iterateThroughVisibleObjects((o2 : Enemy) : void => {
 
-                // TODO: Enemy-to-enemy collision
+                o1.enemyCollision(o2, event);
+
             }, i + 1);
 
             o1.playerCollision(this.player, event);

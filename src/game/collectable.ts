@@ -15,7 +15,7 @@ const EXISTENCE_TIME : number = 300;
 const FLICKER_TIME : number = 60;
 
 const BASE_GRAVITY : number = 3.0;
-const IGNORE_CRATE_TIME : number = 30;
+const IGNORE_CRATE_TIME : number = 8;
 
 
 export const enum CollectableType {
@@ -132,7 +132,7 @@ export class Collectable extends CollisionObject {
 
     public playerCollision(player : Player, event : ProgramEvent) : void {
 
-        if (!player.isActive() || !this.isActive()) {
+        if (!player.isActive() || !this.isActive() || this.ignoreCratesTimer > 0) {
 
             return;
         }

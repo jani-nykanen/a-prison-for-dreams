@@ -45,7 +45,6 @@ export class Player extends CollisionObject {
 
     private jumpTimer : number = 0.0;
     private ledgeTimer : number = 0.0;
-    private touchSurface : boolean = true;
     // TODO: Maybe add "JumpType" enum instead? (Nah.)
     private highJumping : boolean = false;
 
@@ -79,7 +78,6 @@ export class Player extends CollisionObject {
     private swordHitbox : Rectangle;
     private swordHitBoxActive : boolean = false;
 
-    private faceDir : -1 | 1 = 1;
     private sprite : Sprite;
     private flip : Flip;
 
@@ -148,7 +146,7 @@ export class Player extends CollisionObject {
 
         if (this.downAttacking && this.downAttackWait <= 0) {
 
-            this.swordHitbox.x = this.pos.x + DOWN_ATTACK_OFFSET_X*this.faceDir;
+            this.swordHitbox.x = this.pos.x + DOWN_ATTACK_OFFSET_X*this.dir;
             this.swordHitbox.y = this.pos.y + DOWN_ATTACK_OFFSET_Y;
 
             this.swordHitbox.w = DOWN_ATTACK_WIDTH;
@@ -164,7 +162,7 @@ export class Player extends CollisionObject {
             return;
         }
 
-        this.swordHitbox.x = this.pos.x + this.faceDir*SWORD_OFFSET_X;
+        this.swordHitbox.x = this.pos.x + this.dir*SWORD_OFFSET_X;
         this.swordHitbox.y = this.pos.y + SWORD_OFFSET_Y;
 
         this.swordHitbox.w = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_WIDTH : SWORD_ATTACK_BASE_WIDTH;
@@ -186,7 +184,7 @@ export class Player extends CollisionObject {
         const stick : Vector = event.input.stick;
         if (Math.abs(stick.x) > STICK_THRESHOLD) {
 
-            this.faceDir = stick.x > 0 ? 1 : -1;
+            this.dir = stick.x > 0 ? 1 : -1;
         }
     }
 
@@ -218,12 +216,6 @@ export class Player extends CollisionObject {
         const RUN_SPEED : number = 1.0;
         const SWIM_SPEED : number = 0.75;
 
-        const SLOWDOWN_FACTOR : number = 0.10;
-        const SPEEDUP_FACTOR : number = 0.20;
-
-        const baseFactor : number = this.touchSurface ? -this.faceDir*this.steepnessFactor : 0.0;
-        const speedFactor : number = baseFactor < 0 ? SLOWDOWN_FACTOR : SPEEDUP_FACTOR;
-
         const stick : Vector = event.input.stick;
 
         this.target.y = this.getGravity();
@@ -234,7 +226,7 @@ export class Player extends CollisionObject {
         }
 
         const speedx : number = this.underWater ? SWIM_SPEED : RUN_SPEED;
-        this.target.x = stick.x*(1.0 - baseFactor*speedFactor)*speedx;
+        this.target.x = stick.x*this.computeSlopeSpeedFactor()*speedx;
     }
 
 
@@ -304,14 +296,14 @@ export class Player extends CollisionObject {
             return;
         }
 
-        const dx : number = this.pos.x + BULLET_XOFF*this.faceDir;
+        const dx : number = this.pos.x + BULLET_XOFF*this.dir;
         const dy : number = this.pos.y + BULLET_YOFF;
 
         const power : number = type == 1 ? this.stats.getChargeProjectilePower() : this.stats.getProjectilePower();
 
         this.projectiles.next(this.stats).spawn(
             this.pos.x, dy, dx, dy, 
-            this.speed.x*BULLET_SPEED_FACTOR_X + (BULLET_SPEED[type] ?? 0)*this.faceDir, 
+            this.speed.x*BULLET_SPEED_FACTOR_X + (BULLET_SPEED[type] ?? 0)*this.dir, 
             this.speed.y*BULLET_SPEED_FACTOR_Y, 
             type, power, true, this.attackID);
         if (type == 1) {
@@ -396,7 +388,7 @@ export class Player extends CollisionObject {
             }
 
             this.attacking = true;
-            // this.attackDir = this.faceDir;
+            // this.attackDir = this.dir;
 
             this.crouching = false;
             this.shooting = false;
@@ -446,7 +438,7 @@ export class Player extends CollisionObject {
             return;
         }
         
-        this.target.x = this.faceDir*RUSH_SPEED;
+        this.target.x = this.dir*RUSH_SPEED;
         this.speed.x = this.target.x;
         
         this.target.y = this.touchSurface ? this.getGravity() : 0.0;
@@ -634,7 +626,7 @@ export class Player extends CollisionObject {
     
     private animate(event : ProgramEvent) : void {
 
-        this.flip = this.faceDir > 0 ? Flip.None : Flip.Horizontal;
+        this.flip = this.dir > 0 ? Flip.None : Flip.Horizontal;
 
         if (this.powerAttackTimer > 0) {
 
@@ -847,7 +839,7 @@ export class Player extends CollisionObject {
             }
 
             this.particles.next().spawn(
-                this.pos.x + X_OFFSET*this.faceDir,
+                this.pos.x + X_OFFSET*this.dir,
                 this.pos.y + Y_OFFSET,
                 0.0, speedy, id, Flip.None);
             
@@ -891,7 +883,7 @@ export class Player extends CollisionObject {
 
         const frame : number = Math.floor((1.0 - this.shootWait/SHOOT_WAIT_TIME)*4);
 
-        const dx : number = this.pos.x + this.faceDir*X_OFFSET - 8;
+        const dx : number = this.pos.x + this.dir*X_OFFSET - 8;
         const dy : number = this.pos.y + Y_OFFSET - 8;
 
         canvas.drawBitmap(bmp, this.flip, dx, dy, frame*16, this.flashType*16, 16, 16);
@@ -900,7 +892,7 @@ export class Player extends CollisionObject {
 
     private drawWeapon(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
-        const dx : number = this.pos.x - 16 + this.faceDir*10;
+        const dx : number = this.pos.x - 16 + this.dir*10;
         const dy : number = this.pos.y - 14;
 
         let frame : number = this.attacking ? this.sprite.getColumn() - 3 : 5;
@@ -1009,7 +1001,7 @@ export class Player extends CollisionObject {
 
         this.knockbackTimer = KNOCKBACK_TIME;
 
-        const knockbackDirection : number = direction == 0 ? (-this.faceDir) : direction;
+        const knockbackDirection : number = direction == 0 ? (-this.dir) : direction;
         this.speed.x = knockbackDirection*KNOCKBACK_SPEED;
 
         this.hurt(damage, event);
@@ -1165,14 +1157,16 @@ export class Player extends CollisionObject {
         this.touchSurface = true;
         this.shooting = false;
         this.charging = false;
-
+        this.downAttacking = false;
+        
+        this.downAttackWait = 0;
         this.hurtTimer = 0;
         this.knockbackTimer = 0;
         this.deathTimer = 0;
 
         this.sprite.setFrame(6, 3);
         this.flip = Flip.None;
-        this.faceDir = 1;
+        this.dir = 1;
     }
 
 
@@ -1229,6 +1223,11 @@ export class Player extends CollisionObject {
 
 
     public stopPowerAttack() : void {
+
+        if (this.powerAttackTimer <= 0) {
+
+            return;
+        }
 
         this.powerAttackStopped = true;
 

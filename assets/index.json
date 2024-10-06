@@ -22,6 +22,8 @@
         {"name": "collectables", "path": "collectables.png"},
         {"name": "enemies", "path": "enemies.png"},
 
+        {"name": "hud", "path": "hud.png"},
+
         {"name": "player", "path": "player.png"},
         {"name": "weapons", "path": "weapons.png"}
 
