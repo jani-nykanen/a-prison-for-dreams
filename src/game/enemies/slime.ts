@@ -13,7 +13,7 @@ export class Slime extends Enemy {
 
         this.sprite.setFrame(0, 1);
 
-        this.health = 8;
+        this.health = 6;
         this.attackPower = 2;
     }
 

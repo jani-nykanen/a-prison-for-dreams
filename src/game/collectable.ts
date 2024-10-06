@@ -22,6 +22,8 @@ export const enum CollectableType {
 
     Unknown = 0,
     Coin = 1,
+    Heart = 2,
+    Ammo = 3,
 }
 
 
@@ -35,7 +37,7 @@ export class Collectable extends CollisionObject {
 
     private ignoreCratesTimer : number = 0;
 
-    private flyingText : ObjectGenerator<FlyingText> | undefined = undefined;
+    private flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
 
 
     constructor() {
@@ -91,7 +93,7 @@ export class Collectable extends CollisionObject {
 
     public spawn(x : number, y : number, 
         speedx : number, speedy : number, type : CollectableType,
-        flyingText :  ObjectGenerator<FlyingText>) : void {
+        flyingText : ObjectGenerator<FlyingText, void>) : void {
 
         this.pos = new Vector(x, y);
         this.oldPos = this.pos.clone();
@@ -101,7 +103,7 @@ export class Collectable extends CollisionObject {
 
         this.type = type;
 
-        this.sprite.setFrame(Math.floor(Math.random()*4), Math.min(0, type - 1));
+        this.sprite.setFrame(Math.floor(Math.random()*4), Math.max(0, type - 1));
 
         this.timer = EXISTENCE_TIME;
         this.ignoreCratesTimer = IGNORE_CRATE_TIME;
@@ -140,19 +142,47 @@ export class Collectable extends CollisionObject {
             this.dying = true;
             this.sprite.setFrame(4, this.type - 1);
 
-            const ppos : Vector = player.getPosition();
-            this.flyingText?.next().spawn(ppos.x, ppos.y - 8, 1, FlyingTextSymbol.Coin, new RGBA(255, 255, 182));
+            let symbol : FlyingTextSymbol = FlyingTextSymbol.None;
+            let color : RGBA = new RGBA();
+            let count : number = 1;
 
             switch (this.type) {
 
             case CollectableType.Coin:
 
+                symbol = FlyingTextSymbol.Coin;
+                color = new RGBA(255, 255, 182);
+
                 player.stats.updateMoney(1);
+
+                break;
+
+            case CollectableType.Heart:
+
+                symbol = FlyingTextSymbol.Heart;
+                color = new RGBA(182, 255, 0);
+
+                player.stats.updateHealth(5);
+                count = 5;
+
+                break;
+
+            case CollectableType.Ammo:
+
+                symbol = FlyingTextSymbol.Ammo;
+                color = new RGBA(182, 216, 255);
+
+                player.stats.updateBulletCount(5);
+                count = 5;
+
                 break;
 
             default:
                 break;
             }
+
+            const ppos : Vector = player.getPosition();
+            this.flyingText?.next().spawn(ppos.x, ppos.y - 8, count, symbol, color);
         }
     }
 

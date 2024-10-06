@@ -7,7 +7,7 @@ import { GameObject } from "./gameobject.js";
 import { Stage } from "./stage.js";
 
 
-export class ObjectGenerator<T extends GameObject> {
+export class ObjectGenerator<T extends GameObject, S> {
 
 
     protected objects : T[];
@@ -21,12 +21,12 @@ export class ObjectGenerator<T extends GameObject> {
     }
 
 
-    public next() : T {
+    public next(param? : S) : T {
 
         let o : T | undefined = next<T> (this.objects);
         if (o === undefined) {
 
-            o = new this.baseType.prototype.constructor() as T;
+            o = new this.baseType.prototype.constructor(param) as T;
             this.objects.push(o); 
         }
         return o;

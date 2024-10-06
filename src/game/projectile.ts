@@ -6,6 +6,7 @@ import { Camera } from "./camera.js";
 import { Rectangle } from "../math/rectangle.js";
 import { Assets } from "../core/assets.js";
 import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
+import { Progress } from "./progress.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
@@ -27,8 +28,10 @@ export class Projectile extends CollisionObject {
 
     private sprite : Sprite;
 
+    public readonly stats : Progress;
 
-    constructor() {
+
+    constructor(progress : Progress) {
 
         super(0, 0, false);
 
@@ -43,6 +46,8 @@ export class Projectile extends CollisionObject {
         this.checkVerticalSlope = true;
         this.ignoreBottomLayer = true;
         this.ignoreEvenSlopes = true;
+
+        this.stats = progress;
     }
 
 

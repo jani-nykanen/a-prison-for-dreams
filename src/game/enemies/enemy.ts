@@ -10,8 +10,9 @@ import { Projectile } from "../projectile.js";
 import { ObjectGenerator } from "../objectgenerator.js";
 import { FlyingText, FlyingTextSymbol } from "../flyingtext.js";
 import { RGBA } from "../../math/rgba.js";
-import { CollectableGenerator } from "../collectablegenerator.js";
+import { CollectableGenerator, sampleTypeFromProgress } from "../collectablegenerator.js";
 import { CollectableType } from "../collectable.js";
+import { Progress } from "../progress.js";
 
 
 const HURT_TIME : number = 30;
@@ -26,7 +27,7 @@ export class Enemy extends CollisionObject {
     private hurtID : number = -1;
     private hurtTimer : number = 0;
 
-    private flyingText : ObjectGenerator<FlyingText> | undefined = undefined;
+    private flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
     private collectables : CollectableGenerator | undefined = undefined;
 
     protected sprite : Sprite;
@@ -55,7 +56,7 @@ export class Enemy extends CollisionObject {
     }
 
 
-    private spawnCollectables(dir : Vector) : void {
+    private spawnCollectables(dir : Vector, stats : Progress) : void {
 
         const LAUNCH_SPEED_X : number = 1.0;
         const LAUNCH_SPEED_Y : number = 2.0;
@@ -63,18 +64,21 @@ export class Enemy extends CollisionObject {
 
         this.collectables.spawn(this.pos.x, this.pos.y, 
             dir.x*LAUNCH_SPEED_X, dir.y*LAUNCH_SPEED_Y + BASE_JUMP, 
-            CollectableType.Coin);
+            sampleTypeFromProgress(stats));
     }
 
 
-    private takeDamage(amount : number, event : ProgramEvent, dir? : Vector) : void {
+    private takeDamage(amount : number, stats : Progress,
+        event : ProgramEvent, dir? : Vector) : void {
 
-        this.flyingText?.next().spawn(this.pos.x, this.pos.y - 8, -amount, FlyingTextSymbol.None); //, new RGBA(255, 73, 0));
+        this.flyingText?.next()
+            .spawn(this.pos.x, this.pos.y - 8, 
+                -amount, FlyingTextSymbol.None);
 
         this.health -= amount;
         if (this.health <= 0) {
 
-            this.spawnCollectables(dir ?? new Vector());
+            this.spawnCollectables(dir ?? new Vector(), stats);
 
             this.dying = true;
             this.sprite.setFrame(0, 0);
@@ -158,7 +162,7 @@ export class Enemy extends CollisionObject {
             const ppos : Vector = player.getPosition();
 
             this.hurtID = attackID;
-            this.takeDamage(player.getAttackPower(), event, Vector.direction(ppos, this.pos));
+            this.takeDamage(player.getAttackPower(), player.stats, event, Vector.direction(ppos, this.pos));
 
             if (player.performDownAttackJump()) {
 
@@ -208,12 +212,14 @@ export class Enemy extends CollisionObject {
             }
             this.speed.x = Math.sign(this.pos.x - p.getPosition().x)*KNOCKBACK_SPEED*(this.friction.x/0.10);
 
-            this.takeDamage(p.getPower(), event, Vector.direction(ppos, this.pos));
+            this.takeDamage(p.getPower(), p.stats, event, Vector.direction(ppos, this.pos));
         }
     }
 
 
-    public passGenerators(flyingText : ObjectGenerator<FlyingText>, collectables : CollectableGenerator) : void {
+    public passGenerators(
+        flyingText : ObjectGenerator<FlyingText, void>, 
+        collectables : CollectableGenerator) : void {
 
         this.flyingText = flyingText;
         this.collectables = collectables;

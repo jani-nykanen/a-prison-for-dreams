@@ -9,8 +9,9 @@ import { Projectile } from "./projectile.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { SplinterGenerator } from "./splintergenerator.js";
 import { Splinter } from "./splinter.js";
-import { CollectableGenerator } from "./collectablegenerator.js";
+import { CollectableGenerator, sampleTypeFromProgress } from "./collectablegenerator.js";
 import { CollectableType } from "./collectable.js";
+import { Progress } from "./progress.js";
 
 
 const BASE_GRAVITY : number = 5.0;
@@ -86,7 +87,7 @@ export class Breakable extends CollisionObject {
     }
 
 
-    private spawnCollectables(dir : Vector) : void {
+    private spawnCollectables(progress : Progress, dir : Vector) : void {
 
         const LAUNCH_SPEED_X : number = 1.0;
         const LAUNCH_SPEED_Y : number = 2.0;
@@ -94,16 +95,16 @@ export class Breakable extends CollisionObject {
 
         this.collectables.spawn(this.pos.x, this.pos.y, 
             dir.x*LAUNCH_SPEED_X, dir.y*LAUNCH_SPEED_Y + BASE_JUMP, 
-            CollectableType.Coin);
+            sampleTypeFromProgress(progress));
     }
     
 
-    private breakSelf(dir : Vector, event : ProgramEvent) : void {
+    private breakSelf(progress : Progress, dir : Vector, event : ProgramEvent) : void {
 
         this.exist = false;
         
         this.spawnSplinters();
-        this.spawnCollectables(dir);
+        this.spawnCollectables(progress, dir);
     }
 
 
@@ -160,7 +161,7 @@ export class Breakable extends CollisionObject {
 
         if (player.overlaySwordAttackArea(this)) {
 
-            this.breakSelf(Vector.direction(player.getPosition(), this.pos), event);
+            this.breakSelf(player.stats, Vector.direction(player.getPosition(), this.pos), event);
 
             // player.performDownAttackJump();
             this.exist = false;
@@ -170,14 +171,14 @@ export class Breakable extends CollisionObject {
 
     public projectileCollision(p : Projectile, event : ProgramEvent) : void {
 
-        if (!this.isActive() || !p.isActive()) {
+        if (!this.isActive() || !p.isActive() || !p.isFriendly()) {
 
             return;
         }
 
         if (p.overlayObject(this)) {
 
-            this.breakSelf(Vector.direction(p.getPosition(), this.pos),event);
+            this.breakSelf(p.stats, Vector.direction(p.getPosition(), this.pos),event);
             
             this.exist = false;
             if (p.destroyOnTouch()) {

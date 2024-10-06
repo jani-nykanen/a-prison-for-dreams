@@ -15,6 +15,7 @@ export const enum FlyingTextSymbol {
     None = 0,
     Coin = 1,
     Heart = 2,
+    Ammo = 3,
 }
 
 

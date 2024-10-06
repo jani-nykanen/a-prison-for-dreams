@@ -87,16 +87,16 @@ export class Player extends CollisionObject {
     private deathTimer : number = 0;
 
     private readonly projectiles : ProjectileGenerator;
-    private readonly particles : ObjectGenerator<AnimatedParticle>;
-    private readonly flyingText : ObjectGenerator<FlyingText>;
+    private readonly particles : ObjectGenerator<AnimatedParticle, void>;
+    private readonly flyingText : ObjectGenerator<FlyingText, void>;
 
     public readonly stats : Progress;
 
 
     constructor(x : number, y : number, 
         projectiles : ProjectileGenerator,
-        particles : ObjectGenerator<AnimatedParticle>,
-        flyingText : ObjectGenerator<FlyingText>,
+        particles : ObjectGenerator<AnimatedParticle, void>,
+        flyingText : ObjectGenerator<FlyingText, void>,
         stats : Progress) {
 
         super(x, y, true);
@@ -309,7 +309,7 @@ export class Player extends CollisionObject {
 
         const power : number = type == 1 ? this.stats.getChargeProjectilePower() : this.stats.getProjectilePower();
 
-        this.projectiles.next().spawn(
+        this.projectiles.next(this.stats).spawn(
             this.pos.x, dy, dx, dy, 
             this.speed.x*BULLET_SPEED_FACTOR_X + (BULLET_SPEED[type] ?? 0)*this.faceDir, 
             this.speed.y*BULLET_SPEED_FACTOR_Y, 

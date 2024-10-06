@@ -23,11 +23,11 @@ import { negMod } from "../math/utility.js";
 export class ObjectManager {
 
 
-    private flyingText : ObjectGenerator<FlyingText>;
+    private flyingText : ObjectGenerator<FlyingText, void>;
     private projectiles : ProjectileGenerator;
     private splinters : SplinterGenerator;
     private collectables : CollectableGenerator;
-    private animatedParticles : ObjectGenerator<AnimatedParticle>;
+    private animatedParticles : ObjectGenerator<AnimatedParticle, void>;
 
     private breakables : Breakable[];
     private visibleBreakables : VisibleObjectBuffer<Breakable>;
@@ -40,10 +40,10 @@ export class ObjectManager {
 
     constructor(progress : Progress, stage : Stage, camera : Camera, event : ProgramEvent) {
 
-        this.flyingText = new ObjectGenerator<FlyingText> (FlyingText);
+        this.flyingText = new ObjectGenerator<FlyingText, void> (FlyingText);
         this.projectiles = new ProjectileGenerator();
         this.splinters = new SplinterGenerator();
-        this.animatedParticles = new ObjectGenerator<AnimatedParticle> (AnimatedParticle);
+        this.animatedParticles = new ObjectGenerator<AnimatedParticle, void> (AnimatedParticle);
         this.collectables = new CollectableGenerator(this.flyingText);
 
         this.breakables = new Array<Breakable> ();

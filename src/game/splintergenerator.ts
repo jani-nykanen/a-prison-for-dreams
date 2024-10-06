@@ -9,8 +9,7 @@ import { Breakable } from "./breakable.js";
 import { ObjectGenerator } from "./objectgenerator.js";
 
 
-export class SplinterGenerator extends ObjectGenerator<Splinter> {
-
+export class SplinterGenerator extends ObjectGenerator<Splinter, void> {
 
 
     constructor() {

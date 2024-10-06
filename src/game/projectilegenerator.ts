@@ -9,9 +9,10 @@ import { Bitmap, Canvas } from "../gfx/interface.js";
 import { Breakable } from "./breakable.js";
 import { ObjectGenerator } from "./objectgenerator.js";
 import { Enemy } from "./enemies/enemy.js";
+import { Progress } from "./progress.js";
 
 
-export class ProjectileGenerator extends ObjectGenerator<Projectile> {
+export class ProjectileGenerator extends ObjectGenerator<Projectile, Progress> {
 
 
     constructor() {

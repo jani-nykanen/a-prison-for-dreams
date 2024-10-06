@@ -8,15 +8,38 @@ import { ObjectGenerator } from "./objectgenerator.js";
 import { Collectable, CollectableType } from "./collectable.js";
 import { Player } from "./player.js";
 import { FlyingText } from "./flyingtext.js";
+import { Progress } from "./progress.js";
 
 
-export class CollectableGenerator extends ObjectGenerator<Collectable> {
+export const sampleTypeFromProgress = (progress : Progress) : CollectableType => {
+
+    const HEART_MAX_WEIGHT : number = 0.33;
+    const AMMO_MAX_WEIGHT : number = 0.33;
+
+    const heartWeight : number = HEART_MAX_WEIGHT*(1.0 - progress.getHealth()/progress.getMaxHealth());
+    const ammoWeight : number = AMMO_MAX_WEIGHT*(1.0 - progress.getBulletCount()/progress.getMaxBulletCount());
+
+    const p : number = Math.random();
+    if (p < heartWeight) {
+
+        return CollectableType.Heart;
+    }
+    else if (p < heartWeight + ammoWeight) {
+
+        return CollectableType.Ammo;
+    }
+    return CollectableType.Coin;
+
+};
 
 
-    private readonly flyingText : ObjectGenerator<FlyingText>;
+export class CollectableGenerator extends ObjectGenerator<Collectable, void> {
 
 
-    constructor(flyingText : ObjectGenerator<FlyingText>) {
+    private readonly flyingText : ObjectGenerator<FlyingText, void>;
+
+
+    constructor(flyingText : ObjectGenerator<FlyingText, void>) {
 
         super(Collectable);
 
