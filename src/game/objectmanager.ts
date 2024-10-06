@@ -17,7 +17,7 @@ import { FlyingText } from "./flyingtext.js";
 import { AnimatedParticle } from "./animatedparticle.js";
 import { Progress } from "./progress.js";
 import { Vector } from "../math/vector.js";
-import { negMod } from "../math/utility.js";
+import { clamp, negMod } from "../math/utility.js";
 
 
 export class ObjectManager {
@@ -268,14 +268,14 @@ export class ObjectManager {
     }
 
 
-    public getRelativePlayerPosition(camera : Camera) : Vector {
+    public getRelativePlayerPosition(stage : Stage, camera : Camera) : Vector {
 
         const v : Vector = new Vector();
         const ppos : Vector = this.player.getPosition();
         const camPos : Vector = camera.getCorner();
 
-        v.x = Math.max(0, ppos.x - camPos.x) % camera.width;
-        v.y = Math.max(0, ppos.y - camPos.y) % camera.height;
+        v.x = Math.max(0, clamp(ppos.x, 0, stage.width*TILE_WIDTH - 1) - camPos.x) % camera.width;
+        v.y = Math.max(0, clamp(ppos.y, 0, stage.height*TILE_HEIGHT - 1) - camPos.y) % camera.height;
 
         return v;
     }

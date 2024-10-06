@@ -101,10 +101,16 @@ export class Breakable extends CollisionObject {
 
     private breakSelf(progress : Progress, dir : Vector, event : ProgramEvent) : void {
 
+        const DROP_PROBABILITY : number = 0.50;
+
         this.exist = false;
         
         this.spawnSplinters();
-        this.spawnCollectables(progress, dir);
+
+        if (Math.random() < DROP_PROBABILITY) {
+        
+            this.spawnCollectables(progress, dir);
+        }
     }
 
 

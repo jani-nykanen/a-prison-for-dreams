@@ -9,6 +9,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Vector } from "../math/vector.js";
 import { Assets } from "../core/assets.js";
 import { Sprite } from "../gfx/sprite.js";
+import { Rectangle } from "../math/rectangle.js";
 
 
 
@@ -177,24 +178,39 @@ export class Stage {
         const WATER_OFFSET_Y : number = 0;
         const EDGE_OFFSET_Y : number = -256;
 
+        if (!o.isActive()) {
+
+            return;
+        }
+
         this.collisions.objectCollision(o, event);
 
         const totalWidth : number = this.width*TILE_WIDTH;
         const totalHeight : number = this.height*TILE_HEIGHT;
         const waterSurface : number = Math.min(totalHeight, (this.height - this.waterLevel)*TILE_HEIGHT + WATER_OFFSET_Y);
 
+        const opos : Vector = o.getPosition();
+        const hbox : Rectangle = o.getCollisionBox();
+
         if (waterSurface > 0 && o.waterCollision !== undefined) {
             
-            const opos : Vector = o.getPosition();
+            
             o.waterCollision(opos.x - 16, waterSurface, 32, this.height*TILE_HEIGHT - waterSurface, event);
+            /*
             o.slopeCollision(
                 opos.x - 16, this.height*TILE_HEIGHT, 
                 opos.x  + 32, this.height*TILE_HEIGHT, 
                 1, event);
+                */
         }
 
         o.wallCollision(0, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, -1, event);
         o.wallCollision(totalWidth, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, 1, event);
+
+        if (o.getPosition().y + hbox.y - hbox.h/2 > this.height*TILE_HEIGHT) {
+
+            o.instantKill(event);
+        }
     }
 
 

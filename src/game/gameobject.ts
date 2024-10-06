@@ -137,4 +137,11 @@ export class GameObject implements ExistingObject {
         this.dying = false;
     }
 
+
+    public instantKill(event : ProgramEvent) : void {
+
+        this.exist = false;
+        this.dying = false;
+    }
+
 }

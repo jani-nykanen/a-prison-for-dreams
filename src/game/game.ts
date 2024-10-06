@@ -65,9 +65,9 @@ export class Game implements Scene {
                 this.reset(event);
                 this.limitCamera();
                 
-                event.transition.setCenter(this.objects.getRelativePlayerPosition(this.camera));
+                event.transition.setCenter(this.objects.getRelativePlayerPosition(this.stage, this.camera));
             },
-            new RGBA(0, 0, 0), this.objects.getRelativePlayerPosition(this.camera));
+            new RGBA(0, 0, 0), this.objects.getRelativePlayerPosition(this.stage, this.camera));
     }
     
 

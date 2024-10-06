@@ -1,4 +1,5 @@
 import { ProgramEvent } from "../core/event.js";
+import { clamp } from "../math/utility.js";
 import { Vector } from "../math/vector.js";
 import { Tilemap } from "../tilemap/tilemap.js";
 import { CollisionObject } from "./collisionobject.js";
@@ -332,6 +333,9 @@ export class CollisionMap {
 
                     continue;
                 }
+
+                // const dx : number = clamp(x, 0, this.width);
+                // const dy : number = clamp(y, 0, this.height);
 
                 const colID : number = this.collisions[y*this.width + x] ?? 0;
                 if (colID == 0) {

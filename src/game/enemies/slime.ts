@@ -15,6 +15,8 @@ export class Slime extends Enemy {
 
         this.health = 6;
         this.attackPower = 2;
+
+        this.dropProbability = 0.33;
     }
 
 

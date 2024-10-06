@@ -35,6 +35,7 @@ export class Enemy extends CollisionObject {
 
     protected attackPower : number = 1;
     protected health : number = 5;
+    protected dropProbability : number = 0.5;
 
     protected touchSurface : boolean = false;
 
@@ -78,7 +79,10 @@ export class Enemy extends CollisionObject {
         this.health -= amount;
         if (this.health <= 0) {
 
-            this.spawnCollectables(dir ?? new Vector(), stats);
+            if (Math.random() < this.dropProbability) {
+            
+                this.spawnCollectables(dir ?? new Vector(), stats);
+            }
 
             this.dying = true;
             this.sprite.setFrame(0, 0);
@@ -173,10 +177,10 @@ export class Enemy extends CollisionObject {
             if (player.isChargeAttacking()) {
 
                 knockback *= POWER_ATTACK_KNOCK_MULTIPLIER;
-                if (!this.dying) {
+                // if (!this.dying) {
                 
                     player.stopPowerAttack();
-                }
+                // }
             }
             this.speed.x = Math.sign(this.pos.x - ppos.x)*knockback;
         }

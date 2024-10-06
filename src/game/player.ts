@@ -135,7 +135,7 @@ export class Player extends CollisionObject {
         const SWORD_ATTACK_BASE_WIDTH : number = 14;
         const SWORD_ATTACK_BASE_HEIGHT : number = 20;
 
-        const SWORD_ATTACK_SPECIAL_WIDTH : number = 18;
+        const SWORD_ATTACK_SPECIAL_WIDTH : number = 16;
         const SWORD_ATTACK_SPECIAL_HEIGHT : number = 16;
 
         const DOWN_ATTACK_OFFSET_X : number = 1;
@@ -775,8 +775,7 @@ export class Player extends CollisionObject {
             this.knockbackTimer -= event.tick;
             if (this.knockbackTimer <= 0 && this.stats.getHealth() <= 0) {
 
-                this.dying = true;
-                this.sprite.setFrame(4, 8);
+                this.initializeDeath(event);
             }
         }
         else if (this.hurtTimer > 0) {
@@ -873,6 +872,15 @@ export class Player extends CollisionObject {
         this.flyingText?.next()
             .spawn(this.pos.x, this.pos.y - 8, 
                 -damage, FlyingTextSymbol.None, new RGBA(255, 73, 0));
+    }
+
+
+    private initializeDeath(event : ProgramEvent) : void {
+
+        this.dying = true;
+        this.sprite.setFrame(4, 8);
+        
+        // TODO: Sound effects
     }
 
 
@@ -1226,6 +1234,13 @@ export class Player extends CollisionObject {
 
         this.target.zeros();
         this.powerAttackTimer = Math.min(POWER_ATTACK_HALT_TIME, this.powerAttackTimer);
+    }
+
+
+    public instantKill(event : ProgramEvent) : void {
+        
+        this.stats.updateHealth(-this.stats.getHealth());
+        this.initializeDeath(event);
     }
 }
 
