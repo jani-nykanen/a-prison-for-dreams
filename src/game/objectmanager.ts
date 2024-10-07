@@ -306,5 +306,11 @@ export class ObjectManager {
     }
 
 
+    public killPlayer(event : ProgramEvent) : void {
+
+        this.player.instantKill(event);
+    }
+
+
     public hasPlayerDied = () : boolean => !this.player.doesExist();
 }

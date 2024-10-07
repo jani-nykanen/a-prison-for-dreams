@@ -22,7 +22,7 @@
         "Game saved successfully!"
     ],
 
-    "respawn": "Respawn in the latest\ncheckpoint?",
+    "respawn": "Respawn in the\nlatest checkpoint?",
     "quit": "Return to the main menu?\nYour progress will be\nsaved.",
 
     "settings": [

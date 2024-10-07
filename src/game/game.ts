@@ -43,7 +43,9 @@ export class Game implements Scene {
 
         this.objects.centerCamera(this.camera);
 
-        this.pause = new Pause(event);
+        this.pause = new Pause(event,
+            (event : ProgramEvent) : void => this.objects.killPlayer(event)
+        );
     }
 
 

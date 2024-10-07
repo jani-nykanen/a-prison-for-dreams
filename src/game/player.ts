@@ -1060,6 +1060,7 @@ export class Player extends CollisionObject {
         if (this.dying) {
 
             this.drawDeath(canvas, bmp);
+            return;
         }
 
         const flicker : boolean = 
@@ -1177,7 +1178,8 @@ export class Player extends CollisionObject {
     
     public overlaySwordAttackArea(o : GameObject) : boolean {
 
-        if (!this.swordHitBoxActive) {
+        if (!this.swordHitBoxActive ||
+            (this.attacking && this.sprite.getColumn() >= 6)) {
 
             return false;
         }

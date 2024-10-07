@@ -18,7 +18,9 @@ export class Pause {
     private active : boolean = false;
 
 
-    constructor(event : ProgramEvent) {
+    constructor(event : ProgramEvent,
+        respawnEvent : ((event : ProgramEvent) => void) | undefined = undefined
+        ) {
 
         this.gameSavedBox = new TextBox();
 
@@ -65,7 +67,20 @@ export class Pause {
     
                 this.quitBox.activate(1);
             }),
-            ], false);
+        ], false);
+
+        // Respawn box
+        this.respawnBox = new ConfirmationBox([strYes, strNo], 
+            event.localization?.getItem("respawn")?.[0] ?? "null",
+            (event : ProgramEvent) => {
+
+                respawnEvent?.(event);
+                this.deactivate();
+            },
+            (event : ProgramEvent) => {
+
+                this.respawnBox.deactivate();
+            });
     }
 
 

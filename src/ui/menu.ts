@@ -1,7 +1,7 @@
 import { ProgramEvent } from "../core/event.js";
 import { InputState } from "../core/inputstate.js";
 import { negMod } from "../math/utility.js";
-import { Bitmap, Canvas } from "../gfx/interface.js";
+import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { MenuButton } from "./menubutton.js";
 import { RGBA } from "../math/rgba.js";
 import { drawUIBox } from "./box.js";
@@ -19,6 +19,8 @@ export class Menu {
     private height : number;
     private width : number;
 
+    private handAnimation : number = 0;
+
 
     constructor(buttons : Array<MenuButton>, makeActive : boolean = false,
         fixedWidth : number | undefined = undefined, 
@@ -28,7 +30,7 @@ export class Menu {
     
         this.active = makeActive;
 
-        this.width = fixedWidth ?? Math.max(...this.buttons.map(b => b.getText().length));
+        this.width = fixedWidth ?? (2 + Math.max(...this.buttons.map(b => b.getText().length)));
         this.height = fixedHeight ?? this.buttons.length;
     }
 
@@ -46,6 +48,8 @@ export class Menu {
 
 
     public update(event : ProgramEvent) : void {
+
+        const HAND_ANIMATION_SPEED : number = Math.PI*2/60.0;
 
         if (!this.active) {
             
@@ -79,6 +83,8 @@ export class Menu {
             this.buttons[this.cursorPos].evaluateCallback(event);
             event.audio.playSample(event.assets.getSample("select"), 0.45);
         }
+
+        this.handAnimation = (this.handAnimation + HAND_ANIMATION_SPEED*event.tick) % (Math.PI*2);
     }
 
 
@@ -123,8 +129,19 @@ export class Menu {
             const buttonColor : number[] = (i ==  this.cursorPos ? SELECTED_COLOR : BASE_COLOR)[Number(this.buttons[i].isDeactivated())];
             canvas.setColor(...buttonColor);
             
+            const xoff : number = Number(i == this.cursorPos)*15;
+
+            // Item text
             canvas.drawText(font, this.buttons[i].getText(), 
-                dx + SIDE_OFFSET, dy + SIDE_OFFSET + i*yoff);
+                dx + xoff + SIDE_OFFSET, dy + SIDE_OFFSET + i*yoff);
+            // Hand
+            if (i == this.cursorPos) {
+
+                canvas.drawBitmap(font, Flip.None, 
+                    dx + SIDE_OFFSET + Math.round(Math.sin(this.handAnimation)), 
+                    dy + SIDE_OFFSET + i*yoff, 
+                    8, 0, 16, 8);
+            }
         } 
 
         canvas.setColor();
