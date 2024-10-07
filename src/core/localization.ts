@@ -1,7 +1,5 @@
 
 
-
-
 export class Localization {
 
 
@@ -16,7 +14,7 @@ export class Localization {
 
     public getItem(key : string) : string[] | undefined {
 
-        const item = this.jsonData[key];
+        const item : any = this.jsonData[key];
 
         if (typeof(item) === "string") {
 

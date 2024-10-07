@@ -23,6 +23,13 @@ const initialEvent = (event : ProgramEvent) : void => {
 
 const onloadEvent = (event : ProgramEvent) : void => {
 
+    const loc : string | undefined = event.assets.getDocument("en-us");
+    if (loc !== undefined) {
+
+        event.addLocalizationJSON("en-us", loc);
+        event.setActiveLocalization("en-us");
+    }
+
     event.scenes.addScene("game", new Game(event), true);
 }
 

@@ -1,0 +1,34 @@
+
+
+{
+    "yes": "Yes",
+    "no": "No",
+
+    "on": "On",
+    "off": "Off",
+    "audio": "Audio",
+
+    "pause_menu": [
+        "Resume",
+        "Respawn",
+        "Save game",
+        "Settings",
+        "Quit game"
+    ],
+    
+    "savegame": [
+
+        "Error saving the game!",
+        "Game saved successfully!"
+    ],
+
+    "respawn": "Respawn in the latest\ncheckpoint?",
+    "quit": "Return to the main menu?\nYour progress will be\nsaved.",
+
+    "settings": [
+        "Toggle fullscreen",
+        "Sound Volume",
+        "Music Volume"
+    ]
+
+}

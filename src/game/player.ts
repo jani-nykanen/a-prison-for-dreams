@@ -114,6 +114,8 @@ export class Player extends CollisionObject {
         this.stats = stats;
 
         this.swordHitbox = new Rectangle();
+
+        this.dir = 1;
     }
 
 

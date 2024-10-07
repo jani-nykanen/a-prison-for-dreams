@@ -5,6 +5,7 @@ import { Bitmap, Canvas } from "../gfx/interface.js";
 import { MenuButton } from "./menubutton.js";
 import { RGBA } from "../math/rgba.js";
 import { drawUIBox } from "./box.js";
+import { Assets } from "../core/assets.js";
 
 
 export class Menu {
@@ -46,10 +47,12 @@ export class Menu {
 
     public update(event : ProgramEvent) : void {
 
-        if (!this.active) return;
+        if (!this.active) {
+            
+            return;
+        }
 
         const oldPos : number = this.cursorPos;
-
         if (event.input.upPress()) {
 
             -- this.cursorPos;
@@ -79,10 +82,11 @@ export class Menu {
     }
 
 
-    public draw(canvas : Canvas,
+    public draw(canvas : Canvas, assets : Assets,
         x : number = 0, y : number = 0, yoff : number = 12, 
         drawBox : boolean = true, boxColors : RGBA[] | undefined = undefined,
-        drawShadow : boolean = true, shadowAlpha : number = 0.33, shadowOffset : number = 4) : void {
+        drawShadow : boolean = true, shadowAlpha : number = 0.25, 
+        shadowOffset : number = 2) : void {
 
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
@@ -90,9 +94,12 @@ export class Menu {
         const BASE_COLOR : number[][] = [[255, 255, 255], [146, 146, 146]];
         const SELECTED_COLOR : number[][] = [[255, 255, 0], [182, 182, 36]];
 
-        if (!this.active) return;
+        if (!this.active) {
+            
+            return;
+        }
 
-        const font : Bitmap | undefined = canvas.getBitmap("font");
+        const font : Bitmap | undefined = assets.getBitmap("font");
         const charDim : number = (font?.width ?? 128)/16;
 
         const w : number = (this.width + 1)*charDim;
@@ -103,21 +110,11 @@ export class Menu {
 
         if (drawBox) {
 
-            if (drawShadow) {
-
-                canvas.setColor(0, 0, 0, shadowAlpha);
-                canvas.fillRect(
-                    dx - BOX_OFFSET + shadowOffset, 
-                    dy - BOX_OFFSET + shadowOffset, 
-                    w + BOX_OFFSET*2, 
-                    h + BOX_OFFSET*2)
-                canvas.setColor();
-            }
-
             drawUIBox(canvas, 
                 dx - BOX_OFFSET, dy - BOX_OFFSET, 
                 w + BOX_OFFSET*2, h + BOX_OFFSET*2,
-                boxColors);
+                boxColors, drawShadow, shadowAlpha, 
+                shadowOffset);
         }
 
         for (let i = 0; i < this.buttons.length; ++ i) {

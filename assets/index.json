@@ -39,6 +39,12 @@
     "samplePath": "assets/audio/",
     "samples": [
     
+    ],
+
+    "documentPath": "assets/localization/",
+    "documents": [
+
+        {"name": "en-us", "path": "en-us.json"}
     ]
 }
 

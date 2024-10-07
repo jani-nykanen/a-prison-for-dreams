@@ -11,6 +11,8 @@ import { Progress } from "./progress.js";
 import { drawHUD } from "./hud.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
+import { Pause } from "./pause.js";
+import { InputState } from "../core/inputstate.js";
 
 
 export class Game implements Scene {
@@ -20,6 +22,8 @@ export class Game implements Scene {
     private camera : Camera;
     private progress : Progress;
     private objects : ObjectManager;
+
+    private pause : Pause;
 
 
     constructor(event : ProgramEvent) { 
@@ -38,6 +42,8 @@ export class Game implements Scene {
         this.objects = new ObjectManager(this.progress, this.stage, this.camera, event);
 
         this.objects.centerCamera(this.camera);
+
+        this.pause = new Pause(event);
     }
 
 
@@ -79,11 +85,23 @@ export class Game implements Scene {
 
     public update(event : ProgramEvent) : void {
 
+        if (this.pause.isActive() && !event.transition.isActive()) {
+            
+            this.pause.update(event);
+            return;
+        }
+
         this.stage.update(event);
 
         if (event.transition.isActive()) {
 
             this.objects.initialCameraCheck(this.camera, event);
+            return;
+        }
+
+        if (event.input.getAction("pause") == InputState.Pressed) {
+
+            this.pause.activate();
             return;
         }
 
@@ -124,6 +142,8 @@ export class Game implements Scene {
         canvas.moveTo();
 
         drawHUD(canvas, assets, this.progress);
+
+        this.pause.draw(canvas, assets);
     }
 
 

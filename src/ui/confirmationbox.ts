@@ -1,3 +1,4 @@
+import { Assets } from "../core/assets.js";
 import { ProgramEvent } from "../core/event.js";
 import { InputState } from "../core/inputstate.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
@@ -52,23 +53,26 @@ export class ConfirmationBox {
 
             return;
         }
-
         this.menu.update(event);
     }
 
 
-    public draw(canvas : Canvas, drawBox : boolean = true,
-        x : number = 0, y : number = 0, 
+    public draw(canvas : Canvas, assets : Assets,
+        drawBox : boolean = true, x : number = 0, y : number = 0, 
         yoff : number = 10, menuYoff : number = 12,
-        boxColors? : RGBA[]) : void {
+        boxColors : RGBA[] | undefined = undefined,
+        drawShadow : boolean = true, shadowAlpha : number = 0.25, 
+        shadowOffset : number = 2) : void {
 
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
 
-        if (!this.menu.isActive())
+        if (!this.menu.isActive()) {
+            
             return;
+        }
 
-        const font : Bitmap | undefined = canvas.getBitmap("font");
+        const font : Bitmap | undefined = assets.getBitmap("font");
         const charDim : number = (font?.width ?? 128)/16;
 
         const w : number = (this.width + 1)*charDim;
@@ -82,7 +86,8 @@ export class ConfirmationBox {
             drawUIBox(canvas, 
                 dx - BOX_OFFSET, dy - BOX_OFFSET, 
                 w + BOX_OFFSET*2, h + BOX_OFFSET*2,
-                boxColors);
+                boxColors, drawShadow, shadowAlpha, 
+                shadowOffset);
         }
 
         for (let i = 0; i < this.message.length; ++ i) {
@@ -92,7 +97,7 @@ export class ConfirmationBox {
 
         const menuY : number = (dy + h - canvas.height/2) - menuYoff;
 
-        this.menu.draw(canvas, x, menuY, menuYoff, false);
+        this.menu.draw(canvas, assets, x, menuY, menuYoff, false);
     }
 
 

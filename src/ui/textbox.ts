@@ -1,3 +1,4 @@
+import { Assets } from "../core/assets.js";
 import { ProgramEvent } from "../core/event.js";
 import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { RGBA } from "../math/rgba.js";
@@ -154,10 +155,12 @@ export class TextBox {
     }
 
 
-    public draw(canvas : Canvas, 
+    public draw(canvas : Canvas, assets : Assets, 
         x : number = 0, y : number = 0, yoff : number = 2,
         drawBox : boolean = true, drawIcon : boolean = true,
-        boxColors : RGBA[] | undefined = undefined) : void {
+        boxColors : RGBA[] | undefined = undefined,
+        drawShadow : boolean = true, shadowAlpha : number = 0.25, 
+        shadowOffset : number = 2) : void {
 
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
@@ -165,8 +168,8 @@ export class TextBox {
         if (!this.active)
             return;
 
-        const font : Bitmap | undefined  = canvas.getBitmap("font");
-        const fontOutlines : Bitmap | undefined = canvas.getBitmap("font_outlines");
+        const font : Bitmap | undefined  = assets.getBitmap("font");
+        const fontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
 
         const charDim : number = (font?.width ?? 128)/16;
 
@@ -181,11 +184,10 @@ export class TextBox {
             drawUIBox(canvas, 
                 dx - BOX_OFFSET, dy - BOX_OFFSET, 
                 w + BOX_OFFSET*2, h + BOX_OFFSET*2,
-                boxColors);
+                boxColors, drawShadow, shadowAlpha, shadowOffset);
         }
 
         const str : string = this.activeText?.substring(0, this.charPos) ?? "";
-
         canvas.drawText(font, str, dx + SIDE_OFFSET, dy + SIDE_OFFSET, 0, yoff);
 
         if (this.finished && drawIcon) {
