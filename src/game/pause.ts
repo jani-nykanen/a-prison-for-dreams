@@ -5,6 +5,7 @@ import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
 import { TextBox } from "../ui/textbox.js";
+import { Settings } from "../ui/settings.js";
 
 
 export class Pause {
@@ -13,14 +14,16 @@ export class Pause {
     private menu : Menu;
     private gameSavedBox : TextBox;
     private respawnBox : ConfirmationBox;
+    private settings : Settings;
     private quitBox : ConfirmationBox;
 
     private active : boolean = false;
 
 
     constructor(event : ProgramEvent,
-        respawnEvent : ((event : ProgramEvent) => void) | undefined = undefined
-        ) {
+        respawnEvent : ((event : ProgramEvent) => void) | undefined = undefined,
+        saveEvent : ((event : ProgramEvent) => boolean) | undefined = undefined,
+        quitEvent : ((event : ProgramEvent) => void) | undefined = undefined) {
 
         this.gameSavedBox = new TextBox();
 
@@ -51,14 +54,14 @@ export class Pause {
             new MenuButton(menuText[2] ?? "null",
             (event : ProgramEvent) => {
     
-                this.gameSavedBox.activate();
+                this.showGameSavedBox(saveEvent ?? (() : boolean => false), event);
             }),
     
             // Settings
             new MenuButton(menuText[3] ?? "null",
             (event : ProgramEvent) => {
     
-                // ...
+                this.settings.activate();
             }),
     
             // Quit
@@ -80,7 +83,42 @@ export class Pause {
             (event : ProgramEvent) => {
 
                 this.respawnBox.deactivate();
-            });
+            }
+        );
+
+        // Game saved box
+        this.gameSavedBox = new TextBox();
+
+        // Settings
+        this.settings = new Settings(event);
+
+        // Respawn box
+        this.quitBox = new ConfirmationBox([strYes, strNo], 
+            event.localization?.getItem("quit")?.[0] ?? "null",
+            (event : ProgramEvent) => {
+
+                quitEvent?.(event);
+                this.deactivate();
+            },
+            (event : ProgramEvent) => {
+
+                this.quitBox.deactivate();
+            }
+        );
+    }
+
+
+    private showGameSavedBox(saveEvent : ((event : ProgramEvent) => boolean), event : ProgramEvent) : void {
+
+        const result : boolean = saveEvent(event);
+
+        const text : string[] = event.localization?.getItem("savegame");
+
+        this.gameSavedBox.addText([text[Number(result)]]);
+        this.gameSavedBox.activate(true, (event : ProgramEvent) : void => {
+
+            this.gameSavedBox.deactivate();
+        });
     }
 
 
@@ -91,19 +129,22 @@ export class Pause {
             return;
         }
 
-        if (this.gameSavedBox?.isActive()) {
+        if (this.gameSavedBox.isActive()) {
 
             this.gameSavedBox.update(event);
             return;
         }
-
-        if (this.respawnBox?.isActive()) {
+        if (this.respawnBox.isActive()) {
 
             this.respawnBox.update(event);
             return;
         }
+        if (this.settings.isActive()) {
 
-        if (this.quitBox?.isActive()) {
+            this.settings.update(event);
+            return;
+        }
+        if (this.quitBox.isActive()) {
 
             this.quitBox.update(event);
             return;
@@ -126,19 +167,22 @@ export class Pause {
         canvas.fillRect();
         canvas.setColor();
 
-        if (this.gameSavedBox?.isActive()) {
+        if (this.gameSavedBox.isActive()) {
 
             this.gameSavedBox.draw(canvas, assets);
             return;
         }
-
-        if (this.respawnBox?.isActive()) {
+        if (this.respawnBox.isActive()) {
 
             this.respawnBox.draw(canvas, assets);
             return;
         }
+        if (this.settings.isActive()) {
 
-        if (this.quitBox?.isActive()) {
+            this.settings.draw(canvas, assets);
+            return;
+        }
+        if (this.quitBox.isActive()) {
 
             this.quitBox.draw(canvas, assets);
             return;

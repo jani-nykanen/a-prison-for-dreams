@@ -18,8 +18,8 @@
     
     "savegame": [
 
-        "Error saving the game!",
-        "Game saved successfully!"
+        "Error saving\nthe game!",
+        "Game saved\nsuccessfully!"
     ],
 
     "respawn": "Respawn in the\nlatest checkpoint?",
@@ -28,7 +28,8 @@
     "settings": [
         "Toggle fullscreen",
         "Sound Volume",
-        "Music Volume"
+        "Music Volume",
+        "Back"
     ]
 
 }

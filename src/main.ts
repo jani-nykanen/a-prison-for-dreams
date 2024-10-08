@@ -36,13 +36,13 @@ const onloadEvent = (event : ProgramEvent) : void => {
 
 const printError = (e : Error) : void => {
 
-    console.log(e.stack);
+    console.log(e["stack"]);
 
     document.getElementById("base_div")?.remove();
 
     const textOut : HTMLElement = document.createElement("b");
     textOut.setAttribute("style", "color: rgb(224,73,73); font-size: 16px");
-    textOut.innerText = "Fatal error:\n\n " + e.message;
+    textOut.innerText = "Fatal error:\n\n " + e["message"];
 
     document.body.appendChild(textOut);
 }

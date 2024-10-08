@@ -352,6 +352,7 @@ export class Player extends CollisionObject {
 
         const DOWN_ATTACK_JUMP : number = -2.0;
         const DOWN_ATTACK_STICK_Y_THRESHOLD : number = 0.50;
+        const FORWARD_SPEED : number = 1.5;
         
         const attackButton : InputState = event.input.getAction("attack");
         if (this.charging && this.chargeType == ChargeType.Sword && 
@@ -387,6 +388,11 @@ export class Player extends CollisionObject {
                 this.rocketPackActive = false;
                 this.speed.y = DOWN_ATTACK_JUMP;
                 return;
+            }
+
+            if (this.touchSurface) {
+
+                this.speed.x = this.dir*FORWARD_SPEED;
             }
 
             this.attacking = true;

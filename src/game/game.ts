@@ -7,7 +7,7 @@ import { Tilemap } from "../tilemap/tilemap.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { ObjectManager } from "./objectmanager.js";
 import { Assets } from "../core/assets.js";
-import { Progress } from "./progress.js";
+import { LOCAL_STORAGE_KEY, Progress } from "./progress.js";
 import { drawHUD } from "./hud.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
@@ -44,14 +44,10 @@ export class Game implements Scene {
         this.objects.centerCamera(this.camera);
 
         this.pause = new Pause(event,
-            (event : ProgramEvent) : void => this.objects.killPlayer(event)
+            (event : ProgramEvent) : void => this.objects.killPlayer(event),
+            (event : ProgramEvent) : boolean => this.progress.save(LOCAL_STORAGE_KEY),
+            (event : ProgramEvent) : void => this.quitToMainMenu(event)
         );
-    }
-
-
-    private limitCamera() : void {
-
-        this.camera.limit(0, this.stage.width*TILE_WIDTH, null, this.stage.height*TILE_HEIGHT);
     }
 
 
@@ -61,6 +57,21 @@ export class Game implements Scene {
         this.objects.reset(this.progress, this.stage, this.camera, event);
 
         this.objects.centerCamera(this.camera);
+    }
+
+
+    private quitToMainMenu(event : ProgramEvent) : void {
+
+        try {
+
+            this.progress.save(LOCAL_STORAGE_KEY);
+        }
+        catch (e) {
+
+            console.error("Failed to save progress: " + e["message"]);
+        }
+
+        throw new Error("Nope, not yet.");
     }
 
 
@@ -78,6 +89,12 @@ export class Game implements Scene {
             new RGBA(0, 0, 0), this.objects.getRelativePlayerPosition(this.stage, this.camera));
     }
     
+
+    private limitCamera() : void {
+
+        this.camera.limit(0, this.stage.width*TILE_WIDTH, null, this.stage.height*TILE_HEIGHT);
+    }
+
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 

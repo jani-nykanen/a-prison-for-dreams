@@ -3,6 +3,9 @@ import { clamp } from "../math/utility.js";
 import { Vector } from "../math/vector.js";
 
 
+export const LOCAL_STORAGE_KEY : string = "the_end_of_dreams__savedata";
+
+
 export class Progress {
 
 
@@ -94,5 +97,19 @@ export class Progress {
 
         this.health = this.maxHealth;
         this.bullets = this.maxBullets;
+    }
+
+
+    public save(key : string) : boolean {
+
+        try {
+
+            // TODO: Save progress
+        }
+        catch (e) {
+
+            return false;
+        }
+        return true;
     }
 }

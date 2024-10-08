@@ -103,6 +103,7 @@ export class Enemy extends CollisionObject {
         
         const ANIMATION_SPEED : number = 5;
 
+        this.flip = Flip.None;
         this.sprite.animate(0, 0, 4, ANIMATION_SPEED, event.tick);
         return this.sprite.getColumn() >= 4;
     }
