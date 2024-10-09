@@ -61,7 +61,7 @@ export class Pause {
             new MenuButton(menuText[3] ?? "null",
             (event : ProgramEvent) => {
     
-                this.settings.activate();
+                this.settings.activate(event);
             }),
     
             // Quit

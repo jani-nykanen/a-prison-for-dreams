@@ -1,22 +1,21 @@
+import { clamp } from "../math/utility.js";
 import { AudioSample } from "./sample.js";
 
 
 export class AudioPlayer {
 
-    protected ctx : AudioContext;
+    private ctx : AudioContext;
     private musicTrack : AudioSample | undefined = undefined;
 
-    private globalVolume : number;
-    // private enabled : boolean = false;
-
-    private sfxEnabled : boolean = true;
-    private musicEnabled : boolean = true;
+    private soundVolume : number = 100;
+    private musicVolume : number = 100;;
 
 
-    constructor(ctx : AudioContext, globalVolume : number = 1.0) {
+    constructor(ctx : AudioContext, initialSoundVolume : number = 100, initialMusicVolume : number = 100) {
 
         this.ctx = ctx;
-        this.globalVolume = globalVolume;
+        this.soundVolume = initialSoundVolume;
+        this.musicVolume = initialMusicVolume;
     }
 
 
@@ -25,33 +24,40 @@ export class AudioPlayer {
         const EPS : number = 0.001;
 
         if (this.ctx === undefined ||
-            !this.sfxEnabled || 
-            sample === undefined || 
-            this.globalVolume*vol <= EPS) {
+            this.soundVolume == 0 || 
+            sample === undefined) {
+        
+            return;
+        }
+
+        const baseVolume : number = vol*(this.soundVolume/100);
+        if (baseVolume <= EPS) {
 
             return;
         }
 
-        sample.play(this.ctx, this.globalVolume*vol, false, 0);
+        sample.play(this.ctx, baseVolume, false, 0);
     }
 
 
     public playMusic(sample : AudioSample | undefined, vol : number = 1.0) : void {
 
-        if (!this.musicEnabled || sample === undefined) 
+        if (sample === undefined) {
+            
             return;
+        }
 
         this.fadeInMusic(sample, vol);
     }
 
 
-    public fadeInMusic(sample : AudioSample | undefined, vol : number = 1.0, fadeTime : number = 0.0) {
+    public fadeInMusic(sample : AudioSample | undefined, vol : number = 1.0, fadeTime? : number) {
 
-        const EPS = 0.001;
 
-        if (this.ctx === undefined ||
-            !this.musicEnabled || this.globalVolume <= EPS) 
+        if (this.ctx === undefined) {
+
             return;
+        }
 
         // For some reason 0 fade time does not work
         fadeTime = Math.max(0.1, fadeTime);
@@ -62,17 +68,18 @@ export class AudioPlayer {
             this.musicTrack = undefined;
         }
 
-        const v = this.globalVolume*vol;
-        sample?.fadeIn(this.ctx, fadeTime == null ? v : 0.01, v, true, 0, fadeTime);
+        const baseVolume : number = vol*(this.musicVolume/100);
+        sample?.fadeIn(this.ctx, fadeTime === undefined ? baseVolume : 0.0, baseVolume, true, 0, fadeTime);
         this.musicTrack = sample;
     }
 
 
     public pauseMusic() : void {
 
-        if (this.ctx === undefined ||
-            !this.musicEnabled || this.musicTrack === undefined)
+        if (this.ctx === undefined || this.musicTrack === undefined) {
+            
             return;
+        }
 
         this.musicTrack.pause(this.ctx);
     }
@@ -80,55 +87,36 @@ export class AudioPlayer {
 
     public resumeMusic() : boolean {
 
-        if (this.ctx === undefined ||
-            !this.musicEnabled || this.musicTrack === undefined)
-            return false;
+        if (this.ctx === undefined || this.musicTrack === undefined) {
 
+            return false;
+        }
         this.musicTrack.resume(this.ctx);
-        
         return true;
     }
 
 
     public stopMusic() : void {
 
-        //if (!this.musicEnabled || this.musicTrack === undefined)
-
         this.musicTrack?.stop();
         this.musicTrack = undefined;
     }
 
 
-    public toggle(state : boolean) : void {
+    public setSoundVolume(vol : number) : void {
 
-        this.musicEnabled = state;
-        this.sfxEnabled = state;
+        this.soundVolume = clamp(vol, 0, 100);
     }
 
 
-    public toggleSFX(state : boolean = !this.sfxEnabled) : void {
+    public setMusicVolume(vol : number) : void {
 
-        this.sfxEnabled = state;
+        this.musicVolume = clamp(vol, 0, 100);
     }
 
 
-    public toggleMusic(state : boolean = !this.musicEnabled) : void {
-
-        this.musicEnabled = state;
-    }
-
-
-    public setGlobalVolume(vol : number) : void {
-
-        this.globalVolume = vol;
-    }
-
-
-    public isSFXEnabled = () : boolean => this.sfxEnabled;
-    public isMusicEnabled = () : boolean => this.musicEnabled;
-
-
-    // public getStateString = () : string => "Audio: " + ["Off", "On"][Number(this.enabled)]; 
+    public getSoundVolume = () : number => this.soundVolume;
+    public getMusicVolume = () : number => this.musicVolume;
 
 
     public decodeSample(sampleData : ArrayBuffer, callback : (s : AudioSample) => any) : void {

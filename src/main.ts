@@ -16,8 +16,9 @@ const initialEvent = (event : ProgramEvent) : void => {
     event.input.addAction("back2", ["Backspace"]); 
     event.input.addAction("select", ["Enter", "Space", "KeyZ"], [0, 7, 9]);
 
-    event.audio.setGlobalVolume(0.60);
-    event.audio.toggle(true);
+    // TODO: Read from a save file or something?
+    event.audio.setMusicVolume(60);
+    event.audio.setSoundVolume(60);
 }
 
 

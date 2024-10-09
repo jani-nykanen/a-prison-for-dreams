@@ -23,15 +23,33 @@ export class Settings {
                 }
             ),
 
+            // NOTE: The actual button text will be set by the "activate" function, we just
+            // pass something here to compute the correct size for the menu box.
             new MenuButton((text[1] ?? "null") + ": 100%",
+                undefined,
                 (event : ProgramEvent) : void => {
 
+                    event.audio.setSoundVolume(event.audio.getSoundVolume() - 10);
+                    this.updateSoundButtonText(event);
+                },
+                (event : ProgramEvent) : void => {
+
+                    event.audio.setSoundVolume(event.audio.getSoundVolume() + 10);
+                    this.updateSoundButtonText(event);
                 }
             ),
 
             new MenuButton((text[2] ?? "null") + ": 100%",
+                undefined,
+                (event : ProgramEvent) : void => {
+                    
+                    event.audio.setMusicVolume(event.audio.getMusicVolume() - 10);
+                    this.updateSoundButtonText(event);
+                },
                 (event : ProgramEvent) : void => {
 
+                    event.audio.setMusicVolume(event.audio.getMusicVolume() + 10);
+                    this.updateSoundButtonText(event);
                 }
             ),
 
@@ -42,6 +60,18 @@ export class Settings {
                 }
             ),
         ]);   
+    }
+
+
+    private updateSoundButtonText(event : ProgramEvent) : void {
+
+        const soundVolume : number = event.audio.getSoundVolume();
+        const musicVolume : number = event.audio.getMusicVolume();
+
+        const text : string[] = event.localization?.getItem("settings") ?? [];
+
+        this.menu.changeButtonText(1, `${text[1]}: ${soundVolume}%`);
+        this.menu.changeButtonText(2, `${text[2]}: ${musicVolume}%`);
     }
 
 
@@ -57,8 +87,9 @@ export class Settings {
     }
 
 
-    public activate() : void {
+    public activate(event : ProgramEvent) : void {
 
+        this.updateSoundButtonText(event);
         this.menu.activate();
     }
 

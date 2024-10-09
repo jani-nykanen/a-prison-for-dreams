@@ -33,6 +33,8 @@ export class AudioSample {
     public fadeIn(ctx : AudioContext, initial : number, end : number, 
         loop : boolean = false, startTime: number = 0, fadeTime: number = 0) : void {
 
+        const MINIMUM_VOLUME : number = 0.001;
+
         if (this.activeBuffer !== null) {
 
             this.activeBuffer.disconnect();
@@ -43,8 +45,8 @@ export class AudioSample {
         bufferSource.buffer = this.data;
         bufferSource.loop = loop;
 
-        initial = clamp(initial, 0.01, 1.0);
-        end = clamp(end, 0.01, 1.0);
+        initial = clamp(initial, MINIMUM_VOLUME, 1.0);
+        end = clamp(end, MINIMUM_VOLUME, 1.0);
 
         this.gain.gain.setValueAtTime(initial, startTime);
 

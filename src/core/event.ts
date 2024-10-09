@@ -51,7 +51,7 @@ export class ProgramEvent {
     constructor(ctx : AudioContext, renderer : Renderer) {
 
         this.input = new Input();
-        this.audio = new AudioPlayer(ctx, 0.60);
+        this.audio = new AudioPlayer(ctx);
         this.assets = new Assets(this.audio, renderer);
         this.transition = new Transition();
         this.scenes = new SceneManager();
@@ -60,6 +60,7 @@ export class ProgramEvent {
 
         this.localizations = new Map<string, Localization> ();
 
+        // TODO: Unused, remove?
         this.cursorSpriteArea = new Rectangle(0, 0, 16, 16);
         this.cursorCenter = new Vector();
     }

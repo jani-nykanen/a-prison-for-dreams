@@ -72,17 +72,26 @@ export class Menu {
             event.audio.playSample(event.assets.getSample("choose"), 0.50);
         }
 
+        // Selection event
         if (event.input.getAction("select") == InputState.Pressed) {
 
             if (this.buttons[this.cursorPos].isDeactivated()) {
 
                 event.audio.playSample(event.assets.getSample("reject"), 0.50);
-                return;
             }
-
-            this.buttons[this.cursorPos].evaluateCallback(event);
-            event.audio.playSample(event.assets.getSample("select"), 0.45);
+            else if (this.buttons[this.cursorPos].evaluateCallback(event)) {
+            
+                event.audio.playSample(event.assets.getSample("select"), 0.45);
+            }
         }
+
+        // Left & right events
+        if ((event.input.leftPress() && this.buttons[this.cursorPos].evaluateLeftCallback(event)) ||
+            (event.input.rightPress() && this.buttons[this.cursorPos].evaluateRightCallback(event))) {
+
+            event.audio.playSample(event.assets.getSample("choose"), 0.50);
+        }
+
 
         this.handAnimation = (this.handAnimation + HAND_ANIMATION_SPEED*event.tick) % (Math.PI*2);
     }
@@ -123,7 +132,7 @@ export class Menu {
                 shadowOffset);
         }
 
-        for (let i = 0; i < this.buttons.length; ++ i) {
+        for (let i : number = 0; i < this.buttons.length; ++ i) {
 
             // This is a beautiful line
             const buttonColor : number[] = (i ==  this.cursorPos ? SELECTED_COLOR : BASE_COLOR)[Number(this.buttons[i].isDeactivated())];
