@@ -1,6 +1,8 @@
 import { Item } from "./items.js";
 import { clamp } from "../math/utility.js";
 import { Vector } from "../math/vector.js";
+import { ProgramEvent } from "../core/event.js";
+import { updateSpeedAxis } from "./utility.js";
 
 
 export const LOCAL_STORAGE_KEY : string = "the_end_of_dreams__savedata";
@@ -11,6 +13,10 @@ export class Progress {
 
     private health : number = 10;
     private maxHealth : number = 10;
+    // Don't ask why these are here
+    private healthBarTarget : number = 1.0;
+    private healthBarSpeed : number = 0.0;
+    private healthBarPos : number = 1.0;
 
     private bullets : number = 15;
     private maxBullets : number = 15;
@@ -51,6 +57,9 @@ export class Progress {
         }
         
         this.health = clamp(this.health + change, 0, this.maxHealth);
+
+        this.healthBarTarget =  this.health/this.maxHealth;
+        this.healthBarSpeed = Math.abs(change/this.maxHealth)/15.0;
     
         return change;
     }
@@ -93,10 +102,26 @@ export class Progress {
     public getCheckpointPosition = () : Vector => this.checkpointPosition.clone();
 
 
+    public getHealthBarPos = () : number => this.healthBarPos;
+
+
     public reset() : void {
 
         this.health = this.maxHealth;
         this.bullets = this.maxBullets;
+
+        this.healthBarPos = 1.0;
+        this.healthBarTarget = 1.0;
+    }
+
+
+    public update(event : ProgramEvent) : void {
+
+        this.healthBarPos = 
+            clamp(updateSpeedAxis(
+                    this.healthBarPos, this.healthBarTarget, this.healthBarSpeed*event.tick
+                ), 0.0, 1.0);
+        
     }
 
 

@@ -26,7 +26,6 @@
     "quit": "Return to the main menu?\nYour progress will be\nsaved.",
 
     "settings": [
-        "Toggle fullscreen",
         "Sound Volume",
         "Music Volume",
         "Back"

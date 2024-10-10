@@ -128,8 +128,8 @@ export class Game implements Scene {
         if (this.objects.hasPlayerDied()) {
 
             this.startGameOverTransition(event);
-            // return;
         }
+        this.progress.update(event);
 
         this.camera.update(event);
         this.limitCamera();

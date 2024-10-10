@@ -17,15 +17,9 @@ export class Settings {
 
         this.menu = new Menu(
         [
-            new MenuButton(text[0] ?? "null",
-                (event : ProgramEvent) : void => {
-
-                }
-            ),
-
             // NOTE: The actual button text will be set by the "activate" function, we just
             // pass something here to compute the correct size for the menu box.
-            new MenuButton((text[1] ?? "null") + ": 100%",
+            new MenuButton((text[0] ?? "null") + ": 100%",
                 undefined,
                 (event : ProgramEvent) : void => {
 
@@ -39,7 +33,7 @@ export class Settings {
                 }
             ),
 
-            new MenuButton((text[2] ?? "null") + ": 100%",
+            new MenuButton((text[1] ?? "null") + ": 100%",
                 undefined,
                 (event : ProgramEvent) : void => {
                     
@@ -53,7 +47,7 @@ export class Settings {
                 }
             ),
 
-            new MenuButton(text[3] ?? "null",
+            new MenuButton(text[2] ?? "null",
                 (event : ProgramEvent) : void => {
 
                     this.deactivate();
@@ -70,8 +64,8 @@ export class Settings {
 
         const text : string[] = event.localization?.getItem("settings") ?? [];
 
-        this.menu.changeButtonText(1, `${text[1]}: ${soundVolume}%`);
-        this.menu.changeButtonText(2, `${text[2]}: ${musicVolume}%`);
+        this.menu.changeButtonText(0, `${text[0]}: ${soundVolume}%`);
+        this.menu.changeButtonText(1, `${text[1]}: ${musicVolume}%`);
     }
 
 
