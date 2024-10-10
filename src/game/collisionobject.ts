@@ -235,4 +235,5 @@ export class CollisionObject extends GameObject {
     public doesTakeCollisions = () : boolean => this.takeCollisions;
     public doesIgnoreBottomLayer = () : boolean => this.ignoreBottomLayer;
     public doesIgnoreEvenSlopes = () : boolean => this.ignoreEvenSlopes;
+    public doesTouchSurface = () : boolean => this.touchSurface;
 }

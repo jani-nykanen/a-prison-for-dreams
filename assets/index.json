@@ -21,6 +21,7 @@
         {"name": "splinter", "path": "splinter.png"},
         {"name": "collectables", "path": "collectables.png"},
         {"name": "enemies", "path": "enemies.png"},
+        {"name": "npc", "path": "npc.png"},
 
         {"name": "hud", "path": "hud.png"},
 

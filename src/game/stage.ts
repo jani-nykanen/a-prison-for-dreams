@@ -214,7 +214,7 @@ export class Stage {
     }
 
 
-    public iterateObjectLayer(func : (x : number, y : number, objectID : number) => void) : void {
+    public iterateObjectLayer(func : (x : number, y : number, objectID : number, upperID? : number) => void) : void {
 
         const START_INDEX : number = 256;
 
@@ -225,7 +225,8 @@ export class Stage {
 
             for (let x = 0; x < this.width; ++ x) {
 
-                func(x, y, this.objectLayer[y*this.width + x] - START_INDEX);
+                const upperID : number = y > 0 ? this.objectLayer[(y - 1)*this.width + x] - START_INDEX : 0;
+                func(x, y, this.objectLayer[y*this.width + x] - START_INDEX, upperID);
             }
         }
     }

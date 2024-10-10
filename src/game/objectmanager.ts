@@ -18,6 +18,8 @@ import { AnimatedParticle } from "./animatedparticle.js";
 import { Progress } from "./progress.js";
 import { Vector } from "../math/vector.js";
 import { clamp, negMod } from "../math/utility.js";
+import { Interactable } from "./interactables/interactable.js";
+import { NPC } from "./interactables/npc.js";
 
 
 export class ObjectManager {
@@ -34,6 +36,10 @@ export class ObjectManager {
 
     private enemies : Enemy[];
     private visibleEnemies : VisibleObjectBuffer<Enemy>;
+
+    private interactables : Interactable[];
+    // Note to self: probably no reason to store visible interactables
+    // in their own array?
 
     private player : Player;
 
@@ -52,21 +58,27 @@ export class ObjectManager {
         this.enemies = new Array<Enemy> ();
         this.visibleEnemies = new VisibleObjectBuffer<Enemy> ();
 
+        this.interactables = new Array<Interactable> ();
+
         this.player = new Player(0, 0, this.projectiles, this.animatedParticles, this.flyingText, progress);
 
-        this.createObjects(stage);
+        this.createObjects(stage, false, event);
         this.initialCameraCheck(camera, event);
 
         progress.setCheckpointPosition(this.player.getPosition());
     }
 
 
-    private createObjects(stage : Stage, resetPlayer : boolean = false) : void {
+    private createObjects(stage : Stage, resetPlayer : boolean = false, event : ProgramEvent) : void {
 
-        stage.iterateObjectLayer((x : number, y : number, objID : number) : void => {
+        const bmpNPC : Bitmap | undefined = event.assets.getBitmap("npc");
+
+        stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
             const dx : number = (x + 0.5)*TILE_WIDTH;
             const dy : number = (y + 0.5)*TILE_HEIGHT;
+
+            const id : number = Math.max(0, upperID - 128);
 
             switch (objID) {
 
@@ -83,6 +95,12 @@ export class ObjectManager {
             case 2:
                 this.breakables.push(new Breakable(dx, dy, BreakableType.Crate, 
                     this.splinters, this.collectables));
+                break;
+
+            // NPC:
+            case 3:
+
+                this.interactables.push(new NPC(dx, dy, id, bmpNPC));
                 break;
 
             default:
@@ -206,10 +224,22 @@ export class ObjectManager {
     }
 
 
+    private updateInteractables(camera : Camera, event : ProgramEvent) : void {
+
+        for (const o of this.interactables) {
+
+            o.cameraCheck(camera, event);
+            o.update(event);
+            o.playerCollision(this.player, event);
+        }
+    }
+
+
     public update(camera : Camera, stage : Stage, event : ProgramEvent) : void {
 
         this.updateEnemies(camera, stage, event);
         this.updateBreakables(camera, stage, event);
+        this.updateInteractables(camera, event);
         this.updatePlayer(camera, stage, event);
 
         this.projectiles.update(event, camera, stage);
@@ -235,23 +265,33 @@ export class ObjectManager {
 
             o.cameraCheck(camera, event);
         }
+
+        for (const o of this.interactables) {
+
+            o.cameraCheck(camera, event);
+        }
     }
 
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
+        for (const o of this.interactables) {
+
+            o.draw(canvas);
+        }
+
+        const bmpBreakable : Bitmap | undefined = assets.getBitmap("breakable");
         for (const o of this.breakables) {
 
-            const bmpBreakable : Bitmap | undefined = assets.getBitmap("breakable");
             o.draw(canvas, undefined, bmpBreakable);
         }
 
         this.animatedParticles.draw(canvas, undefined, assets.getBitmap("particles_1"));
         this.splinters.draw(canvas, assets);
 
+        const bmpEnemies : Bitmap | undefined = assets.getBitmap("enemies");
         for (const o of this.enemies) {
 
-            const bmpEnemies : Bitmap | undefined = assets.getBitmap("enemies");
             o.draw(canvas, undefined, bmpEnemies);
         }
 
@@ -296,7 +336,7 @@ export class ObjectManager {
         this.enemies.length = 0;
         this.visibleEnemies.clear();
 
-        this.createObjects(stage, true);
+        this.createObjects(stage, true, event);
     
         const checkpoint : Vector = progress.getCheckpointPosition();
         this.player.setPosition(checkpoint.x, checkpoint.y, true);

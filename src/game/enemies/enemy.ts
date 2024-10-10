@@ -201,7 +201,7 @@ export class Enemy extends CollisionObject {
 
     public projectileCollision(p : Projectile, event : ProgramEvent) : void {
 
-        const KNOCKBACK_SPEED : number = 1.0;
+        const KNOCKBACK_SPEED : number = 1.25;
 
         if (!this.isActive() || !p.isActive()) {
 

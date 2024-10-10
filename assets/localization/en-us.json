@@ -29,6 +29,12 @@
         "Sound Volume",
         "Music Volume",
         "Back"
+    ],
+
+
+    "npc0": [
+        "I am test NPC. I have\nabsolute nothing\nsensible to say.",
+        "But you cannot stop me\nfrom saying things!"
     ]
 
 }
