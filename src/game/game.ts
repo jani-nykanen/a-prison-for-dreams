@@ -13,6 +13,8 @@ import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
 import { Pause } from "./pause.js";
 import { InputState } from "../core/inputstate.js";
+import { TextBox } from "../ui/textbox.js";
+import { ConfirmationBox } from "../ui/confirmationbox.js";
 
 
 export class Game implements Scene {
@@ -24,6 +26,7 @@ export class Game implements Scene {
     private objects : ObjectManager;
 
     private pause : Pause;
+    private dialogueBox : TextBox;
 
 
     constructor(event : ProgramEvent) { 
@@ -39,8 +42,11 @@ export class Game implements Scene {
         this.stage = new Stage(baseMap, collisionMap);
         this.camera = new Camera(0, 0, event);
         this.progress = new Progress();
-        this.objects = new ObjectManager(this.progress, this.stage, this.camera, event);
 
+        this.dialogueBox = new TextBox(true, 30, 5);
+        this.objects = new ObjectManager(
+            this.progress, this.dialogueBox, 
+            this.stage, this.camera, event);
         this.objects.centerCamera(this.camera);
 
         this.pause = new Pause(event,
@@ -49,6 +55,7 @@ export class Game implements Scene {
             (event : ProgramEvent) : void => this.quitToMainMenu(event)
         );
     }
+    
 
 
     private reset(event : ProgramEvent) : void {
@@ -111,6 +118,12 @@ export class Game implements Scene {
         }
 
         this.stage.update(event);
+        
+        if (this.dialogueBox.isActive()) {
+
+            this.dialogueBox.update(event);
+            return;
+        }
 
         if (event.transition.isActive()) {
 
@@ -163,6 +176,8 @@ export class Game implements Scene {
         drawHUD(canvas, assets, this.progress);
 
         this.pause.draw(canvas, assets);
+        this.dialogueBox.draw(canvas, assets, 
+            0, canvas.height/2 - this.dialogueBox.getHeight()*10/2 - 10);
     }
 
 

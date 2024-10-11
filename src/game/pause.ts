@@ -115,7 +115,7 @@ export class Pause {
         const text : string[] = event.localization?.getItem("savegame");
 
         this.gameSavedBox.addText([text[Number(result)]]);
-        this.gameSavedBox.activate(true, (event : ProgramEvent) : void => {
+        this.gameSavedBox.activate(true, null, (event : ProgramEvent) : void => {
 
             this.gameSavedBox.deactivate();
         });

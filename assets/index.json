@@ -24,6 +24,7 @@
         {"name": "npc", "path": "npc.png"},
 
         {"name": "hud", "path": "hud.png"},
+        {"name": "portraits", "path": "portraits.png"},
 
         {"name": "player", "path": "player.png"},
         {"name": "weapons", "path": "weapons.png"}

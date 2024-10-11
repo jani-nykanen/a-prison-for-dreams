@@ -74,7 +74,7 @@ window.onload = () => (async () => {
 
     try {
 
-        (new Program(ctx, WebGLRenderer, 256, 192, false, true, false, 768, 576)).run(initialEvent, onloadEvent, printError);
+        (new Program(ctx, WebGLRenderer, 256, 192, false, true, false, 768, 192)).run(initialEvent, onloadEvent, printError);
     }
     catch (e : any) {
 

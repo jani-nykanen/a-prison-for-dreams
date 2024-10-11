@@ -23,8 +23,10 @@ export class TextBox {
 
     private waitWave : number = 0;
 
-    private finishEvent : ((event : ProgramEvent) => void) | undefined = undefined;
+    private portraitID : number | null = null;
 
+    private finishEvent : ((event : ProgramEvent) => void) | undefined = undefined;
+    
 
     constructor(fixedSize : boolean = false, fixedWidth : number = 0, fixedHeight : number = 0) {   
 
@@ -51,17 +53,39 @@ export class TextBox {
     }
 
 
+    private drawIcon(canvas : Canvas, x : number, y : number) : void {
+
+        const WIDTH : number = 8;
+        const HEIGHT : number = 8;
+
+        const AMPLITUDE : number = 1;
+
+        const dx : number = x; 
+        const dy : number = y + Math.round(Math.sin(this.waitWave)*AMPLITUDE);
+
+        canvas.setColor(0, 0, 0);
+        canvas.fillRect(dx, dy, WIDTH, HEIGHT);
+        canvas.setColor(255, 255, 73);
+        canvas.fillRect(dx + 1, dy + 1, WIDTH - 2, HEIGHT - 2);
+        canvas.setColor();
+    }
+
+
     public addText(text : string[]) : void {
 
         this.textBuffer.push(...text);
     }
 
 
-    public activate(instant : boolean = false, 
+    public activate(instant : boolean = false, portraitID : number | null = undefined,
         finishEvent : ((event : ProgramEvent) => void) | undefined = undefined) : void {
 
-        if (this.textBuffer.length == 0)
+        this.portraitID = portraitID;
+
+        if (this.textBuffer.length == 0) {
+
             return;
+        }
 
         this.activeText = this.textBuffer.shift() ?? "";
 
@@ -156,7 +180,7 @@ export class TextBox {
 
 
     public draw(canvas : Canvas, assets : Assets, 
-        x : number = 0, y : number = 0, yoff : number = 2,
+        x : number = 0, y : number = 0, yoff : number = 2, 
         drawBox : boolean = true, drawIcon : boolean = true,
         boxColors : RGBA[] | undefined = undefined,
         drawShadow : boolean = true, shadowAlpha : number = 0.25, 
@@ -169,14 +193,14 @@ export class TextBox {
             return;
 
         const font : Bitmap | undefined  = assets.getBitmap("font");
-        const fontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
+        const bmpPortraits : Bitmap | undefined = assets.getBitmap("portraits");
 
         const charDim : number = (font?.width ?? 128)/16;
 
-        const w : number = this.width*charDim + SIDE_OFFSET*2;
+        const w : number = (this.width*charDim + SIDE_OFFSET*2);
         const h : number = this.height*(charDim + yoff) + SIDE_OFFSET*2;
 
-        const dx : number = x + canvas.width/2 - w/2;
+        let dx : number = x + canvas.width/2 - w/2;
         const dy : number = y + canvas.height/2 - h/2; 
 
         if (drawBox) {
@@ -187,18 +211,29 @@ export class TextBox {
                 boxColors, drawShadow, shadowAlpha, shadowOffset);
         }
 
-        const str : string = this.activeText?.substring(0, this.charPos) ?? "";
-        canvas.drawText(font, str, dx + SIDE_OFFSET, dy + SIDE_OFFSET, 0, yoff);
 
         if (this.finished && drawIcon) {
 
-            canvas.setColor(255, 255, 0);
-            canvas.drawBitmap(fontOutlines, Flip.None, 
-                dx + w - 8, 
-                dy + h - 7 + Math.round(Math.sin(this.waitWave)*1), 
-                240, 16, 16, 16);
-            canvas.setColor();
+            this.drawIcon(canvas, dx + w - 3, dy + h - 3);
         }
+
+        const ph : number = bmpPortraits?.height ?? 0;
+        if (this.portraitID !== null) {
+
+            canvas.setColor(255, 0, 0);
+            canvas.fillRect(dx + 4, dy + h/2 - ph/2, 48, 48);
+            canvas.setColor();
+
+            canvas.drawBitmap(bmpPortraits, Flip.None, 
+                dx + 4, dy + h/2 - ph/2, this.portraitID*ph, 0, ph, ph);
+        }
+
+        const textAreaShift : number = this.portraitID === null ? 0 : ph + 8;
+        dx += textAreaShift;
+
+        const str : string = this.activeText?.substring(0, this.charPos) ?? "";
+        canvas.drawText(font, str, dx + SIDE_OFFSET, dy + SIDE_OFFSET, 0, yoff);
+
     }
 
 
