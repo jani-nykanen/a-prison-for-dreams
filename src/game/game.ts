@@ -103,6 +103,24 @@ export class Game implements Scene {
     }
 
 
+    private drawDialogueBox(canvas : Canvas, assets : Assets) : void {
+
+        const boxHeight : number = this.dialogueBox.getHeight()*10;
+
+        let dy : number = 0;
+        if (this.objects.getRelativePlayerPosition(this.stage, this.camera).y > this.camera.height/2 + boxHeight/2) {
+
+            dy = -canvas.height/2 + boxHeight/2 + 8;
+        }
+        else {
+
+            dy = canvas.height/2 - boxHeight/2 - 10;
+        }
+
+        this.dialogueBox.draw(canvas, assets,  0, dy);
+    }
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         // ...
@@ -176,8 +194,7 @@ export class Game implements Scene {
         drawHUD(canvas, assets, this.progress);
 
         this.pause.draw(canvas, assets);
-        this.dialogueBox.draw(canvas, assets, 
-            0, canvas.height/2 - this.dialogueBox.getHeight()*10/2 - 10);
+        this.drawDialogueBox(canvas, assets);
     }
 
 

@@ -244,8 +244,8 @@ export class ObjectManager {
 
         this.updateEnemies(camera, stage, event);
         this.updateBreakables(camera, stage, event);
-        this.updateInteractables(camera, event);
         this.updatePlayer(camera, stage, event);
+        this.updateInteractables(camera, event);
 
         this.projectiles.update(event, camera, stage);
         this.projectiles.playerCollision(this.player, event);

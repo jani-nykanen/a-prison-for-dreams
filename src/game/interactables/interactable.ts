@@ -5,6 +5,7 @@ import { Player } from "../player.js";
 import { ProgramEvent } from "../../core/event.js";
 import { Vector } from "../../math/vector.js";
 import { Assets } from "../../core/assets.js";
+import { Rectangle } from "../../math/rectangle.js";
 
 
 // Yes, "Interactable" is a word, I checked the
@@ -27,12 +28,15 @@ export class Interactable extends GameObject {
 
         this.cameraCheckArea = new Vector(32, 32);
 
+        this.hitbox = new Rectangle(0, 2, 12, 12);
+
         this.bitmap = bitmap;
     }
 
 
     protected playerEvent?(player : Player, event : ProgramEvent) : void;
     protected interactionEvent?(player : Player, event : ProgramEvent) : void;
+    protected playerCollisionEvent?(player : Player, event : ProgramEvent) : void;
 
 
     public playerCollision(player : Player, event : ProgramEvent) : void {
@@ -44,14 +48,20 @@ export class Interactable extends GameObject {
 
         this.playerEvent?.(player, event);
 
+        if (this.playerCollisionEvent !== undefined && this.overlayObject(player)) {
+
+            this.playerCollisionEvent(player, event);
+        }
+
         if (this.canBeInteracted && player.doesTouchSurface()) {
 
-            if (this.overlayObject(player)) {
+            if (this.interactionEvent !== undefined && this.overlayObject(player)) {
                 
-                // TODO: Show "Press Up Key" icon
+                player.showIcon(1);
                 if (event.input.upPress()) {
 
-                    this.interactionEvent?.(player, event);
+                    player.showIcon(0);
+                    this.interactionEvent(player, event);
                 }
             }
         }

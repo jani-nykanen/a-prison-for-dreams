@@ -220,7 +220,7 @@ export class TextBox {
         const ph : number = bmpPortraits?.height ?? 0;
         if (this.portraitID !== null) {
 
-            canvas.setColor(255, 0, 0);
+            canvas.setColor(0, 0, 0, 0.5);
             canvas.fillRect(dx + 4, dy + h/2 - ph/2, 48, 48);
             canvas.setColor();
 

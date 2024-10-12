@@ -25,6 +25,7 @@
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},
+        {"name": "icons", "path": "icons.png"},
 
         {"name": "player", "path": "player.png"},
         {"name": "weapons", "path": "weapons.png"}

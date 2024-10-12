@@ -20,6 +20,8 @@ export class NPC extends Interactable {
 
         this.id = id - 1;
         this.dialogueBox = dialogueBox;
+
+        this.hitbox.w = 12;
     }
 
 

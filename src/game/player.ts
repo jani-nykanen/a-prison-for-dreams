@@ -84,6 +84,9 @@ export class Player extends CollisionObject {
     private dustTimer : number = 0;
     private deathTimer : number = 0;
 
+    private iconType : number = 0;
+    private iconSprite : Sprite;
+
     private readonly projectiles : ProjectileGenerator;
     private readonly particles : ObjectGenerator<AnimatedParticle, void>;
     private readonly flyingText : ObjectGenerator<FlyingText, void>;
@@ -116,6 +119,8 @@ export class Player extends CollisionObject {
         this.swordHitbox = new Rectangle();
 
         this.dir = 1;
+    
+        this.iconSprite = new Sprite(16, 16);
     }
 
 
@@ -631,10 +636,24 @@ export class Player extends CollisionObject {
         this.sprite.setFrame(9, row);
     }
 
+
+    private animateIcon(event : ProgramEvent) : void {
+
+        const ANIMATION_SPEED : number = 20;
+
+        this.iconSprite.animate(this.iconType - 1, 0, 1, ANIMATION_SPEED, event.tick);
+    }   
+
     
     private animate(event : ProgramEvent) : void {
 
+        
         this.flip = this.dir > 0 ? Flip.None : Flip.Horizontal;
+
+        if (this.iconType > 0) {
+
+            this.animateIcon(event);
+        }
 
         if (this.powerAttackTimer > 0) {
 
@@ -799,9 +818,7 @@ export class Player extends CollisionObject {
 
         this.touchSurface = false;
         this.underWater = false;
-
-        // Ignore the bottom layer slopes if dashing.
-        // this.ignoreBottomLayer = this.dashWait <= 0 && this.dashing;
+        this.iconType = 0;
     }
 
 
@@ -1069,6 +1086,15 @@ export class Player extends CollisionObject {
             return;
         }
 
+        if (this.iconType > 0) {
+
+            const bmpIcon : Bitmap | undefined = assets.getBitmap("icons");
+
+            canvas.setAlpha(0.75);
+            this.iconSprite.draw(canvas, bmpIcon, this.pos.x - 8, this.pos.y - 24);
+            canvas.setAlpha();
+        }
+
         const flicker : boolean = 
             this.knockbackTimer <= 0 &&
             this.hurtTimer > 0 && 
@@ -1167,6 +1193,7 @@ export class Player extends CollisionObject {
         this.shooting = false;
         this.charging = false;
         this.downAttacking = false;
+        this.iconType = 0;
         
         this.downAttackWait = 0;
         this.hurtTimer = 0;
@@ -1250,6 +1277,12 @@ export class Player extends CollisionObject {
         
         this.stats.updateHealth(-this.stats.getHealth());
         this.initializeDeath(event);
+    }
+
+
+    public showIcon(type : number = 0) : void {
+
+        this.iconType = type;
     }
 }
 
