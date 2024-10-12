@@ -394,6 +394,8 @@ export class Player extends CollisionObject {
                 this.downAttacking = true;
                 this.rocketPackActive = false;
                 this.speed.y = DOWN_ATTACK_JUMP;
+                this.charging = false;
+
                 return;
             }
 

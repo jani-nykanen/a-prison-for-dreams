@@ -364,6 +364,11 @@ export class ObjectManager {
 
         this.centerCamera(camera);
         this.initialCameraCheck(camera, event);
+
+        for (const o of this.interactables) {
+
+            o.playerCollision(this.player, event, true);
+        }
     }
 
 

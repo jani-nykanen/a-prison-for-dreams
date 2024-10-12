@@ -36,13 +36,13 @@ export class Interactable extends GameObject {
 
     protected playerEvent?(player : Player, event : ProgramEvent) : void;
     protected interactionEvent?(player : Player, event : ProgramEvent) : void;
-    protected playerCollisionEvent?(player : Player, event : ProgramEvent) : void;
+    protected playerCollisionEvent?(player : Player, event : ProgramEvent, initialCollision? : boolean) : void;
 
 
     public postDraw?(canvas : Canvas, assets? : Assets) : void;
 
 
-    public playerCollision(player : Player, event : ProgramEvent) : void {
+    public playerCollision(player : Player, event : ProgramEvent, initialCollision : boolean = false) : void {
 
         if (!this.isActive() || !player.isActive()) {
 
@@ -53,7 +53,7 @@ export class Interactable extends GameObject {
 
         if (this.playerCollisionEvent !== undefined && this.overlayObject(player)) {
 
-            this.playerCollisionEvent(player, event);
+            this.playerCollisionEvent(player, event, initialCollision);
         }
 
         if (this.canBeInteracted && player.doesTouchSurface()) {
