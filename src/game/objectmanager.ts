@@ -21,6 +21,7 @@ import { clamp, negMod } from "../math/utility.js";
 import { Interactable } from "./interactables/interactable.js";
 import { NPC } from "./interactables/npc.js";
 import { TextBox } from "../ui/textbox.js";
+import { Checkpoint } from "./interactables/checkpoint.js";
 
 
 export class ObjectManager {
@@ -67,16 +68,18 @@ export class ObjectManager {
 
         this.dialogueBox = dialogueBox;
 
-        this.createObjects(dialogueBox, stage, false, event);
+        this.createObjects(stage, false, event);
         this.initialCameraCheck(camera, event);
 
         progress.setCheckpointPosition(this.player.getPosition());
     }
 
 
-    private createObjects(dialogueBox : TextBox, stage : Stage, resetPlayer : boolean = false, event : ProgramEvent) : void {
+    private createObjects(stage : Stage, resetPlayer : boolean = false, event : ProgramEvent) : void {
 
         const bmpNPC : Bitmap | undefined = event.assets.getBitmap("npc");
+        const bmpCheckpoint : Bitmap | undefined = event.assets.getBitmap("checkpoint");
+
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -106,6 +109,12 @@ export class ObjectManager {
             case 3:
 
                 this.interactables.push(new NPC(dx, dy, id, bmpNPC, this.dialogueBox));
+                break;
+
+            // Checkpoint
+            case 4:
+
+                this.interactables.push(new Checkpoint(dx, dy, bmpCheckpoint));    
                 break;
 
             default:
@@ -304,6 +313,11 @@ export class ObjectManager {
         this.player.draw(canvas, assets);
         this.projectiles.draw(canvas, assets);
 
+        for (const o of this.interactables) {
+
+            o.postDraw?.(canvas, assets);
+        }
+
         this.flyingText.draw(canvas, undefined, assets.getBitmap("font_tiny"));
     }
 
@@ -343,7 +357,7 @@ export class ObjectManager {
 
         this.interactables.length = 0;
 
-        this.createObjects(this.dialogueBox, stage, true, event);
+        this.createObjects(stage, true, event);
     
         const checkpoint : Vector = progress.getCheckpointPosition();
         this.player.setPosition(checkpoint.x, checkpoint.y, true);

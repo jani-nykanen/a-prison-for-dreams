@@ -39,6 +39,9 @@ export class Interactable extends GameObject {
     protected playerCollisionEvent?(player : Player, event : ProgramEvent) : void;
 
 
+    public postDraw?(canvas : Canvas, assets? : Assets) : void;
+
+
     public playerCollision(player : Player, event : ProgramEvent) : void {
 
         if (!this.isActive() || !player.isActive()) {
@@ -77,4 +80,5 @@ export class Interactable extends GameObject {
 
         this.sprite.draw(canvas, this.bitmap, this.pos.x - 12, this.pos.y - 16, this.flip);
     }
+
 }

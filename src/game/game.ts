@@ -75,7 +75,7 @@ export class Game implements Scene {
         }
         catch (e) {
 
-            console.error("Failed to save progress: " + e["message"]);
+            console.error("Not-so-fatal error: Failed to save progress: " + e["message"]);
         }
 
         throw new Error("Nope, not yet.");

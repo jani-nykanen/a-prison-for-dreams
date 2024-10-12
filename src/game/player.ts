@@ -87,6 +87,8 @@ export class Player extends CollisionObject {
     private iconType : number = 0;
     private iconSprite : Sprite;
 
+    private checkpointObject : GameObject | undefined = undefined;
+
     private readonly projectiles : ProjectileGenerator;
     private readonly particles : ObjectGenerator<AnimatedParticle, void>;
     private readonly flyingText : ObjectGenerator<FlyingText, void>;
@@ -1284,5 +1286,16 @@ export class Player extends CollisionObject {
 
         this.iconType = type;
     }
+
+
+    public setCheckpointObject(o : GameObject | undefined, shift : Vector = new Vector()) : void {
+
+        this.checkpointObject = o;
+        
+        this.stats.setCheckpointPosition(Vector.add(o.getPosition(), shift));
+    }
+
+
+    public isCheckpointObject = (o : GameObject | undefined) : boolean => this.checkpointObject === o;
 }
 
