@@ -40,6 +40,13 @@
 
     "npc1": [
         "Mushrooms. Oh boy,\nhow I love mushroom!"
+    ],
+
+
+    "item0": [
+
+        "You obtain a DUMMY ITEM!",
+        "It reminds you of your child-\nhood. What a dummy you were!"
     ]
 
 }

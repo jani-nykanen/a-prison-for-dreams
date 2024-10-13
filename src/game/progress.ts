@@ -1,4 +1,3 @@
-import { Item } from "./items.js";
 import { clamp } from "../math/utility.js";
 import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
@@ -27,7 +26,7 @@ export class Progress {
 
     private money : number = 0;
 
-    private obtainedItems : Map<Item, boolean>;
+    private obtainedItems : boolean[]
 
     private checkpointPosition : Vector;
 
@@ -37,14 +36,20 @@ export class Progress {
 
     constructor() {
 
-        this.obtainedItems = new Map<Item, boolean> ();
+        this.obtainedItems = new Array<boolean> ();
         this.checkpointPosition = new Vector();
     }
 
 
-    public getItem(item : Item) : boolean {
+    public obtainItem(itemID : number) : void {
 
-        return this.obtainedItems.get(item) ?? false;
+        this.obtainedItems[itemID] = true;
+    }
+
+
+    public hasItem(itemID : number) : boolean {
+
+        return this.obtainedItems[itemID] ?? false;
     }
 
 

@@ -109,7 +109,7 @@ export class Input {
             stick.x = 1;
         }
         if ((this.keyboard.getKeyState("ArrowUp") & InputState.DownOrPressed) == 1  ||
-            (this.keyboard.getKeyState("KeyS") & InputState.DownOrPressed) == 1 ||
+            (this.keyboard.getKeyState("KeyW") & InputState.DownOrPressed) == 1 ||
             (this.gamepad.getButtonState(12) & InputState.DownOrPressed) == 1) {
 
             stick.y = -1;

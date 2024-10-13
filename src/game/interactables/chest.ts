@@ -1,7 +1,7 @@
 import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Flip } from "../../gfx/interface.js";
 import { TextBox } from "../../ui/textbox.js";
-import { Player } from "../player.js";
+import { Player, WaitType } from "../player.js";
 import { Interactable } from "./interactable.js";
 
 
@@ -45,7 +45,7 @@ export class Chest extends Interactable {
 
         if (this.opened) {
 
-            this.sprite.setFrame(4, this.type - 1);
+            // this.sprite.setFrame(4, this.type - 1);
             return;
         }
 
@@ -64,22 +64,35 @@ export class Chest extends Interactable {
 
         if (initial) {
 
-            // TODO: Check if the player has the item contained in the chest
+            if (player.stats.hasItem(this.id)) {
+
+                this.opened = true;
+                this.canBeInteracted = false;
+
+                this.sprite.setFrame(4, this.type - 1);
+            }
         }
     }
 
 
     protected interactionEvent(player : Player, event : ProgramEvent) : void {
         
-        /*
-        const text : string[] = event.localization?.getItem("npc" + String(this.id)) ?? ["null"];
-
-        this.dialogueBox.addText(text);
-        this.dialogueBox.activate(false, 0);
-        */
+        const OPEN_TIME : number = 30;
 
         this.opened = true;
         this.canBeInteracted = false;
+
+        this.sprite.setFrame(4, this.type - 1);
+        player.startWaiting(OPEN_TIME, WaitType.HoldingItem, this.id, (event : ProgramEvent) : void => {
+
+            const text : string[] = event.localization?.getItem("item" + String(this.id)) ?? ["null"];
+
+            this.dialogueBox.addText(text);
+            this.dialogueBox.activate(false);
+
+            player.stats.obtainItem(this.id);
+            player.setCheckpointObject(this);
+        });
     }
 
 }

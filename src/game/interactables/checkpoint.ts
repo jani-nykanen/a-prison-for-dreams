@@ -189,8 +189,6 @@ export class Checkpoint extends Interactable {
         const dy : number = this.initialY - 16 + 
             TEXT_TARGET_Y*(1.0 - Math.max(0, (this.textTimer - TEXT_STOP_TIME)/(TEXT_TIME - TEXT_STOP_TIME)));
 
-        canvas.setColor(255, 255, 73);
         canvas.drawBitmap(this.bitmap, Flip.None, this.pos.x - 24, dy, 0, 24, 48, 8);
-        canvas.setColor();
     }
 }

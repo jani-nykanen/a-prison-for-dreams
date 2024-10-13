@@ -262,6 +262,12 @@ export class ObjectManager {
 
     public update(camera : Camera, stage : Stage, event : ProgramEvent) : void {
 
+        if (this.player.isWaiting()) {
+
+            this.player.update(event);
+            return;
+        }
+
         this.updateEnemies(camera, stage, event);
         this.updateBreakables(camera, stage, event);
         this.updatePlayer(camera, stage, event);
@@ -328,6 +334,7 @@ export class ObjectManager {
 
             o.postDraw?.(canvas, assets);
         }
+        this.player.postDraw(canvas, assets);
 
         this.flyingText.draw(canvas, undefined, assets.getBitmap("font_tiny"));
     }

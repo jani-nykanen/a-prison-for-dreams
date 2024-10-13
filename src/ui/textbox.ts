@@ -77,7 +77,7 @@ export class TextBox {
     }
 
 
-    public activate(instant : boolean = false, portraitID : number | null = undefined,
+    public activate(instant : boolean = false, portraitID : number | null = null,
         finishEvent : ((event : ProgramEvent) => void) | undefined = undefined) : void {
 
         this.portraitID = portraitID;

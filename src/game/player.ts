@@ -40,6 +40,13 @@ const enum ChargeType {
 };
 
 
+export const enum WaitType {
+
+    Unknown = 0,
+    HoldingItem = 1
+};
+
+
 export class Player extends CollisionObject {
 
 
@@ -88,6 +95,13 @@ export class Player extends CollisionObject {
     private iconSprite : Sprite;
 
     private checkpointObject : GameObject | undefined = undefined;
+
+    private waitActive : boolean = false;
+    private waitTimer : number = 0;
+    private initialWaitTimer : number = 0;
+    private waitType : WaitType = WaitType.Unknown;
+    private waitParameter : number = 0;
+    private waitCeaseEvent : ((event : ProgramEvent) => void) | undefined = undefined;
 
     private readonly projectiles : ProjectileGenerator;
     private readonly particles : ObjectGenerator<AnimatedParticle, void>;
@@ -395,6 +409,8 @@ export class Player extends CollisionObject {
                 this.rocketPackActive = false;
                 this.speed.y = DOWN_ATTACK_JUMP;
                 this.charging = false;
+                
+                this.jumpTimer = 0;
 
                 return;
             }
@@ -960,6 +976,20 @@ export class Player extends CollisionObject {
 
     protected updateEvent(event: ProgramEvent) : void {
         
+        if (this.waitTimer > 0) {
+
+            this.target.zeros();
+            this.speed.zeros();
+
+            this.waitTimer -= event.tick;
+            if (this.waitTimer <= 0) {
+
+                this.waitCeaseEvent?.(event);
+            }
+            return;
+        }
+        this.waitActive = false;
+
         this.control(event);
         this.animate(event);
         this.updateTimers(event);
@@ -1168,6 +1198,30 @@ export class Player extends CollisionObject {
     }
 
 
+    public postDraw(canvas : Canvas, assets : Assets): void {
+        
+        const ITEM_LIFT : number = 16;
+        const ITEM_START_YOFF : number = 8;
+
+        if (!this.exist) {
+
+            return;
+        }
+        
+        // TODO: Split to own function?
+        if (this.waitActive && this.waitType == WaitType.HoldingItem) {
+
+            const bmpItemIcons : Bitmap | undefined = assets.getBitmap("item_icons");
+
+            const yoff : number = ITEM_START_YOFF + (1.0 - this.waitTimer/this.initialWaitTimer)*ITEM_LIFT;
+
+            canvas.drawBitmap(bmpItemIcons, Flip.None, 
+                this.pos.x - 8, this.pos.y - yoff, 
+                this.waitParameter*16, 0, 16, 16);
+        }
+    }
+
+
     public targetCamera(camera : Camera): void {
 
         camera.followPoint(this.pos);
@@ -1299,5 +1353,40 @@ export class Player extends CollisionObject {
 
 
     public isCheckpointObject = (o : GameObject | undefined) : boolean => this.checkpointObject === o;
+    
+
+    public startWaiting(time : number, 
+        type : WaitType = WaitType.Unknown, 
+        waitParam : number = 0,
+        event? : (event : ProgramEvent) => void) : void {
+
+        this.waitActive = true;
+
+        this.waitTimer = time;
+        this.initialWaitTimer = time;
+
+        this.waitType = type;
+        this.waitParameter = waitParam;
+        this.waitCeaseEvent = event;
+
+        this.hurtTimer = 0;
+        this.charging = false;
+        this.crouching = false;
+        this.crouchFlickerTimer = 0;
+
+        switch (type) {
+
+        case WaitType.HoldingItem:
+
+            this.sprite.setFrame(7, 3);
+            break;
+
+        default:
+            break;
+        }
+    }
+
+
+    public isWaiting = () : boolean => this.waitTimer > 0;
 }
 

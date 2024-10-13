@@ -50,6 +50,8 @@ export class Mouse {
 
             // window.focus();
         });
+
+        window.addEventListener("contextmenu", (ev : MouseEvent) => {ev.preventDefault();});
     }
 
 
