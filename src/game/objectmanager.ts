@@ -22,6 +22,7 @@ import { Interactable } from "./interactables/interactable.js";
 import { NPC } from "./interactables/npc.js";
 import { TextBox } from "../ui/textbox.js";
 import { Checkpoint } from "./interactables/checkpoint.js";
+import { Chest, ChestType } from "./interactables/chest.js";
 
 
 export class ObjectManager {
@@ -79,7 +80,7 @@ export class ObjectManager {
 
         const bmpNPC : Bitmap | undefined = event.assets.getBitmap("npc");
         const bmpCheckpoint : Bitmap | undefined = event.assets.getBitmap("checkpoint");
-
+        const bmpChest : Bitmap | undefined = event.assets.getBitmap("chest");
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -115,6 +116,16 @@ export class ObjectManager {
             case 4:
 
                 this.interactables.push(new Checkpoint(dx, dy, bmpCheckpoint));    
+                break;
+
+            // Chests
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+
+                this.interactables.push(new Chest(dx, dy, id, 
+                    (objID - 4) as ChestType, bmpChest, this.dialogueBox));
                 break;
 
             default:

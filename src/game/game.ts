@@ -132,6 +132,12 @@ export class Game implements Scene {
 
     public update(event : ProgramEvent) : void {
 
+        if (this.progress.wasGameSaved()) {
+
+            this.gameSaveMode = this.progress.wasGameSavingSuccessful() ? 1 : 2;
+            this.gameSaveTimer = GAME_SAVE_ANIMATION_TIME;
+        }
+
         if (this.gameSaveTimer > 0) {
 
             this.gameSaveTimer -= event.tick;
@@ -176,12 +182,6 @@ export class Game implements Scene {
 
         this.camera.update(event);
         this.limitCamera();
-
-        if (this.progress.wasGameSaved()) {
-
-            this.gameSaveMode = this.progress.wasGameSavingSuccessful() ? 1 : 2;
-            this.gameSaveTimer = GAME_SAVE_ANIMATION_TIME;
-        }
     }
 
 
@@ -210,13 +210,15 @@ export class Game implements Scene {
         canvas.moveTo();
 
         drawHUD(canvas, assets, this.progress);
+
+        this.pause.draw(canvas, assets);
+        this.drawDialogueBox(canvas, assets);
+
         if (this.gameSaveTimer > 0) {
 
             drawGameSavingIcon(canvas, assets, this.gameSaveTimer, this.gameSaveMode == 1);
         }
 
-        this.pause.draw(canvas, assets);
-        this.drawDialogueBox(canvas, assets);
     }
 
 
