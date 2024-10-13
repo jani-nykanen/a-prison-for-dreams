@@ -8,7 +8,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { ObjectManager } from "./objectmanager.js";
 import { Assets } from "../core/assets.js";
 import { LOCAL_STORAGE_KEY, Progress } from "./progress.js";
-import { drawHUD } from "./hud.js";
+import { drawGameSavingIcon, drawHUD, GAME_SAVE_ANIMATION_TIME } from "./hud.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
 import { Pause } from "./pause.js";
@@ -27,6 +27,9 @@ export class Game implements Scene {
 
     private pause : Pause;
     private dialogueBox : TextBox;
+
+    private gameSaveTimer : number = 0;
+    private gameSaveMode : number = 0;
 
 
     constructor(event : ProgramEvent) { 
@@ -129,6 +132,15 @@ export class Game implements Scene {
 
     public update(event : ProgramEvent) : void {
 
+        if (this.gameSaveTimer > 0) {
+
+            this.gameSaveTimer -= event.tick;
+            if (this.gameSaveTimer <= 0) {
+
+                this.gameSaveMode = 0;
+            }
+        }
+
         if (this.pause.isActive() && !event.transition.isActive()) {
             
             this.pause.update(event);
@@ -164,6 +176,12 @@ export class Game implements Scene {
 
         this.camera.update(event);
         this.limitCamera();
+
+        if (this.progress.wasGameSaved()) {
+
+            this.gameSaveMode = this.progress.wasGameSavingSuccessful() ? 1 : 2;
+            this.gameSaveTimer = GAME_SAVE_ANIMATION_TIME;
+        }
     }
 
 
@@ -192,6 +210,10 @@ export class Game implements Scene {
         canvas.moveTo();
 
         drawHUD(canvas, assets, this.progress);
+        if (this.gameSaveTimer > 0) {
+
+            drawGameSavingIcon(canvas, assets, this.gameSaveTimer, this.gameSaveMode == 1);
+        }
 
         this.pause.draw(canvas, assets);
         this.drawDialogueBox(canvas, assets);

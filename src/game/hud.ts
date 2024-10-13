@@ -3,6 +3,10 @@ import { Align, Bitmap, Canvas, Effect, Flip, TransformTarget } from "../gfx/int
 import { Assets } from "../core/assets.js";
 
 
+export const GAME_SAVE_ANIMATION_TIME : number = 120;
+export const GAME_SAVE_ICON_APPEAR_TIME : number = 15;
+
+
 const HEALTH_BAR_WIDTH : number = 64;
 const HEALTH_BAR_HEIGHT : number = 13;
 
@@ -69,4 +73,46 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
     const strAmmo : string = String(stats.getBulletCount()) + "/" + String(stats.getMaxBulletCount());
     canvas.drawText(bmpFontOutlines, strAmmo, 13, canvas.height - 16, -7, 0);
     canvas.drawBitmap(bmpHUD, Flip.None, 0, canvas.height - 17, 32, 0, 16, 16);
+}
+
+
+export const drawGameSavingIcon = (canvas : Canvas, assets : Assets, timer : number, success : boolean) : void => {
+
+    const XOFF : number = 17;
+    const YOFF : number = 17;
+    const FRAME_TIME : number = 6;
+
+    const bmpHUD : Bitmap | undefined = assets.getBitmap("hud");
+
+    if (!success) {
+
+        if (Math.floor(timer/8) % 2 == 0) {
+
+            return;
+        }
+
+        canvas.drawBitmap(bmpHUD, Flip.None, canvas.width - XOFF - 12, canvas.height - YOFF, 0, 16, 16, 16);
+        canvas.drawBitmap(bmpHUD, Flip.None, canvas.width - XOFF, canvas.height - YOFF, 48, 0, 16, 16);
+
+        return;
+    }
+
+    const initialTime : number = GAME_SAVE_ANIMATION_TIME - GAME_SAVE_ICON_APPEAR_TIME;
+
+    let t : number = 1.0;
+    if (timer >= GAME_SAVE_ANIMATION_TIME - GAME_SAVE_ICON_APPEAR_TIME) {
+
+        t = 1.0 - (timer - initialTime)/GAME_SAVE_ICON_APPEAR_TIME;
+    }
+    else if (timer <= GAME_SAVE_ICON_APPEAR_TIME) {
+
+        t = timer/GAME_SAVE_ICON_APPEAR_TIME;
+    }
+
+    const frame : number = Math.floor(timer/FRAME_TIME) % 8;
+    
+    const dx : number = canvas.width - XOFF*t;
+    const dy : number = canvas.height - YOFF;
+
+    canvas.drawBitmap(bmpHUD, Flip.None, dx, dy, frame*16, 16, 16, 16);
 }

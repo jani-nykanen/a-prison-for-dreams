@@ -31,6 +31,9 @@ export class Progress {
 
     private checkpointPosition : Vector;
 
+    private gameSaved : boolean = false;
+    private gameSavedSuccess : boolean = false;
+
 
     constructor() {
 
@@ -127,14 +130,35 @@ export class Progress {
 
     public save(key : string) : boolean {
 
+        this.gameSaved = true;
         try {
 
-            // TODO: Save progress
+            // throw new Error("Lol");
+            /*
+             TODO: Save to local storage
+             */
+
+            this.gameSavedSuccess = true;
         }
         catch (e) {
 
+            console.error("Not-so-fatal error: failed to save the game: " + e["message"]);
+
+            this.gameSavedSuccess = false;
             return false;
         }
         return true;
     }
+
+
+    public wasGameSaved() : boolean {
+
+        const returnValue : boolean = this.gameSaved;
+        this.gameSaved = false;
+
+        return returnValue;
+    }
+
+
+    public wasGameSavingSuccessful = () : boolean => this.gameSavedSuccess;
 }

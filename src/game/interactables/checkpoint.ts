@@ -4,6 +4,7 @@ import { Align, Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Rectangle } from "../../math/rectangle.js";
 import { Vector } from "../../math/vector.js";
 import { Player } from "../player.js";
+import { LOCAL_STORAGE_KEY } from "../progress.js";
 import { Interactable } from "./interactable.js";
 
 
@@ -120,6 +121,8 @@ export class Checkpoint extends Interactable {
 
         this.liftTimer = 0;
         this.textTimer = TEXT_TIME;
+
+        player.stats.save(LOCAL_STORAGE_KEY);
     }
 
 
