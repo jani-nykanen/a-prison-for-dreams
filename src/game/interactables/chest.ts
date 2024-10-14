@@ -2,6 +2,7 @@ import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Flip } from "../../gfx/interface.js";
 import { TextBox } from "../../ui/textbox.js";
 import { Player, WaitType } from "../player.js";
+import { LOCAL_STORAGE_KEY } from "../progress.js";
 import { Interactable } from "./interactable.js";
 
 
@@ -88,7 +89,10 @@ export class Chest extends Interactable {
             const text : string[] = event.localization?.getItem("item" + String(this.id)) ?? ["null"];
 
             this.dialogueBox.addText(text);
-            this.dialogueBox.activate(false);
+            this.dialogueBox.activate(false, null, (event : ProgramEvent) : void => {
+
+                player.stats.save(LOCAL_STORAGE_KEY);
+            });
 
             player.stats.obtainItem(this.id);
             player.setCheckpointObject(this);
