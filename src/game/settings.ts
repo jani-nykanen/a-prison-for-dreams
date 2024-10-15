@@ -1,8 +1,8 @@
 import { Assets } from "../core/assets.js";
 import { ProgramEvent } from "../core/event.js";
 import { Canvas } from "../gfx/interface.js";
-import { Menu } from "./menu.js";
-import { MenuButton } from "./menubutton.js";
+import { Menu } from "../ui/menu.js";
+import { MenuButton } from "../ui/menubutton.js";
 
 
 export class Settings {
@@ -75,9 +75,9 @@ export class Settings {
     }
 
 
-    public draw(canvas : Canvas, assets : Assets) : void {
+    public draw(canvas : Canvas, assets : Assets, xoff : number = 0, yoff : number = 0) : void {
 
-        this.menu.draw(canvas, assets);
+        this.menu.draw(canvas, assets, xoff, yoff);
     }
 
 

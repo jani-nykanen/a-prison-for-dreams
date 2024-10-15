@@ -170,10 +170,10 @@ export class Enemy extends CollisionObject {
             const ppos : Vector = player.getPosition();
             const dir : Vector = Vector.direction(ppos, this.pos);
 
-            let knockback : number = KNOCKBACK_SPEED*(this.friction.x/0.10);
+            let knockback : number = KNOCKBACK_SPEED*(this.friction.x/0.10)*player.getKnockbackFactor();
             if (player.isChargeAttacking()) {
 
-                knockback *= POWER_ATTACK_KNOCK_MULTIPLIER;
+                // knockback *= POWER_ATTACK_KNOCK_MULTIPLIER;
 
                 dir.x *= POWER_ATTACK_PICKUP_SPEED_FACTOR;
                 dir.y *= POWER_ATTACK_PICKUP_SPEED_FACTOR;

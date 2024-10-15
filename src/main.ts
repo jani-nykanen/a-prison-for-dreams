@@ -2,6 +2,7 @@ import { ProgramEvent } from "./core/event.js";
 import { Program } from "./core/program.js";
 import { WebGLRenderer } from "./gfx/webgl/renderer.js";
 import { Game } from "./game/game.js";
+import { TitleScreen } from "./game/titlescreen.js";
 
 
 const initialEvent = (event : ProgramEvent) : void => {
@@ -31,6 +32,7 @@ const onloadEvent = (event : ProgramEvent) : void => {
         event.setActiveLocalization("en-us");
     }
 
+    event.scenes.addScene("title", new TitleScreen(event), false);
     event.scenes.addScene("game", new Game(event), true);
 }
 

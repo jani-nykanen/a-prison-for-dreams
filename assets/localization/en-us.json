@@ -32,6 +32,14 @@
     ],
 
 
+    "titlescreen": [
+
+        "New game",
+        "Load game",
+        "Settings"
+    ],
+
+
     "npc0": [
         "I am a test NPC. I have\nabsolute nothing sen-\nsible to say.",
         "But you cannot stop me\nfrom saying things!\nBecause I am the un-\nspeakable evil, the\nlord of darkness!",

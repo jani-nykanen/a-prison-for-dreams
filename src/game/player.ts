@@ -31,6 +31,8 @@ const DEATH_TIME : number = 60;
 const POWER_ATTACK_TIME : number = 20;
 const POWER_ATTACK_HALT_TIME : number = 10;
 
+const ATTACK_RELEASE_TIME : number = 8;
+
 
 const enum ChargeType {
 
@@ -78,12 +80,14 @@ export class Player extends CollisionObject {
 
     private attackID : number = 0;
     private attacking : boolean = false;
+    private attackNumber : number = 0;
     private downAttacking : boolean = false;
     private downAttackWait : number = 0;
     private powerAttackTimer : number = 0;
     private powerAttackStopped : boolean = false;
     private swordHitbox : Rectangle;
     private swordHitBoxActive : boolean = false;
+    private attackReleaseTimer : number = 0;
 
     private sprite : Sprite;
     private flip : Flip;
@@ -153,8 +157,8 @@ export class Player extends CollisionObject {
         const SWORD_OFFSET_X : number = 16;
         const SWORD_OFFSET_Y : number = 2;
 
-        const SWORD_ATTACK_BASE_WIDTH : number = 14;
-        const SWORD_ATTACK_BASE_HEIGHT : number = 20;
+        const SWORD_ATTACK_BASE_WIDTH : number[] = [14, 18];
+        const SWORD_ATTACK_BASE_HEIGHT : number[] = [20, 14];
 
         const SWORD_ATTACK_SPECIAL_WIDTH : number = 16;
         const SWORD_ATTACK_SPECIAL_HEIGHT : number = 16;
@@ -188,8 +192,8 @@ export class Player extends CollisionObject {
         this.swordHitbox.x = this.pos.x + this.dir*SWORD_OFFSET_X;
         this.swordHitbox.y = this.pos.y + SWORD_OFFSET_Y;
 
-        this.swordHitbox.w = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_WIDTH : SWORD_ATTACK_BASE_WIDTH;
-        this.swordHitbox.h = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_HEIGHT : SWORD_ATTACK_BASE_HEIGHT;
+        this.swordHitbox.w = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_WIDTH : SWORD_ATTACK_BASE_WIDTH[this.attackNumber];
+        this.swordHitbox.h = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_HEIGHT : SWORD_ATTACK_BASE_HEIGHT[this.attackNumber];
 
         this.swordHitBoxActive = true;
     }
@@ -369,14 +373,15 @@ export class Player extends CollisionObject {
     }
 
 
-    private controlAttacking(event : ProgramEvent) : void {
+    private controlAttacking(event : ProgramEvent, forceSecondAttack : boolean = false) : void {
 
         const DOWN_ATTACK_JUMP : number = -2.0;
         const DOWN_ATTACK_STICK_Y_THRESHOLD : number = 0.50;
-        const FORWARD_SPEED : number = 1.5;
+        const FORWARD_SPEED : number[] = [1.5, 2.0];
         
         const attackButton : InputState = event.input.getAction("attack");
-        if (this.charging && this.chargeType == ChargeType.Sword && 
+        if (!forceSecondAttack &&
+            this.charging && this.chargeType == ChargeType.Sword && 
             (attackButton & InputState.DownOrPressed) == 0) {
 
             this.jumpTimer = 0;
@@ -392,14 +397,16 @@ export class Player extends CollisionObject {
             return;
         }
 
-        if (this.attacking || this.highJumping) {
+        if ((this.attacking && !forceSecondAttack) || this.highJumping) {
 
             return;
         }
         
         if (attackButton == InputState.Pressed) {
 
-            if (!this.touchSurface && 
+            // Down attack
+            if (!forceSecondAttack &&
+                !this.touchSurface && 
                 event.input.stick.y >= DOWN_ATTACK_STICK_Y_THRESHOLD) {
 
                 ++ this.attackID;
@@ -413,11 +420,6 @@ export class Player extends CollisionObject {
                 this.jumpTimer = 0;
 
                 return;
-            }
-
-            if (this.touchSurface) {
-
-                this.speed.x = this.dir*FORWARD_SPEED;
             }
 
             this.attacking = true;
@@ -437,9 +439,17 @@ export class Player extends CollisionObject {
             this.sprite.setFrame(3, 1);
 
             ++ this.attackID;
-        }
+            this.attackNumber = 0;
+            if (forceSecondAttack || this.attackReleaseTimer > 0) {
 
-        // TODO: Charge attack?
+                this.attackNumber = 1;
+            }
+
+            if (this.touchSurface) {
+
+                this.speed.x = this.dir*FORWARD_SPEED[this.attackNumber];
+            }
+        }
     }
 
 
@@ -518,6 +528,16 @@ export class Player extends CollisionObject {
         if (this.knockbackTimer > 0 ||
             (this.attacking && this.touchSurface)) {
 
+            if (this.attacking) {
+
+                // If possible, start a second attack
+                const canPerformSecondAttack : boolean = this.attacking && 
+                    this.attackNumber == 0 &&
+                    this.touchSurface &&
+                    this.sprite.getColumn() >= 6;
+                this.controlAttacking(event, canPerformSecondAttack);
+            }
+                
             this.target.x = 0.0;
             this.target.y = this.getGravity();
             return;
@@ -607,7 +627,9 @@ export class Player extends CollisionObject {
         const LAST_FRAME_LENGTH : number = 16;
         const LAST_FRAME_RELEASE = 8;
 
-        this.sprite.animate(1, 3, LAST_FRAME, 
+        const row : number = 1 + this.attackNumber*4;
+
+        this.sprite.animate(row, 3, LAST_FRAME, 
             this.sprite.getColumn() == LAST_FRAME - 1 ? LAST_FRAME_LENGTH : BASE_ATTACK_SPEED, 
             event.tick);
 
@@ -626,6 +648,8 @@ export class Player extends CollisionObject {
 
             this.attacking = false;
             this.sprite.setFrame(0, 0);
+
+            this.attackReleaseTimer = (1 - this.attackNumber)*ATTACK_RELEASE_TIME;
         }
     }   
 
@@ -831,6 +855,15 @@ export class Player extends CollisionObject {
 
             this.chargeFlickerTimer = (this.chargeFlickerTimer + CHARGE_FLICKER_SPEED*event.tick) % 1.0;
         }
+
+        if (this.attackReleaseTimer > 0) {
+
+            this.attackReleaseTimer -= event.tick;
+            if (!this.touchSurface) {
+
+                this.attackReleaseTimer = 0;
+            }
+        }
     }
 
 
@@ -941,7 +974,7 @@ export class Player extends CollisionObject {
         const dy : number = this.pos.y - 14;
 
         let frame : number = this.attacking ? this.sprite.getColumn() - 3 : 5;
-        let row : number = 0;
+        let row : number = this.downAttacking ? 0 : this.attackNumber*2;
         if (this.powerAttackTimer > 0) {
 
             frame = Math.floor(this.powerAttackTimer/4) % 4;
@@ -1300,9 +1333,6 @@ export class Player extends CollisionObject {
     }
 
 
-    public isChargeAttacking = () : boolean => this.powerAttackTimer > 0;
-
-
     public getAttackPower() : number {
 
         if (this.downAttacking && this.downAttackWait <= 0) {
@@ -1388,5 +1418,26 @@ export class Player extends CollisionObject {
 
 
     public isWaiting = () : boolean => this.waitTimer > 0;
+    public isChargeAttacking = () : boolean => this.powerAttackTimer > 0;
+
+
+    public getKnockbackFactor() : number {
+
+        if (this.powerAttackTimer > 0) {
+
+            return 2.0;
+        }
+        if (this.downAttacking) {
+
+            return 0.0;
+        }
+
+        if (!this.attacking) {
+
+            return 0.0;
+        }
+
+        return 1.0 + this.attackNumber*0.25;
+    }       
 }
 

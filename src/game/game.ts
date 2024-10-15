@@ -81,7 +81,11 @@ export class Game implements Scene {
             console.error("Not-so-fatal error: Failed to save progress: " + e["message"]);
         }
 
-        throw new Error("Nope, not yet.");
+        event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
+            (event : ProgramEvent) : void => {
+
+                event.scenes.changeScene("title", event);
+            });
     }
 
 

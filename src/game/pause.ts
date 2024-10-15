@@ -5,7 +5,7 @@ import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
 import { TextBox } from "../ui/textbox.js";
-import { Settings } from "../ui/settings.js";
+import { Settings } from "./settings.js";
 
 
 export class Pause {
@@ -92,7 +92,7 @@ export class Pause {
         // Settings
         this.settings = new Settings(event);
 
-        // Respawn box
+        // Quit box
         this.quitBox = new ConfirmationBox([strYes, strNo], 
             event.localization?.getItem("quit")?.[0] ?? "null",
             (event : ProgramEvent) => {
