@@ -9,9 +9,12 @@ export class Settings {
 
 
     private menu : Menu;
+    private backEvent : ((event : ProgramEvent) => void | undefined) = undefined;
 
 
-    constructor(event : ProgramEvent) {
+    constructor(event : ProgramEvent, backEvent? : (event : ProgramEvent) => void) {
+
+        this.backEvent = backEvent;
 
         const text : string[] = event.localization?.getItem("settings") ?? [];
 
@@ -51,6 +54,7 @@ export class Settings {
                 (event : ProgramEvent) : void => {
 
                     this.deactivate();
+                    this.backEvent?.(event);
                 }
             ),
         ]);   
@@ -84,7 +88,7 @@ export class Settings {
     public activate(event : ProgramEvent) : void {
 
         this.updateSoundButtonText(event);
-        this.menu.activate();
+        this.menu.activate(2);
     }
 
 

@@ -36,6 +36,11 @@ export class Game implements Scene {
 
     constructor(event : ProgramEvent) { 
 
+        // It is kind of redundant to create these objects here since
+        // most of them get recreated anyway, but things work better
+        // with closure if I initialize everything in the constructor,
+        // no matter how useless that can be.
+
         const baseMap : Tilemap | undefined = event.assets.getTilemap("coast");
         const collisionMap : Tilemap | undefined = event.assets.getTilemap("collisions_1");
 
@@ -61,6 +66,15 @@ export class Game implements Scene {
         );
     }
     
+
+    private hardReset(event : ProgramEvent) : void {
+
+        this.progress = new Progress(this.fileIndex);
+        this.objects = new ObjectManager(
+            this.progress, this.dialogueBox, 
+            this.stage, this.camera, event);
+        this.objects.centerCamera(this.camera);
+    }
 
 
     private reset(event : ProgramEvent) : void {
@@ -131,8 +145,19 @@ export class Game implements Scene {
 
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
-
+        
         this.fileIndex = typeof(param) == "number" ? param : this.fileIndex;
+
+        if (!this.progress.loadGame(this.fileIndex)) {
+
+            this.hardReset(event);
+            this.limitCamera();
+        }
+        else {
+
+            this.reset(event);
+            this.limitCamera();
+        }
     }
 
 

@@ -58,7 +58,7 @@ export class ConfirmationBox {
 
 
     public draw(canvas : Canvas, assets : Assets,
-        drawBox : boolean = true, x : number = 0, y : number = 0, 
+        x : number = 0, y : number = 0, drawBox : boolean = true,
         yoff : number = 10, menuYoff : number = 12,
         boxColors : RGBA[] | undefined = undefined,
         drawShadow : boolean = true, shadowAlpha : number = 0.25, 

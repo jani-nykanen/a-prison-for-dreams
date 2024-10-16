@@ -54,8 +54,8 @@ export class Progress {
 
         const date : Date = new Date();
         const dateString : string = 
-            String(date.getMonth()).padStart(2, "0") + "/" + 
-            String(date.getDay()).padStart(2, "0") + "/" + 
+            String(date.getMonth() + 1).padStart(2, "0") + "/" + 
+            String(date.getDate()).padStart(2, "0") + "/" + 
             String(date.getFullYear());
 
         output["date"] = dateString;
@@ -206,12 +206,14 @@ export class Progress {
     public wasGameSavingSuccessful = () : boolean => this.gameSavedSuccess;
 
 
-    public loadGame() : boolean {
+    public loadGame(fileIndex : number) : boolean {
+
+        this.fileIndex = fileIndex;
 
         try {
 
-            const str : string | undefined = window["localStorage"]["getItem"](LOCAL_STORAGE_KEY + String(this.fileIndex));
-            if (str === undefined) {
+            const str : string | null = window["localStorage"]["getItem"](LOCAL_STORAGE_KEY + String(this.fileIndex));
+            if (str === null) {
 
                 console.log(`Could not find a save file in the index ${this.fileIndex}, creating a new file.`);
                 return false;

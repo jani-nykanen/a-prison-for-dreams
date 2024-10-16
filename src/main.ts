@@ -32,8 +32,8 @@ const onloadEvent = (event : ProgramEvent) : void => {
         event.setActiveLocalization("en-us");
     }
 
-    event.scenes.addScene("title", new TitleScreen(event), false);
-    event.scenes.addScene("game", new Game(event), true);
+    event.scenes.addScene("title", new TitleScreen(event), true);
+    event.scenes.addScene("game", new Game(event), false);
 }
 
 

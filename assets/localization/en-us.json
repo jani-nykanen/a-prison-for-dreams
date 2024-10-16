@@ -4,6 +4,11 @@
     "yes": "Yes",
     "no": "No",
 
+    "yesno": [
+        "Yes",
+        "No"
+    ],
+
     "on": "On",
     "off": "Off",
     "audio": "Audio",
@@ -34,10 +39,16 @@
 
     "titlescreen": [
 
-        "New game",
+        "Start game",
         "Clear data",
         "Settings"
     ],
+
+
+    "clear_data": "Are you sure you want\nto delete this save\nfile? You cannot undo\nthis!",
+
+    "data_cleared": "Save file cleared!",
+    
 
     "back": "Back",
 
