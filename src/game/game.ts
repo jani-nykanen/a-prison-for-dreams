@@ -7,7 +7,7 @@ import { Tilemap } from "../tilemap/tilemap.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { ObjectManager } from "./objectmanager.js";
 import { Assets } from "../core/assets.js";
-import { LOCAL_STORAGE_KEY, Progress } from "./progress.js";
+import { Progress } from "./progress.js";
 import { drawGameSavingIcon, drawHUD, GAME_SAVE_ANIMATION_TIME } from "./hud.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
@@ -31,6 +31,8 @@ export class Game implements Scene {
     private gameSaveTimer : number = 0;
     private gameSaveMode : number = 0;
 
+    private fileIndex : number = 0;
+
 
     constructor(event : ProgramEvent) { 
 
@@ -44,7 +46,7 @@ export class Game implements Scene {
 
         this.stage = new Stage(baseMap, collisionMap);
         this.camera = new Camera(0, 0, event);
-        this.progress = new Progress();
+        this.progress = new Progress(this.fileIndex);
 
         this.dialogueBox = new TextBox(true, 30, 5);
         this.objects = new ObjectManager(
@@ -54,7 +56,7 @@ export class Game implements Scene {
 
         this.pause = new Pause(event,
             (event : ProgramEvent) : void => this.objects.killPlayer(event),
-            (event : ProgramEvent) : boolean => this.progress.save(LOCAL_STORAGE_KEY),
+            (event : ProgramEvent) : boolean => this.progress.save(),
             (event : ProgramEvent) : void => this.quitToMainMenu(event)
         );
     }
@@ -74,7 +76,7 @@ export class Game implements Scene {
 
         try {
 
-            this.progress.save(LOCAL_STORAGE_KEY);
+            this.progress.save();
         }
         catch (e) {
 
@@ -130,7 +132,7 @@ export class Game implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
-        // ...
+        this.fileIndex = typeof(param) == "number" ? param : this.fileIndex;
     }
 
 

@@ -4,7 +4,7 @@ import { ProgramEvent } from "../core/event.js";
 import { updateSpeedAxis } from "./utility.js";
 
 
-export const LOCAL_STORAGE_KEY : string = "the_end_of_dreams__savedata";
+export const LOCAL_STORAGE_KEY : string = "the_end_of_dreams__savedata_";
 
 
 export class Progress {
@@ -33,11 +33,47 @@ export class Progress {
     private gameSaved : boolean = false;
     private gameSavedSuccess : boolean = false;
 
+    private fileIndex : number = 0;
 
-    constructor() {
+
+    constructor(fileIndex : number) {
 
         this.obtainedItems = new Array<boolean> ();
         this.checkpointPosition = new Vector();
+
+        this.fileIndex = fileIndex;
+
+        // TODO: Compute attack power etc. from the list of
+        // items.
+    }
+
+
+    private generateSavefileJSON() : unknown {
+
+        const output : unknown = {};
+
+        const date : Date = new Date();
+        const dateString : string = 
+            String(date.getMonth()).padStart(2, "0") + "/" + 
+            String(date.getDay()).padStart(2, "0") + "/" + 
+            String(date.getFullYear());
+
+        output["date"] = dateString;
+
+        // TODO: Later can be deduced/computed from the item list
+        output["maxHealth"] = this.maxHealth;
+        output["maxBullets"] = this.maxBullets;
+
+        output["items"] = Array.from(this.obtainedItems);
+
+        output["checkpoint"] = {
+            "x": this.checkpointPosition.x,
+            "y": this.checkpointPosition.y
+        };
+
+        output["money"] = this.money;
+
+        return output;
     }
 
 
@@ -133,15 +169,17 @@ export class Progress {
     }
 
 
-    public save(key : string) : boolean {
+    public save() : boolean {
 
         this.gameSaved = true;
         try {
 
-            // throw new Error("Lol");
-            /*
-             TODO: Save to local storage
-             */
+            const content : string = JSON.stringify(this.generateSavefileJSON());
+            const key : string = LOCAL_STORAGE_KEY + String(this.fileIndex);
+            
+            // Note: in the past Closure did not work with calls like "window.localStorage"
+            // since the function name got optimized away, so I'm playing safe here.
+            window["localStorage"]["setItem"](key, content);
 
             this.gameSavedSuccess = true;
         }
@@ -166,4 +204,40 @@ export class Progress {
 
 
     public wasGameSavingSuccessful = () : boolean => this.gameSavedSuccess;
+
+
+    public loadGame() : boolean {
+
+        try {
+
+            const str : string | undefined = window["localStorage"]["getItem"](LOCAL_STORAGE_KEY + String(this.fileIndex));
+            if (str === undefined) {
+
+                console.log(`Could not find a save file in the index ${this.fileIndex}, creating a new file.`);
+                return false;
+            }
+
+            const json : unknown = JSON.parse(str) ?? {};
+            
+            this.maxHealth = Number(json["maxHealth"] ?? this.maxHealth);
+            this.maxBullets = Number(json["maxBullets"] ?? this.maxBullets);
+
+            this.obtainedItems = Array.from(json["items"] ?? []) as boolean[];
+
+            this.money = Number(json["money"] ?? this.money);
+
+            const checkpoint : unknown = json["checkpoint"];
+            if (checkpoint !== undefined) {
+
+                this.checkpointPosition.x = Number(checkpoint["x"] ?? this.checkpointPosition.x);
+                this.checkpointPosition.y = Number(checkpoint["y"] ?? this.checkpointPosition.y);
+            }
+        }
+        catch (e) {
+            
+            // TODO: Not a good way to return an error
+            return false;
+        }
+        return true;
+    }
 }

@@ -35,10 +35,11 @@
     "titlescreen": [
 
         "New game",
-        "Load game",
+        "Clear data",
         "Settings"
     ],
 
+    "back": "Back",
 
     "npc0": [
         "I am a test NPC. I have\nabsolute nothing sen-\nsible to say.",

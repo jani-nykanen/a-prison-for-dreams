@@ -5,6 +5,7 @@ import { TransitionType } from "../core/transition.js";
 import { Canvas } from "../gfx/interface.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
+import { LOCAL_STORAGE_KEY } from "./progress.js";
 import { Settings } from "./settings.js";
 
 
@@ -12,6 +13,7 @@ export class TitleScreen implements Scene {
 
     
     private menu : Menu;
+    private fileMenu : Menu; // Not really
     private settings : Settings;
 
 
@@ -23,27 +25,72 @@ export class TitleScreen implements Scene {
 
         this.menu = new Menu(
         [
+            new MenuButton(text[0] ?? "null", (event : ProgramEvent) : void => {
 
-        new MenuButton(text[0] ?? "null", (event : ProgramEvent) : void => {
+                this.setFileMenuButtonNames();
+                this.fileMenu.activate(0);
+            }),
+            new MenuButton(text[1] ?? "null", (event : ProgramEvent) : void => {
 
-            this.goToGame(true, 0, event);
-        }),
+                
+            }),
+            new MenuButton(text[2] ?? "null", (event : ProgramEvent) : void => {
 
-        new MenuButton(text[1] ?? "null", (event : ProgramEvent) : void => {
-
-            this.goToGame(false, 0, event);
-        }),
-
-        new MenuButton(text[2] ?? "null", (event : ProgramEvent) : void => {
-
-            this.settings.activate(event);
-        }),
-
+                this.settings.activate(event);
+            }),
         ], true);
+
+        const emptyFileString : string = "--/--/----";
+        this.fileMenu = new Menu(
+        [
+            new MenuButton(emptyFileString, (event : ProgramEvent) : void => {
+
+                this.goToGame(0, event);
+            }),
+            new MenuButton(emptyFileString, (event : ProgramEvent) : void => {
+
+                this.goToGame(1, event);
+            }),
+            new MenuButton(emptyFileString, (event : ProgramEvent) : void => {
+
+                this.goToGame(2, event);
+            }),
+            new MenuButton((event.localization?.getItem("back") ?? ["null"])[0], 
+            (event : ProgramEvent) : void => {
+
+                this.fileMenu.deactivate();
+            })
+        ]
+        );
     }
 
 
-    private goToGame(newGame : boolean, file : number, event : ProgramEvent) : void {
+    private setFileMenuButtonNames() : void {
+
+        for (let i = 0; i < 3; ++ i) {
+
+            let str : string = "--/--/----";
+
+            try {
+
+                const saveFile : string | undefined = window["localStorage"]["getItem"](LOCAL_STORAGE_KEY + String(i));
+                if (saveFile !== undefined) {
+
+                    const json : unknown = JSON.parse(saveFile) ?? {};
+                    str = json["date"] ?? str;
+                }
+            }
+            catch(e) {
+
+                console.error("Not-so-fatal error: failed to access the save files: " + e["message"]);
+            }
+
+            this.fileMenu.changeButtonText(i, str);
+        }
+    }
+
+
+    private goToGame(file : number, event : ProgramEvent) : void {
 
         this.menu.deactivate();
             event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
@@ -69,6 +116,12 @@ export class TitleScreen implements Scene {
             return;
         }
 
+        if (this.fileMenu.isActive()) {
+
+            this.fileMenu.update(event);
+            return;
+        }
+
         if (this.settings.isActive()) {
 
             this.settings.update(event);
@@ -81,15 +134,21 @@ export class TitleScreen implements Scene {
 
     public redraw(canvas: Canvas, assets: Assets) : void {
         
+        const YOFF : number = 48;
+
         canvas.clear(0, 73, 182);
 
         if (this.settings.isActive()) {
 
-            this.settings.draw(canvas, assets, 0, 48);
+            this.settings.draw(canvas, assets, 0, YOFF);
+        }
+        else if (this.fileMenu.isActive()){
+
+            this.fileMenu.draw(canvas, assets, 0, YOFF);
         }
         else {
 
-            this.menu.draw(canvas, assets, 0, 48);
+            this.menu.draw(canvas, assets, 0, YOFF);
         }
 
         // TODO: Draw copyright
