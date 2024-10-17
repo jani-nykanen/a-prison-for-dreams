@@ -44,7 +44,7 @@ export class Interactable extends GameObject {
 
     public playerCollision(player : Player, event : ProgramEvent, initial : boolean = false) : void {
 
-        if (!this.isActive() || !player.isActive()) {
+        if (!initial && (!this.isActive() || !player.isActive())) {
 
             return;
         }

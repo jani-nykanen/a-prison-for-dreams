@@ -158,9 +158,11 @@ export class Stage {
     }
 
 
-    public draw(canvas : Canvas, assets : Assets, camera : Camera) : void {
+    public draw(canvas : Canvas, assets : Assets, tilesetIndex : number, camera : Camera) : void {
 
-        this.renderlayer.draw(canvas, assets, camera);
+        const tileset : Bitmap | undefined = assets.getBitmap(`tileset_${tilesetIndex}`);
+
+        this.renderlayer.draw(canvas, tileset, camera);
     }
 
 

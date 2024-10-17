@@ -124,12 +124,7 @@ export class Tilemap {
 
     public getProperty(name : string) : string | undefined {
 
-        for (let [key, value] of this.properties) {
-
-            if (key == name)
-                return value;
-        }
-        return undefined;
+        return this.properties.get(name);
     }
     
 }

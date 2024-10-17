@@ -35,6 +35,8 @@ export class Progress {
 
     private fileIndex : number = 0;
 
+    private areaName : string = "coast";
+
 
     constructor(fileIndex : number) {
 
@@ -72,6 +74,8 @@ export class Progress {
         };
 
         output["money"] = this.money;
+
+        output["area"] = this.areaName;
 
         return output;
     }
@@ -234,6 +238,8 @@ export class Progress {
                 this.checkpointPosition.x = Number(checkpoint["x"] ?? this.checkpointPosition.x);
                 this.checkpointPosition.y = Number(checkpoint["y"] ?? this.checkpointPosition.y);
             }
+
+            this.areaName = json["area"] ?? this.areaName;
         }
         catch (e) {
             
@@ -242,4 +248,7 @@ export class Progress {
         }
         return true;
     }
+
+
+    public getAreaName = () : string => this.areaName;
 }

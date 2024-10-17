@@ -933,6 +933,7 @@ export class Player extends CollisionObject {
         this.charging = false;
         this.attacking = false;
         this.downAttacking = false;
+        this.downAttackWait = 0;
         this.rocketPackActive = false;
         this.powerAttackTimer = 0;
 

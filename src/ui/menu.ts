@@ -146,6 +146,7 @@ export class Menu {
             // Hand
             if (i == this.cursorPos) {
 
+                canvas.setColor(...SELECTED_COLOR[0]);
                 canvas.drawBitmap(font, Flip.None, 
                     dx + SIDE_OFFSET + Math.round(Math.sin(this.handAnimation)), 
                     dy + SIDE_OFFSET + i*yoff, 

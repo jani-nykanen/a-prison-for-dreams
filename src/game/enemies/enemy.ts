@@ -154,7 +154,6 @@ export class Enemy extends CollisionObject {
     public playerCollision(player : Player, event : ProgramEvent) : void {
 
         const KNOCKBACK_SPEED : number = 1.5;
-        const POWER_ATTACK_KNOCK_MULTIPLIER : number = 1.5;
         const POWER_ATTACK_PICKUP_SPEED_FACTOR : number = 1.5;
 
         if (!this.isActive() || !player.isActive()) {

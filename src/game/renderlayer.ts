@@ -73,16 +73,9 @@ export class RenderLayer {
     }
 
 
-    public draw(canvas : Canvas, assets : Assets, camera : Camera) : void {
+    public draw(canvas : Canvas, tileset : Bitmap | undefined, camera : Camera) : void {
 
         const CAMERA_MARGIN : number = 1;
-
-        // TODO: Pass tileset index in the draw function
-        const bmpTileset : Bitmap = assets.getBitmap("tileset_1");
-        if (bmpTileset === undefined) {
-
-            return;
-        }
 
         const cameraPos : Vector = camera.getCorner();
 
@@ -94,7 +87,7 @@ export class RenderLayer {
 
         for (let i = 0; i < this.layers.length; ++ i) {
 
-            this.drawLayer(canvas, bmpTileset, i, startx, starty, endx, endy);
+            this.drawLayer(canvas, tileset, i, startx, starty, endx, endy);
         }
     }
 }

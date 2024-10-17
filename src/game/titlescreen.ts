@@ -47,7 +47,7 @@ export class TitleScreen implements Scene {
             }),
             new MenuButton(text[1] ?? "null", (event : ProgramEvent) : void => {
 
-                this.setFileMenuButtonNames(this.clearDataMenu);
+                this.setFileMenuButtonNames(this.clearDataMenu, true);
                 this.clearDataMenu.activate(3);
 
                 this.activeMenu = this.clearDataMenu;
@@ -129,7 +129,7 @@ export class TitleScreen implements Scene {
 
                 this.activeMenu = this.dataClearedMessage;
 
-                this.setFileMenuButtonNames(this.clearDataMenu);
+                this.setFileMenuButtonNames(this.clearDataMenu, true);
             },
             (event : ProgramEvent) : void => {
                 
@@ -139,7 +139,7 @@ export class TitleScreen implements Scene {
     }
 
 
-    private setFileMenuButtonNames(menu : Menu) : void {
+    private setFileMenuButtonNames(menu : Menu, disableNonExisting : boolean = false) : void {
 
         for (let i = 0; i < 3; ++ i) {
 
@@ -148,10 +148,15 @@ export class TitleScreen implements Scene {
             try {
 
                 const saveFile : string | undefined = window["localStorage"]["getItem"](LOCAL_STORAGE_KEY + String(i));
-                if (saveFile !== undefined) {
+                if (saveFile !== null) {
 
                     const json : unknown = JSON.parse(saveFile) ?? {};
                     str = json["date"] ?? str;
+                }
+
+                if (disableNonExisting) {
+
+                    menu.toggleDeactivation(i, saveFile === null);
                 }
             }
             catch(e) {
@@ -217,39 +222,6 @@ export class TitleScreen implements Scene {
         }
 
         this.activeMenu?.update(event);
-/*
-        if (this.dataClearedMessage.isActive()) {
-
-            this.dataClearedMessage.update(event);
-            return;
-        }
-
-        if (this.confirmClearDataMenu.isActive()) {
-
-            this.confirmClearDataMenu.update(event);
-            return;
-        }
-
-        if (this.clearDataMenu.isActive()) {
-
-            this.clearDataMenu.update(event);
-            return;
-        }
-
-        if (this.fileMenu.isActive()) {
-
-            this.fileMenu.update(event);
-            return;
-        }
-
-        if (this.settings.isActive()) {
-
-            this.settings.update(event);
-            return;
-        }
-
-        this.menu.update(event);
-*/
     }
 
 
@@ -260,22 +232,6 @@ export class TitleScreen implements Scene {
         canvas.clear(0, 73, 182);
 
         this.activeMenu?.draw(canvas, assets, 0, YOFF);
-
-        /*
-        // TODO: This is ugly, maybe add an "active menu" variable?
-        if (this.settings.isActive()) {
-
-            this.settings.draw(canvas, assets, 0, YOFF);
-        }
-        else if (this.fileMenu.isActive()){
-
-            this.fileMenu.draw(canvas, assets, 0, YOFF);
-        }
-        else {
-
-            this.menu.draw(canvas, assets, 0, YOFF);
-        }
-        */
 
         // TODO: Draw copyright
     }

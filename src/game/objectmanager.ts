@@ -49,7 +49,9 @@ export class ObjectManager {
     private readonly dialogueBox : TextBox;
 
 
-    constructor(progress : Progress, dialogueBox : TextBox, stage : Stage, camera : Camera, event : ProgramEvent) {
+    constructor(progress : Progress, dialogueBox : TextBox, 
+        stage : Stage, camera : Camera, event : ProgramEvent,
+        createNewPlayer : boolean = true) {
 
         this.flyingText = new ObjectGenerator<FlyingText, void> (FlyingText);
         this.projectiles = new ProjectileGenerator();
@@ -69,10 +71,24 @@ export class ObjectManager {
 
         this.dialogueBox = dialogueBox;
 
-        this.createObjects(stage, false, event);
+        this.createObjects(stage, !createNewPlayer, event);
         this.initialCameraCheck(camera, event);
 
-        progress.setCheckpointPosition(this.player.getPosition());
+        if (createNewPlayer) {
+
+            progress.setCheckpointPosition(this.player.getPosition());
+        }
+        else {
+
+            const checkpoint : Vector = progress.getCheckpointPosition();
+            this.player.setPosition(checkpoint.x, checkpoint.y, true);
+
+            // Open chests etc.
+            for (const o of this.interactables) {
+
+                o.playerCollision(this.player, event, true);
+            }
+        }
     }
 
 

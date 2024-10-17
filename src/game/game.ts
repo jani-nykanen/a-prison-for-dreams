@@ -20,10 +20,10 @@ import { ConfirmationBox } from "../ui/confirmationbox.js";
 export class Game implements Scene {
 
 
-    private stage : Stage;
+    private stage : Stage | undefined = undefined;
+    private progress : Progress | undefined = undefined;
+    private objects : ObjectManager = undefined;
     private camera : Camera;
-    private progress : Progress;
-    private objects : ObjectManager;
 
     private pause : Pause;
     private dialogueBox : TextBox;
@@ -32,50 +32,20 @@ export class Game implements Scene {
     private gameSaveMode : number = 0;
 
     private fileIndex : number = 0;
+    private tilesetIndex : number = 0;
 
 
     constructor(event : ProgramEvent) { 
 
-        // It is kind of redundant to create these objects here since
-        // most of them get recreated anyway, but things work better
-        // with closure if I initialize everything in the constructor,
-        // no matter how useless that can be.
-
-        const baseMap : Tilemap | undefined = event.assets.getTilemap("coast");
-        const collisionMap : Tilemap | undefined = event.assets.getTilemap("collisions_1");
-
-        if (baseMap === undefined || collisionMap === undefined) {
-
-            throw "Required tilemaps missing!";
-        }
-
-        this.stage = new Stage(baseMap, collisionMap);
         this.camera = new Camera(0, 0, event);
-        this.progress = new Progress(this.fileIndex);
-
         this.dialogueBox = new TextBox(true, 30, 5);
-        this.objects = new ObjectManager(
-            this.progress, this.dialogueBox, 
-            this.stage, this.camera, event);
-        this.objects.centerCamera(this.camera);
-
         this.pause = new Pause(event,
-            (event : ProgramEvent) : void => this.objects.killPlayer(event),
+            (event : ProgramEvent) : void => this.objects?.killPlayer(event),
             (event : ProgramEvent) : boolean => this.progress.save(),
             (event : ProgramEvent) : void => this.quitToMainMenu(event)
         );
     }
     
-
-    private hardReset(event : ProgramEvent) : void {
-
-        this.progress = new Progress(this.fileIndex);
-        this.objects = new ObjectManager(
-            this.progress, this.dialogueBox, 
-            this.stage, this.camera, event);
-        this.objects.centerCamera(this.camera);
-    }
-
 
     private reset(event : ProgramEvent) : void {
 
@@ -148,24 +118,38 @@ export class Game implements Scene {
         
         this.fileIndex = typeof(param) == "number" ? param : this.fileIndex;
 
-        if (!this.progress.loadGame(this.fileIndex)) {
+        this.progress = new Progress(this.fileIndex);
+        const fileLoaded : boolean = this.progress.loadGame(this.fileIndex);
 
-            this.hardReset(event);
-            this.limitCamera();
-        }
-        else {
+        const baseMap : Tilemap | undefined = event.assets.getTilemap(this.progress.getAreaName());
+        if (baseMap === undefined) {
 
-            this.reset(event);
-            this.limitCamera();
+            throw new Error("Required tilemap(s) missing!");
         }
+
+        this.tilesetIndex = Number(baseMap.getProperty("tileset") ?? "0");
+        const collisionMap : Tilemap | undefined = event.assets.getTilemap(`collisions_${this.tilesetIndex}`);
+
+        if (baseMap === undefined || collisionMap === undefined) {
+
+            throw "Required tilemaps missing!";
+        }
+
+        this.stage = new Stage(baseMap, collisionMap);
+        this.objects = new ObjectManager(
+            this.progress, this.dialogueBox, 
+            this.stage, this.camera, event,
+            !fileLoaded);
+        this.objects.centerCamera(this.camera);
+        this.limitCamera();
     }
 
 
     public update(event : ProgramEvent) : void {
 
-        if (this.progress.wasGameSaved()) {
+        if (this.progress?.wasGameSaved()) {
 
-            this.gameSaveMode = this.progress.wasGameSavingSuccessful() ? 1 : 2;
+            this.gameSaveMode = this.progress?.wasGameSavingSuccessful() ? 1 : 2;
             this.gameSaveTimer = GAME_SAVE_ANIMATION_TIME;
         }
 
@@ -184,7 +168,7 @@ export class Game implements Scene {
             return;
         }
 
-        this.stage.update(event);
+        this.stage?.update(event);
         
         if (this.dialogueBox.isActive()) {
 
@@ -194,7 +178,7 @@ export class Game implements Scene {
 
         if (event.transition.isActive()) {
 
-            this.objects.initialCameraCheck(this.camera, event);
+            this.objects?.initialCameraCheck(this.camera, event);
             return;
         }
 
@@ -204,12 +188,12 @@ export class Game implements Scene {
             return;
         }
 
-        this.objects.update(this.camera, this.stage, event);
-        if (this.objects.hasPlayerDied()) {
+        this.objects?.update(this.camera, this.stage!, event);
+        if (this.objects?.hasPlayerDied()) {
 
             this.startGameOverTransition(event);
         }
-        this.progress.update(event);
+        this.progress?.update(event);
 
         this.camera.update(event);
         this.limitCamera();
@@ -231,16 +215,16 @@ export class Game implements Scene {
         this.stage.drawBackground(canvas, assets, this.camera);
 
         this.camera.apply(canvas);
-        this.stage.draw(canvas, assets, this.camera);
-        this.objects.draw(canvas, assets);
-        this.stage.drawForeground(canvas, assets, this.camera);
+        this.stage?.draw(canvas, assets, this.tilesetIndex, this.camera);
+        this.objects?.draw(canvas, assets);
+        this.stage?.drawForeground(canvas, assets, this.camera);
 
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();
         canvas.transform.apply();
         canvas.moveTo();
 
-        drawHUD(canvas, assets, this.progress);
+        drawHUD(canvas, assets, this.progress!);
 
         this.pause.draw(canvas, assets);
         this.drawDialogueBox(canvas, assets);
