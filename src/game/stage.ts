@@ -113,13 +113,13 @@ export class Stage {
     }
 
 
-    public update(event : ProgramEvent) : void {
+    public update(camera : Camera, event : ProgramEvent) : void {
 
         const WATER_ANIMATION_SPEED : number = 8;
 
         this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
 
-        this.background.update(event);
+        this.background.update(camera, event);
     }
 
 
@@ -143,6 +143,8 @@ export class Stage {
 
             this.drawWater(canvas, assets, camera);
         }
+
+        this.background.postDraw(canvas, assets);
     }
 
 
@@ -202,5 +204,11 @@ export class Stage {
                 func(x, y, this.objectLayer[y*this.width + x] - START_INDEX, upperID);
             }
         }
+    }
+
+
+    public initializeBackground(camera : Camera) : void {
+
+        this.background.initialize(camera);
     }
 }

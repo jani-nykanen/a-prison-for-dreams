@@ -51,7 +51,6 @@ export class Game implements Scene {
 
         this.progress.reset();
         this.objects.reset(this.progress, this.stage, this.camera, event);
-
         this.objects.centerCamera(this.camera);
     }
 
@@ -83,6 +82,7 @@ export class Game implements Scene {
 
                 this.reset(event);
                 this.limitCamera();
+                this.stage.initializeBackground(this.camera);
                 
                 event.transition.setCenter(this.objects.getRelativePlayerPosition(this.stage, this.camera));
             },
@@ -142,6 +142,8 @@ export class Game implements Scene {
             !fileLoaded);
         this.objects.centerCamera(this.camera);
         this.limitCamera();
+
+        this.stage.initializeBackground(this.camera);
     }
 
 
@@ -168,7 +170,7 @@ export class Game implements Scene {
             return;
         }
 
-        this.stage?.update(event);
+        this.stage?.update(this.camera, event);
         
         if (this.dialogueBox.isActive()) {
 
