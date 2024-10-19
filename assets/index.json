@@ -14,8 +14,10 @@
         {"name": "muzzle_flash", "path": "muzzle_flash.png"},
 
         {"name": "water", "path": "water.png"},
+        {"name": "clouds_0", "path": "clouds_0.png"},
         {"name": "clouds_1", "path": "clouds_1.png"},
         {"name": "sun", "path": "sun.png"},
+        {"name": "moon", "path": "moon.png"},
         {"name": "stars", "path": "stars.png", "repeatx": "true", "repeaty": "true"},
 
         {"name": "breakable", "path": "breakable.png"},

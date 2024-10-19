@@ -48,12 +48,46 @@ export class Background {
 
     private updateGraveyard(event : ProgramEvent) : void {
 
-        // ...
+        const CLOUD_SPEED : number = 1.0/2048.0;
+
+        this.cloudPos = (this.cloudPos + CLOUD_SPEED*event.tick) % 1.0;
     }
 
     private drawGraveyard(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
         canvas.clear(255, 255, 255);
+
+        const bmpMoon : Bitmap | undefined  = assets.getBitmap("moon");
+        if (bmpMoon !== undefined) {
+
+            canvas.drawBitmap(bmpMoon, Flip.None, canvas.width - bmpMoon.width - 16, 16);
+        }
+
+        const bmpClouds : Bitmap | undefined  = assets.getBitmap("clouds_0");
+        if (bmpClouds === undefined) {
+
+            return;
+        }
+
+        const camPos : Vector = camera.getCorner();
+        const count : number = Math.floor(canvas.width/bmpClouds.width) + 2;
+
+        for (let y : number = 2; y >= 0; -- y) {
+
+            const color : number = 255 - y*73;
+
+            canvas.setColor(color, color, color);
+
+            const shiftx : number = -((camPos.x/(8 + y*8) + this.cloudPos*bmpClouds.width*(3 - y) ) % bmpClouds.width);
+            const dy : number = 96 - camPos.y/8 - y*24;
+
+            for (let x : number = -1; x < count; ++ x) {
+
+                canvas.drawBitmap(bmpClouds, Flip.None, x*bmpClouds.width + shiftx, dy);
+            }  
+        }
+
+        canvas.setColor();
     }
 
 
