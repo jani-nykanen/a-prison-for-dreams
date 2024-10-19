@@ -135,7 +135,7 @@ export class Game implements Scene {
             throw "Required tilemaps missing!";
         }
 
-        this.stage = new Stage(baseMap, collisionMap);
+        this.stage = new Stage(this.tilesetIndex, baseMap, collisionMap);
         this.objects = new ObjectManager(
             this.progress, this.dialogueBox, 
             this.stage, this.camera, event,
