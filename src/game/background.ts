@@ -167,6 +167,8 @@ export class Background {
 
     public initialize(camera : Camera) : void {
 
+        this.snowflakes.length = 0;
+
         switch (this.type) {
 
         case BackgroundType.Graveyard:
