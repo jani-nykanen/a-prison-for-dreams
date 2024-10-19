@@ -4,6 +4,9 @@ import { ProgramEvent } from "../core/event.js";
 import { updateSpeedAxis } from "./utility.js";
 
 
+const INITIAL_MAP : string = "graveyard";
+
+
 export const LOCAL_STORAGE_KEY : string = "the_end_of_dreams__savedata_";
 
 
@@ -35,7 +38,7 @@ export class Progress {
 
     private fileIndex : number = 0;
 
-    private areaName : string = "coast";
+    private areaName : string = INITIAL_MAP;
 
 
     constructor(fileIndex : number) {

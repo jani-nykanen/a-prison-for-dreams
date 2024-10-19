@@ -6,6 +6,7 @@
         {"name": "font_outlines", "path": "font_outlines.png"},
         {"name": "font_tiny", "path": "font_tiny.png"},
 
+        {"name": "tileset_0", "path": "tileset_0.png"},
         {"name": "tileset_1", "path": "tileset_1.png"},
 
         {"name": "projectiles", "path": "projectiles.png"},
@@ -38,7 +39,10 @@
     "tilemapPath": "assets/tilemaps/",
     "tilemaps": [
 
+        {"name": "graveyard", "path": "graveyard.tmx"},
         {"name": "coast", "path": "coast.tmx"},
+
+        {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"}
     ],
 
