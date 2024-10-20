@@ -27,6 +27,7 @@ export class Game implements Scene {
 
     private pause : Pause;
     private dialogueBox : TextBox;
+    private initialDialogueActivated : boolean = false;
 
     private gameSaveTimer : number = 0;
     private gameSaveMode : number = 0;
@@ -34,7 +35,7 @@ export class Game implements Scene {
     private fileIndex : number = 0;
     private tilesetIndex : number = 0;
 
-
+   
     constructor(event : ProgramEvent) { 
 
         this.camera = new Camera(0, 0, event);
@@ -46,6 +47,22 @@ export class Game implements Scene {
         );
     }
     
+
+    private setInitialDialogue(event : ProgramEvent) : void {
+
+        this.dialogueBox.addText(event.localization?.getItem("wakeup") ?? ["null"]);
+        // this.dialogueBox.activate(false, 0);
+    }
+
+
+    private activateInitialDialogue(event : ProgramEvent) : void {
+
+        this.dialogueBox.activate(false, 0, (event : ProgramEvent) : void => {
+
+            this.objects.initiateWakingUpAnimation(event);
+        });
+    }
+
 
     private reset(event : ProgramEvent) : void {
 
@@ -139,11 +156,23 @@ export class Game implements Scene {
         this.objects = new ObjectManager(
             this.progress, this.dialogueBox, 
             this.stage, this.camera, event,
+            Number(baseMap.getProperty("npctype") ?? 0),
             !fileLoaded);
         this.objects.centerCamera(this.camera);
         this.limitCamera();
 
         this.stage.initializeBackground(this.camera);
+
+        event.transition.setCenter(this.objects.getRelativePlayerPosition(this.stage, this.camera));
+        if (!fileLoaded) {
+
+            event.transition.changeSpeed(1.0/120.0);            
+            this.setInitialDialogue(event);
+        }
+        this.initialDialogueActivated = fileLoaded;
+
+        this.gameSaveMode = 0;
+        this.gameSaveTimer = 0;
     }
 
 
@@ -181,6 +210,13 @@ export class Game implements Scene {
         if (event.transition.isActive()) {
 
             this.objects?.initialCameraCheck(this.camera, event);
+            return;
+        }
+
+        if (!this.initialDialogueActivated) {
+
+            this.initialDialogueActivated = true;
+            this.activateInitialDialogue(event);
             return;
         }
 

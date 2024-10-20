@@ -52,14 +52,23 @@
 
     "back": "Back",
 
+
+    "wakeup": [
+        "Wake up!"
+    ],
+
     "npc0": [
-        "I am a test NPC. I have\nabsolute nothing sen-\nsible to say.",
-        "But you cannot stop me\nfrom saying things!\nBecause I am the un-\nspeakable evil, the\nlord of darkness!",
-        "...or not."
+        "We are the grave-\nkeepers, and just a few\nmoments ago we dug up\nyour body and brought\nyou back to life.",
+        "Why, you ask. The\nGreat Dreamer told us,\nthat is why. What are\nher motives, that we\ndo not know.",
+        "She rarely needs the\ndead ones, so something\nbad must be happening.",
+        "Whatever is the reason,\nyou should travel to\nthe World of Dream.\nThere is a portal to\nthe east.",
+        "You might find some\nuseful items on your\nway there. Feel free to\ntake them."
     ],
 
     "npc1": [
-        "Mushrooms. Oh boy,\nhow I love mushroom!"
+        "This is the Graveyard,\na place where the\ndreams come to die.",
+        "There is also the Old\nGraveyard where we bury\nthe nightmares - dead\nor alive.",
+        "Just hope you never\nhave to go there..."
     ],
 
 

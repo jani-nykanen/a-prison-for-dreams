@@ -45,7 +45,8 @@ const enum ChargeType {
 export const enum WaitType {
 
     Unknown = 0,
-    HoldingItem = 1
+    HoldingItem = 1,
+    WakingUp = 2
 };
 
 
@@ -955,6 +956,38 @@ export class Player extends CollisionObject {
     }
 
 
+    private updateWaiting(event : ProgramEvent) : void {
+
+        this.target.zeros();
+        this.speed.zeros();
+
+        this.waitTimer -= event.tick;
+        if (this.waitTimer <= 0) {
+
+            this.waitCeaseEvent?.(event);
+        }
+
+        switch (this.waitType) {
+
+        case WaitType.WakingUp: 
+            {
+                const t : number = 1.0 - this.waitTimer/this.initialWaitTimer;
+                const frame : number = Math.floor(t*3.0);
+                if (frame < 2) {
+
+                    this.sprite.setFrame(frame, 5);
+                    break;
+                }
+                this.sprite.setFrame(0, 0);
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+
+
     private drawMuzzleFlash(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
         const X_OFFSET : number = 10;
@@ -1012,14 +1045,7 @@ export class Player extends CollisionObject {
         
         if (this.waitTimer > 0) {
 
-            this.target.zeros();
-            this.speed.zeros();
-
-            this.waitTimer -= event.tick;
-            if (this.waitTimer <= 0) {
-
-                this.waitCeaseEvent?.(event);
-            }
+            this.updateWaiting(event);
             return;
         }
         this.waitActive = false;
@@ -1406,7 +1432,7 @@ export class Player extends CollisionObject {
         this.initialWaitTimer = time;
 
         this.waitType = type;
-        this.waitParameter = waitParam;
+        this.waitParameter = waitParam ?? 0;
         this.waitCeaseEvent = event;
 
         this.hurtTimer = 0;
@@ -1449,5 +1475,12 @@ export class Player extends CollisionObject {
 
         return 1.0 + this.attackNumber*0.25;
     }       
+
+
+    public setSittingFrame() : void {
+
+        this.sprite.setFrame(0, 5);
+        this.flip = Flip.None;
+    }
 }
 

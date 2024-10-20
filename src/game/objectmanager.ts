@@ -1,6 +1,6 @@
 import { ProgramEvent } from "../core/event.js";
 import { Camera } from "./camera.js";
-import { Player } from "./player.js";
+import { Player, WaitType } from "./player.js";
 import { Stage } from "./stage.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Assets } from "../core/assets.js";
@@ -46,12 +46,14 @@ export class ObjectManager {
 
     private player : Player;
 
+    private npcType : number = 0;
+
     private readonly dialogueBox : TextBox;
 
 
     constructor(progress : Progress, dialogueBox : TextBox, 
         stage : Stage, camera : Camera, event : ProgramEvent,
-        createNewPlayer : boolean = true) {
+        npcType : number, createNewPlayer : boolean = true) {
 
         this.flyingText = new ObjectGenerator<FlyingText, void> (FlyingText);
         this.projectiles = new ProjectileGenerator();
@@ -71,12 +73,15 @@ export class ObjectManager {
 
         this.dialogueBox = dialogueBox;
 
+        this.npcType = npcType;
+        
         this.createObjects(stage, !createNewPlayer, event);
         this.initialCameraCheck(camera, event);
 
         if (createNewPlayer) {
 
             progress.setCheckpointPosition(this.player.getPosition());
+            this.player.setSittingFrame();
         }
         else {
 
@@ -125,7 +130,7 @@ export class ObjectManager {
             // NPC:
             case 3:
 
-                this.interactables.push(new NPC(dx, dy, id, bmpNPC, this.dialogueBox));
+                this.interactables.push(new NPC(dx, dy, id, this.npcType, bmpNPC, this.dialogueBox));
                 break;
 
             // Checkpoint
@@ -409,6 +414,19 @@ export class ObjectManager {
     public killPlayer(event : ProgramEvent) : void {
 
         this.player.instantKill(event);
+    }
+
+
+    public initiateWakingUpAnimation(event : ProgramEvent) : void {
+
+        const WAIT_TIME : number = 90;
+
+        this.player.startWaiting(WAIT_TIME, WaitType.WakingUp, undefined, 
+            (event : ProgramEvent) : void => {
+
+            this.dialogueBox.addText(event.localization?.getItem("npc0") ?? ["null"]);
+            this.dialogueBox.activate(false, 0);
+        });
     }
 
 

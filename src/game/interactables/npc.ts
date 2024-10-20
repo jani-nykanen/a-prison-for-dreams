@@ -13,7 +13,7 @@ export class NPC extends Interactable {
     private readonly dialogueBox : TextBox;
 
 
-    constructor(x : number, y : number, id : number, 
+    constructor(x : number, y : number, id : number, bodyType : number,
         bitmap : Bitmap | undefined, dialogueBox : TextBox) {
 
         super(x, y, bitmap);
@@ -22,6 +22,8 @@ export class NPC extends Interactable {
         this.dialogueBox = dialogueBox;
 
         this.hitbox.w = 12;
+
+        this.sprite.setFrame(0, bodyType);
     }
 
 
@@ -29,7 +31,7 @@ export class NPC extends Interactable {
         
         const ANIMATION_SPEED : number = 10;
 
-        this.sprite.animate(0, 0, 3, ANIMATION_SPEED, event.tick);
+        this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
     }
 
 
