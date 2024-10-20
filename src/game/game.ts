@@ -166,7 +166,7 @@ export class Game implements Scene {
         event.transition.setCenter(this.objects.getRelativePlayerPosition(this.stage, this.camera));
         if (!fileLoaded) {
 
-            event.transition.changeSpeed(1.0/120.0);            
+            event.transition.changeSpeed(1.0/90.0);            
             this.setInitialDialogue(event);
         }
         this.initialDialogueActivated = fileLoaded;

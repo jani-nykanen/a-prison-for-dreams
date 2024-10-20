@@ -1,6 +1,7 @@
 import { Progress } from "./progress.js";
 import { Align, Bitmap, Canvas, Effect, Flip, TransformTarget } from "../gfx/interface.js";
 import { Assets } from "../core/assets.js";
+import { Item } from "./items.js";
 
 
 export const GAME_SAVE_ANIMATION_TIME : number = 120;
@@ -62,7 +63,6 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
     canvas.drawBitmap(bmpHUD, Flip.None, 1, 1, 0, 0, 16, 16);
     canvas.drawText(bmpFontOutlines, strHealth, dx + HEALTH_BAR_WIDTH/2, 0, -7, 0, Align.Center);
     
-
     // Money
     const strMoney : string = "*" + String(stats.getMoney());
     dx = canvas.width - strMoney.length*9;
@@ -70,9 +70,12 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
     canvas.drawBitmap(bmpHUD, Flip.None, dx - 21, 1, 16, 0, 16, 16);
 
     // Ammo
-    const strAmmo : string = String(stats.getBulletCount()) + "/" + String(stats.getMaxBulletCount());
-    canvas.drawText(bmpFontOutlines, strAmmo, 13, canvas.height - 16, -7, 0);
-    canvas.drawBitmap(bmpHUD, Flip.None, 0, canvas.height - 17, 32, 0, 16, 16);
+    if (stats.hasItem(Item.Gun)) {
+        
+        const strAmmo : string = String(stats.getBulletCount()) + "/" + String(stats.getMaxBulletCount());
+        canvas.drawText(bmpFontOutlines, strAmmo, 13, canvas.height - 16, -7, 0);
+        canvas.drawBitmap(bmpHUD, Flip.None, 0, canvas.height - 17, 32, 0, 16, 16);
+    }
 }
 
 

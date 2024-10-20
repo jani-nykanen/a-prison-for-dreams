@@ -23,6 +23,7 @@ import { NPC } from "./interactables/npc.js";
 import { TextBox } from "../ui/textbox.js";
 import { Checkpoint } from "./interactables/checkpoint.js";
 import { Chest, ChestType } from "./interactables/chest.js";
+import { Beam } from "./interactables/beam.js";
 
 
 export class ObjectManager {
@@ -147,6 +148,13 @@ export class ObjectManager {
 
                 this.interactables.push(new Chest(dx, dy, id, 
                     (objID - 4) as ChestType, bmpChest, this.dialogueBox));
+                break;
+
+            // Beam
+            case 9:
+
+                this.interactables.push(new Beam(dx, dy, id));    
+
                 break;
 
             default:

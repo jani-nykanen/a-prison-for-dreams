@@ -346,6 +346,11 @@ export class Player extends CollisionObject {
 
     private controlShooting(event : ProgramEvent) : void {
 
+        if (!this.stats.hasItem(Item.Gun)) {
+
+            return;
+        }
+
         if (this.attacking || 
             this.highJumping || 
             this.shootWait > 0 || 
