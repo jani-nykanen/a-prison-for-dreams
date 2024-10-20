@@ -58,17 +58,15 @@
     ],
 
     "npc0": [
-        "We are the grave-\nkeepers, and just a few\nmoments ago we dug up\nyour body and brought\nyou back to life.",
-        "Why, you ask. The\nGreat Dreamer told us,\nthat is why. What are\nher motives, that we\ndo not know.",
-        "She rarely needs the\ndead ones, so something\nbad must be happening.",
-        "Whatever is the reason,\nyou should travel to\nthe World of Dream.\nThere is a portal to\nthe east.",
-        "You might find some\nuseful items on your\nway there. Feel free to\ntake them."
+        "We are the keepers of\nthe Graveyard. Our\njob is to bury dreams\nthat come here to die.",
+        "However, the Great\nDreamer told us to dig\nyou up and give you a\nlife. For what reason,\nwe do not know.",
+        "Nonetheless, there is a\nportal east from here.\nIt will take you to\nthe World of Dream.",
+        "You can find some use-\nful items on your way\nthere. You can keep\nthem if you wish."
     ],
 
     "npc1": [
-        "This is the Graveyard,\na place where the\ndreams come to die.",
-        "There is also the Old\nGraveyard where we bury\nthe nightmares - dead\nor alive.",
-        "Just hope you never\nhave to go there..."
+        "There is also the Old\nGraveyard, where we\nbury the nightmares.\nHow to get there, I\nhave no idea.",
+        "Just pray you never\nneed to go there."
     ],
 
 
@@ -76,6 +74,18 @@
 
         "You obtain a DUMMY ITEM!",
         "It reminds you of your child-\nhood. What a dummy you were!"
+    ],
+
+    "item1": [
+
+        "You obtain the SWORD OF UN-\nPREDICTABLE CONSEQUENCES!",
+        "It is a trusty (or was rusty?)\nold sword for all types of\nviolent activites."
+    ],
+
+    "item2": [
+
+        "You obtain a FUTURISTIC SCI-FI\nHAND CANNON THING!",
+        "It is one of those novelty\nfirearms that you wear like\ngloves. Not very practical\nbut easier to animate than\nan ordinary gun."
     ]
 
 }

@@ -57,7 +57,7 @@ export class Game implements Scene {
 
     private activateInitialDialogue(event : ProgramEvent) : void {
 
-        this.dialogueBox.activate(false, 0, (event : ProgramEvent) : void => {
+        this.dialogueBox.activate(false, 1, (event : ProgramEvent) : void => {
 
             this.objects.initiateWakingUpAnimation(event);
         });
@@ -203,6 +203,7 @@ export class Game implements Scene {
         
         if (this.dialogueBox.isActive()) {
 
+            this.objects?.animateNPCs(this.camera, event);
             this.dialogueBox.update(event);
             return;
         }
@@ -210,6 +211,7 @@ export class Game implements Scene {
         if (event.transition.isActive()) {
 
             this.objects?.initialCameraCheck(this.camera, event);
+            this.objects?.animateNPCs(this.camera, event);
             return;
         }
 
@@ -262,7 +264,10 @@ export class Game implements Scene {
         canvas.transform.apply();
         canvas.moveTo();
 
-        drawHUD(canvas, assets, this.progress!);
+        if (this.initialDialogueActivated && !this.dialogueBox.isActive()) {
+            
+            drawHUD(canvas, assets, this.progress!);
+        }
 
         this.pause.draw(canvas, assets);
         this.drawDialogueBox(canvas, assets);

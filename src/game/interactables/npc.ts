@@ -46,7 +46,7 @@ export class NPC extends Interactable {
         const text : string[] = event.localization?.getItem("npc" + String(this.id)) ?? ["null"];
 
         this.dialogueBox.addText(text);
-        this.dialogueBox.activate(false, 0);
+        this.dialogueBox.activate(false, this.sprite.getRow());
     }
 
 }

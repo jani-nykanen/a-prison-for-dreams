@@ -15,6 +15,7 @@ import { ObjectGenerator } from "./objectgenerator.js";
 import { FlyingText, FlyingTextSymbol } from "./flyingtext.js";
 import { RGBA } from "../math/rgba.js";
 import { Progress } from "./progress.js";
+import { Item } from "./items.js";
 
 
 const GRAVITY_MAGNITUDE : number = 5.0;
@@ -379,6 +380,11 @@ export class Player extends CollisionObject {
         const DOWN_ATTACK_JUMP : number = -2.0;
         const DOWN_ATTACK_STICK_Y_THRESHOLD : number = 0.50;
         const FORWARD_SPEED : number[] = [1.5, 2.0];
+
+        if (!this.stats.hasItem(Item.Sword)) {
+
+            return;
+        }
         
         const attackButton : InputState = event.input.getAction("attack");
         if (!forceSecondAttack &&

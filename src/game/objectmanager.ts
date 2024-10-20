@@ -270,13 +270,18 @@ export class ObjectManager {
     }
 
 
-    private updateInteractables(camera : Camera, event : ProgramEvent) : void {
+    private updateInteractables(camera : Camera, event : ProgramEvent, 
+        takePlayerEvent : boolean = true) : void {
 
         for (const o of this.interactables) {
 
             o.cameraCheck(camera, event);
             o.update(event);
-            o.playerCollision(this.player, event);
+
+            if (takePlayerEvent) {
+
+                o.playerCollision(this.player, event);
+            }
         }
     }
 
@@ -286,6 +291,7 @@ export class ObjectManager {
         if (this.player.isWaiting()) {
 
             this.player.update(event);
+            this.animateNPCs(camera, event);
             return;
         }
 
@@ -303,6 +309,12 @@ export class ObjectManager {
 
         this.collectables.update(event, camera, stage);
         this.collectables.playerCollision(this.player, event);
+    }
+
+
+    public animateNPCs(camera : Camera, event : ProgramEvent) : void {
+
+        this.updateInteractables(camera, event, false);
     }
 
 
@@ -425,7 +437,7 @@ export class ObjectManager {
             (event : ProgramEvent) : void => {
 
             this.dialogueBox.addText(event.localization?.getItem("npc0") ?? ["null"]);
-            this.dialogueBox.activate(false, 0);
+            this.dialogueBox.activate(false, 1);
         });
     }
 
