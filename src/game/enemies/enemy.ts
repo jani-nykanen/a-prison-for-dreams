@@ -30,6 +30,8 @@ export class Enemy extends CollisionObject {
     private flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
     private collectables : CollectableGenerator | undefined = undefined;
 
+    protected initialPos : Vector;
+
     protected sprite : Sprite;
     protected flip : Flip = Flip.None;
 
@@ -44,6 +46,8 @@ export class Enemy extends CollisionObject {
     constructor(x : number, y : number) {
 
         super(x, y, true);
+
+        this.initialPos = this.pos.clone();
     
         this.sprite = new Sprite(24, 24);
 

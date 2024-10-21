@@ -33,7 +33,7 @@ export class Checkpoint extends Interactable {
 
         this.initialY = this.pos.y;
 
-        this.hitbox = new Rectangle(0, 0, 16, 16);
+        this.hitbox = new Rectangle(0, -16, 16, 32);
 
         // Large area to ensure that the "Checkpoint!" text stays visible
         this.cameraCheckArea = new Vector(128, 128);

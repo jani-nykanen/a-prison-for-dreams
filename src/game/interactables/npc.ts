@@ -23,7 +23,7 @@ export class NPC extends Interactable {
 
         this.hitbox.w = 12;
 
-        this.sprite.setFrame(0, bodyType);
+        this.sprite.setFrame(Math.floor(Math.random()*4), bodyType);
     }
 
 

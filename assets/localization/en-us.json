@@ -65,6 +65,12 @@
     ],
 
     "npc1": [
+        "This portal will take\nyou to the World of\nDream. It is a one-way\nportal, though, so you\ncannot come back.",
+        "Once you get there...\nwell, our friends\ntry to help you the\nbest they can.",
+        "Which is not much, to\nbe honest."
+    ],
+
+    "npc10": [
         "There is also the Old\nGraveyard, where we\nbury the nightmares.\nHow to get there, I\nhave no idea.",
         "Just pray you never\nneed to go there."
     ],

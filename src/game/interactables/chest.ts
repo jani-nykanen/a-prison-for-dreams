@@ -36,6 +36,8 @@ export class Chest extends Interactable {
         this.dialogueBox = dialogueBox;
 
         this.hitbox.w = 12;
+
+        this.sprite.setFrame(Math.floor(Math.random()*4), type - 1);
     }
 
 
@@ -49,7 +51,7 @@ export class Chest extends Interactable {
             return;
         }
 
-        this.sprite.animate(this.type - 1, 0, 3, ANIMATION_SPEED, event.tick);
+        this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
     }
 
 
