@@ -27,6 +27,7 @@
         {"name": "npc", "path": "npc.png"},
         {"name": "checkpoint", "path": "checkpoint.png"},
         {"name": "chest", "path": "chest.png"},
+        {"name": "portal", "path": "portal.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},

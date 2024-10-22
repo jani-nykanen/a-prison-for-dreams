@@ -24,6 +24,7 @@ import { TextBox } from "../ui/textbox.js";
 import { Checkpoint } from "./interactables/checkpoint.js";
 import { Chest, ChestType } from "./interactables/chest.js";
 import { Beam } from "./interactables/beam.js";
+import { Portal } from "./interactables/portal.js";
 
 
 export class ObjectManager {
@@ -103,6 +104,7 @@ export class ObjectManager {
         const bmpNPC : Bitmap | undefined = event.assets.getBitmap("npc");
         const bmpCheckpoint : Bitmap | undefined = event.assets.getBitmap("checkpoint");
         const bmpChest : Bitmap | undefined = event.assets.getBitmap("chest");
+        const bmpPortal : Bitmap | undefined = event.assets.getBitmap("portal");
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -154,7 +156,12 @@ export class ObjectManager {
             case 9:
 
                 this.interactables.push(new Beam(dx, dy, id));    
+                break;
 
+            // Portal
+            case 10:
+
+                this.interactables.push(new Portal(dx, dy, bmpPortal));
                 break;
 
             default:

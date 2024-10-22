@@ -78,7 +78,10 @@ export class Interactable extends GameObject {
             return;
         }
 
-        this.sprite.draw(canvas, this.bitmap, this.pos.x - 12, this.pos.y - 16, this.flip);
+        this.sprite.draw(canvas, this.bitmap, 
+            this.pos.x - this.sprite.width/2,
+            this.pos.y - 16, 
+            this.flip);
     }
 
 }
