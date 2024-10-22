@@ -25,6 +25,7 @@ import { Checkpoint } from "./interactables/checkpoint.js";
 import { Chest, ChestType } from "./interactables/chest.js";
 import { Beam } from "./interactables/beam.js";
 import { Portal } from "./interactables/portal.js";
+import { MapTransitionCallback } from "./maptransition.js";
 
 
 export class ObjectManager {
@@ -49,13 +50,16 @@ export class ObjectManager {
     private player : Player;
 
     private npcType : number = 0;
+    private spawnId : number = 0;
 
     private readonly dialogueBox : TextBox;
+    private readonly mapTransition : MapTransitionCallback;
 
 
     constructor(progress : Progress, dialogueBox : TextBox, 
         stage : Stage, camera : Camera, event : ProgramEvent,
-        npcType : number, createNewPlayer : boolean = true) {
+        npcType : number, mapTransition : MapTransitionCallback,
+        spawnId : number, createNewPlayer : boolean = true) {
 
         this.flyingText = new ObjectGenerator<FlyingText, void> (FlyingText);
         this.projectiles = new ProjectileGenerator();
@@ -76,6 +80,10 @@ export class ObjectManager {
         this.dialogueBox = dialogueBox;
 
         this.npcType = npcType;
+        this.spawnId = spawnId;
+
+        
+        this.mapTransition = mapTransition;
         
         this.createObjects(stage, !createNewPlayer, event);
         this.initialCameraCheck(camera, event);
@@ -117,8 +125,8 @@ export class ObjectManager {
 
             // Player
             case 1:
-
-                if (!resetPlayer) {
+                
+                if (!resetPlayer && id - 1 == this.spawnId) {
 
                     this.player.setPosition(dx, dy, resetPlayer);
                 }
@@ -161,7 +169,7 @@ export class ObjectManager {
             // Portal
             case 10:
 
-                this.interactables.push(new Portal(dx, dy, bmpPortal));
+                this.interactables.push(new Portal(dx, dy, bmpPortal, this.mapTransition));
                 break;
 
             default:
@@ -190,7 +198,7 @@ export class ObjectManager {
 
     private updateEnemies(camera : Camera, stage : Stage, event : ProgramEvent) : void {
 
-        for (let o of this.enemies) {
+        for (const o of this.enemies) {
 
             o.cameraCheck(camera, event);
         }

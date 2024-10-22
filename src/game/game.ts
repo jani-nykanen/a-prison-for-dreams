@@ -48,6 +48,45 @@ export class Game implements Scene {
     }
     
 
+    private performMapTransition(mapName : string, spawnPos : number, event : ProgramEvent, createPlayer : boolean = false) : void {
+
+        const baseMap : Tilemap | undefined = event.assets.getTilemap(mapName);
+        if (baseMap === undefined) {
+
+            throw new Error(`Required tilemap missing: ${mapName}`);
+        }
+
+        this.tilesetIndex = Number(baseMap.getProperty("tileset") ?? "0");
+
+        const collisionMapName : string = `collisions_${this.tilesetIndex}`;
+        const collisionMap : Tilemap | undefined = event.assets.getTilemap(collisionMapName);
+
+        if (collisionMap === undefined) {
+
+            throw new Error(`Required tilemap missing: ${collisionMapName}`);
+        }
+
+        this.progress.setAreaName(mapName);
+
+        this.stage = new Stage(this.tilesetIndex, baseMap, collisionMap);
+        // TODO: Maybe not recreate the whole object, but reset values etc.
+        this.objects = new ObjectManager(
+            this.progress, this.dialogueBox, 
+            this.stage, this.camera, event,
+            Number(baseMap.getProperty("npctype") ?? 0),
+            (mapName : string, 
+             spawnPos : number, 
+             event : ProgramEvent, 
+             _createPlayer? : boolean) : void => this.performMapTransition(mapName, spawnPos, event, _createPlayer), 
+            spawnPos, createPlayer);
+        this.objects.centerCamera(this.camera);
+        this.limitCamera();
+
+        this.stage.initializeBackground(this.camera);
+        this.objects.initialCameraCheck(this.camera, event);
+    }
+
+
     private setInitialDialogue(event : ProgramEvent) : void {
 
         this.dialogueBox.addText(event.localization?.getItem("wakeup") ?? ["null"]);
@@ -138,30 +177,7 @@ export class Game implements Scene {
         this.progress = new Progress(this.fileIndex);
         const fileLoaded : boolean = this.progress.loadGame(this.fileIndex);
 
-        const baseMap : Tilemap | undefined = event.assets.getTilemap(this.progress.getAreaName());
-        if (baseMap === undefined) {
-
-            throw new Error("Required tilemap(s) missing!");
-        }
-
-        this.tilesetIndex = Number(baseMap.getProperty("tileset") ?? "0");
-        const collisionMap : Tilemap | undefined = event.assets.getTilemap(`collisions_${this.tilesetIndex}`);
-
-        if (baseMap === undefined || collisionMap === undefined) {
-
-            throw "Required tilemaps missing!";
-        }
-
-        this.stage = new Stage(this.tilesetIndex, baseMap, collisionMap);
-        this.objects = new ObjectManager(
-            this.progress, this.dialogueBox, 
-            this.stage, this.camera, event,
-            Number(baseMap.getProperty("npctype") ?? 0),
-            !fileLoaded);
-        this.objects.centerCamera(this.camera);
-        this.limitCamera();
-
-        this.stage.initializeBackground(this.camera);
+        this.performMapTransition(this.progress.getAreaName(), 0, event, !fileLoaded);
 
         event.transition.setCenter(this.objects.getRelativePlayerPosition(this.stage, this.camera));
         if (!fileLoaded) {
@@ -210,8 +226,11 @@ export class Game implements Scene {
 
         if (event.transition.isActive()) {
 
-            this.objects?.initialCameraCheck(this.camera, event);
-            this.objects?.animateNPCs(this.camera, event);
+            if (event.transition.getEffectType() != TransitionType.Waves) {
+
+                this.objects?.initialCameraCheck(this.camera, event);
+                this.objects?.animateNPCs(this.camera, event);
+            }
             return;
         }
 

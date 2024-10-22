@@ -1,8 +1,11 @@
 import { ProgramEvent } from "../../core/event.js";
+import { TransitionType } from "../../core/transition.js";
 import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Sprite } from "../../gfx/sprite.js";
+import { RGBA } from "../../math/rgba.js";
 import { Vector } from "../../math/vector.js";
 import { TextBox } from "../../ui/textbox.js";
+import { MapTransitionCallback } from "../maptransition.js";
 import { Player } from "../player.js";
 import { TILE_HEIGHT } from "../tilesize.js";
 import { Interactable } from "./interactable.js";
@@ -11,7 +14,10 @@ import { Interactable } from "./interactable.js";
 export class Portal extends Interactable {
 
 
-    constructor(x : number, y : number,  bitmap : Bitmap | undefined) {
+    private mapTransition : MapTransitionCallback;
+
+
+    constructor(x : number, y : number, bitmap : Bitmap | undefined, mapTransition : MapTransitionCallback) {
 
         super(x, y - 24, bitmap);
 
@@ -21,6 +27,8 @@ export class Portal extends Interactable {
         this.cameraCheckArea = new Vector(48, 64);
 
         this.sprite = new Sprite(32, 48);
+
+        this.mapTransition = mapTransition;
     }
 
 
@@ -33,6 +41,17 @@ export class Portal extends Interactable {
 
 
     protected interactionEvent(player : Player, event : ProgramEvent) : void {
-        
+
+        player.setPosition(this.pos.x, this.pos.y + 24, false);
+        player.setStandingFrame(true);
+
+        event.cloneCanvasToBufferTexture(true);
+        event.transition.activate(true, TransitionType.Waves, 1.0/120.0, event,
+            (event : ProgramEvent) : void => {
+
+                this.mapTransition("coast", 0, event, true);
+                event.cloneCanvasToBufferTexture(true);
+            },
+            new RGBA(255, 255, 255));
     }
 }

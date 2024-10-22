@@ -20,8 +20,8 @@ export class Progress {
     private healthBarSpeed : number = 0.0;
     private healthBarPos : number = 1.0;
 
-    private bullets : number = 15;
-    private maxBullets : number = 15;
+    private bullets : number = 10;
+    private maxBullets : number = 10;
 
     private attackPower : number = 5;
     private projectilePower : number = 3;
@@ -250,6 +250,12 @@ export class Progress {
             return false;
         }
         return true;
+    }
+
+
+    public setAreaName(name : string) : void {
+
+        this.areaName = name;
     }
 
 

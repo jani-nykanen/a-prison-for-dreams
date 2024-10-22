@@ -83,16 +83,20 @@ export class Transition {
         const MAX_AMPLITUDE : number = 0.25;
         const MIN_PERIOD : number = 0.25;
 
-        if (!this.active || this.effectType == TransitionType.None)
-            return;
+        if (!this.active || this.effectType == TransitionType.None) {
 
-        let t = this.timer;
-        if (this.fadeOut)
+            return;
+        }
+
+        let t : number = this.timer;
+        if (this.fadeOut) {
+            
             t = 1.0 - t;
+        }
 
         switch (this.effectType) {
 
-        case TransitionType.Waves:
+        case TransitionType.Waves: {
 
             const amplitude : number = t*MAX_AMPLITUDE*canvas.width;
             const period : number = ((1.0 - t) + t*MIN_PERIOD)*canvas.height;
@@ -101,7 +105,7 @@ export class Transition {
             canvas.clear(this.color.r, this.color.g, this.color.b);
             canvas.drawHorizontallyWavingBitmap(canvas.getCloneBufferBitmap(),
                 amplitude, period, shift, 0, 0, Flip.Vertical);
-            
+        }
         // Fallthrough
         case TransitionType.Fade:
 
@@ -109,20 +113,21 @@ export class Transition {
             canvas.fillRect(0, 0, canvas.width, canvas.height);
             break;
 
-        case TransitionType.Circle:
+        case TransitionType.Circle: {
 
-            const center : Vector = this.center ?? new Vector(canvas.width/2, canvas.height/2);
+                const center : Vector = this.center ?? new Vector(canvas.width/2, canvas.height/2);
 
-            const maxRadius : number = Math.max(
-                Math.hypot(center.x, center.y),
-                Math.hypot(canvas.width - center.x, center.y),
-                Math.hypot(canvas.width - center.x, canvas.height - center.y),
-                Math.hypot(center.x, canvas.height - center.y)
-            );
+                const maxRadius : number = Math.max(
+                    Math.hypot(center.x, center.y),
+                    Math.hypot(canvas.width - center.x, center.y),
+                    Math.hypot(canvas.width - center.x, canvas.height - center.y),
+                    Math.hypot(center.x, canvas.height - center.y)
+                );
 
-            const radius : number = (1 - t)*(1 - t)*maxRadius;
-            canvas.setColor(this.color.r, this.color.g, this.color.b);
-            canvas.fillCircleOutside(center.x, center.y, radius);
+                const radius : number = (1 - t)*(1 - t)*maxRadius;
+                canvas.setColor(this.color.r, this.color.g, this.color.b);
+                canvas.fillCircleOutside(center.x, center.y, radius);
+            }
             break;
 
         default:
@@ -133,6 +138,7 @@ export class Transition {
 
     public isActive = () : boolean => this.active;
     public isFadingOut = () : boolean => this.active && this.fadeOut;
+    public getEffectType = () : TransitionType => this.effectType;
 
     
     public deactivate() : void {

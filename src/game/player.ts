@@ -1493,5 +1493,12 @@ export class Player extends CollisionObject {
         this.sprite.setFrame(0, 5);
         this.flip = Flip.None;
     }
+
+
+    public setStandingFrame(lookBehind : boolean = true) : void {
+
+        this.sprite.setFrame(lookBehind ? 8 : 9, 5);
+        this.flip = Flip.None;
+    }
 }
 
