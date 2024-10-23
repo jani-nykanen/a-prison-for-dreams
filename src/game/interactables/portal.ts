@@ -6,7 +6,7 @@ import { RGBA } from "../../math/rgba.js";
 import { Vector } from "../../math/vector.js";
 import { TextBox } from "../../ui/textbox.js";
 import { MapTransitionCallback } from "../maptransition.js";
-import { Player } from "../player.js";
+import { Player, Pose } from "../player.js";
 import { TILE_HEIGHT } from "../tilesize.js";
 import { Interactable } from "./interactable.js";
 
@@ -43,13 +43,13 @@ export class Portal extends Interactable {
     protected interactionEvent(player : Player, event : ProgramEvent) : void {
 
         player.setPosition(this.pos.x, this.pos.y + 24, false);
-        player.setStandingFrame(true);
+        player.setPose(Pose.UseDoor);
 
         event.cloneCanvasToBufferTexture(true);
         event.transition.activate(true, TransitionType.Waves, 1.0/120.0, event,
             (event : ProgramEvent) : void => {
 
-                this.mapTransition("coast", 0, event, true);
+                this.mapTransition("coast", 0, Pose.EnterRoom, true, event);
                 event.cloneCanvasToBufferTexture(true);
             },
             new RGBA(255, 255, 255));

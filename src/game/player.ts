@@ -51,6 +51,17 @@ export const enum WaitType {
 };
 
 
+export const enum Pose {
+
+    None = 0,
+    Sit = 1,
+    UseDoor = 2,
+    EnterRoom = 3,
+    EnterRight = 4,
+    EnterLeft = 5,
+}
+
+
 export class Player extends CollisionObject {
 
 
@@ -1488,17 +1499,43 @@ export class Player extends CollisionObject {
     }       
 
 
-    public setSittingFrame() : void {
+    public setPose(pose : Pose) {
 
-        this.sprite.setFrame(0, 5);
-        this.flip = Flip.None;
-    }
+        switch (pose) {
 
+        case Pose.Sit:
 
-    public setStandingFrame(lookBehind : boolean = true) : void {
+            this.sprite.setFrame(0, 5);
+            this.flip = Flip.None;
+            break;
 
-        this.sprite.setFrame(lookBehind ? 8 : 9, 5);
-        this.flip = Flip.None;
+        case Pose.EnterLeft:
+
+            this.sprite.setFrame(0, 0);
+            this.flip = Flip.Horizontal;
+            break;
+
+        case Pose.EnterRight:
+
+            this.sprite.setFrame(0, 0);
+            this.flip = Flip.None;
+            break;
+
+        case Pose.UseDoor:
+
+            this.sprite.setFrame(8, 5);
+            this.flip = Flip.None;
+            break;
+
+        case Pose.EnterRoom:
+
+            this.sprite.setFrame(9, 5);
+            this.flip = Flip.None;
+            break;
+
+        default:
+            break;
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 import { ProgramEvent } from "../core/event.js";
 import { Camera } from "./camera.js";
-import { Player, WaitType } from "./player.js";
+import { Player, Pose, WaitType } from "./player.js";
 import { Stage } from "./stage.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Assets } from "../core/assets.js";
@@ -59,7 +59,7 @@ export class ObjectManager {
     constructor(progress : Progress, dialogueBox : TextBox, 
         stage : Stage, camera : Camera, event : ProgramEvent,
         npcType : number, mapTransition : MapTransitionCallback,
-        spawnId : number, createNewPlayer : boolean = true) {
+        spawnId : number, pose : Pose, createNewPlayer : boolean = true) {
 
         this.flyingText = new ObjectGenerator<FlyingText, void> (FlyingText);
         this.projectiles = new ProjectileGenerator();
@@ -82,7 +82,6 @@ export class ObjectManager {
         this.npcType = npcType;
         this.spawnId = spawnId;
 
-        
         this.mapTransition = mapTransition;
         
         this.createObjects(stage, !createNewPlayer, event);
@@ -91,18 +90,18 @@ export class ObjectManager {
         if (createNewPlayer) {
 
             progress.setCheckpointPosition(this.player.getPosition());
-            this.player.setSittingFrame();
+            this.player.setPose(pose);
         }
         else {
 
             const checkpoint : Vector = progress.getCheckpointPosition();
             this.player.setPosition(checkpoint.x, checkpoint.y, true);
+        }
 
-            // Open chests etc.
-            for (const o of this.interactables) {
+        // Open chests etc.
+        for (const o of this.interactables) {
 
-                o.playerCollision(this.player, event, true);
-            }
+            o.playerCollision(this.player, event, true);
         }
     }
 
@@ -462,6 +461,12 @@ export class ObjectManager {
             this.dialogueBox.addText(event.localization?.getItem("npc0") ?? ["null"]);
             this.dialogueBox.activate(false, 1);
         });
+    }
+
+
+    public setPlayerPose(pose : Pose) : void {
+
+        this.player.setPose(pose);
     }
 
 

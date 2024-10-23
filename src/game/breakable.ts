@@ -37,7 +37,7 @@ export class Breakable extends CollisionObject {
         splinters : SplinterGenerator,
         collectables : CollectableGenerator) {
 
-        super(x, y, true);
+        super(x, y + 1, true);
 
         this.collisionBox = new Rectangle(0, -1, 16, 16);
         this.hitbox = this.collisionBox.clone();

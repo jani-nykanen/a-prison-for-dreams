@@ -70,8 +70,14 @@
         "Which is not much, to\nbe honest."
     ],
 
-    "npc10": [
-        "There is also the Old\nGraveyard, where we\nbury the nightmares.\nHow to get there, I\nhave no idea.",
+    "npc2": [
+        "Welcome to the World\nof Dream! I'm glad you\nmade it here! You can\nnever trust the\ngraveyard people...",
+        "Your real adventure\nbegins here. You must\nfind the Great Dreamer\nand do... whatever\nyou must.",
+        "If the dream comes to\nthe end, who knows\nwhat happens?"
+    ],
+
+    "npc3": [
+        "Did you know there is\nalso the Old Graveyard?\nWe bury the nightmares\nthere. Some of them\nmight even be dead.",
         "Just pray you never\nneed to go there."
     ],
 

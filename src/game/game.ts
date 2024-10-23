@@ -15,6 +15,8 @@ import { Pause } from "./pause.js";
 import { InputState } from "../core/inputstate.js";
 import { TextBox } from "../ui/textbox.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
+import { MapTransitionCallback } from "./maptransition.js";
+import { Pose } from "./player.js";
 
 
 export class Game implements Scene {
@@ -35,6 +37,8 @@ export class Game implements Scene {
     private fileIndex : number = 0;
     private tilesetIndex : number = 0;
 
+    private mapTransition : MapTransitionCallback;
+
    
     constructor(event : ProgramEvent) { 
 
@@ -45,10 +49,19 @@ export class Game implements Scene {
             (event : ProgramEvent) : boolean => this.progress.save(),
             (event : ProgramEvent) : void => this.quitToMainMenu(event)
         );
+
+        this.mapTransition = (
+            mapName : string, 
+            spawnPos : number, 
+            pose : Pose,
+            createPlayer : boolean,
+            _event : ProgramEvent) : void => this.performMapTransition(mapName, spawnPos, pose, createPlayer, _event);
     }
     
 
-    private performMapTransition(mapName : string, spawnPos : number, event : ProgramEvent, createPlayer : boolean = false) : void {
+    private performMapTransition(mapName : string, spawnPos : number, 
+        pose : Pose, createPlayer : boolean, event : ProgramEvent,
+        save : boolean = true) : void {
 
         const baseMap : Tilemap | undefined = event.assets.getTilemap(mapName);
         if (baseMap === undefined) {
@@ -74,16 +87,21 @@ export class Game implements Scene {
             this.progress, this.dialogueBox, 
             this.stage, this.camera, event,
             Number(baseMap.getProperty("npctype") ?? 0),
-            (mapName : string, 
-             spawnPos : number, 
-             event : ProgramEvent, 
-             _createPlayer? : boolean) : void => this.performMapTransition(mapName, spawnPos, event, _createPlayer), 
-            spawnPos, createPlayer);
+            this.mapTransition, spawnPos, pose, 
+            createPlayer);
         this.objects.centerCamera(this.camera);
         this.limitCamera();
 
         this.stage.initializeBackground(this.camera);
+        // Might help with portal transition?
+        this.stage.update(this.camera, event);
+
         this.objects.initialCameraCheck(this.camera, event);
+
+        if (save) {
+            
+            this.progress.save();
+        }
     }
 
 
@@ -177,7 +195,8 @@ export class Game implements Scene {
         this.progress = new Progress(this.fileIndex);
         const fileLoaded : boolean = this.progress.loadGame(this.fileIndex);
 
-        this.performMapTransition(this.progress.getAreaName(), 0, event, !fileLoaded);
+        this.performMapTransition(this.progress.getAreaName(), 0, 
+            fileLoaded ? Pose.None : Pose.Sit, !fileLoaded, event, !fileLoaded);
 
         event.transition.setCenter(this.objects.getRelativePlayerPosition(this.stage, this.camera));
         if (!fileLoaded) {
