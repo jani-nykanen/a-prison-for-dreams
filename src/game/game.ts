@@ -37,6 +37,8 @@ export class Game implements Scene {
     private fileIndex : number = 0;
     private tilesetIndex : number = 0;
 
+    private transitionActive : boolean = false;
+
     private mapTransition : MapTransitionCallback;
 
    
@@ -58,6 +60,13 @@ export class Game implements Scene {
             _event : ProgramEvent) : void => this.performMapTransition(mapName, spawnPos, pose, createPlayer, _event);
     }
     
+
+    private triggerNPC(index : number, npcType : number, event : ProgramEvent) : void {
+
+        this.dialogueBox.addText(event.localization?.getItem(`npc${index}`) ?? ["null"]);
+        this.dialogueBox.activate(false, npcType);
+    }
+
 
     private performMapTransition(mapName : string, spawnPos : number, 
         pose : Pose, createPlayer : boolean, event : ProgramEvent,
@@ -101,6 +110,15 @@ export class Game implements Scene {
         if (save) {
             
             this.progress.save();
+
+            // A lazy way to make sure that the animation is not triggered when 
+            // loading the savefile was to put these inside if (save) check...
+            const npcTriggered : number = Number(baseMap.getProperty("triggernpc") ?? -1);
+            if (npcTriggered >= 0) {
+
+                const npcType : number = Number(baseMap.getProperty("npctype") ?? 0);
+                this.triggerNPC(npcTriggered, npcType, event);
+            }
         }
     }
 
@@ -113,7 +131,7 @@ export class Game implements Scene {
 
 
     private activateInitialDialogue(event : ProgramEvent) : void {
-
+        
         this.dialogueBox.activate(false, 1, (event : ProgramEvent) : void => {
 
             this.objects.initiateWakingUpAnimation(event);
@@ -172,6 +190,11 @@ export class Game implements Scene {
 
     private drawDialogueBox(canvas : Canvas, assets : Assets) : void {
 
+        if (this.transitionActive) {
+
+            return;
+        }
+
         const boxHeight : number = this.dialogueBox.getHeight()*10;
 
         let dy : number = 0;
@@ -213,6 +236,8 @@ export class Game implements Scene {
 
     public update(event : ProgramEvent) : void {
 
+        this.transitionActive = event.transition.isActive();
+
         if (this.progress?.wasGameSaved()) {
 
             this.gameSaveMode = this.progress?.wasGameSavingSuccessful() ? 1 : 2;
@@ -234,22 +259,23 @@ export class Game implements Scene {
             return;
         }
 
-        this.stage?.update(this.camera, event);
-        
-        if (this.dialogueBox.isActive()) {
+        if (!event.transition.isActive() ||
+            event.transition.getEffectType() != TransitionType.Waves) {
 
-            this.objects?.animateNPCs(this.camera, event);
-            this.dialogueBox.update(event);
-            return;
+            this.stage?.update(this.camera, event);
         }
 
         if (event.transition.isActive()) {
 
-            if (event.transition.getEffectType() != TransitionType.Waves) {
+            this.objects?.initialCameraCheck(this.camera, event);
+            this.objects?.animateNPCs(this.camera, event);
+            return;
+        }
 
-                this.objects?.initialCameraCheck(this.camera, event);
-                this.objects?.animateNPCs(this.camera, event);
-            }
+        if (this.dialogueBox.isActive()) {
+
+            this.objects?.animateNPCs(this.camera, event);
+            this.dialogueBox.update(event);
             return;
         }
 
@@ -302,19 +328,38 @@ export class Game implements Scene {
         canvas.transform.apply();
         canvas.moveTo();
 
-        if (this.initialDialogueActivated && !this.dialogueBox.isActive()) {
+        if ((this.initialDialogueActivated && !this.dialogueBox.isActive())) { // ||
+            // (this.dialogueBox.isActive() && this.transitionActive) ) {
             
             drawHUD(canvas, assets, this.progress!);
         }
 
         this.pause.draw(canvas, assets);
         this.drawDialogueBox(canvas, assets);
-
+/*
         if (this.gameSaveTimer > 0) {
 
             drawGameSavingIcon(canvas, assets, this.gameSaveTimer, this.gameSaveMode == 1);
         }
+*/
+    }
 
+
+    public postDraw(canvas : Canvas, assets : Assets) : void {
+
+        canvas.moveTo();
+
+        canvas.transform.setTarget(TransformTarget.Camera);
+        canvas.transform.view(canvas.width, canvas.height);
+
+        canvas.transform.setTarget(TransformTarget.Model);
+        canvas.transform.loadIdentity();
+
+        canvas.setColor();
+        if (this.gameSaveTimer > 0) {
+
+            drawGameSavingIcon(canvas, assets, this.gameSaveTimer, this.gameSaveMode == 1);
+        }
     }
 
 

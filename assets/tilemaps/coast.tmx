@@ -5,6 +5,7 @@
   <property name="is_lava" type="int" value="0"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="1"/>
+  <property name="triggernpc" type="int" value="2"/>
   <property name="water_level" type="int" value="1"/>
  </properties>
  <tileset firstgid="1" source="../../tiled/tileset_1.tsx"/>

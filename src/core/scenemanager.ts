@@ -45,6 +45,12 @@ export class SceneManager {
     }
 
 
+    public postDraw(canvas : Canvas, assets : Assets) : void {
+
+        this.activeScene?.postDraw?.(canvas, assets);
+    }
+
+
     public changeScene(name : string, event : ProgramEvent) : void {
 
         const param : SceneParameter = this.activeScene?.dispose();

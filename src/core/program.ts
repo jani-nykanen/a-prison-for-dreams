@@ -114,6 +114,7 @@ export class Program {
                     
                     this.event.scenes.redraw(canvas, this.event.assets);
                     this.event.transition.draw(canvas);
+                    this.event.scenes.postDraw(canvas, this.event.assets);
                 }
                 else {
 

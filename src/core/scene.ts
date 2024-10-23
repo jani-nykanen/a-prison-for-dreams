@@ -11,5 +11,6 @@ export interface Scene {
     init?(param : SceneParameter, event : ProgramEvent) : void;
     update(event : ProgramEvent) : void;
     redraw(canvas : Canvas, assets : Assets) : void;
+    postDraw?(canvas : Canvas, assets : Assets) : void;
     dispose() : SceneParameter;
 }
