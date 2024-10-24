@@ -160,7 +160,8 @@ export class ObjectManager {
             case 8:
 
                 this.interactables.push(new Chest(dx, dy, id, 
-                    (objID - 4) as ChestType, bmpChest, this.dialogueBox));
+                        (objID - 4) as ChestType, bmpChest, 
+                        this.dialogueBox, this.hints));
                 break;
 
             // Beam

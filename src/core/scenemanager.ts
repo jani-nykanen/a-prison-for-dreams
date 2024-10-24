@@ -39,9 +39,9 @@ export class SceneManager {
     }
 
 
-    public redraw(canvas : Canvas, assets : Assets) : void {
+    public redraw(canvas : Canvas, assets : Assets, isCloningToBuffer : boolean = false) : void {
 
-        this.activeScene?.redraw(canvas, assets);
+        this.activeScene?.redraw(canvas, assets, isCloningToBuffer);
     }
 
 

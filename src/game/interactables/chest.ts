@@ -1,8 +1,17 @@
 import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Flip } from "../../gfx/interface.js";
 import { TextBox } from "../../ui/textbox.js";
+import { HintRenderer } from "../hintrenderer.js";
 import { Player, WaitType } from "../player.js";
 import { Interactable } from "./interactable.js";
+
+
+const ITEM_HINT_LOOKUP : (number | undefined)[] = [
+
+    undefined,
+    2,
+    3,
+];
 
 
 // Don't take this out of context, please.
@@ -24,16 +33,18 @@ export class Chest extends Interactable {
     private opened : boolean = false;
 
     private readonly dialogueBox : TextBox;
+    private readonly hints : HintRenderer;
 
 
     constructor(x : number, y : number, id : number, type : ChestType,
-        bitmap : Bitmap | undefined, dialogueBox : TextBox) {
+        bitmap : Bitmap | undefined, dialogueBox : TextBox, hints : HintRenderer) {
 
         super(x, y, bitmap);
 
         this.id = id - 1;
         this.type = type;
         this.dialogueBox = dialogueBox;
+        this.hints = hints;
 
         this.hitbox.w = 12;
 
@@ -93,6 +104,15 @@ export class Chest extends Interactable {
             this.dialogueBox.activate(false, null, (event : ProgramEvent) : void => {
 
                 player.stats.save();
+
+                const hintID : number | undefined = ITEM_HINT_LOOKUP[this.id];
+                if (hintID !== undefined) {
+
+                    this.hints.activate(this.pos, (event.localization?.getItem("hints") ?? [])[hintID] ?? "null");
+
+                    // This is actually redundant
+                    player.stats.markHintAsShown(hintID);
+                }
             });
 
             player.stats.obtainItem(this.id);

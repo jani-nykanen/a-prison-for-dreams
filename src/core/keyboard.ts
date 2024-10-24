@@ -13,7 +13,7 @@ export class Keyboard {
     constructor() {
 
         this.states = new Map<string, InputState> ();
-        this.prevent = new Array<string> ("ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp");
+        this.prevent = new Array<string> ("ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", "KeyA", "KeyS", "KeyD", "KeyW");
 
         window.addEventListener("keydown", (e : any) => {
 

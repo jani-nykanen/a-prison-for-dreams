@@ -77,7 +77,7 @@ export class Input {
         this.actions.set(name, new InputAction(keys, gamepadButtons ?? [], mouseButtons ?? []));
         if (prevent) {
 
-            for (let k of keys) {
+            for (const k of keys) {
 
                 this.keyboard.preventKey(k);
             }

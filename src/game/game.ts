@@ -310,7 +310,7 @@ export class Game implements Scene {
     }
 
 
-    public redraw(canvas : Canvas, assets : Assets) : void {
+    public redraw(canvas : Canvas, assets : Assets, isCloningToBuffer : boolean) : void {
 
         canvas.moveTo();
         // canvas.clear(109, 182, 255);
@@ -334,7 +334,8 @@ export class Game implements Scene {
         canvas.transform.apply();
         canvas.moveTo();
 
-        if ((this.initialDialogueActivated && !this.dialogueBox.isActive())) { // ||
+        if (!isCloningToBuffer &&
+            (this.initialDialogueActivated && !this.dialogueBox.isActive())) { // ||
             // (this.dialogueBox.isActive() && this.transitionActive) ) {
             
             drawHUD(canvas, assets, this.progress!);

@@ -9,13 +9,13 @@ const initialEvent = (event : ProgramEvent) : void => {
 
     event.assets.parseIndexFile("assets/index.json");
 
-    event.input.addAction("jump", ["Space", "KeyZ"], [0]);
-    event.input.addAction("attack", ["ControlLeft", "KeyX"], [2, 3], [0]);
-    event.input.addAction("shoot", ["ShiftLeft", "KeyC"], [1], [2]);
+    event.input.addAction("jump", ["Space", "KeyZ", "KeyJ"], [0]);
+    event.input.addAction("attack", ["ControlLeft", "ControlRight", "KeyX", "KeyK"], [2, 3], [0]);
+    event.input.addAction("shoot", ["ShiftLeft", "ShiftRight", "KeyC", "KeyL"], [1], [2]);
     event.input.addAction("pause", ["Enter", "Escape"], [7, 9]);
     event.input.addAction("back", ["Escape"], [1, 6, 8], undefined, false); // We do not want to prevent escape!
     event.input.addAction("back2", ["Backspace"]); 
-    event.input.addAction("select", ["Enter", "Space", "KeyZ"], [0, 7, 9]);
+    event.input.addAction("select", ["Enter", "Space", "KeyZ", "KeyJ"], [0, 7, 9], [0]);
 
     // TODO: Read from a save file or something?
     event.audio.setMusicVolume(60);

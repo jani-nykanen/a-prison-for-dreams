@@ -55,9 +55,9 @@
 
     "hints": [
         "Use ARROW KEYS or WASD to walk.",
-        "Press SPACE or Z to jump.",
-        "Press Left Ctrl or X to attack.",
-        "Press Left Shift or Z to shoot."
+        "Press SPACE, Z or J to jump.",
+        "Press Ctrl, X or K to attack.",
+        "Press Shift, C or L to shoot."
     ],
 
 

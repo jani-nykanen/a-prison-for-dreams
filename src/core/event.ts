@@ -84,7 +84,7 @@ export class ProgramEvent {
 
             this.renderer.drawToCanvas((canvas : Canvas) : void => {
 
-                this.scenes.redraw(canvas, this.assets);
+                this.scenes.redraw(canvas, this.assets, true);
             });
         }
         this.renderer.cloneCanvasToBufferBitmap();
