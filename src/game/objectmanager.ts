@@ -26,6 +26,8 @@ import { Chest, ChestType } from "./interactables/chest.js";
 import { Beam } from "./interactables/beam.js";
 import { Portal } from "./interactables/portal.js";
 import { MapTransitionCallback } from "./maptransition.js";
+import { HintRenderer } from "./hintrenderer.js";
+import { HintTrigger } from "./interactables/hinttrigger.js";
 
 
 export class ObjectManager {
@@ -53,13 +55,15 @@ export class ObjectManager {
     private spawnId : number = 0;
 
     private readonly dialogueBox : TextBox;
+    private readonly hints : HintRenderer;
     private readonly mapTransition : MapTransitionCallback;
 
 
     constructor(progress : Progress, dialogueBox : TextBox, 
-        stage : Stage, camera : Camera, event : ProgramEvent,
+        hints : HintRenderer, stage : Stage, camera : Camera,
         npcType : number, mapTransition : MapTransitionCallback,
-        spawnId : number, pose : Pose, createNewPlayer : boolean = true) {
+        spawnId : number, pose : Pose, createNewPlayer : boolean, 
+        event : ProgramEvent,) {
 
         this.flyingText = new ObjectGenerator<FlyingText, void> (FlyingText);
         this.projectiles = new ProjectileGenerator();
@@ -78,11 +82,11 @@ export class ObjectManager {
         this.player = new Player(0, 0, this.projectiles, this.animatedParticles, this.flyingText, progress);
 
         this.dialogueBox = dialogueBox;
+        this.hints = hints;
+        this.mapTransition = mapTransition;
 
         this.npcType = npcType;
         this.spawnId = spawnId;
-
-        this.mapTransition = mapTransition;
         
         this.createObjects(stage, !createNewPlayer, event);
         this.initialCameraCheck(camera, event);
@@ -169,6 +173,12 @@ export class ObjectManager {
             case 10:
 
                 this.interactables.push(new Portal(dx, dy, bmpPortal, this.mapTransition));
+                break;
+
+            // Hint trigger
+            case 11:
+
+                this.interactables.push(new HintTrigger(dx, dy, id - 1, this.hints));
                 break;
 
             default:
@@ -308,7 +318,8 @@ export class ObjectManager {
     }
 
 
-    public update(camera : Camera, stage : Stage, event : ProgramEvent) : void {
+    public update(camera : Camera, stage : Stage, 
+        hintRenderer : HintRenderer, event : ProgramEvent) : void {
 
         if (this.player.isWaiting()) {
 
@@ -331,6 +342,8 @@ export class ObjectManager {
 
         this.collectables.update(event, camera, stage);
         this.collectables.playerCollision(this.player, event);
+
+        hintRenderer.update(this.player, event);
     }
 
 
@@ -460,6 +473,9 @@ export class ObjectManager {
 
             this.dialogueBox.addText(event.localization?.getItem("npc0") ?? ["null"]);
             this.dialogueBox.activate(false, 1);
+
+            this.hints.activate(this.player.getPosition(), 
+                ((event.localization?.getItem("hints") ?? [])[0]) ?? "null");
         });
     }
 

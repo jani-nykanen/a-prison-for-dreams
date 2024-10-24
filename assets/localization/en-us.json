@@ -53,9 +53,18 @@
     "back": "Back",
 
 
+    "hints": [
+        "Use ARROW KEYS or WASD to walk.",
+        "Press SPACE or Z to jump.",
+        "Press Left Ctrl or X to attack.",
+        "Press Left Shift or Z to shoot."
+    ],
+
+
     "wakeup": [
         "Wake up!"
     ],
+
 
     "npc0": [
         "We are the keepers of\nthe Graveyard. Our\njob is to bury dreams\nthat come here to die.",

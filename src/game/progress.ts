@@ -30,6 +30,7 @@ export class Progress {
     private money : number = 0;
 
     private obtainedItems : boolean[]
+    private hintShown : boolean[];
 
     private checkpointPosition : Vector;
 
@@ -44,6 +45,8 @@ export class Progress {
     constructor(fileIndex : number) {
 
         this.obtainedItems = new Array<boolean> ();
+        this.hintShown = new Array<boolean> ();
+
         this.checkpointPosition = new Vector();
 
         this.fileIndex = fileIndex;
@@ -70,6 +73,7 @@ export class Progress {
         output["maxBullets"] = this.maxBullets;
 
         output["items"] = Array.from(this.obtainedItems);
+        output["hints"] = Array.from(this.hintShown);
 
         output["checkpoint"] = {
             "x": this.checkpointPosition.x,
@@ -93,6 +97,18 @@ export class Progress {
     public hasItem(itemID : number) : boolean {
 
         return this.obtainedItems[itemID] ?? false;
+    }
+
+
+    public markHintAsShown(id : number) : void {
+
+        this.hintShown[id] = true;
+    }
+
+
+    public hasShownHint(id : number) : boolean {
+
+        return this.hintShown[id] ?? false;
     }
 
 
@@ -232,6 +248,7 @@ export class Progress {
             this.maxBullets = Number(json["maxBullets"] ?? this.maxBullets);
 
             this.obtainedItems = Array.from(json["items"] ?? []) as boolean[];
+            this.hintShown = Array.from(json["hints"] ?? []) as boolean[];
 
             this.money = Number(json["money"] ?? this.money);
 

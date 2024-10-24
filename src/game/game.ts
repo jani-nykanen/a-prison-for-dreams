@@ -17,6 +17,7 @@ import { TextBox } from "../ui/textbox.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { MapTransitionCallback } from "./maptransition.js";
 import { Pose } from "./player.js";
+import { HintRenderer } from "./hintrenderer.js";
 
 
 export class Game implements Scene {
@@ -29,6 +30,7 @@ export class Game implements Scene {
 
     private pause : Pause;
     private dialogueBox : TextBox;
+    private hints : HintRenderer;
     private initialDialogueActivated : boolean = false;
 
     private gameSaveTimer : number = 0;
@@ -51,6 +53,8 @@ export class Game implements Scene {
             (event : ProgramEvent) : boolean => this.progress.save(),
             (event : ProgramEvent) : void => this.quitToMainMenu(event)
         );
+
+        this.hints = new HintRenderer();
 
         this.mapTransition = (
             mapName : string, 
@@ -93,11 +97,11 @@ export class Game implements Scene {
         this.stage = new Stage(this.tilesetIndex, baseMap, collisionMap);
         // TODO: Maybe not recreate the whole object, but reset values etc.
         this.objects = new ObjectManager(
-            this.progress, this.dialogueBox, 
-            this.stage, this.camera, event,
+            this.progress, this.dialogueBox, this.hints,
+            this.stage, this.camera,
             Number(baseMap.getProperty("npctype") ?? 0),
             this.mapTransition, spawnPos, pose, 
-            createPlayer);
+            createPlayer, event);
         this.objects.centerCamera(this.camera);
         this.limitCamera();
 
@@ -120,6 +124,8 @@ export class Game implements Scene {
                 this.triggerNPC(npcTriggered, npcType, event);
             }
         }
+
+        this.hints.deactivate();
     }
 
 
@@ -292,7 +298,7 @@ export class Game implements Scene {
             return;
         }
 
-        this.objects?.update(this.camera, this.stage!, event);
+        this.objects?.update(this.camera, this.stage!, this.hints, event);
         if (this.objects?.hasPlayerDied()) {
 
             this.startGameOverTransition(event);
@@ -342,6 +348,11 @@ export class Game implements Scene {
             drawGameSavingIcon(canvas, assets, this.gameSaveTimer, this.gameSaveMode == 1);
         }
 */
+        if (!this.pause.isActive() && !this.dialogueBox.isActive()) {
+        
+            this.hints.draw(canvas, assets);
+        }
+
     }
 
 
