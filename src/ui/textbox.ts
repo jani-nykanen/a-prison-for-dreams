@@ -189,8 +189,10 @@ export class TextBox {
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
 
-        if (!this.active)
+        if (!this.active) {
+            
             return;
+        }
 
         const font : Bitmap | undefined  = assets.getBitmap("font");
         const bmpPortraits : Bitmap | undefined = assets.getBitmap("portraits");
@@ -211,11 +213,9 @@ export class TextBox {
                 boxColors, drawShadow, shadowAlpha, shadowOffset);
         }
 
-
-        if (this.finished && drawIcon) {
-
-            this.drawIcon(canvas, dx + w - 3, dy + h - 3);
-        }
+        // Store this before modifying dx further, since the icon
+        // should be drawn last
+        const iconPosX : number = dx + w - 3; 
 
         const ph : number = bmpPortraits?.height ?? 0;
         if (this.portraitID !== null) {
@@ -234,6 +234,10 @@ export class TextBox {
         const str : string = this.activeText?.substring(0, this.charPos) ?? "";
         canvas.drawText(font, str, dx + SIDE_OFFSET, dy + SIDE_OFFSET, 0, yoff);
 
+        if (this.finished && drawIcon) {
+
+            this.drawIcon(canvas, iconPosX, dy + h - 3);
+        }
     }
 
 

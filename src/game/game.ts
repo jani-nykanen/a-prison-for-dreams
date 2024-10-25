@@ -18,6 +18,7 @@ import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { MapTransitionCallback } from "./maptransition.js";
 import { Pose } from "./player.js";
 import { HintRenderer } from "./hintrenderer.js";
+import { Cutscene } from "./cutscene.js";
 
 
 export class Game implements Scene {
@@ -31,6 +32,7 @@ export class Game implements Scene {
     private pause : Pause;
     private dialogueBox : TextBox;
     private hints : HintRenderer;
+    private cutscene : Cutscene;
     private initialDialogueActivated : boolean = false;
 
     private gameSaveTimer : number = 0;
@@ -62,6 +64,8 @@ export class Game implements Scene {
             pose : Pose,
             createPlayer : boolean,
             _event : ProgramEvent) : void => this.performMapTransition(mapName, spawnPos, pose, createPlayer, _event);
+
+        this.cutscene = new Cutscene();
     }
     
 
@@ -242,6 +246,12 @@ export class Game implements Scene {
 
     public update(event : ProgramEvent) : void {
 
+        if (this.cutscene.isActive()) {
+
+            this.cutscene.update(event);
+            return;
+        }
+
         this.transitionActive = event.transition.isActive();
 
         if (this.progress?.wasGameSaved()) {
@@ -322,6 +332,12 @@ export class Game implements Scene {
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();
 
+        if (this.cutscene.isActive()) {
+
+            this.cutscene.draw(canvas, assets);
+            return;
+        }
+
         this.stage.drawBackground(canvas, assets, this.camera);
 
         this.camera.apply(canvas);
@@ -358,6 +374,11 @@ export class Game implements Scene {
 
 
     public postDraw(canvas : Canvas, assets : Assets) : void {
+
+        if (this.cutscene.isActive()) {
+
+            return;
+        }
 
         canvas.moveTo();
 

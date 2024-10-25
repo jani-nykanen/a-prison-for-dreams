@@ -66,6 +66,47 @@
     ],
 
 
+    "healthup": [
+        "You obtain a LIFE CONTAINER!",
+        "It contains some sweet, sweet\nvitality! It increases\nyour maximum health by\ntwo."
+    ],
+
+    "ammoup": [
+        "You obtain a BOX OF BULLETS!",
+        "Now you can carry more bullets.\nSomehow."
+    ],
+
+    "smallmoney": [
+
+        "You obtain a SMALL BAG OF\nGOLD!",
+        "It contains 25 coins. Now\nyou are decently rich!"
+    ],
+
+
+    "bigmoney": [
+
+        "You obtain a BIG BAG OF\nGOLD!",
+        "It contains a hundred coins.\nNow you are actually\nrich."
+    ],
+
+
+    "cutscene0": [
+
+        "The Great Dreamer sleeps.\n",
+        "She dreams of the future,\nshe dreams of the past,\nshe dreams of the things\nthat could have been.",
+        "A whole world exists in her\nmind alone.",
+        "But now the dream is coming\nto the end. And if that\nhappens..."
+    ],
+
+
+    "cutscene1": [
+
+        "Long time ago there were\nfive Great Dreamers. Together\nthey imagined the World\nof Dream.",
+        "But centuries passed and\none by one they fell.",
+        "Some people claim that\nthey were killed, but the\nothers say that they\ndecided to wake up\non purpose.",
+        "Either way, now only Lady\nAlexandra remains, and\nher dream is getting\nweaker and weaker..."
+    ],
+
     "npc0": [
         "We are the keepers of\nthe Graveyard. Our\njob is to bury dreams\nthat come here to die.",
         "However, the Great\nDreamer told us to dig\nyou up and give you a\nlife. For what reason,\nwe do not know.",
@@ -99,14 +140,14 @@
 
     "item1": [
 
-        "You obtain the SWORD OF UN-\nFORESEEN CONSEQUENCES!",
+        "You obtain a SWORD!",
         "It is a trusty (or was it\nrusty?) old sword for all\ntypes of unjustified\nviolence."
     ],
 
     "item2": [
 
-        "You obtain a HAND(Y) CANNON!",
-        "It is one of those novelty\nfirearms where you put your\nhand inside and use your\npsychic powers to initiate\nshooting."
+        "You obtain a HAND CANNON!",
+        "It is one of those novelty\nfirearms where you put\nyour hand inside. Not\nvery practical, though."
     ]
 
 }
