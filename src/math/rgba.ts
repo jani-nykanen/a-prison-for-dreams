@@ -9,7 +9,7 @@ export class RGBA {
 	public a : number;
 
 
-	constructor(r : number = 1, g : number = r, b : number = g, a : number = 1) {
+	constructor(r : number = 255, g : number = r, b : number = g, a : number = 1) {
 
 		this.r = r;
 		this.g = g;
@@ -25,9 +25,9 @@ export class RGBA {
 
 		const out : RGBA = new RGBA();
 
-		out.r = Math.round(255 - out.r);
-		out.g = Math.round(255 - out.g);
-		out.b = Math.round(255 - out.b);
+		out.r = Math.round(255 - c.r);
+		out.g = Math.round(255 - c.g);
+		out.b = Math.round(255 - c.b);
 
 		return out;
 	}
