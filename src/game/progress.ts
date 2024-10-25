@@ -31,6 +31,7 @@ export class Progress {
 
     private obtainedItems : boolean[]
     private hintShown : boolean[];
+    private cutsceneWatched : boolean[];
 
     private checkpointPosition : Vector;
 
@@ -46,6 +47,7 @@ export class Progress {
 
         this.obtainedItems = new Array<boolean> ();
         this.hintShown = new Array<boolean> ();
+        this.cutsceneWatched = new Array<boolean> ();
 
         this.checkpointPosition = new Vector();
 
@@ -74,6 +76,7 @@ export class Progress {
 
         output["items"] = Array.from(this.obtainedItems);
         output["hints"] = Array.from(this.hintShown);
+        output["cutscenes"] = Array.from(this.cutsceneWatched);
 
         output["checkpoint"] = {
             "x": this.checkpointPosition.x,
@@ -109,6 +112,18 @@ export class Progress {
     public hasShownHint(id : number) : boolean {
 
         return this.hintShown[id] ?? false;
+    }
+
+
+    public markCutsceneWatched(id : number) : void {
+
+        this.cutsceneWatched[id] = true;
+    }
+
+
+    public hasWatchedCutscene(id : number) : boolean {
+
+        return this.cutsceneWatched[id] ?? false;
     }
 
 
@@ -188,7 +203,6 @@ export class Progress {
             clamp(updateSpeedAxis(
                     this.healthBarPos, this.healthBarTarget, this.healthBarSpeed*event.tick
                 ), 0.0, 1.0);
-        
     }
 
 
@@ -249,6 +263,7 @@ export class Progress {
 
             this.obtainedItems = Array.from(json["items"] ?? []) as boolean[];
             this.hintShown = Array.from(json["hints"] ?? []) as boolean[];
+            this.cutsceneWatched = Array.from(json["cutscenes"] ?? []) as boolean[];
 
             this.money = Number(json["money"] ?? this.money);
 

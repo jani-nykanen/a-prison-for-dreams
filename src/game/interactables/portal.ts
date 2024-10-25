@@ -50,7 +50,7 @@ export class Portal extends Interactable {
             (event : ProgramEvent) : void => {
 
                 this.mapTransition("coast", 0, Pose.EnterRoom, true, event);
-                event.cloneCanvasToBufferTexture(true);
+                // event.cloneCanvasToBufferTexture(true);
 
                 player.setPose(Pose.EnterRight);
             },

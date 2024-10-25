@@ -130,6 +130,32 @@ export class Game implements Scene {
         }
 
         this.hints.deactivate();
+
+        // TODO: Perhaps give this block an own function?
+        const cutsceneIndex : string | undefined = baseMap.getProperty("cutscene");
+        if (cutsceneIndex !== undefined) {
+
+            const id : number = Number(cutsceneIndex);
+            if (!this.progress.hasWatchedCutscene(id)) {
+
+                event.transition.freeze();
+                this.cutscene.activate(Number(cutsceneIndex), 
+                RGBA.invertUnsignedByte(event.transition.getColor()),
+                    event, (event : ProgramEvent) : void => {
+
+                    // Need to deactivate to get the proper frame to the
+                    // buffer for the wave effect.
+                    this.cutscene.deactivate();
+                    if (event.transition.getEffectType() == TransitionType.Waves) {
+
+                        event.cloneCanvasToBufferTexture(true);
+                    }
+                    event.transition.unfreeze();
+                });
+
+                this.progress.markCutsceneWatched(id);
+            }
+        }
     }
 
 
@@ -334,7 +360,6 @@ export class Game implements Scene {
 
         if (this.cutscene.isActive()) {
 
-            this.cutscene.draw(canvas, assets);
             return;
         }
 
@@ -375,11 +400,6 @@ export class Game implements Scene {
 
     public postDraw(canvas : Canvas, assets : Assets) : void {
 
-        if (this.cutscene.isActive()) {
-
-            return;
-        }
-
         canvas.moveTo();
 
         canvas.transform.setTarget(TransformTarget.Camera);
@@ -387,6 +407,12 @@ export class Game implements Scene {
 
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();
+
+        if (this.cutscene.isActive()) {
+
+            this.cutscene.draw(canvas, assets);
+            return;
+        }
 
         canvas.setColor();
         if (this.gameSaveTimer > 0) {

@@ -12,8 +12,6 @@ export class Cutscene {
     private active : boolean = false;
     private color : RGBA;
 
-    private finishEvent : ((event : ProgramEvent) => void) | undefined = undefined;
-    
 
     constructor() {
 
@@ -51,12 +49,19 @@ export class Cutscene {
     }
 
 
-    public activate(index : number, event : ProgramEvent) : void {
+    public activate(index : number, fontColor : RGBA, event : ProgramEvent,
+        finishEvent? : (event : ProgramEvent) => void) : void {
 
         const text : string[] = event.localization?.getItem(`cutscene${index}`) ?? ["null"];
 
         this.text.addText(text);
-        this.text.activate(false, null, this.finishEvent);
+        this.text.activate(false, null, finishEvent);
+
+        this.color = fontColor.clone();
+
+        console.log(this.color);
+
+        this.active = true;
     }
 
 

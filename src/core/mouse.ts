@@ -87,7 +87,7 @@ export class Mouse {
 
         this.computeScaledPosition(event);
 
-        for (let k of this.buttonStates.keys()) {
+        for (const k of this.buttonStates.keys()) {
     
             if (this.buttonStates.get(k) === InputState.Pressed) {
     

@@ -25,6 +25,8 @@ export class Transition {
 
     private callback : ((event : ProgramEvent) => void) | undefined = undefined;
 
+    private frozen : boolean = false;
+
 
     constructor() {
 
@@ -58,8 +60,10 @@ export class Transition {
 
     public update(event : ProgramEvent) : void {
 
-        if (!this.active) 
+        if (!this.active || this.frozen) { 
+
             return;
+        }
 
         this.timer -= this.speed*event.tick;
         if (this.timer <= 0) {
@@ -74,6 +78,10 @@ export class Transition {
 
             this.active = false;
             this.timer = 0;
+
+            // For reasons
+            // ...this does not work as intended
+            // this.color = new RGBA(0, 0, 0);
         }
     }
 
@@ -157,4 +165,19 @@ export class Transition {
 
         this.speed = newSpeed;
     }
+
+
+    public freeze() : void {
+
+        this.frozen = true;
+    } 
+
+
+    public unfreeze() : void {
+
+        this.frozen = false;
+    }
+
+
+    public getColor = () : RGBA => this.color.clone();
 }

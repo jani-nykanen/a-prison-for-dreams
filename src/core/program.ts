@@ -77,6 +77,8 @@ export class Program {
         this.timeSum = Math.min(this.timeSum + delta, MAX_REFRESH_COUNT * FRAME_TIME);
         this.oldTime = ts;
 
+        this.event.input.gamepad.refreshGamepads();
+
         try {
 
             if (loaded && !this.initialized) {

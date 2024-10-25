@@ -58,7 +58,7 @@ export class Keyboard {
 
     public update() : void {
 
-        for (let k of this.states.keys()) {
+        for (const k of this.states.keys()) {
 
             if (this.states.get(k) === InputState.Pressed) {
 

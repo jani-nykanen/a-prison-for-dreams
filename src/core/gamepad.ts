@@ -2,19 +2,22 @@ import { InputState } from "./inputstate.js";
 import { Vector } from "../math/vector.js";
 
 
-// TODO: Some weird type stuff going here,
-// pad can be undefined
-
 
 // Gamepad was taken...
 export class GamePad {
 
 
+    // TODO: Support for more sticks?
     private leftStick : Vector;
-    private pad : Gamepad | null = null;
-    private index : number = -1;
-    private buttons : Map<number, InputState>;
+
+    private index : number | undefined = undefined;
     private anyPressed : boolean = false;
+
+    private activePad : Gamepad | null | undefined = undefined;
+    private buttonStates : boolean[];
+    private oldButtonStates : boolean[];
+
+    private buttons : Map<number, InputState>;
 
 
     public get stick() : Vector {
@@ -28,144 +31,119 @@ export class GamePad {
         this.leftStick = new Vector();
         this.buttons = new Map<number, InputState> ();
 
+        this.oldButtonStates = new Array<boolean> ();
+        this.buttonStates = new Array<boolean> ();
+
         window.addEventListener("gamepadconnected", (ev : GamepadEvent) => {
 
-            if (this.index < 0) {
+            if (this.index === undefined) {
 
                 console.log("Gamepad with index " + 
-                    String(ev["gamepad"].index) + 
+                    String(ev["gamepad"]["index"]) + 
                     " connected.");
             }
             else {
 
                 console.log("Gamepad with index " + 
                         String(ev["gamepad"].index) + 
-                        " connected but ignored due to some weird technical reasons.");
+                        " connected but ignored since one gamepad is already connected.");
                 return;
             }
 
-            const gp = navigator.getGamepads()[ev["gamepad"].index] ?? null;
-            this.index = ev["gamepad"].index;
-            this.pad = gp;
+            const pad : Gamepad | null = navigator.getGamepads()[ev["gamepad"]["index"]] ?? null;
+            this.index = ev["gamepad"]["index"];
 
-            this.updateGamepad(this.pad);
+            this.activePad = pad;
+
+            this.checkButtons();
         });
     }
 
 
-    private pollGamepads() : (Gamepad | null) [] | null {
+    private updateButtons() : void {
 
-        if (navigator === null) {
-
-            return null;
-        }
-        return navigator.getGamepads();
-    }
-
-
-    private updateButtons(pad : Gamepad | null | undefined) : void {
-
-        // TODO: What is the purpose of this...?
-        // TODO 2: The TODO above is six months old, and I still have no idea.
-        // Maybe if gamepad is disconnected this is needed?
-        if (pad === null || pad === undefined) {
-
-            for (let k in this.buttons) {
-
-                this.buttons[k] = InputState.Up;
-            }
+        if (this.activePad === null || this.activePad === undefined) {
+            
             return;
         }
 
-        for (let i = 0; i < pad.buttons.length; ++ i) {
+        for (const k of this.buttons.keys()) {
 
-            if (this.buttons[i] === undefined) {
+            if (this.buttons.get(k) === InputState.Pressed) {
 
-                this.buttons[i] = InputState.Up;
+                this.buttons.set(k, InputState.Down);
             }
+            else if (this.buttons.get(k) === InputState.Released) {
 
-            if (pad.buttons[i].pressed) {
-
-                if ((this.buttons[i] & InputState.DownOrPressed) == 0) {
-                    
-                    this.anyPressed = true;
-                    this.buttons[i] = InputState.Pressed;
-                }
-                else {
-
-                    this.buttons[i] = InputState.Down;
-                }
-            }
-            else {
-
-                if ((this.buttons[i] & InputState.DownOrPressed) == 1) {
-
-                    this.buttons[i] = InputState.Released;
-                }
-                else {
-
-                    this.buttons[i] = InputState.Up;
-                }
+                this.buttons.set(k, InputState.Up);
             }
         }
     }
 
 
-    private updateStick(pad : Gamepad | null | undefined) : void {
+    private updateStick() : void {
         
-        const DEADZONE = 0.25;
+        const DEADZONE : number = 0.25;
 
-        if (pad === null || pad === undefined)
+        if (this.activePad === null || this.activePad === undefined) {
+            
             return;
+        }
 
-        let noLeftStick = true;
+        let noLeftStick : boolean = true;
             
         this.leftStick.x = 0;
         this.leftStick.y = 0;
 
-        if (Math.abs(pad.axes[0]) >= DEADZONE) {
+        if (Math.abs(this.activePad.axes[0]) >= DEADZONE) {
 
-            this.leftStick.x = pad.axes[0];
+            this.leftStick.x = this.activePad.axes[0];
             noLeftStick = false;
         }
-        if (Math.abs(pad.axes[1]) >= DEADZONE) {
+        if (Math.abs(this.activePad.axes[1]) >= DEADZONE) {
 
-            this.leftStick.y = pad.axes[1];
+            this.leftStick.y = this.activePad.axes[1];
             noLeftStick = false;
         }
 
         // On Firefox dpad is considered
         // axes, not buttons
-        if (pad.axes.length >= 8 && noLeftStick) {
+        if (this.activePad.axes.length >= 8 && noLeftStick) {
 
-            if (Math.abs(pad.axes[6]) >= DEADZONE) {
+            if (Math.abs(this.activePad.axes[6]) >= DEADZONE) {
 
-                this.leftStick.x = pad.axes[6];
+                this.leftStick.x = this.activePad.axes[6];
             }
-            if (Math.abs(pad.axes[7]) >= DEADZONE) {
+            if (Math.abs(this.activePad.axes[7]) >= DEADZONE) {
                 
-                this.leftStick.y = pad.axes[7];
+                this.leftStick.y = this.activePad.axes[7];
             }
         }
     }
 
 
-    private updateGamepad(pad : Gamepad | null | undefined) : void {
-        
-        this.updateStick(pad);
-        this.updateButtons(pad);
+    private checkButtons() : void {
+
+        for (const k in this.activePad?.buttons) {
+            
+            const oldState : boolean = (this.oldButtonStates[k] = this.buttonStates[k] ?? false);
+            const newState : boolean = (this.buttonStates[k] = this.activePad?.buttons[k].pressed ?? false);
+
+            if (oldState != newState) {
+
+                this.buttons.set(Number(k), newState ? InputState.Pressed : InputState.Released);
+                this.anyPressed = this.anyPressed || newState;
+            }
+        }
     }
 
 
-    private refreshGamepads() : void {
+    public refreshGamepads() : void {
 
-        if (this.pad == null) return;
+        const pads : (Gamepad | null)[] = navigator?.getGamepads() ?? [];
 
-        let pads = this.pollGamepads();
-        if (pads == null) 
-            return;
-            
-        this.pad = pads[this.index];
+        this.activePad = pads[this.index];
+        this.checkButtons();
     }
 
 
@@ -176,19 +154,14 @@ export class GamePad {
         this.leftStick.x = 0.0;
         this.leftStick.y = 0.0;
 
-        this.refreshGamepads();
-        this.updateGamepad(this.pad);
+        this.updateButtons();
+        this.updateStick();
     }
 
 
     public getButtonState(button : number) : InputState {
 
-        const state : InputState = this.buttons[button];
-
-        if (state == undefined)
-            return InputState.Up;
-
-        return state;
+        return this.buttons.get(button) ?? InputState.Up;
     }
 
 

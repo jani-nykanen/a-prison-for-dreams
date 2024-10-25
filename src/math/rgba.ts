@@ -19,4 +19,16 @@ export class RGBA {
 
 
     public clone = () : RGBA => new RGBA(this.r, this.g, this.b, this.a);
+
+
+	static invertUnsignedByte(c : RGBA) : RGBA {
+
+		const out : RGBA = new RGBA();
+
+		out.r = Math.round(255 - out.r);
+		out.g = Math.round(255 - out.g);
+		out.b = Math.round(255 - out.b);
+
+		return out;
+	}
 }

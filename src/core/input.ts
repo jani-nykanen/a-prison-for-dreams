@@ -152,25 +152,31 @@ export class Input {
         if (action === undefined)
             return InputState.Up;
 
-        for (let k of action.keys) {
+        for (const k of action.keys) {
 
             const state : InputState = this.keyboard.getKeyState(k);
-            if (state != InputState.Up)
+            if (state != InputState.Up) {
+
                 return state;
+            }
         }
 
         for (let b of action.gamepadButtons) {
 
             const state : InputState = this.gamepad.getButtonState(b);
-            if (state != InputState.Up)
+            if (state != InputState.Up) {
+
                 return state;
+            }
         }
 
         for (let b of action.mouseButtons) {
 
             const state : InputState = this.mouse.getButtonState(b);
-            if (state != InputState.Up)
+            if (state != InputState.Up) {
+                
                 return state;
+            }
         }
 
         return InputState.Up;
