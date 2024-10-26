@@ -111,6 +111,8 @@ export class Breakable extends CollisionObject {
         
             this.spawnCollectables(progress, dir);
         }
+
+        event.audio.playSample(event.assets.getSample("break"), 0.60);
     }
 
 

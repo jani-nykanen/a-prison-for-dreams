@@ -46,7 +46,7 @@ export class ConfirmationBox {
 
         if (event.input.getAction("back") == InputState.Pressed) {
 
-            event.audio.playSample(event.assets.getSample("reject"), 0.50);
+            event.audio.playSample(event.assets.getSample("reject"), 0.70);
 
             this.menu.callButtonEvent(1, event);
             this.deactivate();

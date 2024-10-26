@@ -89,11 +89,14 @@ export class Enemy extends CollisionObject {
                 this.spawnCollectables(dir ?? new Vector(), stats);
             }
 
+            event.audio.playSample(event.assets.getSample("kill"), 0.60);
+
             this.dying = true;
             this.sprite.setFrame(0, 0);
             return;
         }
 
+        event.audio.playSample(event.assets.getSample("hit"), 0.70);
         this.hurtTimer = HURT_TIME;
     }
 

@@ -62,6 +62,10 @@
         {"name": "hit", "path": "hit.wav"},
         {"name": "sword", "path": "sword.wav"},
         {"name": "shoot", "path": "shoot.wav"},
+        {"name": "break", "path": "break.wav"},
+        {"name": "hurt", "path": "hurt.wav"},
+        {"name": "coin", "path": "coin.wav"},
+        {"name": "bullethit", "path": "bullethit.wav"},
         {"name": "kill", "path": "kill.wav"}
     ],
 

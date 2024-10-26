@@ -69,7 +69,7 @@ export class Menu {
         if (oldPos != this.cursorPos) {
 
             this.cursorPos = negMod(this.cursorPos, this.buttons.length);
-            event.audio.playSample(event.assets.getSample("choose"), 0.50);
+            event.audio.playSample(event.assets.getSample("choose"), 0.70);
         }
 
         // Selection event
@@ -77,7 +77,7 @@ export class Menu {
 
             if (this.buttons[this.cursorPos].isDeactivated()) {
 
-                event.audio.playSample(event.assets.getSample("deny"), 0.50);
+                event.audio.playSample(event.assets.getSample("deny"), 0.70);
             }
             else if (this.buttons[this.cursorPos].evaluateCallback(event)) {
             
@@ -89,7 +89,7 @@ export class Menu {
         if ((event.input.leftPress() && this.buttons[this.cursorPos].evaluateLeftCallback(event)) ||
             (event.input.rightPress() && this.buttons[this.cursorPos].evaluateRightCallback(event))) {
 
-            event.audio.playSample(event.assets.getSample("choose"), 0.50);
+            event.audio.playSample(event.assets.getSample("choose"), 0.70);
         }
 
 

@@ -124,7 +124,7 @@ export class TextBox {
 
             if (event.input.isAnyPressed()) {
                 
-                event.audio.playSample(event.assets.getSample("choose"), 0.60);
+                event.audio.playSample(event.assets.getSample("choose"), 0.80);
 
                 this.charPos = this.activeText.length;
                 this.finished = true;
@@ -155,7 +155,7 @@ export class TextBox {
 
             if (event.input.isAnyPressed()) {
 
-                event.audio.playSample(event.assets.getSample("choose"), 0.50);
+                event.audio.playSample(event.assets.getSample("choose"), 0.70);
 
                 this.activeText = this.textBuffer.shift();
                 if (this.activeText === undefined) {

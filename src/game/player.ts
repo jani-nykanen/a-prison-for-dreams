@@ -293,6 +293,8 @@ export class Player extends CollisionObject {
                 this.ledgeTimer = 0.0;
 
                 this.crouching = false;
+
+                event.audio.playSample(event.assets.getSample("jump"), 0.80);
             }
             else if (this.canUseRocketPack) {
 
@@ -387,6 +389,9 @@ export class Player extends CollisionObject {
 
             this.charging = false;
             this.chargeFlickerTimer = 0.0;
+
+            // TODO: Different sound effect for charge shot
+            event.audio.playSample(event.assets.getSample("shoot"), 0.40);
         }
     }
 
@@ -403,6 +408,7 @@ export class Player extends CollisionObject {
         }
         
         const attackButton : InputState = event.input.getAction("attack");
+        // Charge attack
         if (!forceSecondAttack &&
             this.charging && this.chargeType == ChargeType.Sword && 
             (attackButton & InputState.DownOrPressed) == 0) {
@@ -426,6 +432,8 @@ export class Player extends CollisionObject {
         }
         
         if (attackButton == InputState.Pressed) {
+
+            event.audio.playSample(event.assets.getSample("sword"), 0.90);
 
             // Down attack
             if (!forceSecondAttack &&
@@ -966,6 +974,8 @@ export class Player extends CollisionObject {
         this.flyingText?.next()
             .spawn(this.pos.x, this.pos.y - 8, 
                 -damage, FlyingTextSymbol.None, new RGBA(255, 73, 0));
+
+        event.audio.playSample(event.assets.getSample("hurt"), 0.80);
     }
 
 
@@ -1037,6 +1047,13 @@ export class Player extends CollisionObject {
             row = 1;
         }
 
+        // Since weird things can happen
+        if (this.downAttackWait > 0) {
+
+            frame = 5;
+            row = 0;
+        }
+
         canvas.drawBitmap(bmp, this.flip, dx, dy, frame*32, row*32, 32, 32);
     }
 
@@ -1052,7 +1069,7 @@ export class Player extends CollisionObject {
         const dx : number = Math.round(this.pos.x);
         const dy : number = Math.round(this.pos.y);
 
-        for (let i = 0; i < ORB_COUNT; ++ i) {
+        for (let i : number = 0; i < ORB_COUNT; ++ i) {
 
             const angle : number = step*i;
 

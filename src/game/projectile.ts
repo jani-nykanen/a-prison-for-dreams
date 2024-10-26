@@ -18,6 +18,9 @@ const ANIMATION_SPEED : number[] = [
 ];
 
 
+const DEATH_SAMPLE_VOLUME : number = 0.50;
+
+
 export class Projectile extends CollisionObject {
 
 
@@ -83,12 +86,14 @@ export class Projectile extends CollisionObject {
     protected wallCollisionEvent(direction: -1 | 1, event : ProgramEvent) : void {
         
         this.kill(event);
+        event.audio.playSample(event.assets.getSample("bullethit"), DEATH_SAMPLE_VOLUME);
     }
 
 
     protected slopeCollisionEvent(direction : -1 | 1, event : ProgramEvent): void {
 
         this.kill(event);
+        event.audio.playSample(event.assets.getSample("bullethit"), DEATH_SAMPLE_VOLUME);
     }
 
 
@@ -143,8 +148,6 @@ export class Projectile extends CollisionObject {
 
         this.sprite.setFrame((LAST_ANIMATION_FRAME[this.id] ?? 0) + 1, this.id);
         this.dying = true;
-
-        // TODO: Death sound
     }
 
 

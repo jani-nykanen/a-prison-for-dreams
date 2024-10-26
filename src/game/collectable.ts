@@ -154,6 +154,7 @@ export class Collectable extends CollisionObject {
                 color = new RGBA(255, 255, 182);
 
                 player.stats.updateMoney(1);
+                event.audio.playSample(event.assets.getSample("coin"), 0.60);
 
                 break;
 
