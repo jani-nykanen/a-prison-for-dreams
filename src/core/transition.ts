@@ -141,6 +141,8 @@ export class Transition {
         default:
             break;
         }
+
+        canvas.setColor();
     }
 
 

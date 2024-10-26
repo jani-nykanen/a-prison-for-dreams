@@ -264,6 +264,9 @@ export class TextBox {
     }
 
 
+    public isFinished = () : boolean => this.finished;
+
+
     public getWidth = () : number => this.width;
     public getHeight = () : number => this.height;
 

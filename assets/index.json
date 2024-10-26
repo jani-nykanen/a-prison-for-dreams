@@ -34,6 +34,8 @@
         {"name": "icons", "path": "icons.png"},
         {"name": "item_icons", "path": "item_icons.png"},
 
+        {"name": "mouth", "path": "mouth.png"},
+
         {"name": "player", "path": "player.png"},
         {"name": "weapons", "path": "weapons.png"}
 
@@ -51,7 +53,16 @@
 
     "samplePath": "assets/audio/",
     "samples": [
-    
+        
+        {"name": "choose", "path": "choose.wav"},
+        {"name": "select", "path": "select.wav"},
+        {"name": "deny", "path": "deny.wav"},
+
+        {"name": "jump", "path": "jump.wav"},
+        {"name": "hit", "path": "hit.wav"},
+        {"name": "sword", "path": "sword.wav"},
+        {"name": "shoot", "path": "shoot.wav"},
+        {"name": "kill", "path": "kill.wav"}
     ],
 
     "documentPath": "assets/localization/",
