@@ -47,6 +47,9 @@ export class NPC extends Interactable {
 
         this.dialogueBox.addText(text);
         this.dialogueBox.activate(false, this.sprite.getRow());
+
+        // TODO: Maybe a better sound effect?
+        event.audio.playSample(event.assets.getSample("choose"), 0.60);
     }
 
 }

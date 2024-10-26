@@ -164,6 +164,7 @@ export class Collectable extends CollisionObject {
                 color = new RGBA(182, 255, 0);
 
                 player.stats.updateHealth(5);
+                event.audio.playSample(event.assets.getSample("heal"), 0.70);
                 count = 5;
 
                 break;
@@ -174,6 +175,7 @@ export class Collectable extends CollisionObject {
                 color = new RGBA(182, 216, 255);
 
                 player.stats.updateBulletCount(5);
+                event.audio.playSample(event.assets.getSample("ammo"), 0.90);
                 count = 5;
 
                 break;

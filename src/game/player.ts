@@ -34,6 +34,8 @@ const POWER_ATTACK_HALT_TIME : number = 10;
 
 const ATTACK_RELEASE_TIME : number = 8;
 
+const CHARGE_VOLUME : number = 0.70;
+
 
 const enum ChargeType {
 
@@ -106,6 +108,8 @@ export class Player extends CollisionObject {
     private flip : Flip;
 
     private dustTimer : number = 0;
+    private dustCount : number = 0;
+
     private deathTimer : number = 0;
 
     private iconType : number = 0;
@@ -306,11 +310,16 @@ export class Player extends CollisionObject {
                 this.jumpTimer = ROCKET_PACK_JUMP;
 
                 this.speed.y = Math.min(MINIMUM_ROCKET_JUMP_SPEED, this.speed.y);
+            
+                // To make the sound effect appear immediately
+                this.dustCount = 0;
             }
             else if (this.rocketPackReleased) {
 
                 this.jumpTimer = 0;
                 this.rocketPackActive = true;
+
+                this.dustCount = 0;
             }
         }
         else if ((jumpButton & InputState.DownOrPressed) == 0) {
@@ -334,7 +343,9 @@ export class Player extends CollisionObject {
 
         if (this.stats.getBulletCount() <= 0) {
 
-            // TODO: Play error sound
+            this.flashType = -1;
+
+            event.audio.playSample(event.assets.getSample("empty"), 0.90);
             return;
         }
 
@@ -351,6 +362,11 @@ export class Player extends CollisionObject {
         if (type == 1) {
 
             ++ this.attackID;
+            event.audio.playSample(event.assets.getSample("charge_shot"), 0.60);
+        }
+        else {
+
+            event.audio.playSample(event.assets.getSample("shoot"), 0.40);
         }
 
         this.stats.updateBulletCount(-1);
@@ -389,9 +405,6 @@ export class Player extends CollisionObject {
 
             this.charging = false;
             this.chargeFlickerTimer = 0.0;
-
-            // TODO: Different sound effect for charge shot
-            event.audio.playSample(event.assets.getSample("shoot"), 0.40);
         }
     }
 
@@ -422,6 +435,8 @@ export class Player extends CollisionObject {
             this.speed.zeros();
             
             ++ this.attackID;
+
+            event.audio.playSample(event.assets.getSample("charge_attack"), 0.60);
 
             return;
         }
@@ -647,6 +662,10 @@ export class Player extends CollisionObject {
         if (this.sprite.getRow() != 3 || this.sprite.getColumn() != 5) {
 
             this.sprite.animate(3, 3, 5, ANIMATION_SPEED, event.tick);
+            if (this.sprite.getColumn() == 5) {
+
+                event.audio.playSample(event.assets.getSample("charge"), CHARGE_VOLUME);
+            }
         }
     }
 
@@ -674,6 +693,10 @@ export class Player extends CollisionObject {
             if (this.sprite.getColumn() == LAST_FRAME) {
 
                 this.charging = !buttonReleased;
+                if (this.charging) {
+
+                    event.audio.playSample(event.assets.getSample("charge"), CHARGE_VOLUME);
+                }
                 this.chargeType = ChargeType.Sword;
             }
 
@@ -839,7 +862,7 @@ export class Player extends CollisionObject {
 
                     this.chargeType = ChargeType.Gun;
                     this.charging = true;
-                    // TODO: Sound effect
+                    event.audio.playSample(event.assets.getSample("charge"), CHARGE_VOLUME);
                 }
                 this.shootTimer = 0;
             }
@@ -945,6 +968,15 @@ export class Player extends CollisionObject {
                     speedy = ROCKET_PACK_DUST_LANDING_SPEED_Y;
                     this.dustTimer = ROCKET_PACK_LANDING_DUST_TIME;
                 }
+
+                // Calling the sound effect each time a dust particle
+                // is too frequent, hence we only call it every other
+                // frame.
+                this.dustCount = (this.dustCount + 1) % 2;
+                if (this.dustCount == 1) {
+
+                    event.audio.playSample(event.assets.getSample("buzz"), 0.70);
+                }
             }
 
             this.particles.next().spawn(
@@ -975,7 +1007,7 @@ export class Player extends CollisionObject {
             .spawn(this.pos.x, this.pos.y - 8, 
                 -damage, FlyingTextSymbol.None, new RGBA(255, 73, 0));
 
-        event.audio.playSample(event.assets.getSample("hurt"), 0.80);
+        event.audio.playSample(event.assets.getSample("hurt"), 0.90);
     }
 
 
@@ -984,7 +1016,7 @@ export class Player extends CollisionObject {
         this.dying = true;
         this.sprite.setFrame(4, 8);
         
-        // TODO: Sound effects
+        event.audio.playSample(event.assets.getSample("die"), 0.80);
     }
 
 
@@ -1024,6 +1056,11 @@ export class Player extends CollisionObject {
 
         const X_OFFSET : number = 10;
         const Y_OFFSET : number = 3;
+
+        if (this.flashType < 0) {
+
+            return;
+        }
 
         const frame : number = Math.floor((1.0 - this.shootWait/SHOOT_WAIT_TIME)*4);
 

@@ -56,17 +56,31 @@
         
         {"name": "choose", "path": "choose.wav"},
         {"name": "select", "path": "select.wav"},
+        {"name": "pause", "path": "pause.wav"},
         {"name": "deny", "path": "deny.wav"},
 
         {"name": "jump", "path": "jump.wav"},
+        {"name": "buzz", "path": "buzz.wav"},
+
         {"name": "hit", "path": "hit.wav"},
         {"name": "sword", "path": "sword.wav"},
-        {"name": "shoot", "path": "shoot.wav"},
-        {"name": "break", "path": "break.wav"},
+        {"name": "kill", "path": "kill.wav"},
+
         {"name": "hurt", "path": "hurt.wav"},
+        {"name": "die", "path": "die.wav"},
+        
+        {"name": "break", "path": "break.wav"},
         {"name": "coin", "path": "coin.wav"},
+        {"name": "heal", "path": "heal.wav"},
+        {"name": "ammo", "path": "ammo.wav"},
+
+        {"name": "shoot", "path": "shoot.wav"},
         {"name": "bullethit", "path": "bullethit.wav"},
-        {"name": "kill", "path": "kill.wav"}
+        {"name": "empty", "path": "empty.wav"},
+
+        {"name": "charge", "path": "charge.wav"},
+        {"name": "charge_attack", "path": "chargeattack.wav"},
+        {"name": "charge_shot", "path": "chargeshot.wav"}
     ],
 
     "documentPath": "assets/localization/",

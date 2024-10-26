@@ -331,6 +331,7 @@ export class Game implements Scene {
         if (event.input.getAction("pause") == InputState.Pressed) {
 
             this.pause.activate();
+            event.audio.playSample(event.assets.getSample("pause"), 0.80);
             return;
         }
 

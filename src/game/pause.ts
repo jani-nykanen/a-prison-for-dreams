@@ -1,5 +1,6 @@
 import { Assets } from "../core/assets.js";
 import { ProgramEvent } from "../core/event.js";
+import { InputState } from "../core/inputstate.js";
 import { Canvas } from "../gfx/interface.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
@@ -126,6 +127,13 @@ export class Pause {
 
         if (!this.active) {
 
+            return;
+        }
+
+        if (event.input.getAction("back") == InputState.Pressed) {
+
+            this.deactivate();
+            event.audio.playSample(event.assets.getSample("pause"), 0.80);
             return;
         }
 
