@@ -6,6 +6,9 @@ import { updateSpeedAxis } from "./utility.js";
 
 const INITIAL_MAP : string = "graveyard";
 
+const BASE_HEALTH_UP : number = 2;
+const BASE_BULLETS_UP : number = 2;
+
 
 export const LOCAL_STORAGE_KEY : string = "the_end_of_dreams__savedata_";
 
@@ -30,6 +33,9 @@ export class Progress {
     private money : number = 0;
 
     private obtainedItems : boolean[]
+    private obtainedHealthUps : boolean[];
+    private obtainedAmmoUps : boolean[];
+
     private hintShown : boolean[];
     private cutsceneWatched : boolean[];
 
@@ -46,6 +52,9 @@ export class Progress {
     constructor(fileIndex : number) {
 
         this.obtainedItems = new Array<boolean> ();
+        this.obtainedHealthUps = new Array<boolean> ();
+        this.obtainedAmmoUps = new Array<boolean> ();
+
         this.hintShown = new Array<boolean> ();
         this.cutsceneWatched = new Array<boolean> ();
 
@@ -55,6 +64,8 @@ export class Progress {
 
         // TODO: Compute attack power etc. from the list of
         // items.
+
+        this.computeStats();
     }
 
 
@@ -71,10 +82,13 @@ export class Progress {
         output["date"] = dateString;
 
         // TODO: Later can be deduced/computed from the item list
-        output["maxHealth"] = this.maxHealth;
-        output["maxBullets"] = this.maxBullets;
+        // output["maxHealth"] = this.maxHealth;
+        // output["maxBullets"] = this.maxBullets;
 
         output["items"] = Array.from(this.obtainedItems);
+        output["healthups"] = Array.from(this.obtainedHealthUps);
+        output["ammoups"] = Array.from(this.obtainedAmmoUps);
+
         output["hints"] = Array.from(this.hintShown);
         output["cutscenes"] = Array.from(this.cutsceneWatched);
 
@@ -91,9 +105,46 @@ export class Progress {
     }
 
 
+    private computeStats() : void {
+
+        this.maxHealth = 10;
+        this.maxBullets = 10;
+
+        // TODO: Find out if there is a good way to check how many
+        // times a certain value exists in an array, this looks a bit silly.
+        for (const h of this.obtainedHealthUps) {
+
+            if (h) {
+
+                this.maxHealth += BASE_HEALTH_UP;
+            }
+        }
+
+        for (const h of this.obtainedAmmoUps) {
+
+            if (h) {
+
+                this.maxBullets += BASE_BULLETS_UP;
+            }
+        }
+
+        this.attackPower = 5;
+        this.projectilePower = 3;
+    }
+
+
+    private resetStats() : void {
+
+        this.health = this.maxHealth;
+        this.bullets = this.maxBullets;
+    }
+
+
     public obtainItem(itemID : number) : void {
 
         this.obtainedItems[itemID] = true;
+    
+        this.computeStats();
     }
 
 
@@ -124,6 +175,44 @@ export class Progress {
     public hasWatchedCutscene(id : number) : boolean {
 
         return this.cutsceneWatched[id] ?? false;
+    }
+
+
+    public obtainHealthUp(id : number) : void {
+
+        if (this.obtainedHealthUps[id]) {
+            
+            return;
+        }
+
+        this.obtainedHealthUps[id] = true;
+        this.health += BASE_HEALTH_UP;
+        this.computeStats();
+    }
+
+    
+    public hasObtainedHealthUp(id : number) : boolean {
+
+        return this.obtainedHealthUps[id] ?? false;
+    }
+
+
+    public obtainAmmoUp(id : number) : void {
+
+        if (this.obtainedAmmoUps[id]) {
+
+            return;
+        }
+
+        this.obtainedAmmoUps[id] = true;
+        this.bullets += BASE_BULLETS_UP;
+        this.computeStats();
+    }
+
+    
+    public hasObtainedAmmoUp(id : number) : boolean {
+
+        return this.obtainedAmmoUps[id] ?? false;
     }
 
 
@@ -258,10 +347,13 @@ export class Progress {
 
             const json : unknown = JSON.parse(str) ?? {};
             
-            this.maxHealth = Number(json["maxHealth"] ?? this.maxHealth);
-            this.maxBullets = Number(json["maxBullets"] ?? this.maxBullets);
+            // this.maxHealth = Number(json["maxHealth"] ?? this.maxHealth);
+            // this.maxBullets = Number(json["maxBullets"] ?? this.maxBullets);
 
             this.obtainedItems = Array.from(json["items"] ?? []) as boolean[];
+            this.obtainedHealthUps = Array.from(json["healthups"] ?? []) as boolean[];
+            this.obtainedAmmoUps = Array.from(json["ammoups"] ?? []) as boolean[];
+
             this.hintShown = Array.from(json["hints"] ?? []) as boolean[];
             this.cutsceneWatched = Array.from(json["cutscenes"] ?? []) as boolean[];
 
@@ -275,6 +367,9 @@ export class Progress {
             }
 
             this.areaName = json["area"] ?? this.areaName;
+
+            this.computeStats();
+            this.resetStats();
         }
         catch (e) {
             

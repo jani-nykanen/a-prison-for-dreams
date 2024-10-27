@@ -439,7 +439,7 @@ export class Game implements Scene {
             return;
         }
 
-        if (this.mapNameTimer > 0) {
+        if (!this.pause.isActive() && this.mapNameTimer > 0) {
 
             const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
             canvas.drawText(bmpFontOutlines, this.mapName,

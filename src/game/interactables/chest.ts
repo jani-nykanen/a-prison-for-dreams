@@ -76,8 +76,30 @@ export class Chest extends Interactable {
         this.flip = player.getPosition().x < this.pos.x ? Flip.None : Flip.Horizontal;
 
         if (initial) {
+            
+            let opened : boolean = false;
+            switch (this.type) {
 
-            if (player.stats.hasItem(this.id)) {
+            case ChestType.Treasure:
+
+                opened = player.stats.hasItem(this.id);
+                break;
+
+            case ChestType.Health:
+
+                opened = player.stats.hasObtainedHealthUp(this.id);
+                break;
+
+            case ChestType.Bullets:
+
+                opened = player.stats.hasObtainedAmmoUp(this.id);
+                break;
+
+            default:
+                break;
+            }
+
+            if (opened) {
 
                 this.opened = true;
                 this.canBeInteracted = false;
@@ -96,13 +118,41 @@ export class Chest extends Interactable {
 
         this.opened = true;
         this.canBeInteracted = false;
-
         this.sprite.setFrame(4, this.type - 1);
-        player.startWaiting(OPEN_TIME, WaitType.HoldingItem, this.id, (event : ProgramEvent) : void => {
 
-            const text : string[] = event.localization?.getItem("item" + String(this.id)) ?? ["null"];
+        let itemID : number = 0;
+        let itemText : string[] = [];
+        switch (this.type) {
 
-            this.dialogueBox.addText(text);
+        case ChestType.Treasure:
+
+            player.stats.obtainItem(this.id);
+            itemID = this.id;
+            itemText = event.localization?.getItem("item" + String(this.id)) ?? ["null"];
+            break;
+
+        case ChestType.Health:
+
+            player.stats.obtainHealthUp(this.id);
+            itemID = 16;
+            itemText = event.localization?.getItem("healthup") ?? ["null"];
+            break;
+
+        case ChestType.Bullets:
+
+            player.stats.obtainAmmoUp(this.id);
+            itemID = 17;
+            itemText = event.localization?.getItem("ammoup") ?? ["null"];
+            break;
+
+        default:
+            break;
+        }
+
+
+        player.startWaiting(OPEN_TIME, WaitType.HoldingItem, itemID, (event : ProgramEvent) : void => {
+
+            this.dialogueBox.addText(itemText);
             this.dialogueBox.activate(false, null, (event : ProgramEvent) : void => {
 
                 player.stats.save();
@@ -112,12 +162,11 @@ export class Chest extends Interactable {
 
                     this.hints.activate(this.pos, (event.localization?.getItem("hints") ?? [])[hintID] ?? "null");
 
-                    // This is actually redundant
+                    // This is actually redundant now
                     player.stats.markHintAsShown(hintID);
                 }
-            });
+            }); 
 
-            player.stats.obtainItem(this.id);
             player.setCheckpointObject(this);
         });
     }

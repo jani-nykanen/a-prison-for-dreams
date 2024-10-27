@@ -1134,9 +1134,12 @@ export class Player extends CollisionObject {
         const t : number = Math.min((1.0 - this.waitTimer/this.initialWaitTimer)*ANIMATION_STOP_MODIFIER, 1.0);
         const yoff: number = ITEM_START_YOFF + t*ITEM_LIFT;
 
+        const column : number = this.waitParameter % 16;
+        const row : number = Math.floor(this.waitParameter/16);
+
         canvas.drawBitmap(bmpItemIcons, Flip.None,
             this.pos.x - 8, this.pos.y - yoff,
-            this.waitParameter * 16, 0, 16, 16);
+            column*16, row*16, 16, 16);
         
     }
 
