@@ -78,9 +78,14 @@
         {"name": "bullethit", "path": "bullethit.wav"},
         {"name": "empty", "path": "empty.wav"},
 
+        {"name": "checkpoint", "path": "checkpoint.wav"},
+        {"name": "portal", "path": "portal.wav"},
+
         {"name": "charge", "path": "charge.wav"},
         {"name": "charge_attack", "path": "chargeattack.wav"},
-        {"name": "charge_shot", "path": "chargeshot.wav"}
+        {"name": "charge_shot", "path": "chargeshot.wav"},
+
+        {"name": "item", "path": "item.ogg"}
     ],
 
     "documentPath": "assets/localization/",

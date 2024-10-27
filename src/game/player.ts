@@ -1117,6 +1117,30 @@ export class Player extends CollisionObject {
     }
 
 
+    private drawHoldingItem(canvas : Canvas, assets : Assets) : void {
+
+        const ITEM_LIFT : number = 16;
+        const ITEM_START_YOFF : number = 8;
+        // Don't ask
+        const ANIMATION_STOP_MODIFIER : number = 2.5;
+
+        if (!this.waitActive || this.waitType != WaitType.HoldingItem) {
+            
+            return;
+        }
+
+        const bmpItemIcons: Bitmap | undefined = assets.getBitmap("item_icons");
+
+        const t : number = Math.min((1.0 - this.waitTimer/this.initialWaitTimer)*ANIMATION_STOP_MODIFIER, 1.0);
+        const yoff: number = ITEM_START_YOFF + t*ITEM_LIFT;
+
+        canvas.drawBitmap(bmpItemIcons, Flip.None,
+            this.pos.x - 8, this.pos.y - yoff,
+            this.waitParameter * 16, 0, 16, 16);
+        
+    }
+
+
     protected updateEvent(event: ProgramEvent) : void {
         
         if (this.waitTimer > 0) {
@@ -1336,25 +1360,12 @@ export class Player extends CollisionObject {
 
     public postDraw(canvas : Canvas, assets : Assets): void {
         
-        const ITEM_LIFT : number = 16;
-        const ITEM_START_YOFF : number = 8;
-
         if (!this.exist) {
 
             return;
         }
         
-        // TODO: Split to own function?
-        if (this.waitActive && this.waitType == WaitType.HoldingItem) {
-
-            const bmpItemIcons : Bitmap | undefined = assets.getBitmap("item_icons");
-
-            const yoff : number = ITEM_START_YOFF + (1.0 - this.waitTimer/this.initialWaitTimer)*ITEM_LIFT;
-
-            canvas.drawBitmap(bmpItemIcons, Flip.None, 
-                this.pos.x - 8, this.pos.y - yoff, 
-                this.waitParameter*16, 0, 16, 16);
-        }
+        this.drawHoldingItem(canvas, assets);
     }
 
 

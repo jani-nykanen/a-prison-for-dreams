@@ -122,6 +122,8 @@ export class Checkpoint extends Interactable {
         this.textTimer = TEXT_TIME;
 
         player.stats.save();
+
+        event.audio.playSample(event.assets.getSample("checkpoint"), 0.80);
     }
 
 

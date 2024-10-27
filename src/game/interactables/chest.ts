@@ -90,7 +90,9 @@ export class Chest extends Interactable {
 
     protected interactionEvent(player : Player, event : ProgramEvent) : void {
         
-        const OPEN_TIME : number = 30;
+        const OPEN_TIME : number = 120;
+
+        event.audio.playSample(event.assets.getSample("item"), 1.0);
 
         this.opened = true;
         this.canBeInteracted = false;
