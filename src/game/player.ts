@@ -358,7 +358,7 @@ export class Player extends CollisionObject {
             this.pos.x, dy, dx, dy, 
             this.speed.x*BULLET_SPEED_FACTOR_X + (BULLET_SPEED[type] ?? 0)*this.dir, 
             this.speed.y*BULLET_SPEED_FACTOR_Y, 
-            type, power, true, this.attackID);
+            type, power, true, this.attackID + 1);
         if (type == 1) {
 
             ++ this.attackID;

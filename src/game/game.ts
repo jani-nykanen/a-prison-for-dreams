@@ -21,6 +21,9 @@ import { HintRenderer } from "./hintrenderer.js";
 import { Cutscene } from "./cutscene.js";
 
 
+const MAP_NAME_APPEAR_TIME : number = 90;
+
+
 export class Game implements Scene {
 
 
@@ -42,6 +45,9 @@ export class Game implements Scene {
     private tilesetIndex : number = 0;
 
     private transitionActive : boolean = false;
+
+    private mapName : string = "";
+    private mapNameTimer : number = 0;
 
     private mapTransition : MapTransitionCallback;
 
@@ -73,6 +79,30 @@ export class Game implements Scene {
 
         this.dialogueBox.addText(event.localization?.getItem(`npc${index}`) ?? ["null"]);
         this.dialogueBox.activate(false, npcType);
+    }
+
+
+    private setCutscene(id : number, event : ProgramEvent) : void {
+
+        if (!this.progress.hasWatchedCutscene(id)) {
+
+            event.transition.freeze();
+            this.cutscene.activate(id, 
+            RGBA.invertUnsignedByte(event.transition.getColor()),
+                event, (event : ProgramEvent) : void => {
+
+                // Need to deactivate to get the proper frame to the
+                // buffer for the wave effect.
+                this.cutscene.deactivate();
+                if (event.transition.getEffectType() == TransitionType.Waves) {
+
+                    event.cloneCanvasToBufferTexture(true);
+                }
+                event.transition.unfreeze();
+            });
+
+            this.progress.markCutsceneWatched(id);
+        }
     }
 
 
@@ -131,31 +161,17 @@ export class Game implements Scene {
 
         this.hints.deactivate();
 
-        // TODO: Perhaps give this block an own function?
+        // Set cutscene
         const cutsceneIndex : string | undefined = baseMap.getProperty("cutscene");
         if (cutsceneIndex !== undefined) {
 
             const id : number = Number(cutsceneIndex);
-            if (!this.progress.hasWatchedCutscene(id)) {
-
-                event.transition.freeze();
-                this.cutscene.activate(Number(cutsceneIndex), 
-                RGBA.invertUnsignedByte(event.transition.getColor()),
-                    event, (event : ProgramEvent) : void => {
-
-                    // Need to deactivate to get the proper frame to the
-                    // buffer for the wave effect.
-                    this.cutscene.deactivate();
-                    if (event.transition.getEffectType() == TransitionType.Waves) {
-
-                        event.cloneCanvasToBufferTexture(true);
-                    }
-                    event.transition.unfreeze();
-                });
-
-                this.progress.markCutsceneWatched(id);
-            }
+            this.setCutscene(id, event);
         }
+
+        // Set area name
+        this.mapName = baseMap.getProperty("name") ?? "null";
+        this.mapNameTimer = MAP_NAME_APPEAR_TIME;
     }
 
 
@@ -278,6 +294,11 @@ export class Game implements Scene {
             return;
         }
 
+        if (this.mapNameTimer > 0) {
+
+            this.mapNameTimer -= event.tick;
+        }
+
         this.transitionActive = event.transition.isActive();
 
         if (this.progress?.wasGameSaved()) {
@@ -315,6 +336,8 @@ export class Game implements Scene {
         }
 
         if (this.dialogueBox.isActive()) {
+
+            this.mapNameTimer = 0;
 
             this.objects?.animateNPCs(this.camera, event);
             this.dialogueBox.update(event);
@@ -402,6 +425,7 @@ export class Game implements Scene {
     public postDraw(canvas : Canvas, assets : Assets) : void {
 
         canvas.moveTo();
+        canvas.setColor();
 
         canvas.transform.setTarget(TransformTarget.Camera);
         canvas.transform.view(canvas.width, canvas.height);
@@ -413,6 +437,13 @@ export class Game implements Scene {
 
             this.cutscene.draw(canvas, assets);
             return;
+        }
+
+        if (this.mapNameTimer > 0) {
+
+            const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
+            canvas.drawText(bmpFontOutlines, this.mapName,
+                canvas.width/2, canvas.height/2 - 8, -8, 0, Align.Center);
         }
 
         canvas.setColor();

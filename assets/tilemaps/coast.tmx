@@ -4,6 +4,7 @@
   <property name="background" type="int" value="1"/>
   <property name="cutscene" type="int" value="1"/>
   <property name="is_lava" type="int" value="0"/>
+  <property name="name" value="Dream Coast"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="1"/>
   <property name="triggernpc" type="int" value="2"/>
