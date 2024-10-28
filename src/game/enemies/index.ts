@@ -2,6 +2,8 @@ import { Slime } from "./slime.js";
 import { Turtle } from "./turtle.js";
 import { Zombie } from "./zombie.js";
 import { ShadowBat } from "./shadowbat.js";
+import { Caterpillar } from "./caterpillar.js";
+import { Apple } from "./apple.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -10,5 +12,7 @@ export const getEnemyByID = (index : number) : Function =>
     Turtle,
     Zombie,
     ShadowBat,
+    Caterpillar,
+    Apple
 ]
 [index] ?? Slime;

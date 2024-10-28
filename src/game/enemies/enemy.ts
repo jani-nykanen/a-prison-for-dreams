@@ -42,6 +42,8 @@ export class Enemy extends CollisionObject {
     protected canBeMoved : boolean = true;
     protected radius : number = 6;
 
+    protected didTouchSurface : boolean = false;
+
 
     constructor(x : number, y : number) {
 
@@ -133,6 +135,8 @@ export class Enemy extends CollisionObject {
 
             this.hurtTimer -= event.tick;
         }
+
+        this.didTouchSurface = this.touchSurface;
         this.touchSurface = false;
     }
 
