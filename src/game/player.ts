@@ -276,8 +276,8 @@ export class Player extends CollisionObject {
 
     private controlJumping(event : ProgramEvent) : void {
 
-        const JUMP_TIME_BASE : number = 13.0;
-        const JUMP_TIME_HIGH : number = 13.0;
+        const JUMP_TIME_BASE : number = 14.0;
+        const JUMP_TIME_HIGH : number = 14.0;
         const ROCKET_PACK_JUMP : number = 45;
         const MINIMUM_ROCKET_JUMP_SPEED : number = 1.5;
 
