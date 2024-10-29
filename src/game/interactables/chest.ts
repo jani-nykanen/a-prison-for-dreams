@@ -21,7 +21,7 @@ export const enum ChestType {
     Treasure = 1,
     Health = 2,
     Bullets = 3,
-    BloodShard = 4, // TODO: Might rename this
+    DreamOrb = 4, 
 }
 
 
@@ -95,6 +95,11 @@ export class Chest extends Interactable {
                 opened = player.stats.hasObtainedAmmoUp(this.id);
                 break;
 
+            case ChestType.DreamOrb:
+
+                opened = player.stats.hasDreamOrb(this.id);
+                break;
+
             default:
                 break;
             }
@@ -145,10 +150,16 @@ export class Chest extends Interactable {
             itemText = event.localization?.getItem("ammoup") ?? ["null"];
             break;
 
+        case ChestType.DreamOrb:
+
+            player.stats.obtainDreamOrb(this.id);
+            itemID = 18;
+            itemText = event.localization?.getItem("dreamorb") ?? ["null"];
+            break;
+
         default:
             break;
         }
-
 
         player.startWaiting(OPEN_TIME, WaitType.HoldingItem, itemID, (event : ProgramEvent) : void => {
 

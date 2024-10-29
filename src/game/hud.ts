@@ -57,9 +57,8 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
 
     // Health
     let dx : number = 11;
-    const dy : number = 3;
     const strHealth : string = String(stats.getHealth()) + "/" + String(stats.getMaxHealth());
-    drawHealthBar(canvas, bmpFontOutlines, dx, dy + 2, stats);
+    drawHealthBar(canvas, bmpFontOutlines, dx, 5, stats);
     canvas.drawBitmap(bmpHUD, Flip.None, 1, 1, 0, 0, 16, 16);
     canvas.drawText(bmpFontOutlines, strHealth, dx + HEALTH_BAR_WIDTH/2, 0, -7, 0, Align.Center);
     
@@ -75,6 +74,19 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
         const strAmmo : string = String(stats.getBulletCount()) + "/" + String(stats.getMaxBulletCount());
         canvas.drawText(bmpFontOutlines, strAmmo, 13, canvas.height - 16, -7, 0);
         canvas.drawBitmap(bmpHUD, Flip.None, 0, canvas.height - 17, 32, 0, 16, 16);
+    }
+
+    // Orbs
+    const orbCount : number = stats.getOrbCount();
+    if (orbCount >= 0) {
+
+        const strOrbs : string = `*${orbCount}`;
+
+        const dy : number = 14;
+        dx = canvas.width - strOrbs.length*9;
+
+        canvas.drawText(bmpFontOutlines, strOrbs, canvas.width, dy + 1, -7, 0, Align.Right);
+        canvas.drawBitmap(bmpHUD, Flip.None, dx - 22, dy, 64, 0, 16, 16);
     }
 }
 

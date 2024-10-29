@@ -31,10 +31,12 @@ export class Progress {
     private armor : number = 0;
 
     private money : number = 0;
+    private orbCount : number = 0;
 
     private obtainedItems : boolean[]
     private obtainedHealthUps : boolean[];
     private obtainedAmmoUps : boolean[];
+    private obtainedDreamOrbs : boolean[];
 
     private hintShown : boolean[];
     private cutsceneWatched : boolean[];
@@ -54,6 +56,7 @@ export class Progress {
         this.obtainedItems = new Array<boolean> ();
         this.obtainedHealthUps = new Array<boolean> ();
         this.obtainedAmmoUps = new Array<boolean> ();
+        this.obtainedDreamOrbs = new Array<boolean> ();
 
         this.hintShown = new Array<boolean> ();
         this.cutsceneWatched = new Array<boolean> ();
@@ -88,6 +91,7 @@ export class Progress {
         output["items"] = Array.from(this.obtainedItems);
         output["healthups"] = Array.from(this.obtainedHealthUps);
         output["ammoups"] = Array.from(this.obtainedAmmoUps);
+        output["dreamorbs"] = Array.from(this.obtainedDreamOrbs);
 
         output["hints"] = Array.from(this.hintShown);
         output["cutscenes"] = Array.from(this.cutsceneWatched);
@@ -109,9 +113,11 @@ export class Progress {
 
         this.maxHealth = 10;
         this.maxBullets = 10;
+        this.orbCount = 0;
 
         // TODO: Find out if there is a good way to check how many
         // times a certain value exists in an array, this looks a bit silly.
+        // NOTE: array.filter(v => v).length should do the trick, but... eh.
         for (const h of this.obtainedHealthUps) {
 
             if (h) {
@@ -125,6 +131,14 @@ export class Progress {
             if (h) {
 
                 this.maxBullets += BASE_BULLETS_UP;
+            }
+        }
+
+        for (const h of this.obtainedDreamOrbs) {
+
+            if (h) {
+
+                ++ this.orbCount;
             }
         }
 
@@ -151,6 +165,18 @@ export class Progress {
     public hasItem(itemID : number) : boolean {
 
         return this.obtainedItems[itemID] ?? false;
+    }
+
+
+    public obtainDreamOrb(orbID : number) : void {
+
+        this.obtainedDreamOrbs[orbID] = true;
+    }
+
+
+    public hasDreamOrb(orbID : number) : boolean {
+
+        return this.obtainedDreamOrbs[orbID] ?? false;
     }
 
 
@@ -247,6 +273,9 @@ export class Progress {
 
     public getBulletCount = () : number => this.bullets;
     public getMaxBulletCount = () : number => this.maxBullets;
+
+    
+    public getOrbCount = () : number => this.orbCount;
     
 
     public updateBulletCount(change : number) : void {
@@ -353,6 +382,7 @@ export class Progress {
             this.obtainedItems = Array.from(json["items"] ?? []) as boolean[];
             this.obtainedHealthUps = Array.from(json["healthups"] ?? []) as boolean[];
             this.obtainedAmmoUps = Array.from(json["ammoups"] ?? []) as boolean[];
+            this.obtainedDreamOrbs = Array.from(json["dreamorbs"] ?? []) as boolean[];
 
             this.hintShown = Array.from(json["hints"] ?? []) as boolean[];
             this.cutsceneWatched = Array.from(json["cutscenes"] ?? []) as boolean[];
