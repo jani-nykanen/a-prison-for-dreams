@@ -193,12 +193,14 @@ export class Stage {
 
         const START_INDEX : number = 256;
 
-        if (this.objectLayer === undefined)
+        if (this.objectLayer === undefined) {
+            
             return;
+        }
 
-        for (let y = 0; y < this.height; ++ y) {
+        for (let y : number = 0; y < this.height; ++ y) {
 
-            for (let x = 0; x < this.width; ++ x) {
+            for (let x : number = 0; x < this.width; ++ x) {
 
                 const upperID : number = y > 0 ? this.objectLayer[(y - 1)*this.width + x] - START_INDEX : 0;
                 func(x, y, this.objectLayer[y*this.width + x] - START_INDEX, upperID);

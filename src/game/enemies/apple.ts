@@ -7,7 +7,7 @@ import { Enemy } from "./enemy.js";
 
 
 const BASE_SPEED : number = 0.25;
-const FOLLOW_SPEED : number = 0.67;
+const FOLLOW_SPEED : number = 0.50;
 
 
 export class Apple extends Enemy {
@@ -35,8 +35,10 @@ export class Apple extends Enemy {
 
         this.wave = Math.random()*(Math.PI*2);
 
-        this.friction.x = 0.05;
-        this.friction.y = 0.05;
+        this.friction.x = 0.025;
+        this.friction.y = 0.025;
+
+        this.ignoreBottomLayer = true;
     }
 
 

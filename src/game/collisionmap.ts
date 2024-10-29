@@ -80,8 +80,10 @@ export class CollisionMap {
 
             // TODO: A bit slow, maybe clone the tilemap and then do the magic?
             const tileID : number = baseMap.getTile(LAYER_NAME[layer], x, y);
-            if (tileID <= 0)
+            if (tileID <= 0) {
+
                 continue;
+            }
 
             for (let i = 0; i < 4; ++ i) {
 
@@ -92,7 +94,7 @@ export class CollisionMap {
                 this.collisions[index] |= (1 << colTileID);
             }
 
-            // TODO: If there collisions from several layers, maybe disable this flag?
+            // TODO: If there are collisions from several layers, maybe disable this flag?
             if (this.collisions[index] != 0 && layer == 0) {
 
                 this.collisions[index] |= CollisionBit.ContainsBottomLayer;
@@ -145,6 +147,13 @@ export class CollisionMap {
 
         const dx : number = x*TILE_WIDTH;
         const dy : number = y*TILE_HEIGHT;
+
+                
+        // Check if ignores bottom layer
+        if (o.doesIgnoreBottomLayer() && (colID & CollisionBit.ContainsBottomLayer) != 0) {
+
+            return;
+        }
 
         // Floor
         if ((colID & CollisionBit.Top) != 0 &&
@@ -214,16 +223,6 @@ export class CollisionMap {
             o.hurtCollision?.(dx, dy + spikeOffX, SPIKE_HEIGHT, SPIKE_WIDTH, event, 0, SPIKE_DAMAGE);
             this.boxCollision(o, dx, dy + spikeOffX, SPIKE_HEIGHT, SPIKE_WIDTH, event);
         }
-
-        // -------------------------------------- //
-        
-
-        // Ignore slopes from the bottom layer if required (used mostly for projectiles)
-        if (o.doesIgnoreBottomLayer() && (colID & CollisionBit.ContainsBottomLayer) != 0) {
-
-            return;
-        }
-
 
         // -------------------------------------- //
 
