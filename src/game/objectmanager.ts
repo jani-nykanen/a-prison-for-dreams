@@ -79,7 +79,9 @@ export class ObjectManager {
 
         this.interactables = new Array<Interactable> ();
 
-        this.player = new Player(0, 0, this.projectiles, this.animatedParticles, this.flyingText, progress);
+        this.player = new Player(0, 0, 
+            this.projectiles, this.animatedParticles, 
+            this.flyingText, progress, mapTransition);
 
         this.dialogueBox = dialogueBox;
         this.hints = hints;

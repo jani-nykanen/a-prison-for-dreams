@@ -26,6 +26,9 @@ export class Stage {
 
     private background : Background;
 
+    private leftExit : string | undefined = undefined;
+    private rightExit : string | undefined = undefined;
+
     public readonly width : number;
     public readonly height : number;
 
@@ -47,6 +50,9 @@ export class Stage {
         this.waterSprite = new Sprite(32, 16);
 
         this.background = new Background(this.height*TILE_HEIGHT, backgroundType);
+
+        this.leftExit = baseMap.getProperty("leftexit");
+        this.rightExit = baseMap.getProperty("rightexit");
     }
 
 
@@ -169,14 +175,7 @@ export class Stage {
 
         if (waterSurface > 0 && o.waterCollision !== undefined) {
             
-            
             o.waterCollision(opos.x - 16, waterSurface, 32, this.height*TILE_HEIGHT - waterSurface, event);
-            /*
-            o.slopeCollision(
-                opos.x - 16, this.height*TILE_HEIGHT, 
-                opos.x  + 32, this.height*TILE_HEIGHT, 
-                1, event);
-                */
         }
 
         o.wallCollision(0, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, -1, event);
@@ -185,6 +184,15 @@ export class Stage {
         if (o.getPosition().y + hbox.y - hbox.h/2 > this.height*TILE_HEIGHT) {
 
             o.instantKill(event);
+        }
+
+        if (this.rightExit !== undefined) {
+
+            o.screenTransitionEvent?.(this.width*TILE_WIDTH, 1, this.rightExit, event);
+        }
+        else if (this.leftExit !== undefined) {
+
+            o.screenTransitionEvent?.(0, -1, this.leftExit, event);
         }
     }
 

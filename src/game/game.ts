@@ -149,13 +149,15 @@ export class Game implements Scene {
             
             this.progress.save();
 
-            // A lazy way to make sure that the animation is not triggered when 
-            // loading the savefile was to put these inside if (save) check...
-            const npcTriggered : number = Number(baseMap.getProperty("triggernpc") ?? -1);
-            if (npcTriggered >= 0) {
+            if (spawnPos == 0) {
+                // A lazy way to make sure that the animation is not triggered when 
+                // loading the savefile was to put these inside if (save) check...
+                const npcTriggered : number = Number(baseMap.getProperty("triggernpc") ?? -1);
+                if (npcTriggered >= 0) {
 
-                const npcType : number = Number(baseMap.getProperty("npctype") ?? 0);
-                this.triggerNPC(npcTriggered, npcType, event);
+                    const npcType : number = Number(baseMap.getProperty("npctype") ?? 0);
+                    this.triggerNPC(npcTriggered, npcType, event);
+                }
             }
         }
 

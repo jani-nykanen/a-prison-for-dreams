@@ -116,6 +116,7 @@ export class CollisionObject extends GameObject {
         event : ProgramEvent, direction? : -1 | 0 | 1, damage? : number) : boolean;
     public waterCollision?(x : number, y : number, w : number, h : number,
         event : ProgramEvent, surface? : boolean) : boolean;
+    public screenTransitionEvent?(x : number, direction : -1 | 1, nextMap : string, event : ProgramEvent) : void;
 
 
     public slopeCollision(

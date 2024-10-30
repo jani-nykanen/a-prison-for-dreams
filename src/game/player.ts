@@ -16,6 +16,8 @@ import { FlyingText, FlyingTextSymbol } from "./flyingtext.js";
 import { RGBA } from "../math/rgba.js";
 import { Progress } from "./progress.js";
 import { Item } from "./items.js";
+import { MapTransitionCallback } from "./maptransition.js";
+import { TransitionType } from "../core/transition.js";
 
 
 const GRAVITY_MAGNITUDE : number = 5.0;
@@ -128,6 +130,8 @@ export class Player extends CollisionObject {
     private readonly particles : ObjectGenerator<AnimatedParticle, void>;
     private readonly flyingText : ObjectGenerator<FlyingText, void>;
 
+    private readonly mapTransition : MapTransitionCallback | undefined = undefined;
+
     public readonly stats : Progress;
 
 
@@ -135,7 +139,7 @@ export class Player extends CollisionObject {
         projectiles : ProjectileGenerator,
         particles : ObjectGenerator<AnimatedParticle, void>,
         flyingText : ObjectGenerator<FlyingText, void>,
-        stats : Progress) {
+        stats : Progress, mapTransition : MapTransitionCallback) {
 
         super(x, y, true);
 
@@ -158,6 +162,8 @@ export class Player extends CollisionObject {
         this.dir = 1;
     
         this.iconSprite = new Sprite(16, 16);
+
+        this.mapTransition = mapTransition;
     }
 
 
@@ -1268,6 +1274,30 @@ export class Player extends CollisionObject {
     }
 
 
+    public screenTransitionEvent(x : number, direction : -1 | 1, nextMap : string, event : ProgramEvent) : void {
+
+        const TRIGGER_WIDTH : number = 16;
+
+        if (!this.isActive() || this.knockbackTimer > 0) {
+
+            return;
+        }
+
+        if ((direction > 0 && this.speed.x > 0 && this.pos.x + TRIGGER_WIDTH/2 >= x) ||
+            (direction < 0 && this.speed.x < 0 && this.pos.x - TRIGGER_WIDTH/2 <= x)   ) {
+
+            event.transition.activate(true, TransitionType.Fade, 1.0/20.0, event,
+                (event : ProgramEvent) : void => {
+
+                    this.mapTransition?.(nextMap, 
+                        direction > 0 ? 0 : 1, 
+                        direction > 0 ? Pose.EnterRight : Pose.EnterLeft, 
+                        true, event, true);
+                });
+        }
+    }
+
+
     public draw(canvas : Canvas, assets : Assets): void {
         
         if (!this.exist) {
@@ -1604,6 +1634,8 @@ export class Player extends CollisionObject {
         default:
             break;
         }
+
+        this.touchSurface = true;
     }
 }
 
