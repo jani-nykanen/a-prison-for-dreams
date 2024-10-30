@@ -107,10 +107,26 @@
 
     "cutscene1": [
 
-        "Long time ago there were five\nGreat Dreamers. Together they\nimagined the World of Dream.",
-        "But centuries passed and\none by one they fell.",
-        "Were they killed or did\nthey decide to wake up?\nThat is not known."
+        "There was a time before\nthe Great Dreamer. Do you\nunderstand what that\nmeans?",
+        "It means that there is a\nworld beyond the World\nof Dream.",
+        "Or was. One can only wonder\nwhat happened to it."
     ],
+
+    "cutscene2": [
+
+        "There are people in the\nDream who came from\nthe world outside.",
+        "The 'real world', like\nthey like to call it.",
+        "Why would anyone abandon\nthe reality and decide\nto live in a dream\ninstead?"
+    ],
+
+
+    "cutscene3": [
+
+        "The Great Dreamer used\nto be a human. She also\ncame from the world\noutside.",
+        "Lady Alexandra, they called\nher. She had a gift of\ndreaming, so they made\nher a Great Dreamer.",
+        "But... who are 'they'?"
+    ],
+
 
     "npc0": [
         "We are the keepers of\nthe Graveyard. Our\njob is to bury dreams\nthat come here to die.",

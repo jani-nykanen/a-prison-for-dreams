@@ -25,10 +25,11 @@ export class Enemy extends CollisionObject {
 
 
     private hurtID : number = -1;
-    private hurtTimer : number = 0;
-
+   
     private flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
     private collectables : CollectableGenerator | undefined = undefined;
+
+    protected hurtTimer : number = 0;
 
     protected initialPos : Vector;
 
@@ -43,6 +44,8 @@ export class Enemy extends CollisionObject {
     protected radius : number = 6;
 
     protected didTouchSurface : boolean = false;
+
+    protected knockbackFactor : number = 1.0;
 
 
     constructor(x : number, y : number) {
@@ -180,7 +183,7 @@ export class Enemy extends CollisionObject {
             const ppos : Vector = player.getPosition();
             const dir : Vector = Vector.direction(ppos, this.pos);
 
-            let knockback : number = KNOCKBACK_SPEED*(this.friction.x/0.10)*player.getKnockbackFactor();
+            let knockback : number = KNOCKBACK_SPEED*this.knockbackFactor*player.getKnockbackFactor();
             if (player.isChargeAttacking()) {
 
                 // knockback *= POWER_ATTACK_KNOCK_MULTIPLIER;
@@ -231,7 +234,7 @@ export class Enemy extends CollisionObject {
 
                 this.hurtID = attackID;
             }
-            this.speed.x = Math.sign(this.pos.x - p.getPosition().x)*KNOCKBACK_SPEED*(this.friction.x/0.10);
+            this.speed.x = Math.sign(this.pos.x - p.getPosition().x)*KNOCKBACK_SPEED*this.knockbackFactor;
 
             this.takeDamage(p.getPower(), p.stats, event, Vector.direction(ppos, this.pos));
         }

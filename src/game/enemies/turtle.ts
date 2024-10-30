@@ -25,6 +25,8 @@ export class Turtle extends Enemy {
         this.dir = (Math.floor(x/TILE_WIDTH) % 2) == 0 ? 1 : -1;
 
         this.collisionBox.w = 8;
+
+        this.knockbackFactor = 1.25;
     }
 
 
@@ -43,7 +45,7 @@ export class Turtle extends Enemy {
 
         this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
 
-        if (!this.touchSurface && this.didTouchSurface) {
+        if (this.hurtTimer <= 0 && !this.touchSurface && this.didTouchSurface) {
 
             this.dir = -this.dir;
             this.pos.x += BASE_SPEED*this.dir;

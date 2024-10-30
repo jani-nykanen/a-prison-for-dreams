@@ -39,6 +39,8 @@ export class Apple extends Enemy {
         this.friction.y = 0.025;
 
         this.ignoreBottomLayer = true;
+
+        this.knockbackFactor = 0.75;
     }
 
 
@@ -101,6 +103,12 @@ export class Apple extends Enemy {
         if (this.mode == 1) {
 
             const dir : Vector = Vector.direction(this.pos, ppos);
+
+            if (this.hurtTimer > 0) {
+
+                this.target.zeros();
+                return;
+            }
 
             this.target.x = dir.x*FOLLOW_SPEED;
             this.target.y = dir.y*FOLLOW_SPEED;
