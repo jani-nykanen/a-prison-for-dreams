@@ -1294,6 +1294,8 @@ export class Player extends CollisionObject {
                         direction > 0 ? Pose.EnterRight : Pose.EnterLeft, 
                         true, event, true);
                 });
+
+            event.audio.playSample(event.assets.getSample("transition"), 0.70);
         }
     }
 

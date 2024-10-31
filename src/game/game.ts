@@ -22,6 +22,7 @@ import { Cutscene } from "./cutscene.js";
 
 
 const MAP_NAME_APPEAR_TIME : number = 90;
+const MAP_NAME_FADE_TIME : number = 30;
 
 
 export class Game implements Scene {
@@ -128,7 +129,7 @@ export class Game implements Scene {
 
         this.progress.setAreaName(mapName);
 
-        this.stage = new Stage(this.tilesetIndex, baseMap, collisionMap);
+        this.stage = new Stage(Number(baseMap.getProperty("background") ?? 1), baseMap, collisionMap);
         // TODO: Maybe not recreate the whole object, but reset values etc.
         this.objects = new ObjectManager(
             this.progress, this.dialogueBox, this.hints,
@@ -441,11 +442,20 @@ export class Game implements Scene {
             return;
         }
 
+        // TODO: Split to own function
         if (!this.pause.isActive() && this.mapNameTimer > 0) {
 
             const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
+            let alpha : number = 1.0;
+            if (this.mapNameTimer <= MAP_NAME_FADE_TIME) {
+
+                alpha = this.mapNameTimer/MAP_NAME_FADE_TIME;
+            }
+
+            canvas.setAlpha(alpha);
             canvas.drawText(bmpFontOutlines, this.mapName,
                 canvas.width/2, canvas.height/2 - 8, -8, 0, Align.Center);
+            canvas.setAlpha();
         }
 
         canvas.setColor();

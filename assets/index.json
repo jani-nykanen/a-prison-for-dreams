@@ -13,6 +13,7 @@
         {"name": "particles_1", "path": "particles_1.png"},
         {"name": "muzzle_flash", "path": "muzzle_flash.png"},
 
+        {"name": "forest", "path": "forest.png"},
         {"name": "water", "path": "water.png"},
         {"name": "clouds_0", "path": "clouds_0.png"},
         {"name": "clouds_1", "path": "clouds_1.png"},
@@ -61,6 +62,7 @@
         {"name": "deny", "path": "deny.wav"},
 
         {"name": "jump", "path": "jump.wav"},
+        {"name": "jump2", "path": "jump2.wav"},
         {"name": "buzz", "path": "buzz.wav"},
 
         {"name": "hit", "path": "hit.wav"},
@@ -81,10 +83,12 @@
 
         {"name": "checkpoint", "path": "checkpoint.wav"},
         {"name": "portal", "path": "portal.wav"},
+        {"name": "transition", "path": "transition.wav"},
 
         {"name": "charge", "path": "charge.wav"},
         {"name": "charge_attack", "path": "chargeattack.wav"},
         {"name": "charge_shot", "path": "chargeshot.wav"},
+
 
         {"name": "item", "path": "item.ogg"}
     ],

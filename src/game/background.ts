@@ -64,6 +64,7 @@ export class Background {
         }
     } 
 
+    
 
     private updateCoast(event : ProgramEvent) : void {
 
@@ -79,6 +80,21 @@ export class Background {
 
         this.cloudPos = (this.cloudPos + CLOUD_SPEED*event.tick) % 1.0;
     }
+
+
+    private drawDefaultSky(canvas : Canvas, assets : Assets) : void {
+
+        const bmpStars : Bitmap | undefined = assets.getBitmap("stars");
+        canvas.drawBitmap(bmpStars, Flip.None, 0, 0, 0, 0, canvas.width, canvas.height, canvas.width, canvas.height);
+
+        const bmpSun : Bitmap | undefined  = assets.getBitmap("sun");
+        if (bmpSun !== undefined) {
+
+            canvas.drawBitmap(bmpSun, Flip.None, canvas.width - bmpSun.width - 16, 16);
+        }
+
+    }
+
 
     private drawGraveyard(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
@@ -120,14 +136,7 @@ export class Background {
 
     private drawCoast(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        const bmpStars : Bitmap | undefined = assets.getBitmap("stars");
-        canvas.drawBitmap(bmpStars, Flip.None, 0, 0, 0, 0, canvas.width, canvas.height, canvas.width, canvas.height);
-
-        const bmpSun : Bitmap | undefined  = assets.getBitmap("sun");
-        if (bmpSun !== undefined) {
-
-            canvas.drawBitmap(bmpSun, Flip.None, canvas.width - bmpSun.width - 16, 16);
-        }
+        this.drawDefaultSky(canvas, assets);
 
         const bmpClouds : Bitmap | undefined  = assets.getBitmap("clouds_1");
         if (bmpClouds === undefined) {
@@ -140,7 +149,7 @@ export class Background {
 
         const shiftx : number = -((camPos.x/8 + this.cloudPos*bmpClouds.width) % bmpClouds.width);
         const dy : number = 80 - camPos.y/8;
-        for (let x = -1; x < count; ++ x) {
+        for (let x : number = -1; x < count; ++ x) {
 
             canvas.drawBitmap(bmpClouds, Flip.None, x*bmpClouds.width + shiftx, dy);
         }  
@@ -149,6 +158,35 @@ export class Background {
 
             canvas.setColor(73, 146, 219);
             canvas.fillRect(0, dy + bmpClouds.height, canvas.width, bottomHeight);
+            canvas.setColor();
+        }
+    }
+
+
+    private drawForest(canvas : Canvas, assets : Assets, camera : Camera) : void {
+
+        this.drawDefaultSky(canvas, assets);
+
+        const bmpForest : Bitmap | undefined  = assets.getBitmap("forest");
+        if (bmpForest === undefined) {
+
+            return;
+        }
+
+        const camPos : Vector = camera.getCorner();
+        const count : number = Math.floor(canvas.width/bmpForest.width) + 2;
+
+        const shiftx : number = -((camPos.x/8) % bmpForest.width);
+        const dy : number = 80 - camPos.y/8;
+        for (let x : number = -1; x < count; ++ x) {
+
+            canvas.drawBitmap(bmpForest, Flip.None, x*bmpForest.width + shiftx, dy);
+        }  
+        const bottomHeight : number = this.height - (dy + bmpForest.height);
+        if (bottomHeight > 0) {
+
+            canvas.setColor(0, 146, 219);
+            canvas.fillRect(0, dy + bmpForest.height, canvas.width, bottomHeight);
             canvas.setColor();
         }
     }
@@ -223,6 +261,11 @@ export class Background {
         case BackgroundType.Coast:
 
             this.drawCoast(canvas, assets, camera);
+            break;
+
+        case BackgroundType.Forest:
+
+            this.drawForest(canvas, assets, camera);
             break;
 
         default:
