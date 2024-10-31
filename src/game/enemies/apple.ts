@@ -80,9 +80,9 @@ export class Apple extends Enemy {
 
             this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
             this.pos.y = this.initialPos.y + Math.sin(this.wave)*AMPLITUDE;
-        }
 
-        this.flip = this.target.x > 0 ? Flip.Horizontal : Flip.None;
+            this.flip = this.target.x > 0 ? Flip.Horizontal : Flip.None;
+        }
     }
 
 
@@ -103,6 +103,8 @@ export class Apple extends Enemy {
         if (this.mode == 1) {
 
             const dir : Vector = Vector.direction(this.pos, ppos);
+
+            this.flip = ppos.x > this.pos.x ? Flip.Horizontal : Flip.None;
 
             if (this.hurtTimer > 0) {
 

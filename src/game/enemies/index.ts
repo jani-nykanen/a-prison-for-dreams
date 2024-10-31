@@ -4,6 +4,7 @@ import { Zombie } from "./zombie.js";
 import { ShadowBat } from "./shadowbat.js";
 import { Caterpillar } from "./caterpillar.js";
 import { Apple } from "./apple.js";
+import { Mushroom } from "./mushroom.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -13,6 +14,7 @@ export const getEnemyByID = (index : number) : Function =>
     Zombie,
     ShadowBat,
     Caterpillar,
-    Apple
+    Apple,
+    Mushroom
 ]
 [index] ?? Slime;

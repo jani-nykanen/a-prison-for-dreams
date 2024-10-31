@@ -42,9 +42,6 @@ export class Caterpillar extends Enemy {
 
     protected updateLogic(event : ProgramEvent) : void {
         
-        this.sprite.animate(this.sprite.getRow(), 4, 7, 
-            ANIMATION_SPEED[this.sprite.getColumn() % 2], event.tick);
-
         if (!this.touchSurface) {
 
             this.target.x = 0;
@@ -53,6 +50,9 @@ export class Caterpillar extends Enemy {
 
             const speedMod : number = this.sprite.getColumn() % 2;
             this.target.x = this.computeSlopeSpeedFactor()*BASE_SPEED*this.dir*speedMod;
+
+            this.sprite.animate(this.sprite.getRow(), 4, 7, 
+                ANIMATION_SPEED[this.sprite.getColumn() % 2], event.tick);
         }
 
         this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
