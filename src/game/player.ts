@@ -1214,6 +1214,20 @@ export class Player extends CollisionObject {
 
     public projectileCollision(p : Projectile, event : ProgramEvent) : boolean {
 
+        if (!this.isActive() || !p.isActive() || p.isFriendly()) {
+
+            return false;
+        }   
+
+        if (p.overlayObject(this)) {
+
+            const ppos : Vector = p.getPosition();
+
+            p.kill(event);
+            this.applyDamage(p.getPower(), ppos.x >= this.pos.x ? -1 : 1, event);
+
+            return true;
+        }
         return false;
     }
 

@@ -10,12 +10,20 @@ import { Progress } from "./progress.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 2, 3
+    3, 2, 3, 3
 ];
 
 const ANIMATION_SPEED : number[] = [
-    4, 4, 4
+    4, 4, 4, 6
 ];
+
+
+const HITBOX_WIDTHS : number[] = [
+    4, 4, 4, 8
+];
+const HITBOX_HEIGHTS : number[] = [
+    4, 4, 4, 8
+]
 
 
 const DEATH_SAMPLE_VOLUME : number = 0.50;
@@ -40,7 +48,6 @@ export class Projectile extends CollisionObject {
 
         this.sprite = new Sprite(24, 24);
 
-        // TODO: Different hitboxes for different type of projectiles
         this.hitbox = new Rectangle(0, 0, 4, 4);
         this.collisionBox = new Rectangle(0, 0, 2, 2);
 
@@ -116,6 +123,9 @@ export class Projectile extends CollisionObject {
         this.power = power;
 
         this.sprite.setFrame(0, this.id);
+
+        this.hitbox.w = HITBOX_WIDTHS[this.id] ?? 4;
+        this.hitbox.h = HITBOX_HEIGHTS[this.id] ?? 4;
 
         this.dying = false;
         this.exist = true;

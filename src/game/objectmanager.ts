@@ -192,7 +192,7 @@ export class ObjectManager {
                     const o : Enemy = (new (getEnemyByID(objID - 17)).prototype.constructor(dx, dy)) as Enemy;
                     this.enemies.push(o);
 
-                    o.passGenerators(this.flyingText, this.collectables);
+                    o.passGenerators(this.flyingText, this.collectables, this.projectiles);
                 }
                 break;
             }

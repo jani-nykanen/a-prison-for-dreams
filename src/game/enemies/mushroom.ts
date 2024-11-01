@@ -35,6 +35,8 @@ export class Mushroom extends Enemy {
 
         this.bounceFactor.x = 1.0;
 
+        this.collisionBox.w = 8;
+
         this.jumpTimer = Math.floor(x/TILE_WIDTH) % 2 == 0 ? JUMP_TIME/2 : JUMP_TIME;
     }
 

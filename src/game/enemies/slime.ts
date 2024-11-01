@@ -26,6 +26,7 @@ export class Slime extends Enemy {
 
         this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
     }
+    
 
     protected playerEvent(player : Player, event : ProgramEvent) : void {
         

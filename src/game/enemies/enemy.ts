@@ -13,6 +13,7 @@ import { RGBA } from "../../math/rgba.js";
 import { CollectableGenerator, sampleTypeFromProgress } from "../collectablegenerator.js";
 import { CollectableType } from "../collectable.js";
 import { Progress } from "../progress.js";
+import { ProjectileGenerator } from "../projectilegenerator.js";
 
 
 const HURT_TIME : number = 30;
@@ -28,7 +29,7 @@ export class Enemy extends CollisionObject {
    
     private flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
     private collectables : CollectableGenerator | undefined = undefined;
-
+    
     protected hurtTimer : number = 0;
 
     protected initialPos : Vector;
@@ -46,6 +47,8 @@ export class Enemy extends CollisionObject {
     protected didTouchSurface : boolean = false;
 
     protected knockbackFactor : number = 1.0;
+
+    protected projectiles : ProjectileGenerator | undefined = undefined;
 
 
     constructor(x : number, y : number) {
@@ -216,7 +219,7 @@ export class Enemy extends CollisionObject {
 
         const KNOCKBACK_SPEED : number = 1.25;
 
-        if (!this.isActive() || !p.isActive()) {
+        if (!this.isActive() || !p.isActive() || !p.isFriendly()) {
 
             return;
         }   
@@ -279,9 +282,11 @@ export class Enemy extends CollisionObject {
 
     public passGenerators(
         flyingText : ObjectGenerator<FlyingText, void>, 
-        collectables : CollectableGenerator) : void {
+        collectables : CollectableGenerator,
+        projectiles : ProjectileGenerator) : void {
 
         this.flyingText = flyingText;
         this.collectables = collectables;
+        this.projectiles = projectiles;
     }
 }
