@@ -156,7 +156,7 @@ export class Background {
         const bottomHeight : number = this.height - (dy + bmpClouds.height);
         if (bottomHeight > 0) {
 
-            canvas.setColor(73, 146, 219);
+            canvas.setColor(36, 146, 255);
             canvas.fillRect(0, dy + bmpClouds.height, canvas.width, bottomHeight);
             canvas.setColor();
         }

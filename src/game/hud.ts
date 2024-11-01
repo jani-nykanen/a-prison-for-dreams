@@ -78,7 +78,7 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
 
     // Orbs
     const orbCount : number = stats.getOrbCount();
-    if (orbCount >= 0) {
+    if (orbCount > 0) {
 
         const strOrbs : string = `*${orbCount}`;
 
