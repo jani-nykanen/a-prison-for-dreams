@@ -68,6 +68,7 @@
         {"name": "hit", "path": "hit.wav"},
         {"name": "sword", "path": "sword.wav"},
         {"name": "kill", "path": "kill.wav"},
+        {"name": "throw", "path": "throw.wav"},
 
         {"name": "hurt", "path": "hurt.wav"},
         {"name": "die", "path": "die.wav"},
@@ -89,8 +90,9 @@
         {"name": "charge_attack", "path": "chargeattack.wav"},
         {"name": "charge_shot", "path": "chargeshot.wav"},
 
+        {"name": "item", "path": "item.ogg"},
 
-        {"name": "item", "path": "item.ogg"}
+        {"name": "graveyard", "path": "graveyard.ogg"}
     ],
 
     "documentPath": "assets/localization/",

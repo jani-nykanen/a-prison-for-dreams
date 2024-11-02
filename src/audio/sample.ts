@@ -1,6 +1,9 @@
 import { clamp } from "../math/utility.js";
 
 
+const MINIMUM_VOLUME : number = 0.001;
+
+
 export class AudioSample {
 
 
@@ -8,12 +11,12 @@ export class AudioSample {
 
 
     private data : AudioBuffer;
-    private activeBuffer : AudioBufferSourceNode | null = null;
+    private activeBuffer : AudioBufferSourceNode | undefined = undefined; // TODO: undefined, maybe?
     private gain : GainNode;
 
     private startTime : number = 0.0;
     private pauseTime : number = 0.0;
-    private playVol : number = 0.0;
+    private baseVolume : number = 0.0;
     private loop : boolean = false;
 
 
@@ -24,35 +27,33 @@ export class AudioSample {
     }
 
 
-    public play(ctx : AudioContext, vol : number = 1.0, loop : boolean = false, startTime : number = 0.0) : void {
+    public play(ctx : AudioContext, volume : number = 1.0, volumeModifier : number = 1.0,
+        loop : boolean = false, startTime : number = 0.0) : void {
 
-        this.fadeIn(ctx, vol, vol, loop, startTime, 0);
+        this.fadeIn(ctx, volume, volume, volumeModifier, loop, startTime, 0);
     }
 
 
-    public fadeIn(ctx : AudioContext, initial : number, end : number, 
+    public fadeIn(ctx : AudioContext, 
+        initial : number, end : number, volumeModifier : number,
         loop : boolean = false, startTime: number = 0, fadeTime: number = 0) : void {
 
-        const MINIMUM_VOLUME : number = 0.001;
+        this.activeBuffer?.disconnect();
+        this.activeBuffer = undefined;
 
-        if (this.activeBuffer !== null) {
-
-            this.activeBuffer.disconnect();
-            this.activeBuffer = null;
-        }
-
-        const bufferSource = ctx.createBufferSource();
+        const bufferSource : AudioBufferSourceNode = ctx.createBufferSource();
         bufferSource.buffer = this.data;
         bufferSource.loop = loop;
 
-        initial = clamp(initial, MINIMUM_VOLUME, 1.0);
-        end = clamp(end, MINIMUM_VOLUME, 1.0);
+        this.baseVolume = end;
+
+        initial = clamp(initial*volumeModifier, MINIMUM_VOLUME, 1.0);
+        end = clamp(end*volumeModifier, MINIMUM_VOLUME, 1.0);
 
         this.gain.gain.setValueAtTime(initial, startTime);
 
         this.startTime = ctx.currentTime - startTime;
         this.pauseTime = 0;
-        this.playVol = end;
         this.loop = loop;
 
         bufferSource.connect(this.gain).connect(ctx.destination);
@@ -69,27 +70,37 @@ export class AudioSample {
 
     public stop() : void {
 
-        if (this.activeBuffer === null) 
-            return;
-
-        this.activeBuffer.disconnect();
-        this.activeBuffer.stop();
-        this.activeBuffer = null;
+        this.activeBuffer?.disconnect();
+        this.activeBuffer?.stop();
+        this.activeBuffer = undefined;
     }
 
 
     public pause(ctx : AudioContext) : void {
 
-        if (this.activeBuffer === null) 
+        if (this.activeBuffer === undefined)  {
+
             return;
+        }
 
         this.pauseTime = ctx.currentTime - this.startTime;
         this.stop();
     }
 
 
-    public resume(ctx : AudioContext) : void {
+    public resume(ctx : AudioContext, volumeModifier : number) : void {
 
-        this.play(ctx, this.playVol, this.loop, this.pauseTime);
+        this.play(ctx, this.baseVolume, volumeModifier, this.loop, this.pauseTime);
+    }
+
+
+    public changeVolume(ctx : AudioContext, newVolume : number) : void {
+
+        if (this.activeBuffer === undefined)  {
+            
+            return;
+        }
+
+        this.gain.gain.setValueAtTime(clamp(this.baseVolume*newVolume, MINIMUM_VOLUME, 1.0), ctx.currentTime);
     }
 }

@@ -42,6 +42,7 @@ export class Portal extends Interactable {
 
     protected interactionEvent(player : Player, event : ProgramEvent) : void {
 
+        event.audio.stopMusic();
         event.audio.playSample(event.assets.getSample("portal"), 0.70);
 
         player.setPosition(this.pos.x, this.pos.y + 24, false);

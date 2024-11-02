@@ -5,7 +5,7 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
-const THROW_TIME : number = 120;
+const THROW_TIME : number = 90;
 
 
 export class Doppelganger extends Enemy {
@@ -61,6 +61,8 @@ export class Doppelganger extends Enemy {
                     THROW_SPEED*this.dir, 0.0, 2, 3, false);
 
                 this.sprite.setFrame(1, 5);
+
+                event.audio.playSample(event.assets.getSample("throw"), 0.50);
             }
         }
     }

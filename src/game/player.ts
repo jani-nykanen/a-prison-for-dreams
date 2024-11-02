@@ -1309,6 +1309,7 @@ export class Player extends CollisionObject {
                         true, event, true);
                 });
 
+            event.audio.stopMusic();
             event.audio.playSample(event.assets.getSample("transition"), 0.70);
         }
     }

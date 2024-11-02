@@ -19,24 +19,16 @@ export class AudioPlayer {
     }
 
 
-    public playSample(sample : AudioSample | undefined, vol : number = 1.0) : void {
+    public playSample(sample : AudioSample | undefined, volume : number = 1.0) : void {
 
         const EPS : number = 0.001;
 
-        if (this.ctx === undefined ||
-            this.soundVolume == 0 || 
-            sample === undefined) {
-        
-            return;
-        }
-
-        const baseVolume : number = vol*(this.soundVolume/100);
-        if (baseVolume <= EPS) {
+        if (this.ctx === undefined || this.soundVolume == 0 ||
+            volume*(this.soundVolume/100) <= EPS) {
 
             return;
         }
-
-        sample.play(this.ctx, baseVolume, false, 0);
+        sample?.play(this.ctx, volume, this.soundVolume/100.0, false, 0);
     }
 
 
@@ -53,7 +45,6 @@ export class AudioPlayer {
 
     public fadeInMusic(sample : AudioSample | undefined, vol : number = 1.0, fadeTime? : number) {
 
-
         if (this.ctx === undefined) {
 
             return;
@@ -69,7 +60,9 @@ export class AudioPlayer {
         }
 
         const baseVolume : number = vol*(this.musicVolume/100);
-        sample?.fadeIn(this.ctx, fadeTime === undefined ? baseVolume : 0.0, baseVolume, true, 0, fadeTime);
+        sample?.fadeIn(this.ctx, 
+            fadeTime === undefined ? baseVolume : 0.0, 
+            baseVolume, this.musicVolume/100.0, true, 0, fadeTime);
         this.musicTrack = sample;
     }
 
@@ -91,7 +84,7 @@ export class AudioPlayer {
 
             return false;
         }
-        this.musicTrack.resume(this.ctx);
+        this.musicTrack.resume(this.ctx, this.musicVolume/100.0);
         return true;
     }
 
@@ -112,6 +105,7 @@ export class AudioPlayer {
     public setMusicVolume(vol : number) : void {
 
         this.musicVolume = clamp(vol, 0, 100);
+        this.musicTrack?.changeVolume(this.ctx, this.musicVolume/100.0);
     }
 
 

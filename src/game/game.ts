@@ -19,6 +19,7 @@ import { MapTransitionCallback } from "./maptransition.js";
 import { Pose } from "./player.js";
 import { HintRenderer } from "./hintrenderer.js";
 import { Cutscene } from "./cutscene.js";
+import { AudioSample } from "../audio/sample.js";
 
 
 const MAP_NAME_APPEAR_TIME : number = 90;
@@ -87,10 +88,14 @@ export class Game implements Scene {
 
         if (!this.progress.hasWatchedCutscene(id)) {
 
+            event.audio.pauseMusic();
+
             event.transition.freeze();
             this.cutscene.activate(id, 
             RGBA.invertUnsignedByte(event.transition.getColor()),
                 event, (event : ProgramEvent) : void => {
+
+                event.audio.resumeMusic();
 
                 // Need to deactivate to get the proper frame to the
                 // buffer for the wave effect.
@@ -104,6 +109,21 @@ export class Game implements Scene {
 
             this.progress.markCutsceneWatched(id);
         }
+    }
+
+
+    private playSong(name : string, event : ProgramEvent) : void {
+
+        const BASE_VOLUME : number = 0.50; // TODO: Pass as a parameter?
+
+        const theme : AudioSample | undefined = event.assets.getSample(name);
+        if (theme === undefined) {
+            
+            return;
+        }
+
+        event.audio.stopMusic();
+        event.audio.fadeInMusic(theme, BASE_VOLUME, 1000);
     }
 
 
@@ -163,6 +183,13 @@ export class Game implements Scene {
         }
 
         this.hints.deactivate();
+
+        // Start the background music
+        const musicName : string | undefined = baseMap.getProperty("music");
+        if (musicName !== undefined) {
+
+            this.playSong(musicName, event);
+        }
 
         // Set cutscene
         const cutsceneIndex : string | undefined = baseMap.getProperty("cutscene");
