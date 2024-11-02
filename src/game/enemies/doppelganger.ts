@@ -71,6 +71,6 @@ export class Doppelganger extends Enemy {
     protected playerEvent(player : Player, event : ProgramEvent) : void {
         
         this.dir = player.getPosition().x > this.pos.x ? 1 : -1;
-        this.flip = this.dir > 1 ? Flip.Horizontal : Flip.None;
+        this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
     }
 }
