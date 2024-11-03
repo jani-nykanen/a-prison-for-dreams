@@ -1654,5 +1654,6 @@ export class Player extends CollisionObject {
 
         this.touchSurface = true;
     }
+    
 }
 

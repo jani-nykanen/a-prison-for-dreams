@@ -32,6 +32,8 @@ export class Stage {
     public readonly width : number;
     public readonly height : number;
 
+    public readonly baseMap : Tilemap;
+
 
     constructor(backgroundType : BackgroundType | undefined, 
         baseMap : Tilemap, collisionMap : Tilemap) {
@@ -54,6 +56,8 @@ export class Stage {
 
         this.leftExit = baseMap.getProperty("leftexit");
         this.rightExit = baseMap.getProperty("rightexit");
+
+        this.baseMap = baseMap;
     }
 
 

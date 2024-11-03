@@ -28,6 +28,7 @@ import { Portal } from "./interactables/portal.js";
 import { MapTransitionCallback } from "./maptransition.js";
 import { HintRenderer } from "./hintrenderer.js";
 import { HintTrigger } from "./interactables/hinttrigger.js";
+import { Door } from "./interactables/door.js";
 
 
 export class ObjectManager {
@@ -127,6 +128,14 @@ export class ObjectManager {
             const id : number = Math.max(0, upperID - 128);
 
             switch (objID) {
+
+            // Door
+            case 12:
+                
+                this.interactables.push(new Door(dx, dy, 
+                    stage.baseMap.getProperty(`door${id - 1}`), 
+                    this.mapTransition));
+                // Fallthrough
 
             // Player
             case 1:
@@ -458,6 +467,11 @@ export class ObjectManager {
 
             o.playerCollision(this.player, event, true);
         }
+
+        // For debugging, if things go wrong
+        // this.player.setPosition(128, 64);
+
+        console.log(this.player.getPosition());
     }
 
 

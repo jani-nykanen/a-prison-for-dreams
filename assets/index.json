@@ -8,6 +8,7 @@
 
         {"name": "tileset_0", "path": "tileset_0.png"},
         {"name": "tileset_1", "path": "tileset_1.png"},
+        {"name": "tileset_2", "path": "tileset_2.png"},
 
         {"name": "projectiles", "path": "projectiles.png"},
         {"name": "particles_1", "path": "particles_1.png"},
@@ -48,9 +49,12 @@
         {"name": "graveyard", "path": "graveyard.tmx"},
         {"name": "coast", "path": "coast.tmx"},
         {"name": "crossroads", "path": "crossroads.tmx"},
+        {"name": "shop", "path": "shop.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
-        {"name": "collisions_1", "path": "collisions_1.tmx"}
+        {"name": "collisions_1", "path": "collisions_1.tmx"},
+        {"name": "collisions_2", "path": "collisions_2.tmx"}
+
     ],
 
     "samplePath": "assets/audio/",
