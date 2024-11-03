@@ -126,5 +126,16 @@ export class Tilemap {
 
         return this.properties.get(name);
     }
+
+
+    public getNumericProperty(name : string) : number | undefined {
+
+        const str : string | undefined = this.properties.get(name);
+        if (str === undefined) {
+
+            return undefined;
+        }
+        return Number(str);
+    }
     
 }

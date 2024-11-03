@@ -149,7 +149,7 @@ export class Game implements Scene {
 
         this.progress.setAreaName(mapName);
 
-        this.stage = new Stage(Number(baseMap.getProperty("background") ?? 1), baseMap, collisionMap);
+        this.stage = new Stage(baseMap.getNumericProperty("background"), baseMap, collisionMap);
         // TODO: Maybe not recreate the whole object, but reset values etc.
         this.objects = new ObjectManager(
             this.progress, this.dialogueBox, this.hints,

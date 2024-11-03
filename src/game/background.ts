@@ -13,7 +13,8 @@ import { Snowflake } from "./snowflake.js";
 
 
 export const enum BackgroundType {
-
+    
+    Unspecified = -1,
     Graveyard = 0,
     Coast = 1,
     Forest = 2,
@@ -35,10 +36,10 @@ export class Background {
     private snowflakes : Snowflake[];
 
 
-    constructor(height : number, type : BackgroundType) {
+    constructor(height : number, type : BackgroundType | undefined) {
 
         this.height = height;
-        this.type = type;
+        this.type = type ?? BackgroundType.Unspecified;
 
         this.snowflakes = new Array<Snowflake> ();
     }
@@ -269,6 +270,8 @@ export class Background {
             break;
 
         default:
+
+            canvas.clear(0, 0, 0);
             break;
         }
     }

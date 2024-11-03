@@ -33,7 +33,8 @@ export class Stage {
     public readonly height : number;
 
 
-    constructor(backgroundType : BackgroundType, baseMap : Tilemap, collisionMap : Tilemap) {
+    constructor(backgroundType : BackgroundType | undefined, 
+        baseMap : Tilemap, collisionMap : Tilemap) {
 
         this.collisions = new CollisionMap(baseMap, collisionMap);
         this.renderlayer = new RenderLayer(baseMap);
