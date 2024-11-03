@@ -25,6 +25,7 @@ export class TitleScreen implements Scene {
     private activeFileIndex : number = 0;
 
     private activeMenu : Menu | ConfirmationBox | TextBox | Settings | undefined = undefined;
+    private activeMenuOffset : number = 1;
 
 
     constructor(event : ProgramEvent) {
@@ -34,6 +35,7 @@ export class TitleScreen implements Scene {
         this.settings = new Settings(event, (event : ProgramEvent) : void => {
 
             this.activeMenu = this.menu;
+            this.activeMenuOffset = 1;
         });
 
         this.menu = new Menu(
@@ -44,6 +46,7 @@ export class TitleScreen implements Scene {
                 this.fileMenu.activate(0);
 
                 this.activeMenu = this.fileMenu;
+                this.activeMenuOffset = 1;
             }),
             new MenuButton(text[1] ?? "null", (event : ProgramEvent) : void => {
 
@@ -51,12 +54,14 @@ export class TitleScreen implements Scene {
                 this.clearDataMenu.activate(3);
 
                 this.activeMenu = this.clearDataMenu;
+                this.activeMenuOffset = 1;
             }),
             new MenuButton(text[2] ?? "null", (event : ProgramEvent) : void => {
 
                 this.settings.activate(event);
 
                 this.activeMenu =  this.settings;
+                this.activeMenuOffset = 1;
             }),
         ], true);
 
@@ -80,6 +85,7 @@ export class TitleScreen implements Scene {
 
                 this.fileMenu.deactivate();
                 this.activeMenu = this.menu;
+                this.activeMenuOffset = 1;
             })
         ]
         );
@@ -107,6 +113,7 @@ export class TitleScreen implements Scene {
                     this.clearDataMenu.deactivate();
 
                     this.activeMenu = this.menu;
+                    this.activeMenuOffset = 1;
                 })
         ]);
 
@@ -125,9 +132,11 @@ export class TitleScreen implements Scene {
                 this.dataClearedMessage.activate(true, null, (event : ProgramEvent) : void => {
 
                     this.activeMenu = this.clearDataMenu;
+                    this.activeMenuOffset = 1;
                 });
 
                 this.activeMenu = this.dataClearedMessage;
+                this.activeMenuOffset = 0;
 
                 this.setFileMenuButtonNames(this.clearDataMenu, true);
             },
@@ -135,6 +144,7 @@ export class TitleScreen implements Scene {
                 
                 this.confirmClearDataMenu.deactivate();
                 this.activeMenu = this.clearDataMenu;
+                this.activeMenuOffset = 1;
             });
     }
 
@@ -188,6 +198,7 @@ export class TitleScreen implements Scene {
 
         this.confirmClearDataMenu.activate(1);
         this.activeMenu = this.confirmClearDataMenu;
+        this.activeMenuOffset = 0;
     }
 
 
@@ -210,6 +221,7 @@ export class TitleScreen implements Scene {
         this.menu.activate(0);
 
         this.activeMenu = this.menu;
+        this.activeMenuOffset = 1;
     }
 
 
@@ -231,7 +243,7 @@ export class TitleScreen implements Scene {
 
         canvas.clear(0, 73, 182);
 
-        this.activeMenu?.draw(canvas, assets, 0, YOFF);
+        this.activeMenu?.draw(canvas, assets, 0, this.activeMenuOffset*YOFF);
 
         // TODO: Draw copyright
     }

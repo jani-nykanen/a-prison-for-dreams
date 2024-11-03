@@ -13,6 +13,8 @@ const FOLLOW_SPEED : number = 0.50;
 export class Apple extends Enemy {
 
 
+    private initialHealth : number = 0;
+
     private wave : number = 0;
 
     private mode : number = 0;
@@ -25,6 +27,7 @@ export class Apple extends Enemy {
         this.sprite.setFrame(4, 4);
 
         this.health = 8;
+        this.initialHealth = this.health;
         this.attackPower = 3;
 
         this.dropProbability = 0.24;
@@ -82,6 +85,11 @@ export class Apple extends Enemy {
             this.pos.y = this.initialPos.y + Math.sin(this.wave)*AMPLITUDE;
 
             this.flip = this.target.x > 0 ? Flip.Horizontal : Flip.None;
+
+            if (this.health != this.initialHealth) {
+
+                this.mode = 1;
+            }
         }
     }
 

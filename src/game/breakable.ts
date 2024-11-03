@@ -179,7 +179,7 @@ export class Breakable extends CollisionObject {
 
     public projectileCollision(p : Projectile, event : ProgramEvent) : void {
 
-        if (!this.isActive() || !p.isActive() || !p.isFriendly()) {
+        if (!this.isActive() || !p.isActive() ) { // || !p.isFriendly()) {
 
             return;
         }
