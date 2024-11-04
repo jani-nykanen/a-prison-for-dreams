@@ -85,8 +85,8 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
         const dy : number = 14;
         dx = canvas.width - strOrbs.length*9;
 
-        canvas.drawText(bmpFontOutlines, strOrbs, canvas.width, dy + 1, -7, 0, Align.Right);
-        canvas.drawBitmap(bmpHUD, Flip.None, dx - 22, dy, 64, 0, 16, 16);
+        canvas.drawText(bmpFontOutlines, strOrbs, canvas.width, dy, -7, 0, Align.Right);
+        canvas.drawBitmap(bmpHUD, Flip.None, dx - 21, dy, 64, 0, 16, 16);
     }
 }
 

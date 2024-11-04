@@ -15,18 +15,22 @@ export class Door extends Interactable {
 
 
     private targetMap : string | undefined = undefined;
+    private id : number = 0;
 
 
     private mapTransition : MapTransitionCallback;
 
 
-    constructor(x : number, y : number, targetMap : string | undefined, 
+    constructor(x : number, y : number, id : number,
+        targetMap : string | undefined, 
         mapTransition : MapTransitionCallback) {
 
         super(x, y);
 
-        this.hitbox.y = 12;
-        this.hitbox.w = 16;
+        this.id = id;
+
+        // this.hitbox.y = 12;
+        this.hitbox.w = 8;
 
         this.cameraCheckArea = new Vector(32, 32);
 
@@ -48,7 +52,7 @@ export class Door extends Interactable {
         event.transition.activate(true, TransitionType.Fade, 1.0/20.0, event,
             (event : ProgramEvent) : void => {
 
-                this.mapTransition(this.targetMap ?? "coast", 0, Pose.EnterRoom, true, event);
+                this.mapTransition(this.targetMap ?? "coast", this.id, Pose.EnterRoom, true, event);
             });
     }
 }

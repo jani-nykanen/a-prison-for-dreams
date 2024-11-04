@@ -132,11 +132,10 @@ export class ObjectManager {
             // Door
             case 12:
                 
-                this.interactables.push(new Door(dx, dy, 
+                this.interactables.push(new Door(dx, dy, id - 1,
                     stage.baseMap.getProperty(`door${id - 1}`), 
                     this.mapTransition));
                 // Fallthrough
-
             // Player
             case 1:
                 

@@ -72,27 +72,35 @@ export class Camera {
     }
 
 
-    public limit(left : number | null, right : number | null, top : number | null, bottom : number | null) : void {
+    public limit(left : number, right : number, top : number, bottom : number) : void {
 
-        if (right !== null && this.corner.x + this.size.x > right) {
+        if (right - left <= this.size.x) {
 
-            this.corner.x = right - this.size.x;
-            this.pos.x = this.corner.x + this.size.x/2;
+            this.pos.x = 0; // Not sure what this should really be
+            this.corner.x = -(this.size.x - (right - left))/2;
         }
+        else {
 
-        if (left !== null && this.corner.x < left) {
+            if (this.corner.x + this.size.x > right) {
 
-            this.corner.x = left;
-            this.pos.x = this.corner.x + this.size.x/2;
+                this.corner.x = right - this.size.x;
+                this.pos.x = this.corner.x + this.size.x/2;
+            }
+
+            if (this.corner.x < left) {
+
+                this.corner.x = left;
+                this.pos.x = this.corner.x + this.size.x/2;
+            }
         }
-
-        if (bottom !== null && this.corner.y + this.size.y > bottom) {
+        
+        if (this.corner.y + this.size.y > bottom) {
 
             this.corner.y = bottom - this.size.y;
             this.pos.y = this.corner.y + this.size.y/2;
         }
 
-        if (top !== null && this.corner.y < top) {
+        if (this.corner.y < top) {
 
             this.corner.y = top;
             this.pos.y = this.corner.y + this.size.y/2;

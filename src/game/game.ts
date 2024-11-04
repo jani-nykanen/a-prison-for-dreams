@@ -264,7 +264,7 @@ export class Game implements Scene {
 
     private limitCamera() : void {
 
-        this.camera.limit(0, this.stage.width*TILE_WIDTH, null, this.stage.height*TILE_HEIGHT);
+        this.camera.limit(0, this.stage.width*TILE_WIDTH, 0, this.stage.height*TILE_HEIGHT);
     }
 
 
