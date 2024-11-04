@@ -4,6 +4,7 @@
   <property name="background" type="int" value="0"/>
   <property name="cutscene" type="int" value="0"/>
   <property name="music" value="graveyard"/>
+  <property name="musicvolume" type="float" value="0.5"/>
   <property name="name" value="Graveyard"/>
   <property name="npctype" type="int" value="1"/>
   <property name="tileset" type="int" value="0"/>

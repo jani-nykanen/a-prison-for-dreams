@@ -39,10 +39,10 @@ export class Projectile extends CollisionObject {
 
     private sprite : Sprite;
 
-    public readonly stats : Progress;
+    public readonly stats : Progress | undefined = undefined;
 
 
-    constructor(progress : Progress) {
+    constructor(progress : Progress | undefined) {
 
         super(0, 0, false);
 

@@ -2,6 +2,8 @@
 <map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
  <properties>
   <property name="door2" value="crossroads"/>
+  <property name="music" value="forest"/>
+  <property name="musicvolume" type="float" value="0.5"/>
   <property name="name" value="Shop"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>

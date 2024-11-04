@@ -5,6 +5,8 @@
   <property name="cutscene" type="int" value="2"/>
   <property name="door2" value="shop"/>
   <property name="leftexit" value="coast"/>
+  <property name="music" value="forest"/>
+  <property name="musicvolume" type="float" value="0.8"/>
   <property name="name" value="Woodcutter's Path"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="1"/>

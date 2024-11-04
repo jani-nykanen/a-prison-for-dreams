@@ -4,6 +4,8 @@
   <property name="background" type="int" value="1"/>
   <property name="cutscene" type="int" value="1"/>
   <property name="is_lava" type="int" value="0"/>
+  <property name="music" value="forest"/>
+  <property name="musicvolume" type="float" value="0.8"/>
   <property name="name" value="Dream Coast"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="crossroads"/>

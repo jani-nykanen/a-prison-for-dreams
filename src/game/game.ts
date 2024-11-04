@@ -112,9 +112,7 @@ export class Game implements Scene {
     }
 
 
-    private playSong(name : string, event : ProgramEvent) : void {
-
-        const BASE_VOLUME : number = 0.50; // TODO: Pass as a parameter?
+    private playSong(name : string, volume : number, event : ProgramEvent) : void {
 
         const theme : AudioSample | undefined = event.assets.getSample(name);
         if (theme === undefined) {
@@ -123,7 +121,7 @@ export class Game implements Scene {
         }
 
         event.audio.stopMusic();
-        event.audio.fadeInMusic(theme, BASE_VOLUME, 1000);
+        event.audio.fadeInMusic(theme, volume, 1000);
     }
 
 
@@ -188,7 +186,7 @@ export class Game implements Scene {
         const musicName : string | undefined = baseMap.getProperty("music");
         if (musicName !== undefined) {
 
-            this.playSong(musicName, event);
+            this.playSong(musicName, baseMap.getNumericProperty("musicvolume") ?? 0.50, event);
         }
 
         // Set cutscene

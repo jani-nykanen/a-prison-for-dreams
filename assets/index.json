@@ -96,7 +96,8 @@
 
         {"name": "item", "path": "item.ogg"},
 
-        {"name": "graveyard", "path": "graveyard.ogg"}
+        {"name": "graveyard", "path": "graveyard.ogg"},
+        {"name": "forest", "path": "forest.ogg"}
     ],
 
     "documentPath": "assets/localization/",
