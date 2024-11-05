@@ -29,6 +29,7 @@ import { MapTransitionCallback } from "./maptransition.js";
 import { HintRenderer } from "./hintrenderer.js";
 import { HintTrigger } from "./interactables/hinttrigger.js";
 import { Door } from "./interactables/door.js";
+import { Shopkeeper } from "./interactables/shopkeeper.js";
 
 
 export class ObjectManager {
@@ -119,6 +120,7 @@ export class ObjectManager {
         const bmpCheckpoint : Bitmap | undefined = event.assets.getBitmap("checkpoint");
         const bmpChest : Bitmap | undefined = event.assets.getBitmap("chest");
         const bmpPortal : Bitmap | undefined = event.assets.getBitmap("portal");
+        const bmpShopkeeper : Bitmap | undefined = event.assets.getBitmap("shopkeeper");
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -190,6 +192,12 @@ export class ObjectManager {
             case 11:
 
                 this.interactables.push(new HintTrigger(dx, dy, id - 1, this.hints));
+                break;
+
+            // Shopkeeper
+            case 13:
+
+                this.interactables.push(new Shopkeeper(dx, dy, bmpShopkeeper));    
                 break;
 
             default:
