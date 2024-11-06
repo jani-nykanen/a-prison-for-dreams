@@ -96,6 +96,18 @@
     ],
 
 
+    "nomoney": [
+
+        "You cannot afford that,\nyou poor soul!"
+    ],
+
+
+    "purchase": [
+
+        "Purchase this item? It costs\nyou %d gold."
+    ],
+
+
     "cutscene0": [
 
         "The Great Dreamer sleeps.\n",
