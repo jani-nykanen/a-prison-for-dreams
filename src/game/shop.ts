@@ -5,6 +5,7 @@ import { ProgramEvent } from "../core/event.js";
 import { Canvas } from "../gfx/interface.js";
 import { Assets } from "../core/assets.js";
 import { InputState } from "../core/inputstate.js";
+import { negMod } from "../math/utility.js";
 
 
 class ShopItem {
@@ -64,11 +65,14 @@ export class Shop {
 
         if (price > progress.getMoney()) {
 
+            event.audio.playSample(event.assets.getSample("deny"), 0.70);
+
             this.noMoneyMessage.addText(event.localization?.getItem("nomoney") ?? ["null"]);
             this.noMoneyMessage.activate(true);
         }
         else {
 
+            event.audio.playSample(event.assets.getSample("select"), 0.40);
             this.confirmationMessage.activate(1);
         }
     }
@@ -89,7 +93,7 @@ export class Shop {
     }
 
 
-    public update(event : ProgramEvent) : void {
+    public update(progress : Progress, event : ProgramEvent) : void {
 
         if (this.active) {
 
@@ -108,7 +112,41 @@ export class Shop {
             return;
         }
 
-        // TODO: The rest
+
+        const oldPos : number = this.cursorPos;
+        if (event.input.upPress()) {
+
+            -- this.cursorPos;
+        }
+        else if (event.input.downPress()) {
+
+            ++ this.cursorPos;
+        }
+
+        const buttonCount : number = this.items.length + 1;
+        if (oldPos != this.cursorPos) {
+
+            this.cursorPos = negMod(this.cursorPos, buttonCount);
+            event.audio.playSample(event.assets.getSample("choose"), 0.50);
+        }
+
+        if (event.input.getAction("select") == InputState.Pressed) {
+
+            if (this.cursorPos == buttonCount) {
+
+                this.deactivate();
+                return;
+            }
+
+            if (this.items[this.cursorPos].obtained) {
+
+                event.audio.playSample(event.assets.getSample("deny"), 0.70);
+            }
+            else {
+            
+                this.prepareMessage(progress, event);
+            }
+        }
 
         if (event.input.getAction("back") == InputState.Pressed) {
 

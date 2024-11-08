@@ -107,6 +107,32 @@
         "Purchase this item? It costs\nyou %d gold."
     ],
 
+    "buyitem": [
+
+        "You obtain a new item:\n\"%s\"!"
+    ],
+
+    "shop1": [
+
+        "Health Container",
+        "Ammo Container",
+        "Power Bracelet",
+        "Spectacles",
+        "Running Shoes",
+        "Iron Breastplate"
+    ],
+
+
+    "shopdescription1": [
+
+        "Increases your maximum health\nby 2.",
+        "Increases your maximum ammo\ncount by 2.",
+        "Slightly increases your melee\nattack power.",
+        "Improves your accuracy and\nincreases your bullet power.",
+        "Makes you run slightly faster.",
+        "Reduces damage taken by 1."
+    ],
+
 
     "cutscene0": [
 
