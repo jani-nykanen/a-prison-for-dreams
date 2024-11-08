@@ -30,6 +30,7 @@ import { HintRenderer } from "./hintrenderer.js";
 import { HintTrigger } from "./interactables/hinttrigger.js";
 import { Door } from "./interactables/door.js";
 import { Shopkeeper } from "./interactables/shopkeeper.js";
+import { Shop } from "./shop.js";
 
 
 export class ObjectManager {
@@ -59,10 +60,12 @@ export class ObjectManager {
     private readonly dialogueBox : TextBox;
     private readonly hints : HintRenderer;
     private readonly mapTransition : MapTransitionCallback;
+    private readonly shops : Shop[];
 
 
     constructor(progress : Progress, dialogueBox : TextBox, 
-        hints : HintRenderer, stage : Stage, camera : Camera,
+        hints : HintRenderer, shops : Shop[],
+        stage : Stage, camera : Camera,
         npcType : number, mapTransition : MapTransitionCallback,
         spawnId : number, pose : Pose, createNewPlayer : boolean, 
         event : ProgramEvent,) {
@@ -88,6 +91,7 @@ export class ObjectManager {
         this.dialogueBox = dialogueBox;
         this.hints = hints;
         this.mapTransition = mapTransition;
+        this.shops = shops;
 
         this.npcType = npcType;
         this.spawnId = spawnId;
@@ -197,7 +201,7 @@ export class ObjectManager {
             // Shopkeeper
             case 13:
 
-                this.interactables.push(new Shopkeeper(dx, dy, bmpShopkeeper));    
+                this.interactables.push(new Shopkeeper(dx, dy, this.shops[id - 1], bmpShopkeeper));    
                 break;
 
             default:

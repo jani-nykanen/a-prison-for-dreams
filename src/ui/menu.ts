@@ -8,6 +8,10 @@ import { drawUIBox } from "./box.js";
 import { Assets } from "../core/assets.js";
 
 
+export const MENU_ITEM_BASE_COLOR : number[][] = [[255, 255, 255], [146, 146, 146]];
+export const MENU_ITEM_SELECTED_COLOR : number[][] = [[255, 255, 0], [182, 182, 36]];
+
+
 export class Menu {
 
 
@@ -106,9 +110,6 @@ export class Menu {
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
 
-        const BASE_COLOR : number[][] = [[255, 255, 255], [146, 146, 146]];
-        const SELECTED_COLOR : number[][] = [[255, 255, 0], [182, 182, 36]];
-
         if (!this.active) {
             
             return;
@@ -135,7 +136,9 @@ export class Menu {
         for (let i : number = 0; i < this.buttons.length; ++ i) {
 
             // This is a beautiful line
-            const buttonColor : number[] = (i ==  this.cursorPos ? SELECTED_COLOR : BASE_COLOR)[Number(this.buttons[i].isDeactivated())];
+            const buttonColor : number[] = 
+                (i ==  this.cursorPos ? MENU_ITEM_SELECTED_COLOR : MENU_ITEM_BASE_COLOR)
+                [Number(this.buttons[i].isDeactivated())];
             canvas.setColor(...buttonColor);
             
             const xoff : number = Number(i == this.cursorPos)*15;
@@ -146,7 +149,7 @@ export class Menu {
             // Hand
             if (i == this.cursorPos) {
 
-                canvas.setColor(...SELECTED_COLOR[0]);
+                canvas.setColor(...MENU_ITEM_SELECTED_COLOR[0]);
                 canvas.drawBitmap(font, Flip.None, 
                     dx + SIDE_OFFSET + Math.round(Math.sin(this.handAnimation)), 
                     dy + SIDE_OFFSET + i*yoff, 

@@ -2,10 +2,12 @@ import { Progress } from "./progress.js";
 import { TextBox } from "../ui/textbox.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { ProgramEvent } from "../core/event.js";
-import { Canvas } from "../gfx/interface.js";
+import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Assets } from "../core/assets.js";
 import { InputState } from "../core/inputstate.js";
 import { negMod } from "../math/utility.js";
+import { drawUIBox } from "../ui/box.js";
+import { MENU_ITEM_BASE_COLOR, MENU_ITEM_SELECTED_COLOR } from "../ui/menu.js";
 
 
 class ShopItem {
@@ -26,7 +28,6 @@ class ShopItem {
 }
 
 
-
 export class Shop {
 
 
@@ -37,6 +38,10 @@ export class Shop {
 
     private noMoneyMessage : TextBox;
     private confirmationMessage : ConfirmationBox;
+
+    private handAnimation : number = 0;
+
+    private cancelText : string = "null";
 
 
     constructor(event : ProgramEvent) {
@@ -54,8 +59,9 @@ export class Shop {
             (event : ProgramEvent) : void => {
 
                 this.confirmationMessage.deactivate();
-            })
+            });
 
+        this.cancelText = (event.localization?.getItem("cancel") ?? ["null"])[0];
     }
 
 
@@ -95,7 +101,9 @@ export class Shop {
 
     public update(progress : Progress, event : ProgramEvent) : void {
 
-        if (this.active) {
+        const HAND_ANIMATION_SPEED : number = Math.PI*2/60.0;
+
+        if (!this.active) {
 
             return;
         }
@@ -132,8 +140,9 @@ export class Shop {
 
         if (event.input.getAction("select") == InputState.Pressed) {
 
-            if (this.cursorPos == buttonCount) {
+            if (this.cursorPos == buttonCount - 1) {
 
+                event.audio.playSample(event.assets.getSample("select"), 0.40);
                 this.deactivate();
                 return;
             }
@@ -149,13 +158,22 @@ export class Shop {
         }
 
         if (event.input.getAction("back") == InputState.Pressed) {
-
+            
+            event.audio.playSample(event.assets.getSample("select"), 0.40);
             this.deactivate();
         }
+
+        this.handAnimation = (this.handAnimation + HAND_ANIMATION_SPEED*event.tick) % (Math.PI*2);
     }
 
 
     public draw(canvas : Canvas, assets : Assets) : void {
+
+        const BOX_WIDTH : number = 192;
+        const ITEM_OFFSET : number = 12;
+
+        const SIDE_OFFSET : number = 4;
+        const HAND_OFFSET : number = 14;
 
         const DARKEN_ALPHA : number = 0.33;
 
@@ -180,8 +198,43 @@ export class Shop {
             return;
         }
 
-        // TODO: Draw the rest
-        
+        const width : number = BOX_WIDTH;
+        const height : number = (this.items.length + 2)*ITEM_OFFSET;
+
+        const dx : number = canvas.width/2 - width/2;
+        const dy : number = canvas.height/2 - height/2;
+
+        const yoff : number = ITEM_OFFSET/2 + SIDE_OFFSET/2;
+
+
+        drawUIBox(canvas, dx, dy, width, height);
+
+        const font : Bitmap | undefined = assets.getBitmap("font");
+
+        for (let i : number = 0; i < this.items.length + 1; ++ i) {
+
+            // This is a beautiful line
+            const buttonColor : number[] = 
+                (i ==  this.cursorPos ? MENU_ITEM_SELECTED_COLOR : MENU_ITEM_BASE_COLOR)
+                [Number(this.items[i]?.obtained ?? 0)];
+            canvas.setColor(...buttonColor);
+
+            // Item text
+            const itemText : string = i == this.items.length ? this.cancelText : this.items[i].name;
+            canvas.drawText(font, itemText, 
+                dx + HAND_OFFSET + SIDE_OFFSET, 
+                dy + i*ITEM_OFFSET + yoff);
+                
+            // Hand
+            if (i == this.cursorPos) {
+
+                canvas.setColor(...MENU_ITEM_SELECTED_COLOR[0]);
+                canvas.drawBitmap(font, Flip.None, 
+                    dx + SIDE_OFFSET + Math.round(Math.sin(this.handAnimation)), 
+                    dy + yoff + i*ITEM_OFFSET, 
+                    8, 0, 16, 8);
+            }
+        }
     }
 
 
@@ -201,5 +254,8 @@ export class Shop {
         this.confirmationMessage.deactivate();
         this.noMoneyMessage.deactivate();
     }
+
+
+    public isActive = () : boolean => this.active;
 
 }

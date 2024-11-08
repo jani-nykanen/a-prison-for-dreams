@@ -112,6 +112,8 @@
         "You obtain a new item:\n\"%s\"!"
     ],
 
+    "cancel": "Cancel",
+
     "shop1": [
 
         "Health Container",

@@ -27,9 +27,10 @@ export const constructShop = (index : 1 | 2, event : ProgramEvent) : Shop => {
 
     const itemNames : string[] | undefined = event.localization?.getItem(`shop${index}`);
 
-    for (let i : number = 0; i < PRICES.length; ++ i) {
+    for (let i : number = 0; i < PRICES[index - 1].length; ++ i) {
 
-        shop.addItem(itemNames?.[i] ?? "null", (PRICES[index] ?? PRICES[0])[i], ITEM_START_INDEX + i);
+        shop.addItem(itemNames?.[i] ?? "null", (PRICES[index - 1] ?? PRICES[0])[i], ITEM_START_INDEX + i);
     }
+
     return shop;
 }

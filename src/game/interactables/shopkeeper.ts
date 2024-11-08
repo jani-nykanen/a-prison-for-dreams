@@ -3,18 +3,24 @@ import { Bitmap, Flip } from "../../gfx/interface.js";
 import { Sprite } from "../../gfx/sprite.js";
 import { TextBox } from "../../ui/textbox.js";
 import { Player } from "../player.js";
+import { Shop } from "../shop.js";
 import { Interactable } from "./interactable.js";
 
 
 export class Shopkeeper extends Interactable {
 
 
-    constructor(x : number, y : number, bitmap : Bitmap | undefined) {
+    private shop : Shop;
+
+
+    constructor(x : number, y : number, shop : Shop, bitmap : Bitmap | undefined) {
 
         super(x, y - 32, bitmap);
 
         this.hitbox.w = 24;
         this.hitbox.y = 32;
+
+        this.shop = shop;
 
         this.sprite = new Sprite(32, 48);
     }
@@ -38,7 +44,7 @@ export class Shopkeeper extends Interactable {
         
         event.audio.playSample(event.assets.getSample("select"), 0.40);
 
-        // TODO: Activate shop
+        this.shop.activate(player.stats);
     }
 
 }

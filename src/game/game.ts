@@ -20,6 +20,8 @@ import { Pose } from "./player.js";
 import { HintRenderer } from "./hintrenderer.js";
 import { Cutscene } from "./cutscene.js";
 import { AudioSample } from "../audio/sample.js";
+import { Shop } from "./shop.js";
+import { constructShop } from "./shopbuilder.js";
 
 
 const MAP_NAME_APPEAR_TIME : number = 90;
@@ -38,6 +40,7 @@ export class Game implements Scene {
     private dialogueBox : TextBox;
     private hints : HintRenderer;
     private cutscene : Cutscene;
+    private shops : Shop[];
     private initialDialogueActivated : boolean = false;
 
     private gameSaveTimer : number = 0;
@@ -74,6 +77,12 @@ export class Game implements Scene {
             _event : ProgramEvent) : void => this.performMapTransition(mapName, spawnPos, pose, createPlayer, _event);
 
         this.cutscene = new Cutscene();
+
+        this.shops = (new Array<Shop> (2));
+        for (let i : number = 0; i < 2; ++ i) {
+
+            this.shops[i] = constructShop((i + 1) as (1 | 2), event);
+        }
     }
     
 
@@ -150,7 +159,8 @@ export class Game implements Scene {
         this.stage = new Stage(baseMap.getNumericProperty("background"), baseMap, collisionMap);
         // TODO: Maybe not recreate the whole object, but reset values etc.
         this.objects = new ObjectManager(
-            this.progress, this.dialogueBox, this.hints,
+            this.progress, this.dialogueBox, 
+            this.hints, this.shops,
             this.stage, this.camera,
             Number(baseMap.getProperty("npctype") ?? 0),
             this.mapTransition, spawnPos, pose, 
@@ -372,6 +382,15 @@ export class Game implements Scene {
             return;
         }
 
+        for (const s of this.shops) {
+
+            if (s.isActive()) {
+
+                s.update(this.progress, event);
+                return;
+            }
+        }
+
         if (!this.initialDialogueActivated) {
 
             this.initialDialogueActivated = true;
@@ -426,6 +445,15 @@ export class Game implements Scene {
         canvas.transform.loadIdentity();
         canvas.transform.apply();
         canvas.moveTo();
+
+        for (const s of this.shops) {
+
+            if (s.isActive()) {
+
+                s.draw(canvas, assets);
+                return;
+            }
+        }
 
         if (!isCloningToBuffer &&
             (this.initialDialogueActivated && !this.dialogueBox.isActive())) { // ||

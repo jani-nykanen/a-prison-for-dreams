@@ -45,7 +45,7 @@ const printError = (e : Error) : void => {
 
     const textOut : HTMLElement = document.createElement("b");
     textOut.setAttribute("style", "color: rgb(224,73,73); font-size: 16px");
-    textOut.innerText = "Fatal error:\n\n " + e["message"];
+    textOut.innerText = "Fatal error:\n\n " + e["stack"];
 
     document.body.appendChild(textOut);
 }
