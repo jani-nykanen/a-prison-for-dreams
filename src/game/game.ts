@@ -450,7 +450,7 @@ export class Game implements Scene {
 
             if (s.isActive()) {
 
-                s.draw(canvas, assets);
+                s.draw(canvas, assets, this.progress);
                 return;
             }
         }

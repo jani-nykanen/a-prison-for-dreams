@@ -2,12 +2,13 @@ import { Progress } from "./progress.js";
 import { TextBox } from "../ui/textbox.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { ProgramEvent } from "../core/event.js";
-import { Bitmap, Canvas, Flip } from "../gfx/interface.js";
+import { Align, Bitmap, Canvas, Flip } from "../gfx/interface.js";
 import { Assets } from "../core/assets.js";
 import { InputState } from "../core/inputstate.js";
 import { negMod } from "../math/utility.js";
 import { drawUIBox } from "../ui/box.js";
 import { MENU_ITEM_BASE_COLOR, MENU_ITEM_SELECTED_COLOR } from "../ui/menu.js";
+import { drawHUD } from "./hud.js";
 
 
 class ShopItem {
@@ -36,7 +37,7 @@ export class Shop {
     private cursorPos : number = 0;
     private active : boolean = false;
 
-    private noMoneyMessage : TextBox;
+    private message : TextBox;
     private confirmationMessage : ConfirmationBox;
 
     private handAnimation : number = 0;
@@ -48,13 +49,14 @@ export class Shop {
 
         this.items = new Array<ShopItem> ();
 
-        this.noMoneyMessage = new TextBox();
+        this.message = new TextBox();
         this.confirmationMessage = new ConfirmationBox(
             event.localization?.getItem("yesno") ?? ["null", "null"],
             (event.localization?.getItem("purchase") ?? ["null"])[0],
             (event : ProgramEvent) : void => {
 
-                // TODO: Obtain the item. Somehow.
+                this.message.addText(event.localization?.getItem("purchase") ?? ["null"]);
+                this.message.activate(true);
             },
             (event : ProgramEvent) : void => {
 
@@ -73,8 +75,8 @@ export class Shop {
 
             event.audio.playSample(event.assets.getSample("deny"), 0.70);
 
-            this.noMoneyMessage.addText(event.localization?.getItem("nomoney") ?? ["null"]);
-            this.noMoneyMessage.activate(true);
+            this.message.addText(event.localization?.getItem("nomoney") ?? ["null"]);
+            this.message.activate(true);
         }
         else {
 
@@ -114,9 +116,9 @@ export class Shop {
             return;
         }
 
-        if (this.noMoneyMessage.isActive()) {
+        if (this.message.isActive()) {
 
-            this.noMoneyMessage.update(event);
+            this.message.update(event);
             return;
         }
 
@@ -167,9 +169,9 @@ export class Shop {
     }
 
 
-    public draw(canvas : Canvas, assets : Assets) : void {
+    public draw(canvas : Canvas, assets : Assets, progress : Progress) : void {
 
-        const BOX_WIDTH : number = 192;
+        const BOX_WIDTH : number = 224;
         const ITEM_OFFSET : number = 12;
 
         const SIDE_OFFSET : number = 4;
@@ -186,15 +188,17 @@ export class Shop {
         canvas.fillRect(0, 0, canvas.width, canvas.height);
         canvas.setColor();
 
+        drawHUD(canvas, assets, progress);
+
         if (this.confirmationMessage.isActive()) {
 
             this.confirmationMessage.draw(canvas, assets);
             return;
         }
 
-        if (this.noMoneyMessage.isActive()) {
+        if (this.message.isActive()) {
 
-            this.noMoneyMessage.draw(canvas, assets);
+            this.message.draw(canvas, assets);
             return;
         }
 
@@ -219,19 +223,30 @@ export class Shop {
                 [Number(this.items[i]?.obtained ?? 0)];
             canvas.setColor(...buttonColor);
 
+            const lineY : number =  dy + i*ITEM_OFFSET + yoff;
+
             // Item text
             const itemText : string = i == this.items.length ? this.cancelText : this.items[i].name;
             canvas.drawText(font, itemText, 
-                dx + HAND_OFFSET + SIDE_OFFSET, 
-                dy + i*ITEM_OFFSET + yoff);
+                dx + HAND_OFFSET + SIDE_OFFSET, lineY);
+
+            // Item price
+            if (i != this.items.length) {
+
+                const price : string = `${this.items[i].price}`;
+                canvas.drawText(font, price, dx + BOX_WIDTH - 8, lineY, 0, 0, Align.Right);
+
+                // Coin symbol
+                canvas.setColor();
+                canvas.drawBitmap(font, Flip.None, dx + BOX_WIDTH - 14, lineY, 24, 0, 8, 8);
+            }
                 
             // Hand
             if (i == this.cursorPos) {
 
                 canvas.setColor(...MENU_ITEM_SELECTED_COLOR[0]);
                 canvas.drawBitmap(font, Flip.None, 
-                    dx + SIDE_OFFSET + Math.round(Math.sin(this.handAnimation)), 
-                    dy + yoff + i*ITEM_OFFSET, 
+                    dx + SIDE_OFFSET + Math.round(Math.sin(this.handAnimation)), lineY, 
                     8, 0, 16, 8);
             }
         }
@@ -252,7 +267,7 @@ export class Shop {
         this.active = false;
         
         this.confirmationMessage.deactivate();
-        this.noMoneyMessage.deactivate();
+        this.message.deactivate();
     }
 
 
