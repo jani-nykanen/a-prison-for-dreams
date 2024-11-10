@@ -20,7 +20,8 @@ const BASE_GRAVITY : number = 5.0;
 export const enum BreakableType {
 
     Unknown = 0,
-    Crate = 1
+    Crate = 1,
+    Rubble = 2,
 };
 
 
@@ -37,7 +38,7 @@ export class Breakable extends CollisionObject {
         splinters : SplinterGenerator,
         collectables : CollectableGenerator) {
 
-        super(x, y + 1, true);
+        super(x, y, true);
 
         this.collisionBox = new Rectangle(0, -1, 16, 16);
         this.hitbox = this.collisionBox.clone();
@@ -49,7 +50,13 @@ export class Breakable extends CollisionObject {
         this.cameraCheckArea = new Vector(32, 1024);
 
         this.friction.y = 0.15;
-        this.target.y = BASE_GRAVITY;
+        // No gravity for rubble!
+        if (type == BreakableType.Crate) {
+
+            this.oldPos.y += 1;
+            this.pos.y += 1;
+            this.target.y = BASE_GRAVITY;
+        }
     
         this.type = type;
 
@@ -207,6 +214,8 @@ export class Breakable extends CollisionObject {
             return;
         }
 
-        canvas.drawBitmap(bmp, Flip.None, this.pos.x - 8, this.pos.y - 8, 0, 0, 16, 16);
+        canvas.drawBitmap(bmp, Flip.None, 
+            this.pos.x - 8, this.pos.y - 8, 
+            (this.type - 1)*16, 0, 16, 16);
     }
 }

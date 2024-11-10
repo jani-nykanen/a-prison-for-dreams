@@ -151,9 +151,11 @@ export class ObjectManager {
                 }
                 break;
 
-            // Crate
+            // Crate & rubble
             case 2:
-                this.breakables.push(new Breakable(dx, dy, BreakableType.Crate, 
+            case 14:
+                this.breakables.push(new Breakable(dx, dy, 
+                    objID == 2 ? BreakableType.Crate : BreakableType.Rubble, 
                     this.splinters, this.collectables));
                 break;
 
