@@ -2,6 +2,7 @@ import { clamp } from "../math/utility.js";
 import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
 import { updateSpeedAxis } from "./utility.js";
+import { Item } from "./items.js";
 
 
 const INITIAL_MAP : string = "graveyard";
@@ -29,6 +30,7 @@ export class Progress {
     private attackPower : number = 5;
     private projectilePower : number = 3;
     private armor : number = 0;
+    private speedBonus : number = 0;
 
     private money : number = 0;
     private orbCount : number = 0;
@@ -118,6 +120,8 @@ export class Progress {
         // TODO: Find out if there is a good way to check how many
         // times a certain value exists in an array, this looks a bit silly.
         // NOTE: array.filter(v => v).length should do the trick, but... eh.
+
+        // Health
         for (const h of this.obtainedHealthUps) {
 
             if (h) {
@@ -125,7 +129,14 @@ export class Progress {
                 this.maxHealth += BASE_HEALTH_UP;
             }
         }
+        if (this.obtainedItems[Item.ExtraHealth]) {
 
+            this.maxHealth += 2;
+        }
+        // Correct the health bar
+        this.healthBarPos =  this.health/this.maxHealth;
+
+        // Ammo
         for (const h of this.obtainedAmmoUps) {
 
             if (h) {
@@ -133,7 +144,12 @@ export class Progress {
                 this.maxBullets += BASE_BULLETS_UP;
             }
         }
+        if (this.obtainedItems[Item.ExtraAmmo]) {
 
+            this.maxBullets += 2;
+        }
+
+        // Dream orbs
         for (const h of this.obtainedDreamOrbs) {
 
             if (h) {
@@ -142,8 +158,33 @@ export class Progress {
             }
         }
 
+        // Attack power
         this.attackPower = 5;
+        if (this.obtainedItems[Item.Bracelet]) {
+
+            this.attackPower += 1;
+        }
+
+        // Projectile power
         this.projectilePower = 3;
+        if (this.obtainedItems[Item.Spectacles]) {
+
+            this.projectilePower += 1;
+        }
+
+        // Damage reduction
+        this.armor = 0;
+        if (this.obtainedItems[Item.Shield]) {
+
+            this.armor += 1;
+        }
+
+        // Speed
+        this.speedBonus = 0;
+        if (this.obtainedItems[Item.RunningShoes]) {
+
+            this.speedBonus = 1;
+        }
     }
 
 
@@ -260,6 +301,9 @@ export class Progress {
     
         return change;
     }
+
+
+    public getSpeedBonus = () : number => this.speedBonus;
 
 
     public getMoney = () : number => this.money;

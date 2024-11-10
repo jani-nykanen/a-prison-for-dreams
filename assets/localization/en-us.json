@@ -114,6 +114,8 @@
 
     "cancel": "Cancel",
 
+    "sold": "SOLD OUT",
+
     "shop1": [
 
         "Health Container",
@@ -121,7 +123,7 @@
         "Power Bracelet",
         "Spectacles",
         "Running Shoes",
-        "Iron Breastplate"
+        "Wooden Shield"
     ],
 
 
@@ -129,9 +131,9 @@
 
         "Increases your maximum\nhealth by 2.",
         "Increases your maximum\nammocount by 2.",
-        "Slightly increases your\nmeleeattack power.",
+        "Slightly increases your\nmelee attack power.",
         "Makes your bullets do\nmore damage.",
-        "Makes you run slightly\nfaster.",
+        "Increases your running\nspeed.",
         "Reduces damage taken."
     ],
 

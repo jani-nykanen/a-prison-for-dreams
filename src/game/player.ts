@@ -38,6 +38,8 @@ const ATTACK_RELEASE_TIME : number = 8;
 
 const CHARGE_VOLUME : number = 0.70;
 
+const RUN_SPEED_BASE_BONUS : number = 0.25;
+
 
 const enum ChargeType {
 
@@ -276,7 +278,9 @@ export class Player extends CollisionObject {
         }
 
         const speedx : number = this.underWater ? SWIM_SPEED : RUN_SPEED;
-        this.target.x = stick.x*this.computeSlopeSpeedFactor()*speedx;
+        const speedBonus : number = 1.0 + this.stats.getSpeedBonus()*RUN_SPEED_BASE_BONUS;
+
+        this.target.x = stick.x*this.computeSlopeSpeedFactor()*speedx*speedBonus;
     }
 
 
@@ -542,7 +546,9 @@ export class Player extends CollisionObject {
 
     private setFriction() : void {
 
-        this.friction.x = 0.15;
+        const speedBonus : number = 1.0 + this.stats.getSpeedBonus()*RUN_SPEED_BASE_BONUS;
+
+        this.friction.x = 0.15*speedBonus;
         this.friction.y = 0.125;
         if (this.underWater) {
 
@@ -570,6 +576,7 @@ export class Player extends CollisionObject {
 
     private control(event : ProgramEvent) : void {
 
+        
         this.setFriction();
 
         if (this.underWater) {
@@ -1654,6 +1661,10 @@ export class Player extends CollisionObject {
         }
 
         this.touchSurface = true;
+        this.attacking = false;
+        this.powerAttackTimer = 0;
+        this.downAttacking = false;
+        this.downAttackWait = 0;
     }
     
 }

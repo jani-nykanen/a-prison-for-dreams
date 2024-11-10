@@ -7,7 +7,7 @@ const ITEM_START_INDEX : number = 16;
 
 const PRICES : number[][] = [
 [
-    25, // Health container
+    50, // Health container
     50, // Ammo container
     75, // Power bracelet,
     75, // Spectacles
@@ -31,7 +31,8 @@ export const constructShop = (index : 1 | 2, event : ProgramEvent) : Shop => {
     for (let i : number = 0; i < PRICES[index - 1].length; ++ i) {
 
         shop.addItem(itemNames?.[i] ?? "null", itemDescriptions?.[i] ?? "null",
-            (PRICES[index - 1] ?? PRICES[0])[i], ITEM_START_INDEX + i);
+            (PRICES[index - 1] ?? PRICES[0])[i], ITEM_START_INDEX + i,
+            (index - 1)*8 + i);
     }
 
     return shop;

@@ -17,17 +17,20 @@ class ShopItem {
     public description : string = "";
     public price : number = 0;
     public itemID : number = 0;
+    public iconID : number = 0;
 
     public obtained : boolean = false;
 
 
     constructor(name : string, description : string,
-        price : number, itemID : number) {
+        price : number, itemID : number, iconID : number) {
 
         this.name = name;
         this.description = description;
         this.price = price;
         this.itemID = itemID;
+
+        this.iconID = iconID;
     }
 }
 
@@ -46,6 +49,9 @@ export class Shop {
     private handAnimation : number = 0;
 
     private cancelText : string = "null";
+    private soldOutText : string = "null";
+
+    private buyEvent : (() => void) | undefined = undefined;
 
 
     constructor(event : ProgramEvent) {
@@ -62,6 +68,9 @@ export class Shop {
                     event.localization?.getItem("buyitem") ?? ["null"],
                     [[this.items[this.cursorPos]?.name ?? "null"]]) ;
                 this.message.activate(true);
+
+                this.buyEvent?.();
+                this.items[this.cursorPos].obtained = true;
             },
             (event : ProgramEvent) : void => {
 
@@ -69,6 +78,7 @@ export class Shop {
             });
 
         this.cancelText = (event.localization?.getItem("cancel") ?? ["null"])[0];
+        this.soldOutText = (event.localization?.getItem("sold") ?? ["null"])[0];
     }
 
 
@@ -104,9 +114,9 @@ export class Shop {
 
 
     public addItem(name : string, description : string, 
-        price : number, itemID : number) : void {
+        price : number, itemID : number, iconID : number) : void {
 
-        this.items.push(new ShopItem(name, description, price, itemID));
+        this.items.push(new ShopItem(name, description, price, itemID, iconID));
     }
 
 
@@ -163,7 +173,12 @@ export class Shop {
                 event.audio.playSample(event.assets.getSample("deny"), 0.70);
             }
             else {
-            
+                
+                this.buyEvent = () : void => {
+
+                    const item : ShopItem = this.items[this.cursorPos];
+                    progress.obtainItem(item.itemID);
+                }
                 this.prepareMessage(progress, event);
             }
         }
@@ -233,12 +248,15 @@ export class Shop {
             // Item price
             if (i != this.items.length) {
 
-                const price : string = `${this.items[i].price}`;
-                canvas.drawText(font, price, dx + BOX_WIDTH - 8, lineY, 0, 0, Align.Right);
+                const price : string = this.items[i].obtained ? this.soldOutText : `${this.items[i].price} `;
+                canvas.drawText(font, price, dx + BOX_WIDTH, lineY, 0, 0, Align.Right);
 
-                // Coin symbol
-                canvas.setColor();
-                canvas.drawBitmap(font, Flip.None, dx + BOX_WIDTH - 14, lineY, 24, 0, 8, 8);
+                if (!this.items[i].obtained) {
+
+                    // Coin symbol
+                    canvas.setColor();
+                    canvas.drawBitmap(font, Flip.None, dx + BOX_WIDTH - 14, lineY, 24, 0, 8, 8);
+                }
             }
                 
             // Hand
@@ -257,11 +275,18 @@ export class Shop {
 
         if (this.cursorPos != this.items.length) {
 
-            canvas.drawText(font,
-                this.items[this.cursorPos]?.description ?? "", 
-                dx + 32, bottomY + 4, 0, 2);
+            const item : ShopItem = this.items[this.cursorPos]; 
+
+            canvas.drawText(font,item.description, dx + 32, bottomY + 4, 0, 2);
+
+            // Item icon
+            const bmpItemIcons : Bitmap | undefined = assets.getBitmap("item_icons");
+
+            canvas.drawBitmap(bmpItemIcons, Flip.None, dx + 6, bottomY + 5, item.iconID*16, 32, 16, 16);
         }
 
+
+        // Messages
         if (this.confirmationMessage.isActive()) {
 
             canvas.setColor(0, 0, 0, DARKEN_ALPHA);
