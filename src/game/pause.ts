@@ -40,6 +40,7 @@ export class Pause {
             new MenuButton(menuText[0] ?? "null",
             (event : ProgramEvent) => {
     
+                event.audio.resumeMusic();
                 this.deactivate();
                 // resumeEvent(event);
             }),
@@ -47,7 +48,8 @@ export class Pause {
             // Respawn
             new MenuButton(menuText[1] ?? "null",
             (event : ProgramEvent) => {
-    
+                
+                event.audio.stopMusic();
                 this.respawnBox.activate(1);
             }),
     
@@ -68,7 +70,8 @@ export class Pause {
             // Quit
             new MenuButton(menuText[4] ?? "null",
             (event : ProgramEvent) => {
-    
+                
+                event.audio.stopMusic();
                 this.quitBox.activate(1);
             }),
         ], false);

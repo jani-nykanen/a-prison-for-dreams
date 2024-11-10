@@ -13,6 +13,7 @@ export class ConfirmationBox {
 
     private menu : Menu;
 
+    private baseMessage : string;
     private message : string[];
     private width : number;
     private height : number;
@@ -21,6 +22,8 @@ export class ConfirmationBox {
     constructor(buttonText : string[], message : string, 
         yesEvent : (event : ProgramEvent) => void, 
         noEvent : (event : ProgramEvent) => void) {
+
+        this.baseMessage = message;
 
         this.message = message.split("\n");
         this.width = Math.max(...this.message.map(s => s.length));
@@ -90,7 +93,7 @@ export class ConfirmationBox {
                 shadowOffset);
         }
 
-        for (let i = 0; i < this.message.length; ++ i) {
+        for (let i : number = 0; i < this.message.length; ++ i) {
 
             canvas.drawText(font, this.message[i], dx + SIDE_OFFSET, dy + SIDE_OFFSET + i*yoff);
         }
@@ -109,7 +112,21 @@ export class ConfirmationBox {
     }
 
 
-    public activate(cursorPos : number = 0) : void {
+    public activate(cursorPos : number = 0, messageParams? : string[]) : void {
+
+        if (messageParams !== undefined) {
+
+            let newMessage : string = this.baseMessage;
+            for (let i : number = 0; i < messageParams.length; ++ i) {
+
+                newMessage = newMessage.replace(`%${i + 1}`, messageParams[i]);
+            }
+
+            this.message = newMessage.split("\n");
+            // Re-compute the dimensions
+            this.width = Math.max(...this.message.map(s => s.length));
+            this.height = this.message.length;
+        }
 
         this.menu.activate(cursorPos);
     }

@@ -1022,6 +1022,7 @@ export class Player extends CollisionObject {
         this.dying = true;
         this.sprite.setFrame(4, 8);
         
+        event.audio.stopMusic();
         event.audio.playSample(event.assets.getSample("die"), 0.80);
     }
 

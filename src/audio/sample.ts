@@ -50,7 +50,15 @@ export class AudioSample {
         initial = clamp(initial*volumeModifier, MINIMUM_VOLUME, 1.0);
         end = clamp(end*volumeModifier, MINIMUM_VOLUME, 1.0);
 
-        this.gain.gain.setValueAtTime(initial, startTime);
+        if (fadeTime > 0) {
+
+            this.gain.gain.setValueAtTime(initial, startTime);
+            this.gain.gain.exponentialRampToValueAtTime(end, startTime + fadeTime/1000.0);
+        }
+        else {
+
+            this.gain.gain.setValueAtTime(end, startTime);
+        }
 
         this.startTime = ctx.currentTime - startTime;
         this.pauseTime = 0;
@@ -58,11 +66,6 @@ export class AudioSample {
 
         bufferSource.connect(this.gain).connect(ctx.destination);
         bufferSource.start(0, startTime);
-
-        if (fadeTime > 0) {
-
-            this.gain.gain.exponentialRampToValueAtTime(end, startTime + fadeTime/1000.0);
-        }
 
         this.activeBuffer = bufferSource;
     }

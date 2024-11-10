@@ -98,6 +98,7 @@
         {"name": "item", "path": "item.ogg"},
 
         {"name": "graveyard", "path": "graveyard.ogg"},
+        {"name": "titlescreen", "path": "titlescreen.ogg"},
         {"name": "forest", "path": "forest.ogg"}
     ],
 

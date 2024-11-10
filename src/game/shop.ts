@@ -14,15 +14,18 @@ import { drawHUD } from "./hud.js";
 class ShopItem {
 
     public name : string = "";
+    public description : string = "";
     public price : number = 0;
     public itemID : number = 0;
 
     public obtained : boolean = false;
 
 
-    constructor(name : string, price : number, itemID : number) {
+    constructor(name : string, description : string,
+        price : number, itemID : number) {
 
         this.name = name;
+        this.description = description;
         this.price = price;
         this.itemID = itemID;
     }
@@ -55,7 +58,9 @@ export class Shop {
             (event.localization?.getItem("purchase") ?? ["null"])[0],
             (event : ProgramEvent) : void => {
 
-                this.message.addText(event.localization?.getItem("purchase") ?? ["null"]);
+                this.message.addText(
+                    event.localization?.getItem("buyitem") ?? ["null"],
+                    [[this.items[this.cursorPos]?.name ?? "null"]]) ;
                 this.message.activate(true);
             },
             (event : ProgramEvent) : void => {
@@ -80,8 +85,11 @@ export class Shop {
         }
         else {
 
+            const price : number = this.items[this.cursorPos]?.price ?? 0;
+            const priceString : string = `${price}${String.fromCharCode(3)}`;
+
             event.audio.playSample(event.assets.getSample("select"), 0.40);
-            this.confirmationMessage.activate(1);
+            this.confirmationMessage.activate(1, [priceString]);
         }
     }
 
@@ -95,9 +103,10 @@ export class Shop {
     }
 
 
-    public addItem(name : string, price : number, itemID : number) : void {
+    public addItem(name : string, description : string, 
+        price : number, itemID : number) : void {
 
-        this.items.push(new ShopItem(name, price, itemID));
+        this.items.push(new ShopItem(name, description, price, itemID));
     }
 
 
@@ -172,12 +181,14 @@ export class Shop {
     public draw(canvas : Canvas, assets : Assets, progress : Progress) : void {
 
         const BOX_WIDTH : number = 224;
+        const DESCRIPTION_BOX_HEIGHT : number = 26;
         const ITEM_OFFSET : number = 12;
 
         const SIDE_OFFSET : number = 4;
         const HAND_OFFSET : number = 14;
+        const SHIFT_Y : number = 16;
 
-        const DARKEN_ALPHA : number = 0.33;
+        const DARKEN_ALPHA : number = 0.50;
 
         if (!this.active) {
 
@@ -190,31 +201,20 @@ export class Shop {
 
         drawHUD(canvas, assets, progress);
 
-        if (this.confirmationMessage.isActive()) {
-
-            this.confirmationMessage.draw(canvas, assets);
-            return;
-        }
-
-        if (this.message.isActive()) {
-
-            this.message.draw(canvas, assets);
-            return;
-        }
-
         const width : number = BOX_WIDTH;
         const height : number = (this.items.length + 2)*ITEM_OFFSET;
 
         const dx : number = canvas.width/2 - width/2;
-        const dy : number = canvas.height/2 - height/2;
+        const dy : number = canvas.height/2 - height/2 - SHIFT_Y;
 
         const yoff : number = ITEM_OFFSET/2 + SIDE_OFFSET/2;
 
-
+        // Box, my UI is a box!
         drawUIBox(canvas, dx, dy, width, height);
 
         const font : Bitmap | undefined = assets.getBitmap("font");
 
+        // Item names & prices
         for (let i : number = 0; i < this.items.length + 1; ++ i) {
 
             // This is a beautiful line
@@ -249,6 +249,37 @@ export class Shop {
                     dx + SIDE_OFFSET + Math.round(Math.sin(this.handAnimation)), lineY, 
                     8, 0, 16, 8);
             }
+        }
+
+        // Item descriptions
+        const bottomY : number = dy + height + 4;
+        drawUIBox(canvas, dx, bottomY, BOX_WIDTH, DESCRIPTION_BOX_HEIGHT);
+
+        if (this.cursorPos != this.items.length) {
+
+            canvas.drawText(font,
+                this.items[this.cursorPos]?.description ?? "", 
+                dx + 32, bottomY + 4, 0, 2);
+        }
+
+        if (this.confirmationMessage.isActive()) {
+
+            canvas.setColor(0, 0, 0, DARKEN_ALPHA);
+            canvas.fillRect(0, 0, canvas.width, canvas.height);
+            canvas.setColor();
+
+            this.confirmationMessage.draw(canvas, assets);
+            return;
+        }
+
+        if (this.message.isActive()) {
+
+            canvas.setColor(0, 0, 0, DARKEN_ALPHA);
+            canvas.fillRect(0, 0, canvas.width, canvas.height);
+            canvas.setColor();
+
+            this.message.draw(canvas, assets);
+            return;
         }
     }
 

@@ -71,9 +71,20 @@ export class TextBox {
     }
 
 
-    public addText(text : string[]) : void {
+    public addText(text : string[], parameters? : string[][]) : void {
 
-        this.textBuffer.push(...text);
+        for (let i : number = 0; i < text.length; ++ i) {
+
+            let baseMessage : string = text[i];
+            if (parameters[i] !== undefined) {
+
+                for (let j : number = 0; j < parameters.length; ++ j) {
+
+                    baseMessage = baseMessage.replace(`%${j + 1}`, parameters[i][j]);
+                }
+            }
+            this.textBuffer.push(baseMessage);
+        } 
     }
 
 

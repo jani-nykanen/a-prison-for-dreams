@@ -56,6 +56,9 @@ export class Game implements Scene {
 
     private mapTransition : MapTransitionCallback;
 
+    private baseTrack : AudioSample | undefined = undefined;
+    private baseTrackVolume : number = 1.0;
+
    
     constructor(event : ProgramEvent) { 
 
@@ -131,6 +134,9 @@ export class Game implements Scene {
 
         event.audio.stopMusic();
         event.audio.fadeInMusic(theme, volume, 1000);
+
+        this.baseTrack = theme;
+        this.baseTrackVolume = volume;
     }
 
 
@@ -234,6 +240,8 @@ export class Game implements Scene {
         this.progress.reset();
         this.objects.reset(this.progress, this.stage, this.camera, event);
         this.objects.centerCamera(this.camera);
+
+        event.audio.fadeInMusic(this.baseTrack, this.baseTrackVolume, 1000);
     }
 
 
@@ -400,6 +408,7 @@ export class Game implements Scene {
 
         if (event.input.getAction("pause") == InputState.Pressed) {
 
+            event.audio.pauseMusic();
             this.pause.activate();
             event.audio.playSample(event.assets.getSample("pause"), 0.80);
             return;

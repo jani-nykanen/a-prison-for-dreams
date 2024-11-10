@@ -98,18 +98,18 @@
 
     "nomoney": [
 
-        "You cannot afford that,\nyou poor soul!"
+        "You cannot afford\nthat item!"
     ],
 
 
     "purchase": [
 
-        "Purchase this item? It costs\nyou %d gold."
+        "Purchase this item?\nIt costs you %1."
     ],
 
     "buyitem": [
 
-        "You obtain a new item:\n\"%s\"!"
+        "You obtain a new item:\n\"%1\"!"
     ],
 
     "cancel": "Cancel",
@@ -127,12 +127,12 @@
 
     "shopdescription1": [
 
-        "Increases your maximum health\nby 2.",
-        "Increases your maximum ammo\ncount by 2.",
-        "Slightly increases your melee\nattack power.",
-        "Improves your accuracy and\nincreases your bullet power.",
-        "Makes you run slightly faster.",
-        "Reduces damage taken by 1."
+        "Increases your maximum\nhealth by 2.",
+        "Increases your maximum\nammocount by 2.",
+        "Slightly increases your\nmeleeattack power.",
+        "Makes your bullets do\nmore damage.",
+        "Makes you run slightly\nfaster.",
+        "Reduces damage taken."
     ],
 
 

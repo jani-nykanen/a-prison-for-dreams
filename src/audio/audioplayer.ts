@@ -43,7 +43,7 @@ export class AudioPlayer {
     }
 
 
-    public fadeInMusic(sample : AudioSample | undefined, vol : number = 1.0, fadeTime? : number) {
+    public fadeInMusic(sample : AudioSample | undefined, volume : number = 1.0, fadeTime? : number) {
 
         if (this.ctx === undefined) {
 
@@ -59,10 +59,10 @@ export class AudioPlayer {
             this.musicTrack = undefined;
         }
 
-        const baseVolume : number = vol*(this.musicVolume/100);
         sample?.fadeIn(this.ctx, 
-            fadeTime === undefined ? baseVolume : 0.0, 
-            baseVolume, this.musicVolume/100.0, true, 0, fadeTime);
+            fadeTime === undefined ? volume : Math.min(volume, 0.01), volume, 
+            this.musicVolume/100.0, 
+            true, 0, fadeTime ?? 0);
         this.musicTrack = sample;
     }
 

@@ -11,6 +11,9 @@ import { LOCAL_STORAGE_KEY } from "./progress.js";
 import { Settings } from "./settings.js";
 
 
+const MUSIC_VOLUME : number = 0.60;
+
+
 export class TitleScreen implements Scene {
 
     
@@ -206,6 +209,8 @@ export class TitleScreen implements Scene {
 
         this.activeFileIndex = file;
 
+        event.audio.stopMusic();
+
         this.menu.deactivate();
             event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
             (event : ProgramEvent) : void => {
@@ -222,6 +227,8 @@ export class TitleScreen implements Scene {
 
         this.activeMenu = this.menu;
         this.activeMenuOffset = 1;
+
+        event.audio.fadeInMusic(event.assets.getSample("titlescreen"), MUSIC_VOLUME, 1000.0);
     }
 
 

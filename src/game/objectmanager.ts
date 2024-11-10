@@ -481,8 +481,6 @@ export class ObjectManager {
 
         // For debugging, if things go wrong
         // this.player.setPosition(128, 64);
-
-        console.log(this.player.getPosition());
     }
 
 
