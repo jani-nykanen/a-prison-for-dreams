@@ -24,6 +24,8 @@ export const enum CollectableType {
     Coin = 1,
     Heart = 2,
     Ammo = 3,
+    Gem = 4,
+    CoinBag = 5, // Or possible something else
 }
 
 
@@ -147,7 +149,7 @@ export class Collectable extends CollisionObject {
             let count : number = 1;
 
             switch (this.type) {
-
+                
             case CollectableType.Coin:
 
                 symbol = FlyingTextSymbol.Coin;
@@ -178,6 +180,18 @@ export class Collectable extends CollisionObject {
                 event.audio.playSample(event.assets.getSample("ammo"), 0.90);
                 count = 5;
 
+                break;
+
+            case CollectableType.Gem:
+
+                symbol = FlyingTextSymbol.Coin;
+                color = new RGBA(255, 255, 182);
+
+                player.stats.updateMoney(5);
+                // TODO: Gem sound?
+                event.audio.playSample(event.assets.getSample("coin"), 0.60);
+                count = 5;
+                
                 break;
 
             default:

@@ -28,6 +28,9 @@ export class Doppelganger extends Enemy {
         this.collisionBox.w = 10;
 
         this.throwTimer = Math.floor(x/TILE_WIDTH) % 2 == 0 ? THROW_TIME/2 : THROW_TIME;
+
+        this.coinTypeWeights[0] = 0.85;
+        this.coinTypeWeights[1] = 0.15;
     }
 
 

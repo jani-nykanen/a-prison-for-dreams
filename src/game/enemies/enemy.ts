@@ -14,9 +14,12 @@ import { CollectableGenerator, sampleTypeFromProgress } from "../collectablegene
 import { CollectableType } from "../collectable.js";
 import { Progress } from "../progress.js";
 import { ProjectileGenerator } from "../projectilegenerator.js";
+import { sampleWeightedUniform } from "../../math/random.js";
 
 
 const HURT_TIME : number = 30;
+
+const COIN_TYPE_LOOKUP : CollectableType[] = [CollectableType.Coin, CollectableType.Gem, CollectableType.CoinBag];
 
 
 export const BASE_GRAVITY : number = 5.0;
@@ -39,7 +42,9 @@ export class Enemy extends CollisionObject {
 
     protected attackPower : number = 1;
     protected health : number = 5;
+
     protected dropProbability : number = 0.5;
+    protected coinTypeWeights : number[];
 
     protected canBeMoved : boolean = true;
     protected radius : number = 6;
@@ -67,6 +72,8 @@ export class Enemy extends CollisionObject {
         this.target.y = BASE_GRAVITY;
 
         this.friction = new Vector(0.10, 0.15);
+
+        this.coinTypeWeights = [1.0, 0.0, 0.0];
     }
 
 
@@ -76,9 +83,15 @@ export class Enemy extends CollisionObject {
         const LAUNCH_SPEED_Y : number = 2.0;
         const BASE_JUMP : number = -1.0;
 
+        let baseType : CollectableType = sampleTypeFromProgress(stats);
+        if (baseType == CollectableType.Coin) {
+
+            baseType = COIN_TYPE_LOOKUP[sampleWeightedUniform(this.coinTypeWeights)] ?? CollectableType.Coin;
+        }
+
         this.collectables.spawn(this.pos.x, this.pos.y, 
             dir.x*LAUNCH_SPEED_X, dir.y*LAUNCH_SPEED_Y + BASE_JUMP, 
-            sampleTypeFromProgress(stats));
+            baseType);
     }
 
 

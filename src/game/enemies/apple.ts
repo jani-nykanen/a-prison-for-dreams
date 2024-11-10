@@ -44,6 +44,9 @@ export class Apple extends Enemy {
         this.ignoreBottomLayer = true;
 
         this.knockbackFactor = 0.75;
+
+        this.coinTypeWeights[0] = 0.90;
+        this.coinTypeWeights[1] = 0.10;
     }
 
 

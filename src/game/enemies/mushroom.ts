@@ -38,6 +38,9 @@ export class Mushroom extends Enemy {
         this.collisionBox.w = 8;
 
         this.jumpTimer = Math.floor(x/TILE_WIDTH) % 2 == 0 ? JUMP_TIME/2 : JUMP_TIME;
+
+        this.coinTypeWeights[0] = 0.90;
+        this.coinTypeWeights[1] = 0.10;
     }
 
 
