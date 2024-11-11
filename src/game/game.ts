@@ -127,6 +127,8 @@ export class Game implements Scene {
     private playSong(name : string, volume : number, event : ProgramEvent) : void {
 
         const theme : AudioSample | undefined = event.assets.getSample(name);
+        this.baseTrack = theme;
+        
         if (theme === undefined) {
             
             return;
@@ -135,7 +137,6 @@ export class Game implements Scene {
         event.audio.stopMusic();
         event.audio.fadeInMusic(theme, volume, 1000);
 
-        this.baseTrack = theme;
         this.baseTrackVolume = volume;
     }
 

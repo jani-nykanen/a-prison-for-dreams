@@ -51,6 +51,8 @@
         {"name": "coast", "path": "coast.tmx"},
         {"name": "crossroads", "path": "crossroads.tmx"},
         {"name": "shop", "path": "shop.tmx"},
+        {"name": "dark_room", "path": "dark_room.tmx"},
+        {"name": "beach", "path": "beach.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
