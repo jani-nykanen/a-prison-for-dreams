@@ -566,23 +566,24 @@ export class Player extends CollisionObject {
 
     private updateWaterMovement(event : ProgramEvent) : void {
 
-        if ( this.speed.y > UNDERWATER_GRAVITY) {
+        if (!this.underWater) {
 
-            this.speed.y = UNDERWATER_GRAVITY;
-            // TODO: Splash sound?
+            return;
         }
+
+        this.speed.y = Math.min(this.speed.y, UNDERWATER_GRAVITY);
+        this.target.y = Math.min(this.target.y, UNDERWATER_GRAVITY);
+        // TODO: Splash sound?
+
+        // Just for sure
+        this.downAttacking = false;
+        this.downAttackWait = 0;
     }
 
 
     private control(event : ProgramEvent) : void {
 
-        
         this.setFriction();
-
-        if (this.underWater) {
-            
-            this.updateWaterMovement(event);
-        }
 
         if (this.knockbackTimer > 0 ||
             (this.attacking && this.touchSurface)) {
@@ -599,8 +600,12 @@ export class Player extends CollisionObject {
                 
             this.target.x = 0.0;
             this.target.y = this.getGravity();
+            // Also needed here (but it has no effect???)
+            this.updateWaterMovement(event);
+
             return;
         }
+        this.updateWaterMovement(event);
 
         if (this.powerAttackTimer > 0) {
 
@@ -1278,7 +1283,7 @@ export class Player extends CollisionObject {
     public waterCollision(x : number, y : number, w : number, h : number, 
         event : ProgramEvent, surface : boolean = false) : boolean {
         
-        if (!this.isActive() || this.hurtTimer > 0) {
+        if (!this.isActive()) {
 
             return false;
         }

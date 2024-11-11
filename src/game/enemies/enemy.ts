@@ -47,6 +47,7 @@ export class Enemy extends CollisionObject {
     protected coinTypeWeights : number[];
 
     protected canBeMoved : boolean = true;
+    protected canBeHurt : boolean = true;
     protected radius : number = 6;
 
     protected didTouchSurface : boolean = false;
@@ -97,6 +98,11 @@ export class Enemy extends CollisionObject {
 
     private takeDamage(amount : number, stats : Progress,
         event : ProgramEvent, dir? : Vector) : void {
+
+        if (!this.canBeHurt) {
+
+            return;
+        }
 
         this.flyingText?.next()
             .spawn(this.pos.x, this.pos.y - 8, 
@@ -174,8 +180,8 @@ export class Enemy extends CollisionObject {
             return;
         }
 
-        const dx : number = this.pos.x - 12;
-        const dy : number = this.pos.y - 12;
+        const dx : number = this.pos.x - this.sprite.width/2;
+        const dy : number = this.pos.y - this.sprite.height/2;
 
         this.sprite.draw(canvas, bmp, dx, dy, this.flip);
     }
@@ -218,7 +224,11 @@ export class Enemy extends CollisionObject {
 
                 return;
             }
-            this.speed.x = Math.sign(this.pos.x - ppos.x)*knockback;
+
+            if (this.canBeHurt) {
+
+                this.speed.x = Math.sign(this.pos.x - ppos.x)*knockback;
+            }
         }
 
         if (this.overlayObject(player)) {

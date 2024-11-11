@@ -164,7 +164,7 @@ export class Stage {
         const WATER_OFFSET_Y : number = 0;
         const EDGE_OFFSET_Y : number = -256;
 
-        if (!o.isActive()) {
+        if (!o.isActive() || !o.doesTakeCollisions()) {
 
             return;
         }

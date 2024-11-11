@@ -328,15 +328,17 @@ export class CollisionMap {
 
             for (let y = starty; y <= endy; ++ y) {
 
+                /*
                 if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
 
                     continue;
                 }
+                */
 
-                // const dx : number = clamp(x, 0, this.width);
-                // const dy : number = clamp(y, 0, this.height);
+                const dx : number = clamp(x, 0, this.width);
+                const dy : number = clamp(y, 0, this.height);
 
-                const colID : number = this.collisions[y*this.width + x] ?? 0;
+                const colID : number = this.collisions[dy*this.width + dx] ?? 0;
                 if (colID == 0) {
 
                     continue;
