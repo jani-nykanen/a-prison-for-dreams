@@ -310,6 +310,10 @@ export class ObjectManager {
 
             this.visibleEnemies.iterateThroughVisibleObjects((e : Enemy) : void => {
 
+                if (!o1.doesTakeCollisions()) {
+
+                    return;
+                }
                 o1.objectCollision(e, event, false);
             });
         });

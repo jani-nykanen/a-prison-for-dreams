@@ -29,6 +29,7 @@ export class Enemy extends CollisionObject {
 
 
     private hurtID : number = -1;
+    private underWater : boolean = false;
    
     private flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
     private collectables : CollectableGenerator | undefined = undefined;
@@ -152,9 +153,33 @@ export class Enemy extends CollisionObject {
     }
 
 
+    public waterCollision(x : number, y : number, w : number, h : number, 
+        event : ProgramEvent, surface : boolean = false) : boolean {
+        
+        if (!this.isActive()) {
+
+            return false;
+        }
+    
+        if (this.overlayCollisionArea(x - 1, y - 1, w + 2, h + 2)) {
+            
+            this.underWater = true;
+            return true;
+        }
+        return false;
+    }
+
+
     protected updateEvent(event : ProgramEvent) : void {
             
+        const UNDERWATER_GRAVITY : number = 0.75;
+
         this.updateLogic?.(event);
+        if (this.underWater) {
+
+            this.target.y = Math.min(this.target.y, UNDERWATER_GRAVITY);
+            this.speed.y = Math.min(this.speed.y, UNDERWATER_GRAVITY);
+        }
 
         if (this.hurtTimer > 0) {
 
@@ -163,6 +188,7 @@ export class Enemy extends CollisionObject {
 
         this.didTouchSurface = this.touchSurface;
         this.touchSurface = false;
+        this.underWater = false;
     }
 
 

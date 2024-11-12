@@ -1,16 +1,14 @@
 import { ProgramEvent } from "../../core/event.js";
 import { Flip } from "../../gfx/interface.js";
 import { Player } from "../player.js";
-import { TILE_WIDTH } from "../tilesize.js";
+import { TILE_HEIGHT, TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
 const BASE_SPEED : number = 0.33;
 
 
-// There might be another bat in future, hence
-// this one is called "shadow bat"
-export class ShadowBat extends Enemy {
+export class Fish extends Enemy {
 
 
     private wave : number = 0;
@@ -18,12 +16,12 @@ export class ShadowBat extends Enemy {
 
     constructor(x : number, y : number) {
 
-        super(x, y);
+        super(x, y + TILE_HEIGHT/2);
 
-        this.sprite.setFrame(4, 1);
+        this.sprite.setFrame(0, 6);
 
-        this.health = 3;
-        this.attackPower = 1;
+        this.health = 7;
+        this.attackPower = 3;
 
         this.dropProbability = 0.10;
 
@@ -33,6 +31,8 @@ export class ShadowBat extends Enemy {
 
         // To avoid everything random that affects the gameplay
         this.wave = (1.0 + Math.sin(x/Math.PI))*Math.PI;
+
+        this.dir = (Math.floor(x/TILE_WIDTH) % 2) == 0 ? 1 : -1;
     }
 
 
@@ -63,13 +63,15 @@ export class ShadowBat extends Enemy {
         const WAVE_SPEED : number = Math.PI*2/60.0;
         const AMPLITUDE : number = 4.0;
 
-        this.sprite.animate(this.sprite.getRow(), 4, 7, ANIMATION_SPEED, event.tick);
+        this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
 
         this.target.x = BASE_SPEED*this.dir;
         // this.speed.x = this.target.x;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
         this.pos.y = this.initialPos.y + Math.sin(this.wave)*AMPLITUDE;
+
+        this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
     }
 
 
@@ -81,12 +83,4 @@ export class ShadowBat extends Enemy {
         this.speed.x = this.target.x;
     }
 
-
-    protected playerEvent(player: Player, event: ProgramEvent): void {
-        
-        if (this.dir == 0) {
-
-            this.dir = Math.sign(player.getPosition().x - this.pos.x)
-        }
-    }
 }

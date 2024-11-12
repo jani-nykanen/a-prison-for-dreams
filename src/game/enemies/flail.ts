@@ -34,6 +34,8 @@ export class Flail extends Enemy {
 
         this.dir = Math.floor(this.pos.x/TILE_WIDTH) % 2 == 0 ? -1 : 1;
 
+        this.angle = Math.PI/2 - this.dir*Math.PI/2;
+
         this.speed.zeros();
         this.target.zeros();
     }
@@ -52,7 +54,7 @@ export class Flail extends Enemy {
         this.distance = Math.min(MAX_DISTANCE, this.distance + DISTANCE_DELTA*event.tick);
 
         this.pos.x = this.initialPos.x + this.dir*Math.cos(this.angle)*this.distance;
-        this.pos.y = this.initialPos.y + this.dir*Math.sin(this.angle)*this.distance;
+        this.pos.y = this.initialPos.y + Math.sin(this.angle)*this.distance;
 
         this.angle = (this.angle + ROTATION_SPEED*event.tick) % (Math.PI*2);
     }
@@ -73,15 +75,15 @@ export class Flail extends Enemy {
         // Chain
         const distDelta : number = this.distance/(CHAIN_COUNT);
 
-        const c : number = Math.cos(this.angle);
+        const c : number = this.dir*Math.cos(this.angle);
         const s : number = Math.sin(this.angle);
 
         for (let i : number = 0; i < CHAIN_COUNT; ++ i) {
 
             const distance : number = distDelta*i;
 
-            const chainx : number = Math.round(this.initialPos.x + this.dir*c*distance);
-            const chainy : number = Math.round(this.initialPos.y + this.dir*s*distance);
+            const chainx : number = Math.round(this.initialPos.x + c*distance);
+            const chainy : number = Math.round(this.initialPos.y + s*distance);
 
             canvas.drawBitmap(bmp, Flip.None, chainx - 12, chainy - 12, 144, 120, 24, 24);
         }
