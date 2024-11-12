@@ -96,6 +96,7 @@ export class Player extends CollisionObject {
     private crouchFlickerTimer : number = 0;
 
     private underWater : boolean = false;
+    private touchDeepWater : boolean = false;
 
     private attackID : number = 0;
     private attacking : boolean = false;
@@ -939,10 +940,26 @@ export class Player extends CollisionObject {
     }
 
 
+    private updateSwimming(event : ProgramEvent) : void {
+
+        const RISE_SPEED : number = -0.1;
+        const RISE_MAX : number = -1.0;
+
+        if (this.stats.hasItem(Item.Snorkel) || !this.touchDeepWater) {
+
+            return;
+        }
+
+        this.speed.y += RISE_SPEED*event.tick;
+        this.speed.y = Math.max(RISE_MAX, this.speed.y);
+    }
+
+
     private updateFlags() : void {
 
         this.touchSurface = false;
         this.underWater = false;
+        this.touchDeepWater = false;
         this.iconType = 0;
     }
 
@@ -1159,7 +1176,6 @@ export class Player extends CollisionObject {
         canvas.drawBitmap(bmpItemIcons, Flip.None,
             this.pos.x - 8, this.pos.y - yoff,
             column*16, row*16, 16, 16);
-        
     }
 
 
@@ -1177,6 +1193,7 @@ export class Player extends CollisionObject {
         this.updateTimers(event);
         this.updateJumping(event);
         this.updateDust(event);
+        this.updateSwimming(event);
 
         this.updateFlags();
         this.computeSwordHitbox();
@@ -1291,10 +1308,13 @@ export class Player extends CollisionObject {
         if (this.overlayCollisionArea(x - 1, y - 1, w + 2, h + 2)) {
             
             this.underWater = true;
+            this.touchDeepWater = this.touchDeepWater || (!surface);
+
             this.ledgeTimer = 1;
             this.canUseRocketPack = true;
             this.rocketPackActive = false;
             this.rocketPackReleased = false;
+
             return true;
         }
         return false;

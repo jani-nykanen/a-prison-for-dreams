@@ -7,6 +7,7 @@ export const enum Item {
     // Treasure chest items
     Sword = 1,
     Gun = 2,
+    Snorkel = 3,
 
 
     // Shop items

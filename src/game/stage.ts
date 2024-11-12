@@ -163,6 +163,7 @@ export class Stage {
 
         const WATER_OFFSET_Y : number = 0;
         const EDGE_OFFSET_Y : number = -256;
+        const SURFACE_HEIGHT : number = 8;
 
         if (!o.isActive() || !o.doesTakeCollisions()) {
 
@@ -180,7 +181,12 @@ export class Stage {
 
         if (waterSurface > 0 && o.waterCollision !== undefined) {
             
-            o.waterCollision(opos.x - 16, waterSurface, 32, this.height*TILE_HEIGHT - waterSurface, event);
+            o.waterCollision(opos.x - 16, waterSurface, 
+                32, SURFACE_HEIGHT, 
+                event, true);
+            o.waterCollision(opos.x - 16, waterSurface + SURFACE_HEIGHT, 
+                32, this.height*TILE_HEIGHT - waterSurface - SURFACE_HEIGHT, 
+                event, false);
         }
 
         o.wallCollision(0, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, -1, event);
