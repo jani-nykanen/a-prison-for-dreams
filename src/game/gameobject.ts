@@ -26,6 +26,8 @@ export class GameObject implements ExistingObject {
     protected inCamera : boolean = false;
     protected cameraCheckArea : Vector;
 
+    protected referenceObject : GameObject | undefined = undefined;
+
 
     constructor(x : number = 0, y : number = 0, exist : boolean = false) {
 
@@ -57,6 +59,12 @@ export class GameObject implements ExistingObject {
 
         this.pos.x += this.speed.x*event.tick;
         this.pos.y += this.speed.y*event.tick;
+
+        if (this.referenceObject !== undefined) {
+
+            this.pos.x += this.referenceObject.speed.x*event.tick;
+            this.pos.y += this.referenceObject.speed.y*event.tick;
+        }
     }
 
 
@@ -95,6 +103,8 @@ export class GameObject implements ExistingObject {
         this.updateEvent?.(event);
         this.updateMovement(event);
         this.postMovementEvent?.(event);
+
+        this.referenceObject = undefined;
     }
 
 

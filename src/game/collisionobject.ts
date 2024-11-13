@@ -123,7 +123,8 @@ export class CollisionObject extends GameObject {
         x1 : number, y1 : number, x2 : number, y2 : number, 
         direction : -1 | 1, event : ProgramEvent,
         leftMargin : number = 1, rightMargin : number = 1,
-        safeMarginNear : number = 1.0, safeMarginFar : number = 4.0) : boolean {
+        safeMarginNear : number = 1.0, safeMarginFar : number = 4.0,
+        setReference : GameObject | undefined = undefined) : boolean {
 
         const TOO_CLOSE : number = 0.01;
         const MIN_SPEED : number = 0.01;
@@ -180,6 +181,11 @@ export class CollisionObject extends GameObject {
 
             this.pos.y = y0 - this.collisionBox.y - this.collisionBox.h/2*direction;
             this.speed.y *= -this.bounceFactor.y;
+
+            if (setReference !== undefined) {
+                
+                this.referenceObject = setReference;
+            }
 
             this.steepnessFactor = steepness;
             this.touchSurface = true;

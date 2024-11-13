@@ -31,6 +31,7 @@
         {"name": "chest", "path": "chest.png"},
         {"name": "portal", "path": "portal.png"},
         {"name": "shopkeeper", "path": "shopkeeper.png"},
+        {"name": "platforms", "path": "platforms.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},

@@ -31,6 +31,7 @@ import { HintTrigger } from "./interactables/hinttrigger.js";
 import { Door } from "./interactables/door.js";
 import { Shopkeeper } from "./interactables/shopkeeper.js";
 import { Shop } from "./shop.js";
+import { Platform, PlatformType } from "./platform.js";
 
 
 export class ObjectManager {
@@ -47,6 +48,9 @@ export class ObjectManager {
 
     private enemies : Enemy[];
     private visibleEnemies : VisibleObjectBuffer<Enemy>;
+
+    private platforms : Platform[];
+    private visiblePlatforms : VisibleObjectBuffer<Platform>;
 
     private interactables : Interactable[];
     // Note to self: probably no reason to store visible interactables
@@ -81,6 +85,9 @@ export class ObjectManager {
 
         this.enemies = new Array<Enemy> ();
         this.visibleEnemies = new VisibleObjectBuffer<Enemy> ();
+
+        this.platforms = new Array<Platform> ();
+        this.visiblePlatforms = new VisibleObjectBuffer<Platform> ();
 
         this.interactables = new Array<Interactable> ();
 
@@ -206,6 +213,13 @@ export class ObjectManager {
                 this.interactables.push(new Shopkeeper(dx, dy, this.shops[id - 1], bmpShopkeeper));    
                 break;
 
+            // Moving platforms
+            case 15:
+            case 16:
+
+                this.platforms.push(new Platform(dx, dy, PlatformType.VerticallyMoving + (objID - 15)))
+                break;
+
             default:
                 
                 // Enemies
@@ -264,7 +278,7 @@ export class ObjectManager {
 
         if (somethingDied) {
 
-            for (let i = 0; i < this.enemies.length; ++ i) {
+            for (let i : number = 0; i < this.enemies.length; ++ i) {
 
                 if (!this.enemies[i].doesExist()) {
 
@@ -277,7 +291,7 @@ export class ObjectManager {
 
     private updateBreakables(camera : Camera, stage : Stage, event : ProgramEvent) : void {
 
-        for (let o of this.breakables) {
+        for (const o of this.breakables) {
 
             o.cameraCheck(camera, event);
         }
@@ -310,7 +324,7 @@ export class ObjectManager {
 
             this.visibleEnemies.iterateThroughVisibleObjects((e : Enemy) : void => {
 
-                if (!o1.doesTakeCollisions()) {
+                if (!e.doesTakeCollisions()) {
 
                     return;
                 }
@@ -347,6 +361,32 @@ export class ObjectManager {
     }
 
 
+    private updatePlatforms(camera : Camera, event : ProgramEvent) : void {
+
+        for (const o of this.platforms) {
+
+            o.cameraCheck(camera, event);
+        }
+
+        this.visiblePlatforms.refresh(this.platforms);
+        this.visiblePlatforms.iterateThroughVisibleObjects((p : Platform, i : number) : void => {
+
+            p.update(event);
+
+            p.objectCollision(this.player, event);
+
+            this.visibleEnemies.iterateThroughVisibleObjects((e : Enemy) : void => {
+
+                if (!e.doesTakeCollisions()) {
+
+                    return;
+                }
+                p.objectCollision(e, event);
+            });
+        });
+    }
+
+
     public update(camera : Camera, stage : Stage, 
         hintRenderer : HintRenderer, event : ProgramEvent) : void {
 
@@ -361,6 +401,7 @@ export class ObjectManager {
         this.updateBreakables(camera, stage, event);
         this.updatePlayer(camera, stage, event);
         this.updateInteractables(camera, event);
+        this.updatePlatforms(camera, event);
 
         this.projectiles.update(event, camera, stage);
         this.projectiles.playerCollision(this.player, event);
@@ -398,10 +439,21 @@ export class ObjectManager {
 
             o.cameraCheck(camera, event);
         }
+
+        for (const o of this.platforms) {
+
+            o.cameraCheck(camera, event);
+        }
     }
 
 
     public draw(canvas : Canvas, assets : Assets) : void {
+
+        const bmpPlatforms : Bitmap | undefined = assets.getBitmap("platforms");
+        for (const o of this.platforms) {
+
+            o.draw(canvas, assets, bmpPlatforms);
+        }
 
         for (const o of this.interactables) {
 

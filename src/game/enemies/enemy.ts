@@ -97,7 +97,7 @@ export class Enemy extends CollisionObject {
     }
 
 
-    private takeDamage(amount : number, stats : Progress,
+    private takeDamage(amount : number, stats : Progress | undefined,
         event : ProgramEvent, dir? : Vector) : void {
 
         if (!this.canBeHurt) {
@@ -112,7 +112,7 @@ export class Enemy extends CollisionObject {
         this.health -= amount;
         if (this.health <= 0) {
 
-            if (Math.random() < this.dropProbability) {
+            if (stats !== undefined && Math.random() < this.dropProbability) {
             
                 this.spawnCollectables(dir ?? new Vector(), stats);
             }
