@@ -22,6 +22,7 @@ import { TransitionType } from "../core/transition.js";
 
 const GRAVITY_MAGNITUDE : number = 5.0;
 const UNDERWATER_GRAVITY : number = 0.75;
+const UNDERWATER_FRICTION_MODIFIER : number = 2;
 
 const SHOOT_RELEASE_TIME : number = 20;
 const SHOOT_BASE_TIME : number = 20;
@@ -178,6 +179,20 @@ export class Player extends CollisionObject {
         this.sprite.getColumn() == 5;
 
 
+    private setHitbox() : void {
+
+        if (!this.crouching) {
+            
+            this.hitbox.y = 2
+            this.hitbox.h = 12;
+            return;
+        }
+
+        this.hitbox.y = 6;
+        this.hitbox.h = 6;
+    }
+
+
     private computeSwordHitbox() : void {
 
         const SWORD_OFFSET_X : number = 16;
@@ -308,6 +323,13 @@ export class Player extends CollisionObject {
                 this.ledgeTimer = 0.0;
 
                 this.crouching = false;
+
+                if (this.referenceObject !== undefined) {
+
+                    const refSpeed : Vector = this.referenceObject.getSpeed();
+                    this.speed.x += refSpeed.x;
+                    this.speed.y += refSpeed.y;
+                }
 
                 event.audio.playSample(event.assets.getSample("jump"), 0.80);
             }
@@ -553,8 +575,8 @@ export class Player extends CollisionObject {
         this.friction.y = 0.125;
         if (this.underWater) {
 
-            this.friction.x /= 2.0;
-            this.friction.y /= 2.0;
+            this.friction.x /= UNDERWATER_FRICTION_MODIFIER;
+            this.friction.y /= UNDERWATER_FRICTION_MODIFIER;
         }
 /*
         if (this.powerAttackTimer > 0 && this.powerAttackStopped) {
@@ -848,7 +870,12 @@ export class Player extends CollisionObject {
             }
             return;
         }
-        this.jumpTimer -= event.tick;
+
+        if (!this.underWater || 
+            (this.underWater && this.stats.hasItem(Item.Snorkel) && this.touchDeepWater)) {
+        
+            this.jumpTimer -= event.tick;
+        }
 
         if (this.rocketPackActive) {
 
@@ -1189,6 +1216,7 @@ export class Player extends CollisionObject {
         this.waitActive = false;
 
         this.control(event);
+        this.setHitbox();
         this.animate(event);
         this.updateTimers(event);
         this.updateJumping(event);
@@ -1275,6 +1303,11 @@ export class Player extends CollisionObject {
 
         const knockbackDirection : number = direction == 0 ? (-this.dir) : direction;
         this.speed.x = knockbackDirection*KNOCKBACK_SPEED;
+        if (this.underWater) {
+
+            // Didn't work as intended
+            // this.speed.x /= UNDERWATER_FRICTION_MODIFIER;
+        }
 
         this.hurt(damage, event);
     }

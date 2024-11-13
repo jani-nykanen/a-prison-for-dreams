@@ -55,13 +55,13 @@ export class Progress {
 
     constructor(fileIndex : number) {
 
-        this.obtainedItems = new Array<boolean> ();
-        this.obtainedHealthUps = new Array<boolean> ();
-        this.obtainedAmmoUps = new Array<boolean> ();
-        this.obtainedDreamOrbs = new Array<boolean> ();
+        this.obtainedItems = (new Array<boolean> (32)).fill(false);
+        this.obtainedHealthUps = (new Array<boolean> (8)).fill(false);
+        this.obtainedAmmoUps = (new Array<boolean> (8)).fill(false);
+        this.obtainedDreamOrbs = (new Array<boolean> (6)).fill(false);
 
-        this.hintShown = new Array<boolean> ();
-        this.cutsceneWatched = new Array<boolean> ();
+        this.hintShown = (new Array<boolean> (10)).fill(false);
+        this.cutsceneWatched = (new Array<boolean> (16)).fill(false);
 
         this.checkpointPosition = new Vector();
 

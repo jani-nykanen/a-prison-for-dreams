@@ -8,7 +8,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Vector } from "../math/vector.js";
 
 
-const BASE_FRICTION : number = 0.01;
+const BASE_FRICTION : number = 0.015;
 const BASE_SPEED : number = 1.0;
 
 
@@ -40,8 +40,8 @@ export class Platform extends GameObject {
 
         this.type = type;
 
-        this.cameraCheckArea.x = 64;
-        this.cameraCheckArea.y = 64;
+        this.cameraCheckArea.x = 128;
+        this.cameraCheckArea.y = 128;
 
         this.sprite = new Sprite(48, 24);
 
@@ -117,7 +117,8 @@ export class Platform extends GameObject {
 
     public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
 
-        if (!this.isActive() || !o.isActive()) {
+        if (!this.isActive() || !o.isActive() ||
+            (this.type != PlatformType.Bouncing && o.doesIgnoreBottomLayer())) {
 
             return;
         }

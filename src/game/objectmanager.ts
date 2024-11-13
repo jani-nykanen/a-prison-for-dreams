@@ -522,6 +522,9 @@ export class ObjectManager {
         this.enemies.length = 0;
         this.visibleEnemies.clear();
 
+        this.platforms.length = 0;
+        this.visiblePlatforms.clear();
+
         this.interactables.length = 0;
 
         this.createObjects(stage, true, event);

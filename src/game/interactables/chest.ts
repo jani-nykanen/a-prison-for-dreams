@@ -119,6 +119,7 @@ export class Chest extends Interactable {
         
         const OPEN_TIME : number = 120;
 
+        event.audio.pauseMusic();
         event.audio.playSample(event.assets.getSample("item"), 1.0);
 
         this.opened = true;
@@ -176,6 +177,7 @@ export class Chest extends Interactable {
                     // This is actually redundant now
                     player.stats.markHintAsShown(hintID);
                 }
+                event.audio.resumeMusic();
             }); 
 
             player.setCheckpointObject(this);

@@ -194,13 +194,11 @@
         "Just pray you never\nneed to go there."
     ],
 
-
     "npc4": [
         "In the old times we hid\nDream Orbs around the\nisland. They were\nstored in chests like\nthe one above us.",
         "If you could gather\neight of them, you\nwon a special audience\nwith the Great Dreamer\nherself.",
         "This was when the old\ncitizens were still\nalive..."
     ],
-
 
     "npc5": [
         "The Great Dreamer is\nunable to dream proper\nhouses, so she gave\nus these...\"containers\"\ninstead.",
@@ -208,11 +206,15 @@
         "Now this house is inha-\nbitated by the shop-\nkeeper."
     ],
 
-
     "npc6": [
         "This part of the Dream\nis now long forgotten,\nhence we call it the\n'Forgotten Coast'.",
-        "When new people where\nstill coming here,\nthey usually arrived\nby ship, so there used\nto be a port here.",
-        "But where did the ships\ncome from, you ask.\nFrom the real world, I\nguess?"
+        "There used to be a port\nhere. New people tend\nto arrive the main is-\nland by ship.",
+        "However, people stopped\ncoming here centuries\nago. It makes you\nwonder..."
+    ],
+
+    "npc7": [
+        "There are many broken\nportals in this island.\nThey used to connect\nthe Dream to the outer\nworlds.",
+        "I think this particular\nportal took you to\nthe Graveyard, or\nperhaps the Entrance\nHall."
     ],
 
 
@@ -232,6 +234,13 @@
 
         "You obtain a HAND CANNON!",
         "It is one of those novelty\nfirearms where you put\nyour hand inside. Not\nvery practical, though."
+    ],
+
+
+    "item3": [
+
+        "You obtain a MAGIC SNORKEL!",
+        "Its magical capabilities allow\nyou to breathe underwater,\nmaking it possible to dive\nwithout fear or dying."
     ]
 
 }
