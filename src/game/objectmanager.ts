@@ -310,7 +310,7 @@ export class ObjectManager {
             }, i + 1);
 
             o1.playerCollision(this.player, event);
-            o1.objectCollision(this.player, event);
+            o1.objectCollision(this.player, event, false, false, true);
 
             if (!o1.doesExist()) {
 

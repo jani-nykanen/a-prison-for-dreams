@@ -1658,6 +1658,9 @@ export class Player extends CollisionObject {
 
     public isWaiting = () : boolean => this.waitTimer > 0;
     public isChargeAttacking = () : boolean => this.powerAttackTimer > 0;
+    public isOrdinarilyAttacking = () : boolean => this.attacking && 
+        this.powerAttackTimer <= 0 && 
+        !this.downAttacking;
 
 
     public getKnockbackFactor() : number {
