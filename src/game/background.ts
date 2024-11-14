@@ -65,7 +65,6 @@ export class Background {
         }
     } 
 
-    
 
     private updateCoast(event : ProgramEvent) : void {
 
@@ -93,7 +92,6 @@ export class Background {
 
             canvas.drawBitmap(bmpSun, Flip.None, canvas.width - bmpSun.width - 16, 16);
         }
-
     }
 
 
@@ -193,6 +191,23 @@ export class Background {
     }
 
 
+    private drawCaveBackground(canvas : Canvas, assets : Assets, camera : Camera) : void {
+
+        const bmpWall : Bitmap | undefined = assets.getBitmap("cave_wall");
+        if (bmpWall === undefined) {
+
+            return;
+        }
+
+        const camPos : Vector = camera.getCorner();
+        const shiftx : number = (camPos.x/4) % bmpWall.width;
+        const shifty : number = (camPos.y/4) % bmpWall.height;
+
+        canvas.drawBitmap(bmpWall, Flip.None, 
+            0, 0, shiftx, shifty, canvas.width, canvas.height, canvas.width, canvas.height);
+    }
+
+
     private postDrawGraveyard(canvas : Canvas) : void {
 
         canvas.setColor(0, 0, 0, 0.5);
@@ -267,6 +282,11 @@ export class Background {
         case BackgroundType.Forest:
 
             this.drawForest(canvas, assets, camera);
+            break;
+
+        case BackgroundType.Cave:
+
+            this.drawCaveBackground(canvas, assets, camera);
             break;
 
         default:

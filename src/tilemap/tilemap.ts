@@ -138,4 +138,14 @@ export class Tilemap {
         return Number(str);
     }
     
+
+    public getBooleanProperty(name : string) : boolean | undefined {
+
+        const str : string | undefined = this.properties.get(name);
+        if (str === undefined) {
+
+            return undefined;
+        }
+        return Boolean(str);
+    }
 }

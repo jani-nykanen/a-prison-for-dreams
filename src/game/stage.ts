@@ -23,6 +23,7 @@ export class Stage {
 
     private waterSprite : Sprite;
     private waterLevel : number = 0;
+    private backgroundWater : boolean = false;
 
     private background : Background;
 
@@ -49,7 +50,8 @@ export class Stage {
 
         this.objectLayer = baseMap.cloneLayer("objects");
 
-        this.waterLevel = Number(baseMap.getProperty("water_level") ?? "0");
+        this.waterLevel = baseMap.getNumericProperty("water_level") ?? 0;
+        this.backgroundWater = baseMap.getBooleanProperty("background_water") ?? false;
         this.waterSprite = new Sprite(32, 16);
 
         this.background = new Background(this.height*TILE_HEIGHT, backgroundType);
@@ -79,9 +81,8 @@ export class Stage {
     }
 
 
-    private drawWater(canvas : Canvas, assets : Assets, camera : Camera, isLava : boolean = false) : void {
+    private drawWater(canvas : Canvas, assets : Assets, camera : Camera, opacity : number) : void {
 
-        const WATER_OPACITY : number = 0.75;
         const WATER_WIDTH : number = 32;
 
         if (this.waterLevel <= 0) {
@@ -106,7 +107,7 @@ export class Stage {
         const startx : number = Math.floor(camPos.x/WATER_WIDTH) - 1;
         const endx : number = startx + Math.ceil(camera.width/WATER_WIDTH) + 2;
 
-        canvas.setAlpha(WATER_OPACITY);
+        canvas.setAlpha(opacity);
         for (let x = startx; x < endx; ++ x) {
 
             this.waterSprite.draw(canvas, bmpWater, x*WATER_WIDTH, dy);
@@ -116,7 +117,7 @@ export class Stage {
         const bottomHeight : number = this.height*TILE_HEIGHT - (dy + 16);
         if (bottomHeight > 0) {
 
-            canvas.setColor(30, 109, 219, WATER_OPACITY);
+            canvas.setColor(30, 109, 219, opacity);
             canvas.fillRect(camPos.x, dy + 16, canvas.width, bottomHeight);
             canvas.setColor();
         }
@@ -142,7 +143,14 @@ export class Stage {
 
     public draw(canvas : Canvas, assets : Assets, tilesetIndex : number, camera : Camera) : void {
 
+        const BACKGROUND_WATER_OPACITY : number = 0.33;
+
         const tileset : Bitmap | undefined = assets.getBitmap(`tileset_${tilesetIndex}`);
+
+        if (this.backgroundWater && this.waterLevel > 0) {
+
+            this.drawWater(canvas, assets, camera, BACKGROUND_WATER_OPACITY);
+        }
 
         this.renderlayer.draw(canvas, tileset, camera);
     }
@@ -150,9 +158,11 @@ export class Stage {
 
     public drawForeground(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        if (this.waterLevel > 0) {
+        const FOREGROUND_WATER_OPACITY : number = 0.75;
 
-            this.drawWater(canvas, assets, camera);
+        if (!this.backgroundWater && this.waterLevel > 0) {
+
+            this.drawWater(canvas, assets, camera, FOREGROUND_WATER_OPACITY);
         }
 
         this.background.postDraw(canvas, assets);

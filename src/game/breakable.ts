@@ -153,7 +153,7 @@ export class Breakable extends CollisionObject {
         o.wallCollision(x1, y1 + Y_OFFSET, y2 - y1 - Y_OFFSET*2, 1, event);
         o.wallCollision(x2, y1 + Y_OFFSET, y2 - y1 - Y_OFFSET*2, -1, event);
 
-        if (!swapComparison) {
+        if (!swapComparison || this.type != BreakableType.Crate) {
 
             return;
         }

@@ -21,6 +21,7 @@
         {"name": "sun", "path": "sun.png"},
         {"name": "moon", "path": "moon.png"},
         {"name": "stars", "path": "stars.png", "repeatx": "true", "repeaty": "true"},
+        {"name": "cave_wall", "path": "cave_wall.png", "repeatx": "true", "repeaty": "true"},
 
         {"name": "breakable", "path": "breakable.png"},
         {"name": "splinter", "path": "splinter.png"},
@@ -54,6 +55,7 @@
         {"name": "shop", "path": "shop.tmx"},
         {"name": "dark_room", "path": "dark_room.tmx"},
         {"name": "beach", "path": "beach.tmx"},
+        {"name": "sunken_passage", "path": "sunken_passage.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

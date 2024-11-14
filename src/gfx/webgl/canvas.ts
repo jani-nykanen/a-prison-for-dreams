@@ -105,7 +105,7 @@ export class WebGLCanvas implements Canvas {
 
         this.meshCircleOut = createCircleOutMesh(gl, 64);
         
-        this.batch = new SpriteBatch(gl, 2048);
+        this.batch = new SpriteBatch(gl, 4096);
 
         // TODO: TEMPORARY PLACE, add function "hideCursor"
         // document.body.style.setProperty("cursor", "none");
