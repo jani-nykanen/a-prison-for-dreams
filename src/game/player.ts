@@ -1662,6 +1662,8 @@ export class Player extends CollisionObject {
     public isOrdinarilyAttacking = () : boolean => this.attacking && 
         this.powerAttackTimer <= 0 && 
         !this.downAttacking;
+    // TODO: I guess down attack is not attacking, then?
+    public isAttacking = () : boolean => this.attacking || this.shooting || this.powerAttackTimer > 0;
 
 
     public getKnockbackFactor() : number {

@@ -213,7 +213,7 @@ export class Background {
         const shiftx : number = (camPos.x/4) % bmpWall.width;
         const shifty : number = (camPos.y/4) % bmpWall.height;
 
-        const light : number = 255*(0.40 + 0.10*Math.sin(this.lightMagnitude));
+        const light : number = 255*(0.50 + 0.15*Math.sin(this.lightMagnitude));
 
         canvas.setColor(light, light, light);
         canvas.drawBitmap(bmpWall, Flip.None, 

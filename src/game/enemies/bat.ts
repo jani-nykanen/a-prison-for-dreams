@@ -103,6 +103,7 @@ export class Bat extends Enemy {
         if (this.mode == 2) {
 
             const dir : Vector = Vector.direction(this.pos, ppos);
+            const sign : number = player.isAttacking() ? -1 : 1;
 
             this.flip = ppos.x > this.pos.x ? Flip.Horizontal : Flip.None;
 
@@ -112,8 +113,8 @@ export class Bat extends Enemy {
                 return;
             }
 
-            this.target.x = dir.x*FOLLOW_SPEED;
-            this.target.y = dir.y*FOLLOW_SPEED;
+            this.target.x = sign*dir.x*FOLLOW_SPEED;
+            this.target.y = sign*dir.y*FOLLOW_SPEED;
 
             return;
         }
