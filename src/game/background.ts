@@ -32,6 +32,7 @@ export class Background {
     private height : number;
 
     private cloudPos : number = 0;
+    private lightMagnitude : number = 0;
 
     private snowflakes : Snowflake[];
 
@@ -79,6 +80,15 @@ export class Background {
         const CLOUD_SPEED : number = 1.0/2048.0;
 
         this.cloudPos = (this.cloudPos + CLOUD_SPEED*event.tick) % 1.0;
+    }
+
+
+    private updateCave(event : ProgramEvent) : void {
+
+        const LIGHT_SPEED : number = Math.PI*2/120; // Might want to rename this...
+
+        this.lightMagnitude = (this.lightMagnitude + LIGHT_SPEED*event.tick) % (Math.PI*2);
+
     }
 
 
@@ -203,8 +213,12 @@ export class Background {
         const shiftx : number = (camPos.x/4) % bmpWall.width;
         const shifty : number = (camPos.y/4) % bmpWall.height;
 
+        const light : number = 255*(0.40 + 0.10*Math.sin(this.lightMagnitude));
+
+        canvas.setColor(light, light, light);
         canvas.drawBitmap(bmpWall, Flip.None, 
             0, 0, shiftx, shifty, canvas.width, canvas.height, canvas.width, canvas.height);
+        canvas.setColor();
     }
 
 
@@ -248,6 +262,11 @@ export class Background {
         case BackgroundType.Coast:
 
             this.updateCoast(event);
+            break;
+
+        case BackgroundType.Cave:
+
+            this.updateCave(event);
             break;
 
         default:

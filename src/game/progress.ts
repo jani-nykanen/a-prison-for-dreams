@@ -192,6 +192,9 @@ export class Progress {
 
         this.health = this.maxHealth;
         this.bullets = this.maxBullets;
+
+        this.healthBarTarget = 1;
+        this.healthBarPos = 1;
     }
 
 

@@ -2,10 +2,11 @@ import { ProgramEvent } from "../../core/event.js";
 import { Flip } from "../../gfx/interface.js";
 import { Vector } from "../../math/vector.js";
 import { Player } from "../player.js";
-import { BASE_GRAVITY, Enemy } from "./enemy.js";
+import { Enemy } from "./enemy.js";
 
 
 const FOLLOW_SPEED : number = 0.50;
+const DROP_GRAVITY : number = 1.0;
 
 
 export class Bat extends Enemy {
@@ -32,8 +33,8 @@ export class Bat extends Enemy {
 
         this.target.y = 0.0;
 
-        this.friction.x = 0.015;
-        this.friction.y = 0.015;
+        this.friction.x = 0.025;
+        this.friction.y = 0.025;
 
         this.ignoreBottomLayer = true;
 
@@ -48,8 +49,8 @@ export class Bat extends Enemy {
         this.collisionBox.w = 8;
         this.collisionBox.h = 8;
 
-        this.hitbox.w = 8;
-        this.hitbox.h = 8;
+        this.hitbox.w = 10;
+        this.hitbox.h = 10;
     }
 
 
@@ -79,7 +80,7 @@ export class Bat extends Enemy {
 
             this.flip = Flip.Vertical;
             this.sprite.setFrame(4, 6);
-            if (this.speed.y >= BASE_GRAVITY || this.health < this.initialHealth) {
+            if (this.speed.y >= DROP_GRAVITY || this.health < this.initialHealth) {
 
                 this.mode = 2;
             }
@@ -121,7 +122,7 @@ export class Bat extends Enemy {
             Math.abs(this.pos.x - ppos.x) < DROP_ACTIVATE_DISTANCE) {
 
             this.mode = 1;
-            this.target.y = BASE_GRAVITY;
+            this.target.y = DROP_GRAVITY;
         }
     }
 }
