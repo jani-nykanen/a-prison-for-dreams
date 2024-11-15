@@ -8,6 +8,7 @@ import { Mushroom } from "./mushroom.js";
 import { Doppelganger } from "./doppelganger.js";
 import { Flail } from "./flail.js";
 import { Fish } from "./fish.js";
+import { Bat } from "./bat.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -22,5 +23,6 @@ export const getEnemyByID = (index : number) : Function =>
     Doppelganger,
     Flail,
     Fish,
+    Bat
 ]
 [index] ?? Slime;

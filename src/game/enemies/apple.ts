@@ -30,7 +30,7 @@ export class Apple extends Enemy {
         this.initialHealth = this.health;
         this.attackPower = 3;
 
-        this.dropProbability = 0.24;
+        this.dropProbability = 0.25;
 
         this.dir = 0;
 

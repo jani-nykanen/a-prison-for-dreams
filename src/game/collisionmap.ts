@@ -324,9 +324,9 @@ export class CollisionMap {
         const endx : number = startx + MARGIN*2;
         const endy : number = starty + MARGIN*2;
 
-        for (let x = startx; x <= endx; ++ x) {
+        for (let x : number = startx; x <= endx; ++ x) {
 
-            for (let y = starty; y <= endy; ++ y) {
+            for (let y : number = starty; y <= endy; ++ y) {
 
                 /*
                 if (x < 0 || y < 0 || x >= this.width || y >= this.height) {

@@ -203,6 +203,11 @@ export class Breakable extends CollisionObject {
 
         if (p.overlayObject(this)) {
 
+            if (p.destroyOnTouch()) {
+
+                p.kill(event);
+            }
+
             // TODO: Also check for more powerful charge attack (if I decide
             // to implement it)
             if (this.type == BreakableType.Rubble && p.getID() != 1) {
@@ -211,12 +216,8 @@ export class Breakable extends CollisionObject {
             }
 
             this.breakSelf(p.stats, Vector.direction(p.getPosition(), this.pos),event);
-            
             this.exist = false;
-            if (p.destroyOnTouch()) {
 
-                p.kill(event);
-            }
             return;
         }
 
