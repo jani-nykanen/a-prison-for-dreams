@@ -76,6 +76,7 @@
         {"name": "jump", "path": "jump.wav"},
         {"name": "jump2", "path": "jump2.wav"},
         {"name": "buzz", "path": "buzz.wav"},
+        {"name": "thwomp", "path": "thwomp.wav"},
 
         {"name": "hit", "path": "hit.wav"},
         {"name": "sword", "path": "sword.wav"},

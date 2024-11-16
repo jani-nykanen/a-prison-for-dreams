@@ -224,8 +224,7 @@ export class ObjectManager {
 
             // Spring mushroom
             case 65:
-
-                console.log("Lol");
+                
                 this.interactables.push(new Spring(dx, dy, bmpSpring));
                 break;
 

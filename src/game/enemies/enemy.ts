@@ -286,7 +286,11 @@ export class Enemy extends CollisionObject {
 
                 this.hurtID = attackID;
             }
-            this.speed.x = Math.sign(this.pos.x - p.getPosition().x)*KNOCKBACK_SPEED*this.knockbackFactor;
+
+            if (this.canBeMoved) {
+                
+                this.speed.x = Math.sign(this.pos.x - p.getPosition().x)*KNOCKBACK_SPEED*this.knockbackFactor;
+            }
 
             this.takeDamage(p.getPower(), p.stats, event, Vector.direction(ppos, this.pos));
         }
