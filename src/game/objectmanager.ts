@@ -32,6 +32,7 @@ import { Door } from "./interactables/door.js";
 import { Shopkeeper } from "./interactables/shopkeeper.js";
 import { Shop } from "./shop.js";
 import { Platform, PlatformType } from "./platform.js";
+import { Spring } from "./interactables/spring.js";
 
 
 export class ObjectManager {
@@ -132,6 +133,7 @@ export class ObjectManager {
         const bmpChest : Bitmap | undefined = event.assets.getBitmap("chest");
         const bmpPortal : Bitmap | undefined = event.assets.getBitmap("portal");
         const bmpShopkeeper : Bitmap | undefined = event.assets.getBitmap("shopkeeper");
+        const bmpSpring : Bitmap | undefined = event.assets.getBitmap("spring");
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -220,10 +222,17 @@ export class ObjectManager {
                 this.platforms.push(new Platform(dx, dy, PlatformType.VerticallyMoving + (objID - 15)))
                 break;
 
+            // Spring mushroom
+            case 65:
+
+                console.log("Lol");
+                this.interactables.push(new Spring(dx, dy, bmpSpring));
+                break;
+
             default:
                 
                 // Enemies
-                if (objID >= 17 && objID <= 48) {
+                if (objID >= 17 && objID <= 64) {
 
                     const o : Enemy = (new (getEnemyByID(objID - 17)).prototype.constructor(dx, dy)) as Enemy;
                     this.enemies.push(o);

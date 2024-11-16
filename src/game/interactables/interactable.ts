@@ -16,6 +16,7 @@ export class Interactable extends GameObject {
     protected bitmap : Bitmap | undefined = undefined;
     protected flip : Flip = Flip.None;
     protected sprite : Sprite;
+    protected spriteOffset : Vector;
 
     protected canBeInteracted : boolean = true;
 
@@ -25,6 +26,7 @@ export class Interactable extends GameObject {
         super(x, y, true);
 
         this.sprite = new Sprite(24, 24);
+        this.spriteOffset = new Vector();
 
         this.cameraCheckArea = new Vector(32, 32);
 
@@ -79,8 +81,8 @@ export class Interactable extends GameObject {
         }
 
         this.sprite.draw(canvas, this.bitmap, 
-            this.pos.x - this.sprite.width/2,
-            this.pos.y - 16, 
+            this.pos.x - this.sprite.width/2 + this.spriteOffset.x,
+            this.pos.y - 16 + this.spriteOffset.y, 
             this.flip);
     }
 
