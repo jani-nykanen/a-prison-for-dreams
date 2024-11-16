@@ -1542,6 +1542,19 @@ export class Player extends CollisionObject {
     } 
 
 
+    public bounce(amount : number) : void {
+        
+        this.speed.y = amount;
+        this.downAttacking = false;
+
+        this.swordHitBoxActive = false;
+
+        this.canUseRocketPack = true;
+        this.rocketPackReleased = false;
+        this.rocketPackActive = false;
+    }
+
+
     public performDownAttackJump() : boolean {
 
         const JUMP_SPEED : number = -3.0;
@@ -1550,15 +1563,7 @@ export class Player extends CollisionObject {
 
             return false;
         }
-
-        this.speed.y = JUMP_SPEED;
-        this.downAttacking = false;
-
-        this.swordHitBoxActive = false;
-
-        this.canUseRocketPack = true;
-        this.rocketPackReleased = false;
-        this.rocketPackActive = false;
+        this.bounce(JUMP_SPEED);
 
         return true;
     }
