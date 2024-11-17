@@ -57,7 +57,8 @@
         "Use ARROW KEYS or WASD to walk.",
         "Press SPACE, Z or J to jump.",
         "Press Ctrl, X or K to attack.",
-        "Press Shift, C or L to shoot."
+        "Press Shift, C or L to shoot.",
+        "Press DOWN to crouch and then\nSPACE, Z or J to high jump."
     ],
 
 
@@ -245,6 +246,13 @@
 
         "You obtain a MAGIC SNORKEL!",
         "Its magical capabilities allow\nyou to breathe underwater,\nmaking it possible to dive\nwithout fear or dying."
+    ],
+
+
+    "item4": [
+
+        "You obtain a PAIR OF SPRING\nBOOTS!",
+        "They are just ordinary leather\nboots, but they have springs\nin the bottom, allowing you\nto perform a high jump!\nHooray!"
     ]
 
 }

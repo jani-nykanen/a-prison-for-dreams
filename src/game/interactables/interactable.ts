@@ -73,7 +73,7 @@ export class Interactable extends GameObject {
     }
 
 
-    public draw(canvas : Canvas) : void {
+    public draw(canvas : Canvas, assets? : Assets) : void {
 
         if (!this.isActive() || this.bitmap === undefined) {
 

@@ -15,6 +15,8 @@ export class HintRenderer {
     private message : string = "";
     private startPos : Vector;
     private active : boolean = false;
+    private width : number = 0;
+    private height : number = 0;
 
     private fadeTimer : number = 0;
     private fadeMode : number = 0;
@@ -50,7 +52,8 @@ export class HintRenderer {
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
-        const YOFF : number = 24;
+        const TOP_OFF : number = 28;
+        const TEXT_YOFF_MODIFIER : number = -4;
 
         if (!this.active && this.fadeTimer <= 0) {
 
@@ -66,8 +69,11 @@ export class HintRenderer {
             alpha = this.fadeMode == 0 ? t : 1.0 - t;
         }
 
+        const dx : number = canvas.width/2 - this.width*4;
+        const dy : number = TOP_OFF - this.height*(16 + TEXT_YOFF_MODIFIER)/2;
+
         canvas.setColor(255, 255, 73, alpha);
-        canvas.drawText(bmpFont, this.message, canvas.width/2, YOFF, -8, 0, Align.Center);
+        canvas.drawText(bmpFont, this.message, dx, dy, -8, TEXT_YOFF_MODIFIER, Align.Left);
         canvas.setColor();
     }
 
@@ -80,6 +86,12 @@ export class HintRenderer {
         this.active = true;
         this.fadeTimer = FADE_TIME;
         this.fadeMode = 1;
+
+        const lines : string[] = this.message.split("\n");
+        this.width = Math.max(...lines.map((s : string) => s.length));
+        this.height = lines.length;
+
+        console.log(message, this.width, this.height);
     }
 
 

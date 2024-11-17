@@ -318,7 +318,7 @@ export class Player extends CollisionObject {
 
             if (this.ledgeTimer > 0 || this.underWater) {
 
-                this.highJumping = this.isFullyDown();
+                this.highJumping = this.stats.hasItem(Item.SpringBoots) && this.isFullyDown();
 
                 this.jumpTimer = this.highJumping ? JUMP_TIME_HIGH : JUMP_TIME_BASE;
                 this.ledgeTimer = 0.0;
@@ -705,7 +705,7 @@ export class Player extends CollisionObject {
         if (this.sprite.getRow() != 3 || this.sprite.getColumn() != 5) {
 
             this.sprite.animate(3, 3, 5, ANIMATION_SPEED, event.tick);
-            if (this.sprite.getColumn() == 5) {
+            if (this.stats.hasItem(Item.SpringBoots) && this.sprite.getColumn() == 5) {
 
                 event.audio.playSample(event.assets.getSample("charge"), CHARGE_VOLUME);
             }
@@ -948,7 +948,7 @@ export class Player extends CollisionObject {
             this.hurtTimer -= event.tick;
         }
 
-        if (this.isFullyDown()) {
+        if (this.stats.hasItem(Item.SpringBoots) && this.isFullyDown()) {
 
             this.crouchFlickerTimer = (this.crouchFlickerTimer + CROUCH_FLICKER_SPEED*event.tick) % 1.0;
         }
@@ -1420,7 +1420,9 @@ export class Player extends CollisionObject {
         const px : number = this.pos.x - 12;
         const py : number = this.pos.y - 11;
 
-        const crouchJumpFlicker : boolean = (this.isFullyDown() && this.crouchFlickerTimer >= 0.5);
+        const crouchJumpFlicker : boolean = this.stats.hasItem(Item.SpringBoots) &&
+            this.isFullyDown() && 
+            this.crouchFlickerTimer >= 0.5;
         const chargeFlicker : boolean = this.charging && this.chargeFlickerTimer < 0.5;
 
         if (crouchJumpFlicker) {

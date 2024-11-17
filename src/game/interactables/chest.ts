@@ -1,5 +1,6 @@
+import { Assets } from "../../core/assets.js";
 import { ProgramEvent } from "../../core/event.js";
-import { Bitmap, Flip } from "../../gfx/interface.js";
+import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { TextBox } from "../../ui/textbox.js";
 import { HintRenderer } from "../hintrenderer.js";
 import { Player, WaitType } from "../player.js";
@@ -11,7 +12,19 @@ const ITEM_HINT_LOOKUP : (number | undefined)[] = [
     undefined,
     2,
     3,
+    undefined,
+    4,
 ];
+
+
+const ITEM_GUIDE_LOOKUP : (number | undefined)[] = [
+
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    0
+]
 
 
 // Don't take this out of context, please.
@@ -31,6 +44,7 @@ export class Chest extends Interactable {
     private id : number = 0;
     private type : ChestType = ChestType.Unknown;
     private opened : boolean = false;
+    private guideID : number | undefined = undefined;
 
     private readonly dialogueBox : TextBox;
     private readonly hints : HintRenderer;
@@ -110,6 +124,12 @@ export class Chest extends Interactable {
                 this.canBeInteracted = false;
 
                 this.sprite.setFrame(4, this.type - 1);
+
+                this.guideID = ITEM_GUIDE_LOOKUP[this.id];
+                if (this.guideID !== undefined) {
+
+                    this.cameraCheckArea.y = 128; // TODO: Make constant
+                }
             }
         }
     }
@@ -178,10 +198,38 @@ export class Chest extends Interactable {
                     player.stats.markHintAsShown(hintID);
                 }
                 event.audio.resumeMusic();
+
+                this.guideID = ITEM_GUIDE_LOOKUP[this.id];
+                if (this.guideID !== undefined) {
+
+                    this.cameraCheckArea.y = 128;
+                }
             }); 
 
             player.setCheckpointObject(this);
         });
+    }
+
+
+    public draw(canvas : Canvas, assets : Assets) : void {
+
+        if (!this.isActive() || this.bitmap === undefined) {
+
+            return;
+        }
+
+        if (this.opened && this.guideID !== undefined) {
+
+            const bmpGuide : Bitmap | undefined = assets.getBitmap("guides");
+
+            canvas.drawBitmap(bmpGuide, Flip.None, 
+                this.pos.x - bmpGuide.width/2, this.pos.y - 48, 0, this.guideID*32, 96);
+        }
+
+        this.sprite.draw(canvas, this.bitmap, 
+            this.pos.x - this.sprite.width/2 + this.spriteOffset.x,
+            this.pos.y - 16 + this.spriteOffset.y, 
+            this.flip);
     }
 
 }

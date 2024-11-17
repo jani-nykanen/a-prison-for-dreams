@@ -473,7 +473,7 @@ export class ObjectManager {
 
         for (const o of this.interactables) {
 
-            o.draw(canvas);
+            o.draw(canvas, assets);
         }
 
         const bmpBreakable : Bitmap | undefined = assets.getBitmap("breakable");
