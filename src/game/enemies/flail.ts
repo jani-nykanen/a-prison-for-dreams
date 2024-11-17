@@ -45,7 +45,7 @@ export class Flail extends Enemy {
         
         const MAX_DISTANCE : number = 32;
         const DISTANCE_DELTA : number = MAX_DISTANCE/60;
-        const ROTATION_SPEED : number = Math.PI*2/120;
+        const ROTATION_SPEED : number = Math.PI*2/150;
 
         const ANIMATION_SPEED : number = 5;
 

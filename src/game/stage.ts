@@ -211,7 +211,7 @@ export class Stage {
 
             o.screenTransitionEvent?.(this.width*TILE_WIDTH, 1, this.rightExit, event);
         }
-        else if (this.leftExit !== undefined) {
+        if (this.leftExit !== undefined) {
 
             o.screenTransitionEvent?.(0, -1, this.leftExit, event);
         }

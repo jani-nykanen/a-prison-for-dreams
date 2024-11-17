@@ -61,6 +61,7 @@
         {"name": "sunken_passage", "path": "sunken_passage.tmx"},
         {"name": "cave", "path": "cave.tmx"},
         {"name": "grotto", "path": "grotto.tmx"},
+        {"name": "sewers", "path": "sewers.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
