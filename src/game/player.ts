@@ -54,7 +54,8 @@ export const enum WaitType {
 
     Unknown = 0,
     HoldingItem = 1,
-    WakingUp = 2
+    WakingUp = 2,
+    ToggleLever = 3,
 };
 
 
@@ -1654,6 +1655,11 @@ export class Player extends CollisionObject {
         case WaitType.HoldingItem:
 
             this.sprite.setFrame(7, 3);
+            break;
+
+        case WaitType.ToggleLever:
+
+            this.sprite.setFrame(8, 5);
             break;
 
         default:

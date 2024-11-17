@@ -11,6 +11,39 @@ const BASE_HEALTH_UP : number = 2;
 const BASE_BULLETS_UP : number = 2;
 
 
+const booleanArrayToListOfTrueValues = (arr : boolean[]) : number[] => {
+
+    const out : number[] = new Array<number> ();
+
+    for (let i : number = 0; i < arr.length; ++ i) {
+
+        if (arr[i]) {
+
+            out.push(i);
+        }
+    }
+    return out;
+}
+
+
+const listOfTrueValuesToBooleanArray = (values : number[]) : boolean[] => {
+
+    if (values.length == 0) {
+
+        return [] as boolean[];
+    }
+
+    const len : number = Math.max(...values);
+    const out : boolean[] = (new Array<boolean> (len + 1)).fill(false);
+
+    for (const v of values) {
+
+        out[v] = true;
+    }
+    return out;
+}
+
+
 export const LOCAL_STORAGE_KEY : string = "the_end_of_dreams__savedata_";
 
 
@@ -42,6 +75,7 @@ export class Progress {
 
     private hintShown : boolean[];
     private cutsceneWatched : boolean[];
+    private leversPulled : boolean[];
 
     private checkpointPosition : Vector;
 
@@ -62,6 +96,7 @@ export class Progress {
 
         this.hintShown = (new Array<boolean> (10)).fill(false);
         this.cutsceneWatched = (new Array<boolean> (16)).fill(false);
+        this.leversPulled = new Array<boolean> ();
 
         this.checkpointPosition = new Vector();
 
@@ -97,6 +132,7 @@ export class Progress {
 
         output["hints"] = Array.from(this.hintShown);
         output["cutscenes"] = Array.from(this.cutsceneWatched);
+        output["levers"] = booleanArrayToListOfTrueValues(this.leversPulled);
 
         output["checkpoint"] = {
             "x": this.checkpointPosition.x,
@@ -104,7 +140,6 @@ export class Progress {
         };
 
         output["money"] = this.money;
-
         output["area"] = this.areaName;
 
         return output;
@@ -246,6 +281,15 @@ export class Progress {
 
         return this.cutsceneWatched[id] ?? false;
     }
+
+
+    public markLeverPulled(id : number) : void {
+
+        this.leversPulled[id] = true;
+    }
+
+
+    public hasPulledLever = (id : number) : boolean => this.leversPulled[id] ?? false;
 
 
     public obtainHealthUp(id : number) : void {
@@ -433,6 +477,7 @@ export class Progress {
 
             this.hintShown = Array.from(json["hints"] ?? []) as boolean[];
             this.cutsceneWatched = Array.from(json["cutscenes"] ?? []) as boolean[];
+            this.leversPulled = listOfTrueValuesToBooleanArray(json["levers"] ?? []);
 
             this.money = Number(json["money"] ?? this.money);
 

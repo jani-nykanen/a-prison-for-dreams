@@ -34,6 +34,7 @@
         {"name": "shopkeeper", "path": "shopkeeper.png"},
         {"name": "platforms", "path": "platforms.png"},
         {"name": "spring", "path": "spring.png"},
+        {"name": "lever", "path": "lever.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},
@@ -58,6 +59,7 @@
         {"name": "beach", "path": "beach.tmx"},
         {"name": "sunken_passage", "path": "sunken_passage.tmx"},
         {"name": "cave", "path": "cave.tmx"},
+        {"name": "grotto", "path": "grotto.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
@@ -82,6 +84,7 @@
         {"name": "sword", "path": "sword.wav"},
         {"name": "kill", "path": "kill.wav"},
         {"name": "throw", "path": "throw.wav"},
+        {"name": "lever", "path": "lever.wav"},
 
         {"name": "hurt", "path": "hurt.wav"},
         {"name": "die", "path": "die.wav"},

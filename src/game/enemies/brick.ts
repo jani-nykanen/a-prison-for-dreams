@@ -42,6 +42,8 @@ export class Brick extends Enemy {
 
         this.hitbox.w = 14;
         this.hitbox.h = 16;
+
+        this.sprite.setFrame(0, 7);
     }
 
 

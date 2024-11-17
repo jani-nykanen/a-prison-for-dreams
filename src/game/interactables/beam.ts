@@ -3,6 +3,7 @@ import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Vector } from "../../math/vector.js";
 import { TextBox } from "../../ui/textbox.js";
 import { Player } from "../player.js";
+import { Progress } from "../progress.js";
 import { TILE_HEIGHT } from "../tilesize.js";
 import { Interactable } from "./interactable.js";
 
@@ -28,6 +29,18 @@ export class Beam extends Interactable {
     }
 
 
+    private disable(stats : Progress) : boolean {
+
+        if ((this.id <= 2 && stats.hasItem(this.id)) ||
+            (this.id >= 3 && this.id <= 4 && stats.hasPulledLever(this.id - 3))) {
+
+            this.exist = false;
+            return true;
+        } 
+        return false;
+    }
+
+
     protected updateEvent(event : ProgramEvent) : void {
         
         const MIN_WIDTH : number = 2;
@@ -42,15 +55,14 @@ export class Beam extends Interactable {
 
     protected playerEvent(player : Player, event : ProgramEvent, initial : boolean) : void {
         
-        if (player.stats.hasItem(this.id)) {
+        if (this.disable(player.stats)) {
 
-            this.exist = false;
             return;
         }
 
         if (!initial) {
 
-            player.wallCollision(this.pos.x, this.pos.y + TILE_HEIGHT/2, TILE_HEIGHT*3, 1, event);
+            player.wallCollision(this.pos.x - 4, this.pos.y + TILE_HEIGHT/2, TILE_HEIGHT*3, 1, event);
         }
     }
 

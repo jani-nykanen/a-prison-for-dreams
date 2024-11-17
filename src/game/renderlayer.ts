@@ -1,6 +1,7 @@
 import { Assets } from "../core/assets.js";
 import { ProgramEvent } from "../core/event.js";
 import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
+import { clamp } from "../math/utility.js";
 import { Vector } from "../math/vector.js";
 import { Tilemap } from "../tilemap/tilemap.js";
 import { Camera } from "./camera.js";
@@ -32,7 +33,7 @@ export class RenderLayer {
 
     }
 
-
+/*
     private getTile(layer : number, x : number, y : number, def : number = 0) : number {
 
         if (layer < 0 || layer >= this.layers.length ||
@@ -42,6 +43,7 @@ export class RenderLayer {
         }
         return this.layers[layer][y*this.width + x];
     }
+*/
 
 
     private drawLayer(canvas : Canvas, bmp : Bitmap,
@@ -53,7 +55,10 @@ export class RenderLayer {
 
             for (let x = startx; x <= endx; ++ x) {
 
-                const tileID : number = this.getTile(layer, x, y);
+                const tx : number = clamp(x, 0, this.width - 1);
+                const ty : number = clamp(y, 0, this.height - 1);
+
+                const tileID : number = this.layers[layer][ty*this.width + tx] // this.getTile(layer, x, y);
                 if (tileID == 0) {
 
                     continue;

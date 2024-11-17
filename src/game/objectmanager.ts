@@ -33,6 +33,7 @@ import { Shopkeeper } from "./interactables/shopkeeper.js";
 import { Shop } from "./shop.js";
 import { Platform, PlatformType } from "./platform.js";
 import { Spring } from "./interactables/spring.js";
+import { Lever } from "./interactables/lever.js";
 
 
 export class ObjectManager {
@@ -134,6 +135,7 @@ export class ObjectManager {
         const bmpPortal : Bitmap | undefined = event.assets.getBitmap("portal");
         const bmpShopkeeper : Bitmap | undefined = event.assets.getBitmap("shopkeeper");
         const bmpSpring : Bitmap | undefined = event.assets.getBitmap("spring");
+        const bmpLever : Bitmap | undefined = event.assets.getBitmap("lever");
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -226,6 +228,12 @@ export class ObjectManager {
             case 65:
                 
                 this.interactables.push(new Spring(dx, dy, bmpSpring));
+                break;
+
+            // Lever
+            case 66:
+
+                this.interactables.push(new Lever(dx, dy, id - 1, bmpLever, this.dialogueBox));
                 break;
 
             default:

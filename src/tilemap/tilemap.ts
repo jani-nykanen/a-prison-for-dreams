@@ -141,11 +141,6 @@ export class Tilemap {
 
     public getBooleanProperty(name : string) : boolean | undefined {
 
-        const str : string | undefined = this.properties.get(name);
-        if (str === undefined) {
-
-            return undefined;
-        }
-        return Boolean(str);
+        return this.properties.get(name) === "true";
     }
 }
