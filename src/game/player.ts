@@ -1368,8 +1368,6 @@ export class Player extends CollisionObject {
         if ((direction > 0 && this.speed.x > 0 && this.pos.x + TRIGGER_WIDTH/2 >= x) ||
             (direction < 0 && this.speed.x < 0 && this.pos.x - TRIGGER_WIDTH/2 <= x)   ) {
 
-            console.log(nextMap);
-
             event.transition.activate(true, TransitionType.Fade, 1.0/20.0, event,
                 (event : ProgramEvent) : void => {
 

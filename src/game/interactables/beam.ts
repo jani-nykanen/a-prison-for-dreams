@@ -32,7 +32,7 @@ export class Beam extends Interactable {
     private disable(stats : Progress) : boolean {
 
         if ((this.id <= 2 && stats.hasItem(this.id)) ||
-            (this.id >= 3 && this.id <= 4 && stats.hasPulledLever(this.id - 3))) {
+            (this.id >= 3 && this.id <= 5 && stats.hasPulledLever(this.id - 3))) {
 
             this.exist = false;
             return true;

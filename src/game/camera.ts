@@ -124,7 +124,7 @@ export class Camera {
     public followPoint(p : Vector) : void {
 
         const HORIZONTAL_THRESHOLD : number = 16;
-        const VERTICAL_THRESHOLD : number = 24;
+        const VERTICAL_THRESHOLD : number = 16;
 
         const X_OFFSET : number = 0;
         const Y_OFFSET : number = 0;

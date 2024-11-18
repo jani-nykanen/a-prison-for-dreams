@@ -90,8 +90,6 @@ export class HintRenderer {
         const lines : string[] = this.message.split("\n");
         this.width = Math.max(...lines.map((s : string) => s.length));
         this.height = lines.length;
-
-        console.log(message, this.width, this.height);
     }
 
 
