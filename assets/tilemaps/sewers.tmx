@@ -3,7 +3,7 @@
  <properties>
   <property name="background" type="int" value="3"/>
   <property name="background_water" type="bool" value="true"/>
-  <property name="door3" value="crossroads"/>
+  <property name="door2" value="warehouse"/>
   <property name="musicvolume" type="float" value="0.8"/>
   <property name="name" value="Ancient Sewers"/>
   <property name="npctype" type="int" value="0"/>

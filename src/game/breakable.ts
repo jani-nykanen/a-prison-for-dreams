@@ -114,7 +114,9 @@ export class Breakable extends CollisionObject {
         
         this.spawnSplinters();
 
-        if (progress !== undefined && Math.random() < DROP_PROBABILITY) {
+        if (this.type == BreakableType.Crate &&
+            progress !== undefined && 
+            Math.random() < DROP_PROBABILITY) {
         
             this.spawnCollectables(progress, dir);
         }
