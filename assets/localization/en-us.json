@@ -58,7 +58,8 @@
         "Press SPACE, Z or J to jump.",
         "Press Ctrl, X or K to attack.",
         "Press Shift, C or L to shoot.",
-        "Press DOWN to crouch and then\nSPACE, Z or J to high jump."
+        "Press DOWN to crouch and then\nSPACE, Z or J to high jump.",
+        "Hold down the attack button\nto charge a power attack."
     ],
 
 
@@ -253,6 +254,13 @@
 
         "You obtain a PAIR OF SPRING\nBOOTS!",
         "They are just ordinary leather\nboots, but they have springs\nin the bottom, allowing you\nto perform a high jump!\nHooray!"
+    ],
+
+
+    "item5": [
+
+        "You obtain an ETERNAL FLAME!",
+        "This magical flames makes\npossible to perform a power-\nful charge attack. Because\nthat's what magic fires\ndo."
     ]
 
 }

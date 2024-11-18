@@ -9,6 +9,7 @@ export const enum Item {
     Gun = 2,
     Snorkel = 3,
     SpringBoots = 4,
+    EternalFlame = 5,
 
 
     // Shop items

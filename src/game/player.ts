@@ -456,7 +456,8 @@ export class Player extends CollisionObject {
         
         const attackButton : InputState = event.input.getAction("attack");
         // Charge attack
-        if (!forceSecondAttack &&
+        if (this.stats.hasItem(Item.EternalFlame) &&
+            !forceSecondAttack &&
             this.charging && this.chargeType == ChargeType.Sword && 
             (attackButton & InputState.DownOrPressed) == 0) {
 
@@ -733,7 +734,7 @@ export class Player extends CollisionObject {
             this.sprite.getColumn() == LAST_FRAME - 1 &&
             this.sprite.getFrameTime() >= LAST_FRAME_RELEASE)) {
 
-            if (this.sprite.getColumn() == LAST_FRAME) {
+            if (this.stats.hasItem(Item.EternalFlame) && this.sprite.getColumn() == LAST_FRAME) {
 
                 this.charging = !buttonReleased;
                 if (this.charging) {

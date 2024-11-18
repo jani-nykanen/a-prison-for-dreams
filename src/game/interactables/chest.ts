@@ -14,6 +14,7 @@ const ITEM_HINT_LOOKUP : (number | undefined)[] = [
     3,
     undefined,
     4,
+    5,
 ];
 
 
@@ -23,7 +24,8 @@ const ITEM_GUIDE_LOOKUP : (number | undefined)[] = [
     undefined,
     undefined,
     undefined,
-    0
+    0,
+    1,
 ]
 
 
