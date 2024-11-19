@@ -4,7 +4,7 @@
   <property name="background" type="int" value="3"/>
   <property name="background_water" type="bool" value="true"/>
   <property name="door3" value="crossroads"/>
-  <property name="door4" value="warehouse"/>
+  <property name="door4" value="puzzle_tower"/>
   <property name="leftexit" value="sewers"/>
   <property name="musicvolume" type="float" value="0.8"/>
   <property name="name" value="Sunken Passage"/>
