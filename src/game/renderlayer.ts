@@ -8,6 +8,12 @@ import { Camera } from "./camera.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 
+const COLOR_BLOCKS : number[][] = [
+    [241, 244],
+    [242, 245],
+    [243, 246]
+];
+
 
 export class RenderLayer {
 
@@ -94,5 +100,34 @@ export class RenderLayer {
 
             this.drawLayer(canvas, tileset, i, startx, starty, endx, endy);
         }
+    }
+
+
+    public toggleColorBlocks(index : number) : Map<string, number> | undefined {
+
+        if (index < 0 || index >= 3) {
+
+            return undefined;
+        }
+
+        const output : Map<string, number> = new Map<string, number> ();
+        for (const l of this.layers) {
+
+            for (const k in l) {
+
+                const tile : number = l[k];
+                if (tile == COLOR_BLOCKS[index][0]) {
+
+                    l[k] = COLOR_BLOCKS[index][1];
+                    output.set(k, l[k]);
+                }
+                else if (tile == COLOR_BLOCKS[index][1]) {
+
+                    l[k] = COLOR_BLOCKS[index][0];
+                    output.set(k, l[k]);
+                }
+            }
+        }
+        return output;
     }
 }

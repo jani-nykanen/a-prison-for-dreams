@@ -6,17 +6,31 @@ import { Vector } from "../../math/vector.js";
 import { TextBox } from "../../ui/textbox.js";
 import { HintRenderer } from "../hintrenderer.js";
 import { Player, WaitType } from "../player.js";
+import { Stage } from "../stage.js";
 import { Interactable } from "./interactable.js";
 
 
-export class Spring extends Interactable {
+export class Switch extends Interactable {
 
 
-    constructor(x : number, y : number, bitmap : Bitmap | undefined) {
+    private id : number = 0;
+    private active : boolean = true;
+    private initialActivationState : boolean = true;
+
+    private readonly stage : Stage;
+
+
+    constructor(x : number, y : number, stage : Stage, id : number, active : boolean, bitmap : Bitmap | undefined) {
 
         super(x, y, bitmap);
 
-        this.sprite = new Sprite(32, 24);
+        this.sprite = new Sprite(24, 24);
+        this.sprite.setFrame(id, Number(!active));
+
+        this.id = id;
+        this.active = active;
+        this.initialActivationState = active;
+        this.stage = stage;
 
         // this.spriteOffset.y = -8;
     }
@@ -24,29 +38,28 @@ export class Spring extends Interactable {
 
     protected updateEvent(event : ProgramEvent) : void {
         
-        const FRAME_TIME : number = 6.0;
-
-        if (this.sprite.getColumn() != 0) {
-
-            this.sprite.animate(0, 1, 4, FRAME_TIME, event.tick);
-            if (this.sprite.getColumn() == 4) {
-
-                this.sprite.setFrame(0, 0);
-            }
-        }
+        this.active = this.stage.getSwitchState(this.id) != this.initialActivationState;
+        this.sprite.setFrame(this.id, Number(!this.active));
     }
 
 
     protected playerEvent(player : Player, event : ProgramEvent, initial : boolean) : void {
         
+        // TODO: Perhaps extend "Spring" to avoid duplicate code?
+
         const SPEED_EPS : number = -0.5;
 
-        const JUMP_SPEED : number = -4.75;
+        const JUMP_SPEED : number = -2.75;
 
-        const WIDTH : number = 24;
-        const COLLISION_Y : number = 8;
+        const WIDTH : number = 16;
+        const COLLISION_Y : number = 6;
         const NEAR_MARGIN : number = 2;
         const FAR_MARGIN : number = 8;
+
+        if (!this.active) {
+
+            return;
+        }
 
         const yspeed : number = player.getSpeed().y;
         if (yspeed < SPEED_EPS) {
@@ -72,9 +85,13 @@ export class Spring extends Interactable {
         }
 
         player.bounce(JUMP_SPEED);
-        event.audio.playSample(event.assets.getSample("jump"), 0.80);
 
-        this.sprite.setFrame(1, 0);
+        // TODO: Play "toggle" sound
+        event.audio.playSample(event.assets.getSample("lever"), 0.70);
+
+        this.sprite.setFrame(this.sprite.getColumn(), 1);
+        this.active = false;
+        this.stage.toggleSwitch(this.id);
     }
 
 }

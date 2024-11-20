@@ -35,6 +35,7 @@
         {"name": "platforms", "path": "platforms.png"},
         {"name": "spring", "path": "spring.png"},
         {"name": "lever", "path": "lever.png"},
+        {"name": "switch", "path": "switch.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},

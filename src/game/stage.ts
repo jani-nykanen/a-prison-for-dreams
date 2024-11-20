@@ -30,6 +30,8 @@ export class Stage {
     private leftExit : string | undefined = undefined;
     private rightExit : string | undefined = undefined;
 
+    private switches : boolean[];
+
     public readonly width : number;
     public readonly height : number;
 
@@ -60,6 +62,8 @@ export class Stage {
         this.rightExit = baseMap.getProperty("rightexit");
 
         this.baseMap = baseMap;
+    
+        this.switches = (new Array<boolean> (3)).fill(false);
     }
 
 
@@ -242,4 +246,18 @@ export class Stage {
 
         this.background.initialize(camera);
     }
+
+
+    public toggleSwitch(index : number) : void {
+
+        if (index < 0 || index >= 3) {
+
+            return;
+        }
+        this.switches[index] = !this.switches[index];
+        this.collisions.recomputeCollisionTiles(this.renderlayer.toggleColorBlocks(index));
+    }
+
+
+    public getSwitchState = (index : number) : boolean => this.switches[index] ?? false;
 }

@@ -40,12 +40,17 @@ const enum CollisionBit {
 }
 
 
+const START_INDEX : number = 257;
+
+
 export class CollisionMap {
 
 
     private collisions : number[];
     private width : number;
     private height : number;
+
+    private readonly collisionMap : Tilemap;
 
 
     constructor(baseMap : Tilemap, collisionMap : Tilemap) {
@@ -54,6 +59,9 @@ export class CollisionMap {
 
         this.width = baseMap.width;
         this.height = baseMap.height;
+
+        // This reference is only needed if the collision map is updated.
+        this.collisionMap = collisionMap;
 
         this.createCollisionTiles(baseMap, collisionMap);
     }
@@ -72,11 +80,10 @@ export class CollisionMap {
     private computeCollisionTile(x : number, y : number, baseMap : Tilemap, collisionMap : Tilemap) : void {
 
         const LAYER_NAME : string[] = ["bottom", "middle", "top"];
-        const START_INDEX : number = 257;
 
         const index : number = y*this.width + x;
 
-        for (let layer = 0; layer < 3; ++ layer) {
+        for (let layer : number = 0; layer < 3; ++ layer) {
 
             // TODO: A bit slow, maybe clone the tilemap and then do the magic?
             const tileID : number = baseMap.getTile(LAYER_NAME[layer], x, y);
@@ -85,7 +92,7 @@ export class CollisionMap {
                 continue;
             }
 
-            for (let i = 0; i < 4; ++ i) {
+            for (let i : number = 0; i < 4; ++ i) {
 
                 const colTileID : number = collisionMap.getIndexedTile(String(i + 1), tileID - 1) - START_INDEX;
                 if (colTileID < 0)
@@ -345,6 +352,25 @@ export class CollisionMap {
                 }
 
                 this.tileCollision(o, x, y, colID, event);
+            }
+        }
+    }
+
+
+    public recomputeCollisionTiles(tilesToUpdate : Map<string, number>) : void {
+
+        for (const k of tilesToUpdate.keys()) {
+
+            const tileID : number = tilesToUpdate.get(k);
+
+            this.collisions[k] = 0;
+            for (let i : number = 0; i < 4; ++ i) {
+
+                const colTileID : number = this.collisionMap.getIndexedTile(String(i + 1), tileID - 1) - START_INDEX;
+                if (colTileID < 0)
+                    continue;
+
+                this.collisions[k] |= (1 << colTileID);
             }
         }
     }

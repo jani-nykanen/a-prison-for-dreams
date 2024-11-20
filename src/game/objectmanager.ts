@@ -34,6 +34,7 @@ import { Shop } from "./shop.js";
 import { Platform, PlatformType } from "./platform.js";
 import { Spring } from "./interactables/spring.js";
 import { Lever } from "./interactables/lever.js";
+import { Switch } from "./interactables/switch.js";
 
 
 export class ObjectManager {
@@ -136,6 +137,7 @@ export class ObjectManager {
         const bmpShopkeeper : Bitmap | undefined = event.assets.getBitmap("shopkeeper");
         const bmpSpring : Bitmap | undefined = event.assets.getBitmap("spring");
         const bmpLever : Bitmap | undefined = event.assets.getBitmap("lever");
+        const bmpSwitch : Bitmap | undefined = event.assets.getBitmap("switch");
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -234,6 +236,17 @@ export class ObjectManager {
             case 66:
 
                 this.interactables.push(new Lever(dx, dy, id - 1, bmpLever, this.dialogueBox));
+                break;
+
+            // Switches
+            case 67:
+            case 68:
+            case 69:
+            case 70:
+            case 71:
+            case 72:
+
+                this.interactables.push(new Switch(dx, dy, stage, (objID - 67) % 3, objID <= 69, bmpSwitch));
                 break;
 
             default:
