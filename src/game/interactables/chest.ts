@@ -127,10 +127,13 @@ export class Chest extends Interactable {
 
                 this.sprite.setFrame(4, this.type - 1);
 
-                this.guideID = ITEM_GUIDE_LOOKUP[this.id];
-                if (this.guideID !== undefined) {
+                if (this.type == ChestType.Treasure) {
 
-                    this.cameraCheckArea.y = 128; // TODO: Make constant
+                    this.guideID = ITEM_GUIDE_LOOKUP[this.id];
+                    if (this.guideID !== undefined) {
+
+                        this.cameraCheckArea.y = 128; // TODO: Make constant
+                    }
                 }
             }
         }
@@ -191,21 +194,24 @@ export class Chest extends Interactable {
 
                 player.stats.save();
 
-                const hintID : number | undefined = ITEM_HINT_LOOKUP[this.id];
-                if (hintID !== undefined) {
+                if (this.type == ChestType.Treasure) {
 
-                    this.hints.activate(this.pos, (event.localization?.getItem("hints") ?? [])[hintID] ?? "null");
+                    const hintID : number | undefined = ITEM_HINT_LOOKUP[this.id];
+                    if (hintID !== undefined) {
 
-                    // This is actually redundant now
-                    player.stats.markHintAsShown(hintID);
+                        this.hints.activate(this.pos, (event.localization?.getItem("hints") ?? [])[hintID] ?? "null");
+
+                        // This is actually redundant now
+                        player.stats.markHintAsShown(hintID);
+                    }
+
+                    this.guideID = ITEM_GUIDE_LOOKUP[this.id];
+                    if (this.guideID !== undefined) {
+    
+                        this.cameraCheckArea.y = 128;
+                    }
                 }
                 event.audio.resumeMusic();
-
-                this.guideID = ITEM_GUIDE_LOOKUP[this.id];
-                if (this.guideID !== undefined) {
-
-                    this.cameraCheckArea.y = 128;
-                }
             }); 
 
             player.setCheckpointObject(this);

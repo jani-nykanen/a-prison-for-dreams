@@ -269,7 +269,7 @@ export class Player extends CollisionObject {
 
         const wasCrouching : boolean = this.crouching;
 
-        this.crouching = this.touchSurface && event.input.stick.y > THRESHOLD;
+        this.crouching = !this.underWater && this.touchSurface && event.input.stick.y > THRESHOLD;
         if (this.crouching && !wasCrouching) {
 
             this.charging = false;
