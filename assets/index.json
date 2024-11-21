@@ -115,7 +115,8 @@
 
         {"name": "graveyard", "path": "graveyard.ogg"},
         {"name": "titlescreen", "path": "titlescreen.ogg"},
-        {"name": "forest", "path": "forest.ogg"}
+        {"name": "forest", "path": "forest.ogg"},
+        {"name": "cave", "path": "cave.ogg"}
     ],
 
     "documentPath": "assets/localization/",

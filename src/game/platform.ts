@@ -51,12 +51,18 @@ export class Platform extends GameObject {
 
             this.dir = Math.floor(this.pos.x/TILE_WIDTH) == 0 ? 1 : -1;
             this.friction.x = BASE_FRICTION;
+
+            this.speed.x = this.dir*BASE_SPEED;
+
             break;
 
         case PlatformType.VerticallyMoving:
 
             this.dir = Math.floor(this.pos.y/TILE_HEIGHT) == 0 ? 1 : -1;
             this.friction.y = BASE_FRICTION;
+
+            this.speed.y = this.dir*BASE_SPEED;
+
             break;
 
         default:

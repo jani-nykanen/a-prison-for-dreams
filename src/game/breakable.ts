@@ -62,6 +62,13 @@ export class Breakable extends CollisionObject {
 
         this.splinters = splinters;
         this.collectables = collectables;
+
+        // This fixes some problems
+        if (this.type == BreakableType.Rubble) {
+
+            this.collisionBox.w = 8;
+            this.collisionBox.h = 8;
+        }
     }
 
 

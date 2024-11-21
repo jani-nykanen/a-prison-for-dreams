@@ -4,7 +4,8 @@
   <property name="background" type="int" value="3"/>
   <property name="door1" value="grotto"/>
   <property name="leftexit" value="sunken_passage"/>
-  <property name="musicvolume" type="float" value="0.8"/>
+  <property name="music" value="cave"/>
+  <property name="musicvolume" type="float" value="0.5"/>
   <property name="name" value="Mushroom Cave"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>

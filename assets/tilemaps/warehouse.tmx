@@ -4,7 +4,8 @@
   <property name="background_water" type="bool" value="true"/>
   <property name="door2" value="sewers"/>
   <property name="door4" value="sewers"/>
-  <property name="musicvolume" type="float" value="0.8"/>
+  <property name="music" value="cave"/>
+  <property name="musicvolume" type="float" value="0.3"/>
   <property name="name" value="Warehouse"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>
