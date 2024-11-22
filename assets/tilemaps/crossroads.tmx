@@ -11,7 +11,7 @@
   <property name="musicvolume" type="float" value="0.8"/>
   <property name="name" value="Woodcutter's Path"/>
   <property name="npctype" type="int" value="0"/>
-  <property name="rightexit" value="town"/>
+  <property name="rightexit" value="hills"/>
   <property name="tileset" type="int" value="1"/>
   <property name="water_level" type="int" value="0"/>
  </properties>

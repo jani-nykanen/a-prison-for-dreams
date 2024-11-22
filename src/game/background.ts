@@ -10,6 +10,14 @@ import { Vector } from "../math/vector.js";
 import { Assets } from "../core/assets.js";
 import { Sprite } from "../gfx/sprite.js";
 import { Snowflake } from "./snowflake.js";
+import { RGBA } from "../math/rgba.js";
+
+
+const SKY_COLOR_1 : RGBA = new RGBA(73, 182, 255);
+const SKY_COLOR_2 : RGBA = new RGBA(0, 0, 0);
+
+const CLOUD_COLOR_MOD_1 : RGBA = new RGBA();
+const CLOUD_COLOR_MOD_2 : RGBA = new RGBA(0.28, 0.71, 1.0);
 
 
 export const enum BackgroundType {
@@ -19,9 +27,7 @@ export const enum BackgroundType {
     Coast = 1,
     Forest = 2,
     Cave = 3,
-    Mountains = 4,
-    CastleInterior = 5,
-    CastleOuterior = 6,
+    NightSky = 4,
 };
 
 
@@ -46,10 +52,7 @@ export class Background {
     }
 
 
-    private hasSnowflakes = () : boolean => 
-        this.type == BackgroundType.Graveyard ||
-        this.type == BackgroundType.Mountains ||
-        this.type == BackgroundType.CastleOuterior;
+    private hasSnowflakes = () : boolean => this.type == BackgroundType.Graveyard;
 
 
     private initializeGraveyard(camera : Camera) : void {
@@ -75,7 +78,7 @@ export class Background {
     }
 
 
-    private updateGraveyard(event : ProgramEvent) : void {
+    private updateClouds(event : ProgramEvent) : void {
 
         const CLOUD_SPEED : number = 1.0/2048.0;
 
@@ -92,7 +95,9 @@ export class Background {
     }
 
 
-    private drawDefaultSky(canvas : Canvas, assets : Assets) : void {
+    private drawDefaultSky(canvas : Canvas, assets : Assets, backgroundColor : RGBA) : void {
+
+        canvas.clear(backgroundColor.r, backgroundColor.g, backgroundColor.b);
 
         const bmpStars : Bitmap | undefined = assets.getBitmap("stars");
         canvas.drawBitmap(bmpStars, Flip.None, 0, 0, 0, 0, canvas.width, canvas.height, canvas.width, canvas.height);
@@ -105,15 +110,7 @@ export class Background {
     }
 
 
-    private drawGraveyard(canvas : Canvas, assets : Assets, camera : Camera) : void {
-
-        canvas.clear(255, 255, 255);
-
-        const bmpMoon : Bitmap | undefined  = assets.getBitmap("moon");
-        if (bmpMoon !== undefined) {
-
-            canvas.drawBitmap(bmpMoon, Flip.None, canvas.width - bmpMoon.width - 16, 16);
-        }
+    private drawClouds(canvas : Canvas, assets : Assets, camera : Camera, colorMod : RGBA ) : void {
 
         const bmpClouds : Bitmap | undefined  = assets.getBitmap("clouds_0");
         if (bmpClouds === undefined) {
@@ -128,7 +125,7 @@ export class Background {
 
             const color : number = 255 - y*73;
 
-            canvas.setColor(color, color, color);
+            canvas.setColor(colorMod.r*color, colorMod.g*color, colorMod.b*color);
 
             const shiftx : number = -((camPos.x/(8 + y*8) + this.cloudPos*bmpClouds.width*(3 - y) ) % bmpClouds.width);
             const dy : number = 96 - camPos.y/8 - y*24;
@@ -143,9 +140,23 @@ export class Background {
     }
 
 
+    private drawGraveyard(canvas : Canvas, assets : Assets, camera : Camera) : void {
+
+        canvas.clear(255, 255, 255);
+
+        const bmpMoon : Bitmap | undefined  = assets.getBitmap("moon");
+        if (bmpMoon !== undefined) {
+
+            canvas.drawBitmap(bmpMoon, Flip.None, canvas.width - bmpMoon.width - 16, 16);
+        }
+
+        this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_1);
+    }
+
+
     private drawCoast(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        this.drawDefaultSky(canvas, assets);
+        this.drawDefaultSky(canvas, assets, SKY_COLOR_1);
 
         const bmpClouds : Bitmap | undefined  = assets.getBitmap("clouds_1");
         if (bmpClouds === undefined) {
@@ -174,7 +185,7 @@ export class Background {
 
     private drawForest(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        this.drawDefaultSky(canvas, assets);
+        this.drawDefaultSky(canvas, assets, SKY_COLOR_1);
 
         const bmpForest : Bitmap | undefined  = assets.getBitmap("forest");
         if (bmpForest === undefined) {
@@ -222,6 +233,13 @@ export class Background {
     }
 
 
+    private drawNightSky(canvas : Canvas, assets : Assets, camera : Camera) : void {
+
+        this.drawDefaultSky(canvas, assets, SKY_COLOR_2);
+        this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_2);
+    }
+
+
     private postDrawGraveyard(canvas : Canvas) : void {
 
         canvas.setColor(0, 0, 0, 0.5);
@@ -255,8 +273,9 @@ export class Background {
         switch (this.type) {
 
         case BackgroundType.Graveyard:
+        case BackgroundType.NightSky:
 
-            this.updateGraveyard(event);
+            this.updateClouds(event);
             break;
 
         case BackgroundType.Coast:
@@ -307,6 +326,11 @@ export class Background {
 
             this.drawCaveBackground(canvas, assets, camera);
             break;
+
+        case BackgroundType.NightSky:
+
+            this.drawNightSky(canvas, assets, camera);
+            return;
 
         default:
 

@@ -65,6 +65,8 @@
         {"name": "sewers", "path": "sewers.tmx"},
         {"name": "warehouse", "path": "warehouse.tmx"},
         {"name": "puzzle_tower", "path": "puzzle_tower.tmx"},
+        {"name": "hills", "path": "hills.tmx"},
+        {"name": "town", "path": "town.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
