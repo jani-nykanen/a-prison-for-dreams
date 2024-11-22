@@ -13,11 +13,8 @@ import { Snowflake } from "./snowflake.js";
 import { RGBA } from "../math/rgba.js";
 
 
-const SKY_COLOR_1 : RGBA = new RGBA(73, 182, 255);
-const SKY_COLOR_2 : RGBA = new RGBA(0, 0, 0);
-
-const CLOUD_COLOR_MOD_1 : RGBA = new RGBA();
-const CLOUD_COLOR_MOD_2 : RGBA = new RGBA(0.28, 0.71, 1.0);
+const CLOUD_COLOR_MOD_1 : RGBA = new RGBA(1.0);
+const CLOUD_COLOR_MOD_2 : RGBA = new RGBA(182/255, 219/255, 1.0);
 
 
 export const enum BackgroundType {
@@ -78,11 +75,11 @@ export class Background {
     }
 
 
-    private updateClouds(event : ProgramEvent) : void {
+    private updateClouds(speedMod : number, event : ProgramEvent) : void {
 
         const CLOUD_SPEED : number = 1.0/2048.0;
 
-        this.cloudPos = (this.cloudPos + CLOUD_SPEED*event.tick) % 1.0;
+        this.cloudPos = (this.cloudPos + speedMod*CLOUD_SPEED*event.tick) % 1.0;
     }
 
 
@@ -95,9 +92,7 @@ export class Background {
     }
 
 
-    private drawDefaultSky(canvas : Canvas, assets : Assets, backgroundColor : RGBA) : void {
-
-        canvas.clear(backgroundColor.r, backgroundColor.g, backgroundColor.b);
+    private drawDefaultSky(canvas : Canvas, assets : Assets) : void {
 
         const bmpStars : Bitmap | undefined = assets.getBitmap("stars");
         canvas.drawBitmap(bmpStars, Flip.None, 0, 0, 0, 0, canvas.width, canvas.height, canvas.width, canvas.height);
@@ -110,7 +105,22 @@ export class Background {
     }
 
 
-    private drawClouds(canvas : Canvas, assets : Assets, camera : Camera, colorMod : RGBA ) : void {
+    private drawMoon(canvas : Canvas, assets : Assets, id : number = 0) : void {
+
+        const bmpMoon : Bitmap | undefined  = assets.getBitmap("moon");
+        if (bmpMoon !== undefined) {
+
+            canvas.drawBitmap(bmpMoon, 
+                Flip.None, 
+                canvas.width - 96, 16, 
+                id*64, 0, 64, 64);
+        }
+
+    }
+
+
+    private drawClouds(canvas : Canvas, assets : Assets, camera : Camera, 
+        colorMod : RGBA, shifty : number = 0.0) : void {
 
         const bmpClouds : Bitmap | undefined  = assets.getBitmap("clouds_0");
         if (bmpClouds === undefined) {
@@ -128,7 +138,7 @@ export class Background {
             canvas.setColor(colorMod.r*color, colorMod.g*color, colorMod.b*color);
 
             const shiftx : number = -((camPos.x/(8 + y*8) + this.cloudPos*bmpClouds.width*(3 - y) ) % bmpClouds.width);
-            const dy : number = 96 - camPos.y/8 - y*24;
+            const dy : number = 96 - (camPos.y + shifty)/8 - y*24;
 
             for (let x : number = -1; x < count; ++ x) {
 
@@ -144,19 +154,14 @@ export class Background {
 
         canvas.clear(255, 255, 255);
 
-        const bmpMoon : Bitmap | undefined  = assets.getBitmap("moon");
-        if (bmpMoon !== undefined) {
-
-            canvas.drawBitmap(bmpMoon, Flip.None, canvas.width - bmpMoon.width - 16, 16);
-        }
-
+        this.drawMoon(canvas, assets, 0);
         this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_1);
     }
 
 
     private drawCoast(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        this.drawDefaultSky(canvas, assets, SKY_COLOR_1);
+        this.drawDefaultSky(canvas, assets);
 
         const bmpClouds : Bitmap | undefined  = assets.getBitmap("clouds_1");
         if (bmpClouds === undefined) {
@@ -185,7 +190,7 @@ export class Background {
 
     private drawForest(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        this.drawDefaultSky(canvas, assets, SKY_COLOR_1);
+        this.drawDefaultSky(canvas, assets);
 
         const bmpForest : Bitmap | undefined  = assets.getBitmap("forest");
         if (bmpForest === undefined) {
@@ -235,8 +240,10 @@ export class Background {
 
     private drawNightSky(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        this.drawDefaultSky(canvas, assets, SKY_COLOR_2);
-        this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_2);
+        canvas.clear(0, 0, 0);
+
+        this.drawMoon(canvas, assets, 1);
+        this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_2, -240);
     }
 
 
@@ -273,9 +280,8 @@ export class Background {
         switch (this.type) {
 
         case BackgroundType.Graveyard:
-        case BackgroundType.NightSky:
 
-            this.updateClouds(event);
+            this.updateClouds(1.0, event);
             break;
 
         case BackgroundType.Coast:
@@ -286,6 +292,11 @@ export class Background {
         case BackgroundType.Cave:
 
             this.updateCave(event);
+            break;
+
+        case BackgroundType.NightSky:
+
+            this.updateClouds(2.0, event);
             break;
 
         default:
