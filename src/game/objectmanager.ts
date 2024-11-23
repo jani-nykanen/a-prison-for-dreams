@@ -249,6 +249,12 @@ export class ObjectManager {
                 this.interactables.push(new Switch(dx, dy, stage, (objID - 67) % 3, objID <= 69, bmpSwitch));
                 break;
 
+            // Swing
+            case 73:
+
+                this.platforms.push(new Platform(dx, dy, PlatformType.Swing));
+                break;
+
             default:
                 
                 // Enemies
