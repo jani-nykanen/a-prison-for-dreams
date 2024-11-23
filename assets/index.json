@@ -69,6 +69,9 @@
         {"name": "hills", "path": "hills.tmx"},
         {"name": "town", "path": "town.tmx"},
         {"name": "house1", "path": "house1.tmx"},
+        {"name": "house2", "path": "house2.tmx"},
+        {"name": "house3", "path": "house3.tmx"},
+
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

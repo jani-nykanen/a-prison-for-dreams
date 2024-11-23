@@ -78,6 +78,9 @@ export class Door extends Interactable {
                 this.opened = true;
 
                 event.audio.playSample(event.assets.getSample("choose"), 0.50);
+
+                player.setPose(Pose.UseDoor);
+                player.setPosition(this.pos.x, this.pos.y, false);
             }
             else {
 

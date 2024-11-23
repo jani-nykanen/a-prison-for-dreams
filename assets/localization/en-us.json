@@ -272,6 +272,27 @@
 
         "You obtain an ETERNAL FLAME!",
         "This magical flames makes\npossible to perform a power-\nful charge attack. Because\nthat's what magic fires\ndo."
+    ],
+
+
+    "item6": [
+
+        "You obtain a RED KEY!",
+        "Knowing that it this key only\nopens red doors makes you\nsee red."
+    ],
+
+
+    "item7": [
+
+        "You obtain a BLUE KEY!",
+        "Not opening a blue door with\nthis key makes you feel blue."
+    ],
+
+
+    "item8": [
+
+        "You obtain a PURPLE KEY!",
+        "It is purple like the face\nof a choking baby, hence\nit only opens purple\ndoors... or something\nlike that."
     ]
 
 }

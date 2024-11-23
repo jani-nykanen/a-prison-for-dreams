@@ -265,6 +265,10 @@ export class ObjectManager {
                     stage.baseMap.getProperty(`door${id - 1}`), 
                     this.mapTransition, this.dialogueBox,
                     objID - 74, bmpDoors));
+                if (!resetPlayer && id - 1 == this.spawnId) {
+
+                    this.player.setPosition(dx, dy, resetPlayer);
+                }
                 break;
 
             default:
