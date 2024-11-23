@@ -11,6 +11,7 @@ const BASE_HEALTH_UP : number = 2;
 const BASE_BULLETS_UP : number = 2;
 
 
+// No, not "truth" values, but a list of values that a true...
 const booleanArrayToListOfTrueValues = (arr : boolean[]) : number[] => {
 
     const out : number[] = new Array<number> ();
@@ -76,6 +77,7 @@ export class Progress {
     private hintShown : boolean[];
     private cutsceneWatched : boolean[];
     private leversPulled : boolean[];
+    private doorsOpened : boolean[];
 
     private checkpointPosition : Vector;
 
@@ -97,6 +99,7 @@ export class Progress {
         this.hintShown = (new Array<boolean> (10)).fill(false);
         this.cutsceneWatched = (new Array<boolean> (16)).fill(false);
         this.leversPulled = new Array<boolean> ();
+        this.doorsOpened = new Array<boolean> ();
 
         this.checkpointPosition = new Vector();
 
@@ -133,6 +136,7 @@ export class Progress {
         output["hints"] = Array.from(this.hintShown);
         output["cutscenes"] = Array.from(this.cutsceneWatched);
         output["levers"] = booleanArrayToListOfTrueValues(this.leversPulled);
+        output["doors"] = booleanArrayToListOfTrueValues(this.doorsOpened);
 
         output["checkpoint"] = {
             "x": this.checkpointPosition.x,
@@ -290,6 +294,15 @@ export class Progress {
 
 
     public hasPulledLever = (id : number) : boolean => this.leversPulled[id] ?? false;
+
+
+    public markDoorOpened(id : number) : void {
+
+        this.doorsOpened[id] = true;
+    }
+
+
+    public isDoorOpen = (id : number) : boolean => this.doorsOpened[id] ?? false;
 
 
     public obtainHealthUp(id : number) : void {
@@ -478,6 +491,7 @@ export class Progress {
             this.hintShown = Array.from(json["hints"] ?? []) as boolean[];
             this.cutsceneWatched = Array.from(json["cutscenes"] ?? []) as boolean[];
             this.leversPulled = listOfTrueValuesToBooleanArray(json["levers"] ?? []);
+            this.doorsOpened = listOfTrueValuesToBooleanArray(json["doors"] ?? []);
 
             this.money = Number(json["money"] ?? this.money);
 

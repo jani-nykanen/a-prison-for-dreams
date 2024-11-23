@@ -36,6 +36,7 @@
         {"name": "spring", "path": "spring.png"},
         {"name": "lever", "path": "lever.png"},
         {"name": "switch", "path": "switch.png"},
+        {"name": "locked_doors", "path": "locked_doors.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},
@@ -67,6 +68,7 @@
         {"name": "puzzle_tower", "path": "puzzle_tower.tmx"},
         {"name": "hills", "path": "hills.tmx"},
         {"name": "town", "path": "town.tmx"},
+        {"name": "house1", "path": "house1.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

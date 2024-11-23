@@ -138,6 +138,7 @@ export class ObjectManager {
         const bmpSpring : Bitmap | undefined = event.assets.getBitmap("spring");
         const bmpLever : Bitmap | undefined = event.assets.getBitmap("lever");
         const bmpSwitch : Bitmap | undefined = event.assets.getBitmap("switch");
+        const bmpDoors : Bitmap | undefined = event.assets.getBitmap("locked_doors");
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -153,7 +154,7 @@ export class ObjectManager {
                 
                 this.interactables.push(new Door(dx, dy, id - 1,
                     stage.baseMap.getProperty(`door${id - 1}`), 
-                    this.mapTransition));
+                    this.mapTransition, this.dialogueBox));
                 // Fallthrough
             // Player
             case 1:
@@ -253,6 +254,17 @@ export class ObjectManager {
             case 73:
 
                 this.platforms.push(new Platform(dx, dy, PlatformType.Swing));
+                break;
+
+            // Locked doors
+            case 74:
+            case 75:
+            case 76:
+
+                this.interactables.push(new Door(dx, dy, id - 1,
+                    stage.baseMap.getProperty(`door${id - 1}`), 
+                    this.mapTransition, this.dialogueBox,
+                    objID - 74, bmpDoors));
                 break;
 
             default:

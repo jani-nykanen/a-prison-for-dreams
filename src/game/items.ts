@@ -10,7 +10,10 @@ export const enum Item {
     Snorkel = 3,
     SpringBoots = 4,
     EternalFlame = 5,
-
+    RedKey = 6,
+    BlueKey = 7,
+    PurpleKey = 8,
+    
 
     // Shop items
     ExtraHealth = 16,
