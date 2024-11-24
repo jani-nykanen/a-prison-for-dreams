@@ -75,7 +75,7 @@ export class Enemy extends CollisionObject {
 
         this.friction = new Vector(0.10, 0.15);
 
-        this.coinTypeWeights = [1.0, 0.0, 0.0];
+        this.coinTypeWeights = [0.95, 0.05, 0.0];
     }
 
 

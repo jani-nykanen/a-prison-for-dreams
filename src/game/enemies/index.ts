@@ -10,6 +10,8 @@ import { Flail } from "./flail.js";
 import { Fish } from "./fish.js";
 import { Bat } from "./bat.js";
 import { Brick } from "./brick.js";
+import { Hog } from "./hog.js";
+import { Bee } from "./bee.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -25,6 +27,8 @@ export const getEnemyByID = (index : number) : Function =>
     Flail,
     Fish,
     Bat,
-    Brick
+    Brick,
+    Hog,
+    Bee
 ]
 [index] ?? Slime;

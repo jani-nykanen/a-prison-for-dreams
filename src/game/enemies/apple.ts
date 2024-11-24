@@ -106,7 +106,7 @@ export class Apple extends Enemy {
     }
 
 
-    protected playerEvent(player: Player, event: ProgramEvent): void {
+    protected playerEvent(player : Player, event : ProgramEvent) : void {
         
         const FOLLOW_DISTANCE : number = 64;
 
