@@ -61,7 +61,7 @@
         "Press DOWN to crouch and then\nSPACE, Z or J to high jump.",
         "Hold down the attack button\nto charge a power attack.",
         "Hit bricks with your head\nto break them.",
-        "Press DOWN + ATTACK\nafter jumping to do\na down attack."
+        "Press DOWN + ATTACK after\njumping to do a down attack."
     ],
 
 
@@ -300,8 +300,8 @@
 
     "item9": [
 
-        "You obtain A POGO STICK!",
-        "Following some hazy dream\nlogic (because of course),\nit allows you to perform\na down attack."
+        "You obtain a THUMB DOWN!",
+        "All this sudden negativity\ngives you motivation to\nlearn a down attack."
     ]
 
 }

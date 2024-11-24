@@ -13,7 +13,7 @@ export const enum Item {
     RedKey = 6,
     BlueKey = 7,
     PurpleKey = 8,
-    PogoStick = 9,
+    ThumbDown = 9,
     
 
     // Shop items

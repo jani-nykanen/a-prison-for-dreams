@@ -486,7 +486,8 @@ export class Player extends CollisionObject {
             event.audio.playSample(event.assets.getSample("sword"), 0.90);
 
             // Down attack
-            if (!this.underWater &&
+            if (this.stats.hasItem(Item.ThumbDown) &&
+                !this.underWater &&
                 !forceSecondAttack &&
                 !this.touchSurface && 
                 event.input.stick.y >= DOWN_ATTACK_STICK_Y_THRESHOLD) {

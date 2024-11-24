@@ -30,6 +30,10 @@ const ITEM_GUIDE_LOOKUP : (number | undefined)[] = [
     undefined,
     0,
     1,
+    undefined,
+    undefined,
+    undefined,
+    2
 ]
 
 
