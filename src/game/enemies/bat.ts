@@ -96,6 +96,7 @@ export class Bat extends Enemy {
         
         const YOFF_AMPLITUDE : number = 32;
         const DROP_ACTIVATE_DISTANCE : number = 64;
+        const DROP_ACTIVATE_MAX_Y_DISTANCE : number = 72;
 
         const ppos : Vector = player.getPosition();
         ppos.y += Math.sin(this.wave)*YOFF_AMPLITUDE;
@@ -120,7 +121,8 @@ export class Bat extends Enemy {
         }
         
         if (this.mode == 0 && ppos.y > this.pos.y - 8 && 
-            Math.abs(this.pos.x - ppos.x) < DROP_ACTIVATE_DISTANCE) {
+            Math.abs(this.pos.x - ppos.x) < DROP_ACTIVATE_DISTANCE &&
+            ppos.y - this.pos.y <= DROP_ACTIVATE_MAX_Y_DISTANCE ) {
 
             this.mode = 1;
             this.target.y = DROP_GRAVITY;

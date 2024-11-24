@@ -6,7 +6,7 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
-const BASE_SPEED : number = 1.0;
+const BASE_SPEED : number = 0.80;
 
 
 export class Hog extends Enemy {

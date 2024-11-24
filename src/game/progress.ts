@@ -254,6 +254,7 @@ export class Progress {
     public obtainDreamOrb(orbID : number) : void {
 
         this.obtainedDreamOrbs[orbID] = true;
+        this.computeStats();
     }
 
 

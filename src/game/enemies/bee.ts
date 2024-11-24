@@ -22,7 +22,7 @@ export class Bee extends Enemy {
 
         this.sprite.setFrame(4, 7);
 
-        this.health = 5;
+        this.health = 6;
         this.attackPower = 3;
 
         this.dropProbability = 0.33;

@@ -7,12 +7,12 @@ const ITEM_START_INDEX : number = 16;
 
 const PRICES : number[][] = [
 [
-    50, // Health container
-    50, // Ammo container
-    75, // Power bracelet,
-    75, // Spectacles
-    50, // Running shoes
-    100, // Breastplate
+    25, // Health container
+    25, // Ammo container
+    50, // Power bracelet,
+    50, // Spectacles
+    35, // Running shoes
+    100, // Shield
 ],
 [
     // TODO: later

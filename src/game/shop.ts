@@ -51,7 +51,7 @@ export class Shop {
     private cancelText : string = "null";
     private soldOutText : string = "null";
 
-    private buyEvent : (() => void) | undefined = undefined;
+    private buyEvent : ((amount : number) => void) | undefined = undefined;
 
 
     constructor(event : ProgramEvent) {
@@ -69,7 +69,7 @@ export class Shop {
                     [[this.items[this.cursorPos]?.name ?? "null"]]) ;
                 this.message.activate(true);
 
-                this.buyEvent?.();
+                this.buyEvent?.(this.items[this.cursorPos]?.price ?? 0);
                 this.items[this.cursorPos].obtained = true;
             },
             (event : ProgramEvent) : void => {
@@ -174,10 +174,11 @@ export class Shop {
             }
             else {
                 
-                this.buyEvent = () : void => {
+                this.buyEvent = (amount : number) : void => {
 
                     const item : ShopItem = this.items[this.cursorPos];
                     progress.obtainItem(item.itemID);
+                    progress.updateMoney(-amount);
                 }
                 this.prepareMessage(progress, event);
             }
