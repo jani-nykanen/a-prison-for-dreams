@@ -71,7 +71,8 @@
         {"name": "house1", "path": "house1.tmx"},
         {"name": "house2", "path": "house2.tmx"},
         {"name": "house3", "path": "house3.tmx"},
-
+        {"name": "house4", "path": "house4.tmx"},
+        {"name": "house5", "path": "house5.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

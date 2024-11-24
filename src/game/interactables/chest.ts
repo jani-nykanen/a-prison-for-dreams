@@ -15,6 +15,10 @@ const ITEM_HINT_LOOKUP : (number | undefined)[] = [
     undefined,
     4,
     5,
+    undefined,
+    undefined,
+    undefined,
+    7
 ];
 
 

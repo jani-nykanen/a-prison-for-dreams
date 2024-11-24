@@ -59,7 +59,9 @@
         "Press Ctrl, X or K to attack.",
         "Press Shift, C or L to shoot.",
         "Press DOWN to crouch and then\nSPACE, Z or J to high jump.",
-        "Hold down the attack button\nto charge a power attack."
+        "Hold down the attack button\nto charge a power attack.",
+        "Hit bricks with your head\nto break them.",
+        "Press DOWN + ATTACK\nafter jumping to do\na down attack."
     ],
 
 
@@ -292,7 +294,14 @@
     "item8": [
 
         "You obtain a PURPLE KEY!",
-        "It is purple like the face\nof a choking baby, hence\nit only opens purple\ndoors... or something\nlike that."
+        "It reminds you of the face of\nyour dying grandmother.\nBetter use it only to open\npurple doors!"
+    ],
+
+
+    "item9": [
+
+        "You obtain A POGO STICK!",
+        "Following some hazy dream\nlogic (because of course),\nit allows you to perform\na down attack."
     ]
 
 }
