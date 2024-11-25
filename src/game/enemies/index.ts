@@ -12,6 +12,7 @@ import { Bat } from "./bat.js";
 import { Brick } from "./brick.js";
 import { Hog } from "./hog.js";
 import { Bee } from "./bee.js";
+import { PogoStick } from "./pogostick.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -29,6 +30,7 @@ export const getEnemyByID = (index : number) : Function =>
     Bat,
     Brick,
     Hog,
-    Bee
+    Bee,
+    PogoStick
 ]
 [index] ?? Slime;

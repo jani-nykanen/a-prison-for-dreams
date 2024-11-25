@@ -86,7 +86,7 @@ export class ShadowBat extends Enemy {
         
         if (this.dir == 0) {
 
-            this.dir = Math.sign(player.getPosition().x - this.pos.x)
+            this.dir = Math.sign(player.getPosition().x - this.pos.x);
         }
     }
 }
