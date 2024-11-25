@@ -203,9 +203,13 @@ export class ObjectManager {
                 break;
 
             // Portal
+            case 77:
             case 10:
 
-                this.interactables.push(new Portal(dx, dy, bmpPortal, this.mapTransition));
+                this.interactables.push(new Portal(dx, dy, bmpPortal, 
+                    this.mapTransition, this.dialogueBox,
+                    id - 1, stage.baseMap.getProperty(`portal${id - 1}`),
+                    objID == 77));
                 break;
 
             // Hint trigger

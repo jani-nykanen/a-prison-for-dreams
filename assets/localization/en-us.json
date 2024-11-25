@@ -146,6 +146,9 @@
     "locked": "You need a %1 KEY to\nopen this door.",
     "open_door": "You open the door with\na %1 KEY.",
 
+    "locked_huge_door": "You need more dreams orbs to\nopen this door.",
+    "open_huge_door": "You open the huge door leading\nto the Old Graveyard.",
+
 
     "lever1": [
         

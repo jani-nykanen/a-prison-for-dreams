@@ -124,6 +124,7 @@
         {"name": "graveyard", "path": "graveyard.ogg"},
         {"name": "titlescreen", "path": "titlescreen.ogg"},
         {"name": "forest", "path": "forest.ogg"},
+        {"name": "miniboss", "path": "miniboss.ogg"},
         {"name": "cave", "path": "cave.ogg"}
     ],
 
