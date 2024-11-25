@@ -91,7 +91,8 @@ export class Hog extends Enemy {
 
         this.dir = Math.sign(ppos.x - this.pos.x);
 
-        if (ppos.y < this.pos.y - JUMP_TRIGGER) {
+        if (ppos.y < this.pos.y - JUMP_TRIGGER ||
+            (this.hurtTimer <= 0 && player.isAttacking())) {
 
             this.jump(event);
         }

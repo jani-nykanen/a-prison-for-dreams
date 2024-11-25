@@ -39,7 +39,7 @@ const ATTACK_RELEASE_TIME : number = 8;
 
 const CHARGE_VOLUME : number = 0.70;
 
-const RUN_SPEED_BASE_BONUS : number = 0.125;
+const RUN_SPEED_BASE_BONUS : number = 0.20;
 
 
 const enum ChargeType {
