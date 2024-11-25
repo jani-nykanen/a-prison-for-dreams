@@ -210,6 +210,10 @@ export class ObjectManager {
                     this.mapTransition, this.dialogueBox,
                     id - 1, stage.baseMap.getProperty(`portal${id - 1}`),
                     objID == 77));
+                if (!resetPlayer && id - 1 == this.spawnId) {
+
+                    this.player.setPosition(dx, dy, resetPlayer);
+                }
                 break;
 
             // Hint trigger

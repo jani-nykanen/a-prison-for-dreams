@@ -8,7 +8,7 @@
   <property name="door4" value="dark_room"/>
   <property name="leftexit" value="coast"/>
   <property name="music" value="forest"/>
-  <property name="musicvolume" type="float" value="0.8"/>
+  <property name="musicvolume" type="float" value="0.6"/>
   <property name="name" value="Woodcutter's Path"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="hills"/>

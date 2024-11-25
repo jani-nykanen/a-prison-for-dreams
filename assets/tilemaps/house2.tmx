@@ -3,7 +3,7 @@
  <properties>
   <property name="door3" value="town"/>
   <property name="music" value="graveyard"/>
-  <property name="musicvolume" type="float" value="0.3"/>
+  <property name="musicvolume" type="float" value="0.2"/>
   <property name="name" value="House 2"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>

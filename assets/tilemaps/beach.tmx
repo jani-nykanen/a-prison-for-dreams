@@ -4,7 +4,7 @@
   <property name="background" type="int" value="1"/>
   <property name="door0" value="dark_room"/>
   <property name="music" value="forest"/>
-  <property name="musicvolume" type="float" value="0.8"/>
+  <property name="musicvolume" type="float" value="0.6"/>
   <property name="name" value="Forgotten Coast"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="1"/>

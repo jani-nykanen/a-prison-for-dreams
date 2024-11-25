@@ -2,6 +2,7 @@ import { Progress } from "./progress.js";
 import { Align, Bitmap, Canvas, Effect, Flip, TransformTarget } from "../gfx/interface.js";
 import { Assets } from "../core/assets.js";
 import { Item } from "./items.js";
+import { LOCKED_HUGE_DOOR_INDEX } from "./interactables/portal.js";
 
 
 export const GAME_SAVE_ANIMATION_TIME : number = 120;
@@ -76,7 +77,15 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
         canvas.drawBitmap(bmpHUD, Flip.None, 0, canvas.height - 17, 32, 0, 16, 16);
     }
 
-    // Orbs
+    // Orbs 
+
+    // Do not draw if the huge door has been opened
+    // (i.e the orbs have been "consumed")
+    if (stats.isDoorOpen(LOCKED_HUGE_DOOR_INDEX)) {
+
+        return;
+    }
+
     const orbCount : number = stats.getOrbCount();
     if (orbCount > 0) {
 

@@ -213,6 +213,13 @@ export class Game implements Scene {
             const id : number = Number(cutsceneIndex);
             this.setCutscene(id, event);
         }
+        else {
+            
+            if (event.transition.getEffectType() == TransitionType.Waves) {
+
+                event.cloneCanvasToBufferTexture(true);
+            }
+        }
 
         // Set area name
         this.mapName = baseMap.getProperty("name") ?? "null";

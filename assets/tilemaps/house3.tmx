@@ -4,7 +4,7 @@
   <property name="background_water" type="bool" value="true"/>
   <property name="door4" value="town"/>
   <property name="music" value="graveyard"/>
-  <property name="musicvolume" type="float" value="0.3"/>
+  <property name="musicvolume" type="float" value="0.2"/>
   <property name="name" value="House 3"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>

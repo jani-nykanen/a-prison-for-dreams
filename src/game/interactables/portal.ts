@@ -12,8 +12,10 @@ import { TILE_HEIGHT } from "../tilesize.js";
 import { Interactable } from "./interactable.js";
 
 
+export const LOCKED_HUGE_DOOR_INDEX : number = 3;
+
+
 const REQUIRED_ORB_COUNT : number = 8;
-const LOCKED_DOOR_INDEX : number = 3;
 
 
 // NOTE: This is basically the same class as "Door" with
@@ -92,7 +94,7 @@ export class Portal extends Interactable {
             return;
         }
 
-        if (this.locked && player.stats.isDoorOpen(LOCKED_DOOR_INDEX)) {
+        if (this.locked && player.stats.isDoorOpen(LOCKED_HUGE_DOOR_INDEX)) {
 
             this.locked = false;
             return;
@@ -111,7 +113,7 @@ export class Portal extends Interactable {
 
                 this.dialogueBox.addText(event.localization?.getItem("open_huge_door") ?? ["null"]);
 
-                player.stats.markDoorOpened(LOCKED_DOOR_INDEX);
+                player.stats.markDoorOpened(LOCKED_HUGE_DOOR_INDEX);
                 this.locked = false;
 
                 event.audio.playSample(event.assets.getSample("choose"), 0.50);
@@ -158,6 +160,17 @@ export class Portal extends Interactable {
         const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
         const str : string = `${this.orbCount}/${REQUIRED_ORB_COUNT}`;
 
-        canvas.drawText(bmpFontOutlines, str, this.pos.x, this.pos.y - 32, -8, 0, Align.Center);
+        const dx : number = this.pos.x - str.length*8;
+        const dy : number = this.pos.y - 28;
+
+        if (this.orbCount < REQUIRED_ORB_COUNT) {
+
+            canvas.setColor(182, 182, 182);
+        }
+        canvas.drawText(bmpFontOutlines, str, dx + 11, dy, -8, 0);
+        canvas.setColor();
+
+        const bmpIcons : Bitmap | undefined = assets.getBitmap("icons");
+        canvas.drawBitmap(bmpIcons, Flip.None, dx + 4, dy + 3, 32, 0, 11, 11);
     }
 }

@@ -10,7 +10,7 @@
   <property name="door7" value="house5"/>
   <property name="leftexit" value="hills"/>
   <property name="music" value="graveyard"/>
-  <property name="musicvolume" type="float" value="0.5"/>
+  <property name="musicvolume" type="float" value="0.3"/>
   <property name="name" value="Abandoned Town"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="1"/>

@@ -4,7 +4,7 @@
   <property name="background" type="int" value="2"/>
   <property name="leftexit" value="crossroads"/>
   <property name="music" value="forest"/>
-  <property name="musicvolume" type="float" value="0.8"/>
+  <property name="musicvolume" type="float" value="0.6"/>
   <property name="name" value="Burial Hill"/>
   <property name="npctype" type="int" value="0"/>
   <property name="portal2" value="old_graveyard"/>
