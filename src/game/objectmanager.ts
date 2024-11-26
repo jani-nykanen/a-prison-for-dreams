@@ -279,6 +279,12 @@ export class ObjectManager {
                 }
                 break;
 
+            // Cloud
+            case 78:
+
+                this.platforms.push(new Platform(dx, dy, PlatformType.Cloud));
+                break;
+
             default:
                 
                 // Enemies

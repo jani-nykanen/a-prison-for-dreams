@@ -17,7 +17,8 @@ export const enum PlatformType {
     VerticallyMoving = 0,
     HorizontallyMoving = 1,
     Bouncing = 2,
-    Swing = 3
+    Swing = 3,
+    Cloud = 4
 };
 
 
@@ -31,6 +32,14 @@ export class Platform extends GameObject {
 
     private dir : number = 0;
     private angle : number = 0;
+
+    private renderOffsetY : number = 0;
+
+    private touched : boolean = false;
+    private waitTimer : number = 0;
+    private disappearing : boolean = false;
+    private disappeared : boolean = false;
+    private recovering : boolean = false;
 
 
     constructor(x : number, y : number, type : PlatformType) {
@@ -77,6 +86,13 @@ export class Platform extends GameObject {
             this.cameraCheckArea.y = 256;
 
             this.sprite.setFrame(0, 1);
+
+            break;
+
+        case PlatformType.Cloud:
+
+            this.renderOffsetY = -7;
+            this.sprite.setFrame(0, 2);
 
             break;
 
@@ -148,6 +164,75 @@ export class Platform extends GameObject {
     }
 
 
+    private updateCloud(event : ProgramEvent) : void {
+
+        const WAIT_TIME : number = 15;
+        const VANISH_SPEED : number = 5;
+        const RECOVER_TIME : number = 60;
+
+        if (this.recovering) {
+
+            this.sprite.animate(2, 4, 1, VANISH_SPEED, event.tick);
+            if (this.sprite.getColumn() == 1) {
+
+                this.waitTimer = 0,
+                this.recovering = false;
+                this.touched = false;
+
+                this.sprite.setFrame(0, 2);
+            }
+            return;
+        }
+
+        if (this.disappeared) {
+
+            if (this.waitTimer > 0) {
+
+                this.waitTimer -= event.tick;
+            }
+            else {
+
+                this.recovering = true;
+                this.disappeared = false;
+                this.disappearing = false;
+                this.sprite.setFrame(4, 2);
+            }
+            return;
+        }
+
+        if (!this.touched) {
+
+            return;
+        }
+
+        if (this.touched && !this.disappearing) {
+
+            this.disappearing = true;
+            this.waitTimer = WAIT_TIME;
+            this.sprite.setFrame(1, 2);
+
+            return;
+        }
+
+        if (this.disappearing) {
+
+            if (this.waitTimer > 0) {
+
+                this.waitTimer -= event.tick;
+            }
+            else {
+
+                this.sprite.animate(2, 2, 5, VANISH_SPEED, event.tick);
+                if (this.sprite.getColumn() == 5) {
+
+                    this.disappeared = true;
+                    this.waitTimer = RECOVER_TIME;
+                }
+            }
+        }
+    }
+
+
     private drawChain(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
         const CHAIN_COUNT = 7;
@@ -173,7 +258,7 @@ export class Platform extends GameObject {
 
 
     protected updateEvent(event : ProgramEvent) : void {
-        
+
         switch (this.type) {
 
         case PlatformType.HorizontallyMoving:
@@ -189,6 +274,11 @@ export class Platform extends GameObject {
         case PlatformType.Swing:
 
             this.updateSwing(event);
+            break;
+
+        case PlatformType.Cloud:
+
+            this.updateCloud(event);
             break;
 
         default:
@@ -209,22 +299,22 @@ export class Platform extends GameObject {
 
     public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
 
-        if (!this.isActive() || !o.isActive() ||
+        if (this.disappeared || this.recovering || !this.isActive() || !o.isActive() ||
             (this.type != PlatformType.Bouncing && o.doesIgnoreBottomLayer())) {
 
             return;
         }
 
-        o.slopeCollision(
-            this.pos.x - 24, this.pos.y - 12, 
-            this.pos.x + 24, this.pos.y - 12, 1, event, 1, 1,
-            1, 4, this);
+        this.touched = o.slopeCollision(
+                this.pos.x - 24, this.pos.y - 12, 
+                this.pos.x + 24, this.pos.y - 12, 1, event, 1, 1,
+                1, 4, this) || this.touched;
     }
 
 
     public draw(canvas : Canvas, assets : Assets | undefined, bmp : Bitmap | undefined) : void {
         
-        if (!this.isActive()) {
+        if (!this.isActive() || (this.disappeared && !this.recovering)) {
 
             return;
         }
@@ -237,6 +327,9 @@ export class Platform extends GameObject {
             this.drawChain(canvas, bmp);
         }
 
-        this.sprite.draw(canvas, bmp, this.pos.x - 24, this.pos.y - 12, Flip.None);
+        this.sprite.draw(canvas, bmp, 
+            this.pos.x - 24, 
+            this.pos.y - 12 + this.renderOffsetY, 
+            Flip.None);
     }
 }
