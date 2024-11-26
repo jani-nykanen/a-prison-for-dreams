@@ -23,9 +23,9 @@ export class PogoStick extends Enemy {
         this.attackPower =4;
 
         this.dropProbability = 0.40;
-        this.knockbackFactor = 1.5;
+        this.knockbackFactor = 0.75;
 
-        this.friction.x = 0.15;
+        this.friction.x = 0.025;
         this.friction.y = 0.075;
 
         this.target.y = GRAVITY;

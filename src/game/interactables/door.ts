@@ -59,6 +59,10 @@ export class Door extends Interactable {
         }
 
         this.opened = player.stats.isDoorOpen(this.requiredKey);
+        if (initialEvent && this.opened) {
+
+            this.sprite.setFrame(0, 0);
+        }
     }
 
 

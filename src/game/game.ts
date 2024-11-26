@@ -283,6 +283,8 @@ export class Game implements Scene {
                 this.stage.initializeBackground(this.camera);
                 
                 event.transition.setCenter(this.objects.getRelativePlayerPosition(this.stage, this.camera));
+
+                this.progress.save();
             },
             new RGBA(0, 0, 0), this.objects.getRelativePlayerPosition(this.stage, this.camera));
     }
