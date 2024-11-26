@@ -10,19 +10,19 @@ import { Progress } from "./progress.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 2, 3, 3
+    3, 2, 3, 2
 ];
 
 const ANIMATION_SPEED : number[] = [
-    4, 4, 4, 6
+    4, 4, 4, 4
 ];
 
 
 const HITBOX_WIDTHS : number[] = [
-    4, 4, 4, 8
+    4, 6, 4, 4
 ];
 const HITBOX_HEIGHTS : number[] = [
-    4, 4, 4, 8
+    4, 6, 4, 4
 ]
 
 
@@ -55,7 +55,8 @@ export class Projectile extends CollisionObject {
 
         this.checkVerticalSlope = true;
         this.ignoreBottomLayer = true;
-        this.ignoreEvenSlopes = true;
+        // Probably not even need any more
+        // this.ignoreEvenSlopes = true;
 
         this.stats = progress;
     }
@@ -111,6 +112,8 @@ export class Projectile extends CollisionObject {
         friendly : boolean = true,
         attackID : number = -1) : void {
 
+        const IGNORE_EVEN_THRESHOLD : number = 0.001;
+
         this.oldPos = new Vector(originx, originy);
         this.pos = new Vector(x, y);
 
@@ -129,6 +132,8 @@ export class Projectile extends CollisionObject {
 
         this.dying = false;
         this.exist = true;
+
+        this.ignoreEvenSlopes = Math.abs(this.speed.y) < IGNORE_EVEN_THRESHOLD;
     }
 
 

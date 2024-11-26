@@ -26,7 +26,7 @@ export class PogoStick extends Enemy {
         this.knockbackFactor = 1.5;
 
         this.friction.x = 0.15;
-        this.friction.y = 0.10;
+        this.friction.y = 0.075;
 
         this.target.y = GRAVITY;
 
@@ -43,7 +43,7 @@ export class PogoStick extends Enemy {
 
     protected updateLogic(event : ProgramEvent) : void {
         
-        const JUMP_HEIGHT : number = -3.0;
+        const JUMP_HEIGHT : number = -2.5;
 
         if (this.touchSurface) {
 
