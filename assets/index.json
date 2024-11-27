@@ -74,6 +74,7 @@
         {"name": "house4", "path": "house4.tmx"},
         {"name": "house5", "path": "house5.tmx"},
         {"name": "old_graveyard", "path": "old_graveyard.tmx"},
+        {"name": "boss_room", "path": "boss_room.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
@@ -93,6 +94,7 @@
         {"name": "jump2", "path": "jump2.wav"},
         {"name": "buzz", "path": "buzz.wav"},
         {"name": "thwomp", "path": "thwomp.wav"},
+        {"name": "vaporize", "path": "vaporize.wav"},
 
         {"name": "hit", "path": "hit.wav"},
         {"name": "sword", "path": "sword.wav"},

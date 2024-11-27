@@ -169,6 +169,11 @@ export class Platform extends GameObject {
         const WAIT_TIME : number = 15;
         const VANISH_SPEED : number = 5;
         const RECOVER_TIME : number = 60;
+        const WAVE_SPEED : number = Math.PI*2/120.0;
+        const AMPLITUDE : number = 2;
+
+        this.speed.zeros();
+        this.target.zeros();
 
         if (this.recovering) {
 
@@ -202,6 +207,9 @@ export class Platform extends GameObject {
 
         if (!this.touched) {
 
+            this.angle = (this.angle + WAVE_SPEED*event.tick) % (Math.PI*2);
+            this.pos.y = this.initialPos.y + Math.sin(this.angle)*AMPLITUDE;
+
             return;
         }
 
@@ -219,6 +227,10 @@ export class Platform extends GameObject {
             if (this.waitTimer > 0) {
 
                 this.waitTimer -= event.tick;
+                if (this.waitTimer <= 0) {
+
+                    event.audio.playSample(event.assets.getSample("vaporize"), 1.0);
+                }
             }
             else {
 
@@ -227,6 +239,8 @@ export class Platform extends GameObject {
 
                     this.disappeared = true;
                     this.waitTimer = RECOVER_TIME;
+
+                    this.angle = 0.0;
                 }
             }
         }
@@ -289,7 +303,7 @@ export class Platform extends GameObject {
 
     protected postMovementEvent(event: ProgramEvent) : void {
 
-        if (this.type == PlatformType.Swing) {
+        if (this.type == PlatformType.Swing || this.type == PlatformType.Cloud) {
 
             this.speed.x = this.pos.x - this.oldPos.x;
             this.speed.y = this.pos.y - this.oldPos.y;
