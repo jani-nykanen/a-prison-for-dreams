@@ -908,7 +908,7 @@ export class Player extends CollisionObject {
                 (this.shootTimer <= SHOOT_RELEASE_TIME && (shootButton & InputState.DownOrPressed) == 0)) {
 
                 this.shooting = false;
-                if (this.shootTimer <= 0) {
+                if (this.shootTimer <= 0 && this.stats.hasItem(Item.ChargeShot)) {
 
                     this.chargeType = ChargeType.Gun;
                     this.charging = true;

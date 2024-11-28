@@ -14,6 +14,7 @@ export const enum Item {
     BlueKey = 7,
     PurpleKey = 8,
     ThumbDown = 9,
+    ChargeShot = 10,
     
 
     // Shop items

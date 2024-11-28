@@ -87,7 +87,7 @@ export class Switch extends Interactable {
         player.bounce(JUMP_SPEED);
 
         // TODO: Play "toggle" sound
-        event.audio.playSample(event.assets.getSample("lever"), 0.70);
+        event.audio.playSample(event.assets.getSample("lever"), 0.50);
 
         this.sprite.setFrame(this.sprite.getColumn(), 1);
         this.active = false;

@@ -59,9 +59,10 @@
         "Press Ctrl, X or K to attack.",
         "Press Shift, C or L to shoot.",
         "Press DOWN to crouch and then\nSPACE, Z or J to high jump.",
-        "Hold down the attack button\nto charge a power attack.",
+        "Hold down the ATTACK button\nto CHARGE a power attack.",
         "Hit bricks with your head\nto break them.",
-        "Press DOWN + ATTACK after\njumping to do a down attack."
+        "Press DOWN + ATTACK after\njumping to do a down attack.",
+        "Hold down the SHOOT button\nto CHARGE a power shot."
     ],
 
 
@@ -305,6 +306,11 @@
 
         "You obtain a THUMB DOWN!",
         "All this sudden negativity\ngives you motivation to\nlearn a down attack."
-    ]
+    ],
 
+    "item10": [
+
+        "You obtain a RECHARGABLE BAT-\nTERY!",
+        "Now you can store some energy\nplasma thing in your gun and\nrelease it as a powerful\ncharge attack!"
+    ]
 }

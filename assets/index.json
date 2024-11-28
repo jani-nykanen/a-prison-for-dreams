@@ -74,6 +74,7 @@
         {"name": "house4", "path": "house4.tmx"},
         {"name": "house5", "path": "house5.tmx"},
         {"name": "old_graveyard", "path": "old_graveyard.tmx"},
+        {"name": "puzzle2", "path": "puzzle2.tmx"},
         {"name": "boss_room", "path": "boss_room.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
