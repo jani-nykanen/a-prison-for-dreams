@@ -68,13 +68,14 @@ export class ObjectManager {
 
     private readonly dialogueBox : TextBox;
     private readonly hints : HintRenderer;
+    private readonly bossBattleConfirmationBox : ConfirmationBox;
     private readonly mapTransition : MapTransitionCallback;
     private readonly shops : Shop[];
 
 
     constructor(progress : Progress, dialogueBox : TextBox,
-        hints : HintRenderer, shops : Shop[],
-        stage : Stage, camera : Camera,
+        hints : HintRenderer, bossBattleConfirmationBox : ConfirmationBox,
+        shops : Shop[], stage : Stage, camera : Camera,
         npcType : number, mapTransition : MapTransitionCallback,
         spawnId : number, pose : Pose, createNewPlayer : boolean, 
         event : ProgramEvent,) {
@@ -98,9 +99,11 @@ export class ObjectManager {
 
         this.player = new Player(0, 0, 
             this.projectiles, this.animatedParticles, 
-            this.flyingText, progress, mapTransition);
+            this.flyingText, progress, mapTransition,
+            event);
 
         this.dialogueBox = dialogueBox;
+        this.bossBattleConfirmationBox = bossBattleConfirmationBox;
         this.hints = hints;
         this.mapTransition = mapTransition;
         this.shops = shops;
@@ -290,7 +293,7 @@ export class ObjectManager {
             // Eye trigger
             case 79:
 
-                this.interactables.push(new EyeTrigger(dx + 8, dy));
+                this.interactables.push(new EyeTrigger(dx + 8, dy, this.bossBattleConfirmationBox));
                 break;
 
             default:

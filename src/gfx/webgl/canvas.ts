@@ -251,25 +251,31 @@ export class WebGLCanvas implements Canvas {
     
 
     public drawHorizontallyWavingBitmap(bitmap : Bitmap | undefined, 
-        amplitude : number, period : number, shift : number,
-        dx : number = 0, dy : number = 0, flip : Flip = Flip.None) : void {
+        amplitude : number, period : number, shift : number, flip : Flip = Flip.None,
+        dx : number = 0, dy : number = 0, sx : number = 0, sy : number = 0,
+        sw : number | undefined = bitmap?.width, sh : number | undefined = bitmap?.height) : void {
 
         bitmap ??= this.batchTexture;
-        if (bitmap=== undefined)
-            return;
+        if (bitmap === undefined) {
 
+            return;
+        }
+            
         // Note: For better performance one should obviously do this in
         // a shader, but I'm lazy
 
-        const phaseStep : number = Math.PI*2 / period;
+        // TODO: Automaticall use sprite batch if not enabled
+        // for a better performance
 
-        for (let y = 0; y < bitmap.height; ++ y) {
+        const phaseStep : number = Math.PI*2/period;
+
+        for (let y : number = 0; y < sh!; ++ y) {
 
             const phase : number = shift + phaseStep*y;
-            const x : number = dx + Math.round(Math.sin(phase)*amplitude);
-            const sy : number = (flip & Flip.Vertical) != 0 ? (bitmap.height - 1) - y : y;
+            const x : number = dx + Math.sin(phase)*amplitude;
+            const py : number = (flip & Flip.Vertical) != 0 ? (sh! - 1) - y : y;
 
-            this.drawBitmap(bitmap, Flip.Horizontal & flip, x, dy + y, 0, sy, bitmap.width, 1);
+            this.drawBitmap(bitmap, Flip.Horizontal & flip, x, dy + y, sx, sy! + py, sw!, 1);
         }
     }
 

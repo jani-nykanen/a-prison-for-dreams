@@ -87,19 +87,6 @@
         "It emits dreamlike energy. Who\nknows what it does!"
     ],
 
-    "smallmoney": [
-
-        "You obtain a SMALL BAG OF\nGOLD!",
-        "It contains 25 coins. Now\nyou are decently rich!"
-    ],
-
-
-    "bigmoney": [
-
-        "You obtain a BIG BAG OF\nGOLD!",
-        "It contains a hundred coins.\nNow you are actually\nrich."
-    ],
-
 
     "nomoney": [
 
@@ -149,6 +136,10 @@
 
     "locked_huge_door": "You need more dreams orbs to\nopen this door.",
     "open_huge_door": "You open the huge door leading\nto the Old Graveyard.",
+
+
+    "lick": "Lick the Eye? (I know\nyou want to!)",
+    "slurp": "SLURP",
 
 
     "lever1": [

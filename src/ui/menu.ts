@@ -172,7 +172,13 @@ export class Menu {
 
     public changeButtonText(index : number, text : string) : void {
 
-        this.buttons[index].changeText(text);
+        this.buttons[index]?.changeText(text);
+    }
+
+
+    public changeButtonEvent(index : number, cb : (event : ProgramEvent) => void) : void {
+
+        this.buttons[index]?.changeCallback(cb);
     }
 
 

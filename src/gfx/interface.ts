@@ -80,7 +80,9 @@ export interface Canvas {
 
     drawHorizontallyWavingBitmap(bitmap : Bitmap | undefined, 
         amplitude : number, period : number, shift : number,
-        dx? : number, dy? : number, flip? : Flip) : void;
+        flip? : Flip, dx? : number, dy? : number, 
+        sx? : number, sy? : number,
+        sw? : number | undefined, sh? : number | undefined) : void;
     drawVerticallyWavingBitmap(bmp : Bitmap | undefined,
         dx : number, dy : number,
         sx : number, sy : number, sw : number, sh : number,

@@ -59,6 +59,8 @@ export class Game implements Scene {
     private baseTrack : AudioSample | undefined = undefined;
     private baseTrackVolume : number = 1.0;
 
+    private bossBattleConfirmationBox : ConfirmationBox;
+
    
     constructor(event : ProgramEvent) { 
 
@@ -86,6 +88,18 @@ export class Game implements Scene {
 
             this.shops[i] = constructShop((i + 1) as (1 | 2), event);
         }
+
+        this.bossBattleConfirmationBox = new ConfirmationBox(
+            event.localization?.getItem("yesno") ?? ["null", "null"],
+            event.localization?.getItem("lick")?.[0] ?? "null", 
+            (event : ProgramEvent) : void => {
+
+                // This will be overridden
+            },
+            (event : ProgramEvent) : void => {
+
+                this.bossBattleConfirmationBox.deactivate();
+            });
     }
     
 
@@ -167,8 +181,8 @@ export class Game implements Scene {
         // TODO: Maybe not recreate the whole object, but reset values etc.
         this.objects = new ObjectManager(
             this.progress, this.dialogueBox, 
-            this.hints, this.shops,
-            this.stage, this.camera,
+            this.hints, this.bossBattleConfirmationBox,
+            this.shops, this.stage, this.camera,
             Number(baseMap.getProperty("npctype") ?? 0),
             this.mapTransition, spawnPos, pose, 
             createPlayer, event);
@@ -391,6 +405,12 @@ export class Game implements Scene {
             return;
         }
 
+        if (this.bossBattleConfirmationBox.isActive()) {
+
+            this.bossBattleConfirmationBox.update(event);
+            return;
+        }
+
         if (this.dialogueBox.isActive()) {
 
             this.mapNameTimer = 0;
@@ -482,6 +502,11 @@ export class Game implements Scene {
         }
 
         this.pause.draw(canvas, assets);
+        if (this.bossBattleConfirmationBox.isActive()) {
+
+            this.bossBattleConfirmationBox.draw(canvas, assets);
+        }
+
         this.drawDialogueBox(canvas, assets);
 /*
         if (this.gameSaveTimer > 0) {

@@ -3,7 +3,7 @@ import { Vector } from "../math/vector.js";
 import { Rectangle } from "../math/rectangle.js";
 import { ProgramEvent } from "../core/event.js";
 import { Camera } from "./camera.js";
-import { Bitmap, Canvas, Effect, Flip } from "../gfx/interface.js";
+import { Align, Bitmap, Canvas, Effect, Flip } from "../gfx/interface.js";
 import { InputState } from "../core/inputstate.js";
 import { Sprite } from "../gfx/sprite.js";
 import { Assets } from "../core/assets.js";
@@ -56,6 +56,7 @@ export const enum WaitType {
     HoldingItem = 1,
     WakingUp = 2,
     ToggleLever = 3,
+    Licking = 4, // Don't ask
 };
 
 
@@ -131,6 +132,8 @@ export class Player extends CollisionObject {
     private waitParameter : number = 0;
     private waitCeaseEvent : ((event : ProgramEvent) => void) | undefined = undefined;
 
+    private slurpString : string = ""; // Slurp *what now*?
+
     private readonly projectiles : ProjectileGenerator;
     private readonly particles : ObjectGenerator<AnimatedParticle, void>;
     private readonly flyingText : ObjectGenerator<FlyingText, void>;
@@ -144,7 +147,8 @@ export class Player extends CollisionObject {
         projectiles : ProjectileGenerator,
         particles : ObjectGenerator<AnimatedParticle, void>,
         flyingText : ObjectGenerator<FlyingText, void>,
-        stats : Progress, mapTransition : MapTransitionCallback) {
+        stats : Progress, mapTransition : MapTransitionCallback,
+        event : ProgramEvent) {
 
         super(x, y, true);
 
@@ -169,6 +173,8 @@ export class Player extends CollisionObject {
         this.iconSprite = new Sprite(16, 16);
 
         this.mapTransition = mapTransition;
+
+        this.slurpString = event.localization?.getItem("slurp")?.[0] ?? "null";
     }
 
 
@@ -1210,6 +1216,38 @@ export class Player extends CollisionObject {
     }
 
 
+    private drawSlurping(canvas : Canvas, assets : Assets) : void {
+
+        if (!this.waitActive || this.waitType != WaitType.Licking) {
+            
+            return;
+        }
+
+        const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
+
+        const t : number = 1.0 - this.waitTimer/this.initialWaitTimer;
+
+        const count : number = 1 + Math.min(2, Math.floor(t*3));
+
+        for (let i : number = 0; i < count; ++ i) {
+
+            let shiftx : number = 0;
+            if (i == 1) {
+
+                shiftx = 8;
+            }
+            else if (i == 2) {
+
+                shiftx = -8;
+            }
+
+            canvas.drawText(bmpFontOutlines, this.slurpString, 
+                this.pos.x + shiftx, 
+                this.pos.y - 24 - i*12, -8, 0, Align.Center);
+        }
+    }
+
+
     protected updateEvent(event: ProgramEvent) : void {
         
         if (this.waitTimer > 0) {
@@ -1488,6 +1526,7 @@ export class Player extends CollisionObject {
         }
         
         this.drawHoldingItem(canvas, assets);
+        this.drawSlurping(canvas, assets);
     }
 
 
@@ -1664,6 +1703,11 @@ export class Player extends CollisionObject {
         case WaitType.ToggleLever:
 
             this.sprite.setFrame(8, 5);
+            break;
+
+        case WaitType.Licking:
+
+            this.sprite.setFrame(10, 5);
             break;
 
         default:

@@ -112,7 +112,8 @@ export class ConfirmationBox {
     }
 
 
-    public activate(cursorPos : number = 0, messageParams? : string[]) : void {
+    public activate(cursorPos : number = 0, messageParams? : string[],
+        overrideYes? : (event : ProgramEvent) => void) : void {
 
         if (messageParams !== undefined) {
 
@@ -126,6 +127,11 @@ export class ConfirmationBox {
             // Re-compute the dimensions
             this.width = Math.max(...this.message.map(s => s.length));
             this.height = this.message.length;
+        }
+
+        if (overrideYes !== undefined) {
+
+            this.menu.changeButtonEvent(0, overrideYes);
         }
 
         this.menu.activate(cursorPos);

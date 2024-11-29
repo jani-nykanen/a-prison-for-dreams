@@ -39,6 +39,12 @@ export class MenuButton {
     }
 
 
+    public changeCallback(cb : (event : ProgramEvent) => void) : void {
+
+        this.callback = cb;
+    }
+
+
     public evaluateLeftCallback(event : ProgramEvent)  : boolean {
 
         if (this.leftEvent === undefined) {
