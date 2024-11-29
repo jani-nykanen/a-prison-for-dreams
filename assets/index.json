@@ -37,6 +37,7 @@
         {"name": "lever", "path": "lever.png"},
         {"name": "switch", "path": "switch.png"},
         {"name": "locked_doors", "path": "locked_doors.png"},
+        {"name": "eye", "path": "eye.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},

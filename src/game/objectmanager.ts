@@ -35,6 +35,8 @@ import { Platform, PlatformType } from "./platform.js";
 import { Spring } from "./interactables/spring.js";
 import { Lever } from "./interactables/lever.js";
 import { Switch } from "./interactables/switch.js";
+import { EyeTrigger } from "./interactables/eyetrigger.js";
+import { ConfirmationBox } from "../ui/confirmationbox.js";
 
 
 export class ObjectManager {
@@ -70,7 +72,7 @@ export class ObjectManager {
     private readonly shops : Shop[];
 
 
-    constructor(progress : Progress, dialogueBox : TextBox, 
+    constructor(progress : Progress, dialogueBox : TextBox,
         hints : HintRenderer, shops : Shop[],
         stage : Stage, camera : Camera,
         npcType : number, mapTransition : MapTransitionCallback,
@@ -283,6 +285,12 @@ export class ObjectManager {
             case 78:
 
                 this.platforms.push(new Platform(dx, dy, PlatformType.Cloud));
+                break;
+
+            // Eye trigger
+            case 79:
+
+                this.interactables.push(new EyeTrigger(dx + 8, dy));
                 break;
 
             default:
