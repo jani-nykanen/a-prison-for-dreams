@@ -14,17 +14,23 @@ export class EyeTrigger extends Interactable {
     private confirmationBox : ConfirmationBox;
     private wave : number = 0;
 
+    private readonly triggerEvent : () => void;
 
-    constructor(x : number, y : number, confirmationBox : ConfirmationBox) {
+
+    constructor(x : number, y : number, 
+        confirmationBox : ConfirmationBox,
+        triggerEvent : () => void) {
 
         super(x, y, undefined);
 
-        this.hitbox.w = 24;
+        this.hitbox.w = 32;
 
         this.cameraCheckArea.x = 64;
         this.cameraCheckArea.y = 64;
 
         this.confirmationBox = confirmationBox;
+
+        this.triggerEvent = triggerEvent;
     }
 
 
@@ -44,15 +50,19 @@ export class EyeTrigger extends Interactable {
 
     protected interactionEvent(player : Player, event : ProgramEvent) : void {
         
+        event.audio.playSample(event.assets.getSample("select"), 0.40);
+
         this.confirmationBox.activate(1, undefined, 
             (event : ProgramEvent) : void => {
 
                 player.setPosition(this.pos.x, this.pos.y);
 
-                this.confirmationBox.deactivate();
-                player.startWaiting(60, WaitType.Licking, undefined, (event : ProgramEvent) : void => {
+                event.audio.playSample(event.assets.getSample("lick"), 0.60);
 
-                    // ...
+                this.confirmationBox.deactivate();
+                player.startWaiting(90, WaitType.Licking, undefined, (event : ProgramEvent) : void => {
+
+                    this.triggerEvent();
                 });
             }
         );
@@ -61,8 +71,8 @@ export class EyeTrigger extends Interactable {
 
     public draw(canvas : Canvas, assets : Assets) : void {
         
-        const PERIOD : number = 64;
-        const AMPLITUDE : number = 4;
+        const PERIOD : number = 32;
+        const AMPLITUDE : number = 2;
 
         if (!this.isActive()) {
 

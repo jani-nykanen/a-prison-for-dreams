@@ -293,7 +293,9 @@ export class ObjectManager {
             // Eye trigger
             case 79:
 
-                this.interactables.push(new EyeTrigger(dx + 8, dy, this.bossBattleConfirmationBox));
+                this.interactables.push(new EyeTrigger(dx + 8, dy, 
+                    this.bossBattleConfirmationBox,  
+                    () : void => this.initiateMiniBoss(stage)));
                 break;
 
             default:
@@ -469,6 +471,7 @@ export class ObjectManager {
         if (this.player.isWaiting()) {
 
             this.player.update(event);
+            this.player.targetCamera(camera);
             this.animateNPCs(camera, event);
             return;
         }
@@ -650,4 +653,12 @@ export class ObjectManager {
 
 
     public hasPlayerDied = () : boolean => !this.player.doesExist();
+
+
+    public initiateMiniBoss(stage : Stage) : void {
+
+        stage.toggleTopLayerRendering(false);
+
+        this.interactables.length = 0;
+    }
 }

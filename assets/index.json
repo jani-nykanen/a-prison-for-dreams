@@ -103,6 +103,7 @@
         {"name": "kill", "path": "kill.wav"},
         {"name": "throw", "path": "throw.wav"},
         {"name": "lever", "path": "lever.wav"},
+        {"name": "lick", "path": "lick.wav"},
 
         {"name": "hurt", "path": "hurt.wav"},
         {"name": "die", "path": "die.wav"},

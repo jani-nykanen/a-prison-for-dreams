@@ -32,6 +32,8 @@ export class Stage {
 
     private switches : boolean[];
 
+    private topLayerDisabled : boolean = false;
+
     public readonly width : number;
     public readonly height : number;
 
@@ -156,7 +158,7 @@ export class Stage {
             this.drawWater(canvas, assets, camera, BACKGROUND_WATER_OPACITY);
         }
 
-        this.renderlayer.draw(canvas, tileset, camera);
+        this.renderlayer.draw(canvas, tileset, camera, 0, this.topLayerDisabled ? 1 : 2);
     }
 
 
@@ -260,4 +262,10 @@ export class Stage {
 
 
     public getSwitchState = (index : number) : boolean => this.switches[index] ?? false;
+
+
+    public toggleTopLayerRendering(state : boolean = true) : void {
+
+        this.topLayerDisabled = !state;
+    }
 }

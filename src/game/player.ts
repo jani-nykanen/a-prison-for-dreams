@@ -1229,6 +1229,7 @@ export class Player extends CollisionObject {
 
         const count : number = 1 + Math.min(2, Math.floor(t*3));
 
+        canvas.setColor(182, 255, 146);
         for (let i : number = 0; i < count; ++ i) {
 
             let shiftx : number = 0;
@@ -1245,6 +1246,7 @@ export class Player extends CollisionObject {
                 this.pos.x + shiftx, 
                 this.pos.y - 24 - i*12, -8, 0, Align.Center);
         }
+        canvas.setColor();
     }
 
 
