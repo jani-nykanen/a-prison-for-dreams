@@ -268,4 +268,10 @@ export class Stage {
 
         this.topLayerDisabled = !state;
     }
+
+
+    public changeBackground(newType : BackgroundType) : void {
+
+        this.background.changeType(newType);
+    }
 }

@@ -123,6 +123,12 @@ export class WebGLCanvas implements Canvas {
         dx = (dx + this.translation.x) | 0;
         dy = (dy + this.translation.y) | 0;
 
+        if (this.batchingEnabled) {
+
+            this.batch.pushSprite(0, 0, 1, 1, dx, dy, dw, dh);
+            return;
+        }
+
         this.renderer.changeShader(ShaderType.NoTexture);
         this.renderer.setVertexTransform(dx, dy, dw, dh);
         this.renderer.drawMesh();
@@ -355,8 +361,10 @@ export class WebGLCanvas implements Canvas {
 
     public drawSpriteBatch(dx : number = 0.0, dy : number = 0.0) : void {
 
-        if (!this.batch.anythingToDraw())
+        if (!this.batch.anythingToDraw()) {
+
             return;
+        }
 
         this.renderer.changeShader(getShaderTypeFromEffect(this.activeEffect));
         this.renderer.setVertexTransform(dx | 0, dy | 0, 1.0, 1.0);

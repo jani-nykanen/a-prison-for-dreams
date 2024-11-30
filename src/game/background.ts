@@ -11,6 +11,7 @@ import { Assets } from "../core/assets.js";
 import { Sprite } from "../gfx/sprite.js";
 import { Snowflake } from "./snowflake.js";
 import { RGBA } from "../math/rgba.js";
+import { Starfield } from "./starfield.js";
 
 
 const CLOUD_COLOR_MOD_1 : RGBA = new RGBA(1.0);
@@ -25,6 +26,7 @@ export const enum BackgroundType {
     Forest = 2,
     Cave = 3,
     NightSky = 4,
+    StarField = 5,
 };
 
 
@@ -38,6 +40,7 @@ export class Background {
     private lightMagnitude : number = 0;
 
     private snowflakes : Snowflake[];
+    private starfield : Starfield | undefined = undefined;
 
 
     constructor(height : number, type : BackgroundType | undefined) {
@@ -46,6 +49,11 @@ export class Background {
         this.type = type ?? BackgroundType.Unspecified;
 
         this.snowflakes = new Array<Snowflake> ();
+
+        if (type === BackgroundType.StarField) {
+
+            this.starfield = new Starfield();
+        }
     }
 
 
@@ -299,6 +307,11 @@ export class Background {
             this.updateClouds(2.0, event);
             break;
 
+        case BackgroundType.StarField:
+
+            this.starfield?.update(event);
+            break;
+
         default:
             break;
         }
@@ -341,7 +354,13 @@ export class Background {
         case BackgroundType.NightSky:
 
             this.drawNightSky(canvas, assets, camera);
-            return;
+            break;
+
+        case BackgroundType.StarField:
+
+            canvas.clear(0, 0, 0);
+            this.starfield?.draw(canvas);
+            break;
 
         default:
 
@@ -364,5 +383,15 @@ export class Background {
             break;
         }
     } 
+
+
+    public changeType(newType : BackgroundType) : void {
+
+        this.type = newType;
+        if (newType === BackgroundType.StarField) {
+
+            this.starfield = new Starfield();
+        }
+    }
     
 }

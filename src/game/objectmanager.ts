@@ -37,6 +37,7 @@ import { Lever } from "./interactables/lever.js";
 import { Switch } from "./interactables/switch.js";
 import { EyeTrigger } from "./interactables/eyetrigger.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
+import { BackgroundType } from "./background.js";
 
 
 export class ObjectManager {
@@ -658,6 +659,7 @@ export class ObjectManager {
     public initiateMiniBoss(stage : Stage) : void {
 
         stage.toggleTopLayerRendering(false);
+        stage.changeBackground(BackgroundType.StarField);
 
         this.interactables.length = 0;
     }
