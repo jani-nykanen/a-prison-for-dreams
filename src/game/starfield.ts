@@ -14,7 +14,7 @@ import { RGBA } from "../math/rgba.js";
 
 
 const STAR_COUNT : number = 256;
-const MAX_DISTANCE : number = Math.round(Math.hypot(128, 96));
+const MAX_DISTANCE : number = 192;
 
 
 export class Starfield {
@@ -22,6 +22,9 @@ export class Starfield {
 
     private initialStars : Vector[];
     private distanceModifier : number = 0.0;
+    private angle : number = 0.0;
+
+    private seed : number = 1337;
 
 
     constructor() {
@@ -31,42 +34,46 @@ export class Starfield {
     }
 
 
-    private generateInitialStars() : void {
+    private nextRandom() : number {
 
-        // Bigger values may cause overflow
         const LCG_MODULUS : number = 2 << 29;
         const LCG_MULTIPLIER : number = 22695477;
         const LCG_INCREMENT : number = 12345;
 
-        let sample : number = 1337;
+        return (this.seed = (LCG_MULTIPLIER*this.seed + LCG_INCREMENT) % LCG_MODULUS);
+    }
+
+
+    private generateInitialStars() : void {
+
         for (let i : number = 0; i < STAR_COUNT; ++ i) {
 
-            sample = (LCG_MULTIPLIER*sample + LCG_INCREMENT) % LCG_MODULUS;
-            let x : number = -128 + (sample % 256);
+            const angle : number = (this.nextRandom() % 3600)/3600*Math.PI*2;
+            const distance : number = ((this.nextRandom() % 1000))/1000.0*MAX_DISTANCE; 
 
-            sample = (LCG_MULTIPLIER*sample + LCG_INCREMENT) % LCG_MODULUS;
-            let y : number = -96 + (sample % 192);
-
-            if (x == 0 && y == 0) {
-
-                x = 1;
-            }
-
-            const direction : Vector = Vector.normalize(new Vector(x, y));
-
-            this.initialStars[i] = new Vector(direction.x, direction.y, Math.hypot(x, y)/MAX_DISTANCE);
+            // NOTE: initial location never used, can remove the first two
+            // components
+            this.initialStars[i] = new Vector(Math.cos(angle), Math.sin(angle), distance, angle);
         }
     }
 
 
     private projectStar(canvas : Canvas, v : Vector, scaledDistanceFactor : number) : void {
 
+        const MIN_DISTANCE : number = 2;
+
         const t : number = (v.z + scaledDistanceFactor) % 1;
 
         const distance : number = t*t*MAX_DISTANCE;
+        if (distance < MIN_DISTANCE) {
 
-        const dx : number = v.x*distance;
-        const dy : number = v.y*distance;
+            return;
+        }
+
+        const angle : number = v.w + this.angle;
+
+        const dx : number = Math.cos(angle)*distance;
+        const dy : number = Math.sin(angle)*distance;
 
         canvas.fillRect(dx, dy, 1, 1);
     }
@@ -74,9 +81,11 @@ export class Starfield {
 
     public update(event : ProgramEvent) : void {
 
-        const DISTANCE_FACTOR_SPEED : number = 1.0/120.0;
+        const DISTANCE_FACTOR_SPEED : number = 1.0/300.0;
+        const ROTATION_SPEED : number = Math.PI*2/600;
 
         this.distanceModifier = (this.distanceModifier + DISTANCE_FACTOR_SPEED*event.tick) % 1.0;
+        this.angle = (this.angle + ROTATION_SPEED*event.tick) % (Math.PI*2);
     }
 
 

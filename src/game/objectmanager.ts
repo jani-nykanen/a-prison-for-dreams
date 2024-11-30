@@ -38,6 +38,7 @@ import { Switch } from "./interactables/switch.js";
 import { EyeTrigger } from "./interactables/eyetrigger.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { BackgroundType } from "./background.js";
+import { Eye } from "./enemies/eye.js";
 
 
 export class ObjectManager {
@@ -54,6 +55,7 @@ export class ObjectManager {
 
     private enemies : Enemy[];
     private visibleEnemies : VisibleObjectBuffer<Enemy>;
+    private miniboss : Eye | undefined = undefined;
 
     private platforms : Platform[];
     private visiblePlatforms : VisibleObjectBuffer<Platform>;
@@ -318,7 +320,10 @@ export class ObjectManager {
     private updatePlayer(camera : Camera, stage : Stage, event : ProgramEvent) : void {
 
         this.player.update(event);
-        this.player.targetCamera(camera);
+        if (this.miniboss?.hasReachedInitialPos()) {
+            
+            this.player.targetCamera(camera);
+        }
         stage.objectCollision(this.player, event);
     }
 
@@ -364,6 +369,11 @@ export class ObjectManager {
                     this.enemies.splice(i, 1);
                 }
             }
+        }
+
+        if (this.miniboss !== undefined && !this.miniboss.hasReachedInitialPos()) {
+
+            camera.followPoint(this.miniboss.getPosition());
         }
     }
 
@@ -552,7 +562,7 @@ export class ObjectManager {
         const bmpEnemies : Bitmap | undefined = assets.getBitmap("enemies");
         for (const o of this.enemies) {
 
-            o.draw(canvas, undefined, bmpEnemies);
+            o.draw(canvas, assets, bmpEnemies);
         }
 
         this.collectables.draw(canvas, assets);
@@ -662,5 +672,11 @@ export class ObjectManager {
         stage.changeBackground(BackgroundType.StarField);
 
         this.interactables.length = 0;
+
+        this.player.startHarmlessKnockback(60);
+
+        const playerPos : Vector = this.player.getPosition();
+        this.miniboss = new Eye(playerPos.x, playerPos.y - 24);
+        this.enemies.push(this.miniboss);
     }
 }

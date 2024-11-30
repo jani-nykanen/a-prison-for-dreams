@@ -84,10 +84,11 @@ export class RenderLayer {
     }
 
 
-    public draw(canvas : Canvas, tileset : Bitmap | undefined, camera : Camera,
-        startLayer : number = 0, endLayer : number = this.layers.length - 1) : void {
+    public draw(canvas : Canvas, tileset : Bitmap | undefined, 
+        camera : Camera, topLayerOpacity : number = 1.0) : void {
 
-        const CAMERA_MARGIN : number = 1;
+        const MIN_OPACITY : number = 0.001;
+        const CAMERA_MARGIN : number = 1;   
 
         const cameraPos : Vector = camera.getCorner();
 
@@ -97,9 +98,25 @@ export class RenderLayer {
         const endx : number = startx + ((camera.width/TILE_WIDTH) | 0) + CAMERA_MARGIN*2;
         const endy : number = starty + ((camera.height/TILE_HEIGHT) | 0) + CAMERA_MARGIN*2;
 
-        for (let i : number = startLayer; i <= endLayer; ++ i) {
+        for (let i : number = 0; i < this.layers.length; ++ i) {
 
+            if (i == 2) {
+
+                if (topLayerOpacity <= MIN_OPACITY) {
+
+                    continue;
+                }
+                else if (topLayerOpacity < 1.0) {
+
+                    canvas.setAlpha(topLayerOpacity);
+                }
+            }
             this.drawLayer(canvas, tileset, i, startx, starty, endx, endy);
+        
+            if (topLayerOpacity < 1.0) {
+
+                canvas.setAlpha();
+            }
         }
     }
 

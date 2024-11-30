@@ -110,7 +110,7 @@ export class Sprite {
     }
 
 
-    public setDimensions(newWidth : number, newHeight : number) : void {
+    public resize(newWidth : number, newHeight : number) : void {
 
         this.frameWidth = newWidth;
         this.frameHeight = newHeight;
@@ -120,4 +120,5 @@ export class Sprite {
     public getColumn = () : number => this.column;
     public getRow = () : number => this.row;
     public getFrameTime = () : number => this.timer;
+    
 }

@@ -33,6 +33,8 @@ export class Stage {
     private switches : boolean[];
 
     private topLayerDisabled : boolean = false;
+    private topLayerFadeTimer : number = 0;
+    private topLayerInitialFadeTime : number = 0;
 
     public readonly width : number;
     public readonly height : number;
@@ -138,6 +140,11 @@ export class Stage {
         this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
 
         this.background.update(camera, event);
+
+        if (this.topLayerFadeTimer > 0) {
+
+            this.topLayerFadeTimer -= event.tick;
+        }
     }
 
 
@@ -158,7 +165,19 @@ export class Stage {
             this.drawWater(canvas, assets, camera, BACKGROUND_WATER_OPACITY);
         }
 
-        this.renderlayer.draw(canvas, tileset, camera, 0, this.topLayerDisabled ? 1 : 2);
+        let topLayerOpacity : number = this.topLayerDisabled ? 0.0 : 1.0;
+        if (this.topLayerFadeTimer > 0) {
+
+            let t : number = 0.0;
+            if (this.topLayerInitialFadeTime > 0) {
+
+                t = this.topLayerFadeTimer/this.topLayerInitialFadeTime;
+            }
+
+            topLayerOpacity = this.topLayerDisabled ? t : 1.0 - t;
+        }
+
+        this.renderlayer.draw(canvas, tileset, camera, topLayerOpacity);
     }
 
 
@@ -264,9 +283,12 @@ export class Stage {
     public getSwitchState = (index : number) : boolean => this.switches[index] ?? false;
 
 
-    public toggleTopLayerRendering(state : boolean = true) : void {
+    public toggleTopLayerRendering(state : boolean, fadeTime : number = 60) : void {
 
         this.topLayerDisabled = !state;
+
+        this.topLayerFadeTimer = fadeTime;
+        this.topLayerInitialFadeTime = fadeTime;
     }
 
 

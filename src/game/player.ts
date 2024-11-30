@@ -1791,6 +1791,14 @@ export class Player extends CollisionObject {
         this.downAttacking = false;
         this.downAttackWait = 0;
     }
+
+
+    public startHarmlessKnockback(time : number) : void {
+
+        this.knockbackTimer = time;
+        this.hurtTimer = HURT_TIME;
+        this.speed.zeros();
+    }
     
 }
 
