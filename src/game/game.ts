@@ -260,6 +260,7 @@ export class Game implements Scene {
     private reset(event : ProgramEvent) : void {
 
         this.stage.toggleTopLayerRendering(true);
+        this.stage.changeBackground();
 
         this.progress.reset();
         this.objects.reset(this.progress, this.stage, this.camera, event);

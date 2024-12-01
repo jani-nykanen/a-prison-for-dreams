@@ -33,6 +33,7 @@ export const enum BackgroundType {
 export class Background {
 
 
+    private oldType : BackgroundType = BackgroundType.Unspecified;
     private type : BackgroundType;
     private height : number;
 
@@ -385,12 +386,27 @@ export class Background {
     } 
 
 
-    public changeType(newType : BackgroundType) : void {
+    public changeType(newType? : BackgroundType) : void {
+
+        if (newType === undefined) {
+
+            newType = this.oldType;
+        }
+        else {
+
+            this.oldType = this.type;
+        }
 
         this.type = newType;
         if (newType === BackgroundType.StarField) {
 
             this.starfield = new Starfield();
+        }
+        else {
+
+            // Let the garbage collector get rid of the 
+            // starfield
+            this.starfield = undefined;
         }
     }
     

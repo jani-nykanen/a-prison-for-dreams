@@ -114,7 +114,7 @@ export class ObjectManager {
         this.npcType = npcType;
         this.spawnId = spawnId;
         
-        this.createObjects(stage, !createNewPlayer, event);
+        this.createObjects(stage, camera, !createNewPlayer, event);
         this.initialCameraCheck(camera, event);
 
         if (createNewPlayer) {
@@ -136,7 +136,7 @@ export class ObjectManager {
     }
 
 
-    private createObjects(stage : Stage, resetPlayer : boolean = false, event : ProgramEvent) : void {
+    private createObjects(stage : Stage, camera : Camera, resetPlayer : boolean = false, event : ProgramEvent) : void {
 
         const bmpNPC : Bitmap | undefined = event.assets.getBitmap("npc");
         const bmpCheckpoint : Bitmap | undefined = event.assets.getBitmap("checkpoint");
@@ -298,7 +298,7 @@ export class ObjectManager {
 
                 this.interactables.push(new EyeTrigger(dx + 8, dy, 
                     this.bossBattleConfirmationBox,  
-                    () : void => this.initiateMiniBoss(stage)));
+                    () : void => this.initiateMiniBoss(stage, camera, event)));
                 break;
 
             default:
@@ -320,10 +320,7 @@ export class ObjectManager {
     private updatePlayer(camera : Camera, stage : Stage, event : ProgramEvent) : void {
 
         this.player.update(event);
-        if (this.miniboss?.hasReachedInitialPos()) {
-            
-            this.player.targetCamera(camera);
-        }
+        this.player.targetCamera(camera);
         stage.objectCollision(this.player, event);
     }
 
@@ -371,10 +368,12 @@ export class ObjectManager {
             }
         }
 
+        /*
         if (this.miniboss !== undefined && !this.miniboss.hasReachedInitialPos()) {
 
             camera.followPoint(this.miniboss.getPosition());
         }
+        */
     }
 
 
@@ -617,7 +616,7 @@ export class ObjectManager {
 
         this.interactables.length = 0;
 
-        this.createObjects(stage, true, event);
+        this.createObjects(stage, camera, true, event);
     
         const checkpoint : Vector = progress.getCheckpointPosition();
         this.player.setPosition(checkpoint.x, checkpoint.y, true);
@@ -629,6 +628,8 @@ export class ObjectManager {
 
             o.playerCollision(this.player, event, true);
         }
+
+        this.miniboss = undefined;
 
         // For debugging, if things go wrong
         // this.player.setPosition(128, 64);
@@ -666,7 +667,9 @@ export class ObjectManager {
     public hasPlayerDied = () : boolean => !this.player.doesExist();
 
 
-    public initiateMiniBoss(stage : Stage) : void {
+    public initiateMiniBoss(stage : Stage, camera : Camera, event : ProgramEvent) : void {
+
+        const MUSIC_VOL : number = 0.50;
 
         stage.toggleTopLayerRendering(false);
         stage.changeBackground(BackgroundType.StarField);
@@ -678,5 +681,16 @@ export class ObjectManager {
         const playerPos : Vector = this.player.getPosition();
         this.miniboss = new Eye(playerPos.x, playerPos.y - 24);
         this.enemies.push(this.miniboss);
+
+        event.audio.playSample(event.assets.getSample("thwomp"), 0.70);
+        event.audio.fadeInMusic(event.assets.getSample("miniboss"), MUSIC_VOL, 1000);
+
+        // Create platforms
+        for (let i : number = 0; i < 2; ++ i) {
+
+            this.platforms.push(new Platform(playerPos.x, 112, PlatformType.RectangularSwing, i));
+        }
+
+        camera.shake(60, 4);
     }
 }

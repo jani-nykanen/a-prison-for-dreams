@@ -12,6 +12,10 @@ export class Camera {
     private size : Vector;
     private corner : Vector;
 
+    private shakeTimer : number = 0;
+    private shakeMagnitude : number = 0;
+    private shakeVector : Vector;
+
 
     public get width() : number {
 
@@ -30,6 +34,8 @@ export class Camera {
 
         this.size = new Vector(event.screenWidth, event.screenHeight);
         this.corner = new Vector(x - this.size.x/2, y - this.size.y/2);
+
+        this.shakeVector = new Vector();
     }
 
 
@@ -69,6 +75,18 @@ export class Camera {
         this.pos.y = updateSpeedAxis(this.pos.y, 
             this.targetPos.y, 
             (Math.abs(this.pos.y - this.targetPos.y)/V_FACTOR)*event.tick);
+
+        if (this.shakeTimer > 0) {
+
+            this.shakeTimer -= event.tick;
+
+            this.shakeVector.x = -this.shakeMagnitude + Math.round(Math.random()*this.shakeMagnitude*2);
+            this.shakeVector.y = -this.shakeMagnitude + Math.round(Math.random()*this.shakeMagnitude*2);
+        }
+        else {
+
+            this.shakeVector.zeros();
+        }
     }
 
 
@@ -117,7 +135,7 @@ export class Camera {
         // Using "moveTo" instead of modifying the transformation matrix
         // reduces "flickering" of the game objects since it is easier this
         // way to "floor" the rendering coordinates.
-        canvas.moveTo(-this.corner.x, -this.corner.y);
+        canvas.moveTo(-this.corner.x + this.shakeVector.x, -this.corner.y + this.shakeVector.y);
     }
 
 
@@ -173,5 +191,12 @@ export class Camera {
         return new Vector(
             p.x - this.corner.x,
             p.y - this.corner.y);
+    }
+
+
+    public shake(time : number, magnitude : number) : void {
+
+        this.shakeTimer = time;
+        this.shakeMagnitude = magnitude;
     }
 }

@@ -292,7 +292,7 @@ export class Stage {
     }
 
 
-    public changeBackground(newType : BackgroundType) : void {
+    public changeBackground(newType? : BackgroundType) : void {
 
         this.background.changeType(newType);
     }

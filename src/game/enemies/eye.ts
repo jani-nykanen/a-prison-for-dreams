@@ -6,7 +6,7 @@ import { Player } from "../player.js";
 import { Enemy } from "./enemy.js";
 
 
-const INITIAL_Y : number = 96;
+const INITIAL_Y : number = 80;
 
 
 export class Eye extends Enemy {
@@ -23,14 +23,17 @@ export class Eye extends Enemy {
         this.sprite.setFrame(1, 0);
 
         this.health = 100;
-        this.attackPower = 4;
+        this.attackPower = 0;
 
         this.dropProbability = 0.0;
 
         this.collisionBox = new Rectangle(0, 0, 48, 48);
-        this.hitbox = new Rectangle(0, 0, 48, 48);
+        this.hitbox = new Rectangle(0, 0, 56, 56);
 
         this.target.zeros();
+
+        this.ignoreBottomLayer = true;
+        this.canHurtPlayer = false;
     }
 
 

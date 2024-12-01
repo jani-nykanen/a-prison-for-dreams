@@ -11,14 +11,17 @@ import { Vector } from "../math/vector.js";
 const BASE_FRICTION : number = 0.015;
 const BASE_SPEED : number = 1.0;
 
+const APPEAR_TIME : number = 60;
+
 
 export const enum PlatformType {
 
     VerticallyMoving = 0,
     HorizontallyMoving = 1,
-    Bouncing = 2,
+    Bouncing = 2, // Unused
     Swing = 3,
-    Cloud = 4
+    Cloud = 4, 
+    RectangularSwing = 5,
 };
 
 
@@ -41,8 +44,11 @@ export class Platform extends GameObject {
     private disappeared : boolean = false;
     private recovering : boolean = false;
 
+    private appearTimer : number = 0;
 
-    constructor(x : number, y : number, type : PlatformType) {
+
+    constructor(x : number, y : number, type : PlatformType,
+        specialParam? : number) {
 
         super(x, y, true);
 
@@ -93,6 +99,22 @@ export class Platform extends GameObject {
 
             this.renderOffsetY = -7;
             this.sprite.setFrame(0, 2);
+
+            break;
+
+        case PlatformType.RectangularSwing:
+
+            this.angle = (specialParam ?? 0)*Math.PI;
+
+            this.computeRectangularSwingPosition();
+            this.oldPos = this.pos.clone();
+
+            this.cameraCheckArea.x = 512;
+            this.cameraCheckArea.y = 512;
+
+            this.sprite.setFrame(4, 0);
+
+            this.appearTimer = APPEAR_TIME;
 
             break;
 
@@ -149,6 +171,34 @@ export class Platform extends GameObject {
     }
 
 
+    private computeRectangularSwingPosition() : void {
+
+        const RADIUS_H : number = 96;
+        const RADIUS_V : number = 40;
+
+        const dx : number = Math.cos(this.angle);
+        const dy : number = Math.sin(this.angle);
+
+        let sx : number = 0;
+        let sy : number = 0;
+        
+        // A simple projection from S^1 to [-1,1]^2
+        if (Math.abs(dx) > Math.abs(dy)) {
+
+            sx = Math.sign(dx);
+            sy = dy/(Math.SQRT1_2);
+        }
+        else {
+
+            sx = dx/(Math.SQRT1_2);
+            sy = Math.sign(dy);
+        }
+
+        this.pos.x = this.initialPos.x + sx*RADIUS_H;
+        this.pos.y = this.initialPos.y + sy*RADIUS_V + 4;
+    }
+
+
     private updateSwing(event : ProgramEvent) : void {
 
         const SWING_SPEED : number = Math.PI*2/180;
@@ -161,6 +211,29 @@ export class Platform extends GameObject {
 
         this.speed.zeros();
         this.target.zeros();
+    }
+
+
+    private updateRectangularSwing(event : ProgramEvent) : void {
+
+        const SWING_SPEED : number = Math.PI*2/600;
+        const SPEED_REDUCTION : number = 0.5;
+
+        const speedFactor : number = 
+            (this.angle >= Math.PI/4 && this.angle < Math.PI - Math.PI/4) ||
+            (this.angle >= Math.PI + Math.PI/4 && this.angle < Math.PI*2 - Math.PI/4)
+            ? 1.0 - SPEED_REDUCTION : 1.0;
+        
+        this.angle = (this.angle + SWING_SPEED*speedFactor*event.tick) % (Math.PI*2);
+        this.computeRectangularSwingPosition();
+
+        this.speed.zeros();
+        this.target.zeros();
+
+        if (this.appearTimer > 0) {
+
+            this.appearTimer -= event.tick;
+        }
     }
 
 
@@ -295,6 +368,11 @@ export class Platform extends GameObject {
             this.updateCloud(event);
             break;
 
+        case PlatformType.RectangularSwing:
+
+            this.updateRectangularSwing(event);
+            break;
+
         default:
             break;
         }
@@ -303,7 +381,9 @@ export class Platform extends GameObject {
 
     protected postMovementEvent(event: ProgramEvent) : void {
 
-        if (this.type == PlatformType.Swing || this.type == PlatformType.Cloud) {
+        if (this.type == PlatformType.Swing || 
+            this.type == PlatformType.Cloud ||
+            this.type == PlatformType.RectangularSwing) {
 
             this.speed.x = this.pos.x - this.oldPos.x;
             this.speed.y = this.pos.y - this.oldPos.y;
@@ -341,9 +421,19 @@ export class Platform extends GameObject {
             this.drawChain(canvas, bmp);
         }
 
+        if (this.appearTimer > 0) {
+
+            canvas.setAlpha(1.0 - this.appearTimer/APPEAR_TIME);
+        }
+
         this.sprite.draw(canvas, bmp, 
             this.pos.x - 24, 
             this.pos.y - 12 + this.renderOffsetY, 
             Flip.None);
+
+        if (this.appearTimer > 0) {
+
+            canvas.setAlpha();
+        }
     }
 }

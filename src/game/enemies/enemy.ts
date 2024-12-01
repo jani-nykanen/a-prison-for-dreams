@@ -49,6 +49,7 @@ export class Enemy extends CollisionObject {
 
     protected canBeMoved : boolean = true;
     protected canBeHurt : boolean = true;
+    protected canHurtPlayer : boolean = true;
     protected radius : number = 6;
 
     protected didTouchSurface : boolean = false;
@@ -257,7 +258,7 @@ export class Enemy extends CollisionObject {
             }
         }
 
-        if (this.overlayObject(player)) {
+        if (this.canHurtPlayer && this.overlayObject(player)) {
 
             player.applyDamage(this.attackPower, Math.sign(player.getPosition().x - this.pos.x), event);
         }
