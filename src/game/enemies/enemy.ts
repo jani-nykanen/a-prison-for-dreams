@@ -27,7 +27,6 @@ export const BASE_GRAVITY : number = 5.0;
 
 export class Enemy extends CollisionObject {
 
-
     private hurtID : number = -1;
     private underWater : boolean = false;
    
@@ -57,6 +56,8 @@ export class Enemy extends CollisionObject {
     protected knockbackFactor : number = 1.0;
 
     protected projectiles : ProjectileGenerator | undefined = undefined;
+
+    protected overriddenHurtbox : Rectangle | undefined = undefined;
 
 
     constructor(x : number, y : number) {
@@ -252,13 +253,15 @@ export class Enemy extends CollisionObject {
                 return;
             }
 
-            if (this.canBeHurt) {
+            if (this.canBeHurt && this.canBeMoved) {
 
                 this.speed.x = Math.sign(this.pos.x - ppos.x)*knockback;
             }
         }
 
-        if (this.canHurtPlayer && this.overlayObject(player)) {
+        if (this.canHurtPlayer && 
+            (this.overriddenHurtbox !== undefined && player.overlayRect(this.pos, this.overriddenHurtbox)) ||
+            (this.overriddenHurtbox === undefined && this.overlayObject(player))) {
 
             player.applyDamage(this.attackPower, Math.sign(player.getPosition().x - this.pos.x), event);
         }

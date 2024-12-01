@@ -23,14 +23,16 @@ const enum Attack {
     Shoot2 = 1,
     Crush = 2,
     Dash = 3,
+
+    AttackCount = 4,
 }
 
 
 const ATTACK_WEIGHTS : number[] = [
-    0.70,
-    0.30,
+    0.40,
+    0.25,
     0.0,
-    0.0
+    0.35
 ];
 
 
@@ -41,12 +43,18 @@ export class Eye extends Enemy {
 
     private attackTimer : number = BASE_ATTACK_TIME/2;
     private attackType : Attack = Attack.None;
+    private previousAttack : Attack = Attack.None;
     private attacking : boolean = false;
     private phase : number = 0;
+    private flickerTimer : number = 0;
 
     private initialHealth : number = 0;
 
     private playerRef : Player | undefined = undefined;
+
+    private dashing : boolean = false;
+    private crushing : boolean = false;
+    private dashDirection : Vector;
 
 
     constructor(x : number, y : number) {
@@ -58,17 +66,25 @@ export class Eye extends Enemy {
 
         this.health = 100;
         this.initialHealth = this.health;
-        this.attackPower = 0;
+        this.attackPower = 4;
 
         this.dropProbability = 0.0;
 
         this.collisionBox = new Rectangle(0, 0, 48, 48);
         this.hitbox = new Rectangle(0, 0, 56, 56);
+        this.overriddenHurtbox = new Rectangle(0, 0, 40, 40);
 
         this.target.zeros();
 
         this.ignoreBottomLayer = true;
-        this.canHurtPlayer = false;
+        // this.canHurtPlayer = false;
+
+        this.friction.x = 0.15;
+        this.friction.y = 0.15;
+
+        this.knockbackFactor = 1.0;
+
+        this.dashDirection = new Vector();
     }
 
 
@@ -113,9 +129,54 @@ export class Eye extends Enemy {
     }
 
 
+    private initiateDash(event : ProgramEvent) : void {
+
+        const DASH_SPEED : number = 4;
+
+        this.speed.x = this.dashDirection.x*DASH_SPEED;
+        this.speed.y = this.dashDirection.y*DASH_SPEED;
+
+        this.target.zeros();
+        this.attacking = false;
+
+        this.dashing = true;
+    }
+
+
+    private updateDash(event : ProgramEvent) : void {
+
+        const STOP_THRESHOLD : number = 0.1;
+
+        this.friction.x = 0.025;
+        this.friction.y = 0.025;
+
+        this.bounceFactor.x = 1.0;
+        this.bounceFactor.y = 1.0;
+
+        this.canBeMoved = false;
+
+        if (this.speed.length <= STOP_THRESHOLD) {
+
+            this.dashing = false;
+        }
+    }
+
+
+    private crush(event : ProgramEvent) : void {
+
+    }
+
+
     private performAttack(event : ProgramEvent) : void {
 
+        const FLICKER_TIME : number = 60;
         const CLOSE_EYE_SPEED : number = 6;
+        const LOAD_SPEED : number = 0.5;
+
+        if (this.playerRef === undefined) {
+
+            return;
+        }
 
         switch (this.attackType) {
 
@@ -124,7 +185,9 @@ export class Eye extends Enemy {
 
             if (this.phase == 0) {
 
-                this.sprite.animate(0, 2, 5, CLOSE_EYE_SPEED, event.tick);
+                this.sprite.animate(0, 2, 5, 
+                    this.sprite.getColumn() == 4 ? CLOSE_EYE_SPEED*2 : CLOSE_EYE_SPEED, 
+                    event.tick);
                 if (this.sprite.getColumn() == 5) {
 
                     this.sprite.setFrame(4, 0);
@@ -155,9 +218,47 @@ export class Eye extends Enemy {
             }
             break;
 
+        case Attack.Crush:
+        case Attack.Dash:
+
+            if (this.flickerTimer == 0) {
+
+                this.flickerTimer = FLICKER_TIME;
+                this.dashDirection = Vector.direction(this.pos, this.playerRef.getPosition());
+
+                if (this.attackType == Attack.Dash) {
+
+                    this.target.x = -this.dashDirection.x*LOAD_SPEED; 
+                    this.target.y = -this.dashDirection.y*LOAD_SPEED;
+                }
+
+                break;
+            }
+
+            this.flickerTimer -= event.tick;
+            if (this.flickerTimer <= 0) {
+
+                this.initiateDash(event);
+            }
+            break;
+
         default:
             break;
         }
+    }
+
+
+    private resetStats() : void {
+
+        this.friction.x = 0.15;
+        this.friction.y = 0.15;
+
+        this.knockbackFactor = 1.0;
+        this.bounceFactor.zeros();
+
+        this.canBeMoved = true;
+
+        this.flip = Flip.None;
     }
 
 
@@ -175,15 +276,34 @@ export class Eye extends Enemy {
             return;
         }
 
+        if (this.dashing) {
+
+            this.updateDash(event);
+            return;
+        }
+
+        this.resetStats();
+
         this.attackTimer -= event.tick;
         if (this.attackTimer <= 0) {
 
             const t : number = this.health/this.initialHealth;
 
-            this.attackType = sampleWeightedUniform(ATTACK_WEIGHTS);
+            this.target.zeros();
+
+            this.attackType = Attack.Dash; // Math.floor(Math.random()*Attack.AttackCount);  //sampleWeightedUniform(ATTACK_WEIGHTS);
+          /*  if (this.attackType == this.previousAttack) {
+
+                this.attackType = (this.attackType + 1) % Attack.AttackCount;
+            }
+            this.previousAttack = this.attackType;
+*/
+           
             this.attackTimer += t*BASE_ATTACK_TIME + (1.0 - t)*MIN_ATTACK_TIME;
             this.attacking = true;
             this.phase = 0;
+
+            this.flickerTimer = 0;
         }
     }
 
@@ -216,14 +336,21 @@ export class Eye extends Enemy {
 
         const bmpEye : Bitmap | undefined = assets.getBitmap("eye");
 
-        const flicker : boolean = !this.dying && this.hurtTimer > 0 &&
+        const hurtFlicker : boolean = !this.dying && 
+            this.hurtTimer > 0 &&
             Math.floor(this.hurtTimer/4) % 2 != 0;
+        const chargeFlicker : boolean = !this.dying && this.flickerTimer > 0 &&
+            Math.floor(this.flickerTimer/4) % 2 != 0;
 
-        // Flicker if hurt
-        if (flicker) {
+        if (hurtFlicker) {
 
             canvas.applyEffect(Effect.FixedColor);
             canvas.setColor(255, 255, 255);
+        }
+        if (chargeFlicker) {
+
+            // canvas.applyEffect(Effect.FixedColor);
+            canvas.setColor(255, 0, 0);
         }
 
         const dx : number = this.pos.x - this.sprite.width/2;
@@ -231,9 +358,10 @@ export class Eye extends Enemy {
 
         this.sprite.draw(canvas, bmpEye, dx, dy, this.flip);
 
-        if (flicker) {
+        if (hurtFlicker || chargeFlicker) {
 
             canvas.applyEffect(Effect.None);
+            canvas.setColor();
         }
     }
 
