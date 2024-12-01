@@ -48,6 +48,7 @@ export class Background {
 
         this.height = height;
         this.type = type ?? BackgroundType.Unspecified;
+        this.oldType = this.type;
 
         this.snowflakes = new Array<Snowflake> ();
 

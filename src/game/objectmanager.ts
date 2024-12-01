@@ -682,6 +682,8 @@ export class ObjectManager {
         this.miniboss = new Eye(playerPos.x, playerPos.y - 24);
         this.enemies.push(this.miniboss);
 
+        this.miniboss.passGenerators(this.flyingText, this.collectables, this.projectiles);
+
         event.audio.playSample(event.assets.getSample("thwomp"), 0.70);
         event.audio.fadeInMusic(event.assets.getSample("miniboss"), MUSIC_VOL, 1000);
 

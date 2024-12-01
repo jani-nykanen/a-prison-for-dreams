@@ -7,22 +7,23 @@ import { Rectangle } from "../math/rectangle.js";
 import { Assets } from "../core/assets.js";
 import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
 import { Progress } from "./progress.js";
+import { GameObject } from "./gameobject.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 2, 3, 2
+    3, 2, 3, 2, 3
 ];
 
 const ANIMATION_SPEED : number[] = [
-    4, 4, 4, 4
+    4, 4, 4, 4, 4
 ];
 
 
 const HITBOX_WIDTHS : number[] = [
-    4, 8, 4, 4
+    4, 8, 4, 4, 8,
 ];
 const HITBOX_HEIGHTS : number[] = [
-    4, 8, 4, 4
+    4, 8, 4, 4, 8
 ]
 
 
@@ -38,6 +39,9 @@ export class Projectile extends CollisionObject {
     private friendly : boolean = false;
 
     private sprite : Sprite;
+
+    private targetObject : GameObject | undefined = undefined;
+    private followSpeed : number = 0;
 
     public readonly stats : Progress | undefined = undefined;
 
@@ -59,6 +63,10 @@ export class Projectile extends CollisionObject {
         // this.ignoreEvenSlopes = true;
 
         this.stats = progress;
+
+        // TODO: Pass in spawn or store in array
+        this.friction.x = 0.0125;
+        this.friction.y = 0.0125;
     }
 
 
@@ -88,6 +96,14 @@ export class Projectile extends CollisionObject {
         this.sprite.animate(this.id, 0, 
             LAST_ANIMATION_FRAME[this.id] ?? 0, 
             ANIMATION_SPEED[this.id] ?? 0, event.tick);
+
+        if (this.targetObject !== undefined) {
+
+            const dir : Vector = Vector.direction(this.pos, this.targetObject.getPosition());
+
+            this.target.x = this.followSpeed*dir.x;
+            this.target.y = this.followSpeed*dir.y;
+        }
     }
 
 
@@ -110,7 +126,9 @@ export class Projectile extends CollisionObject {
         speedx : number, speedy : number, 
         id : number, power : number,
         friendly : boolean = true,
-        attackID : number = -1) : void {
+        attackID : number = -1,
+        targetObject : GameObject | undefined = undefined,
+        followSpeed : number = 0.0) : void {
 
         const IGNORE_EVEN_THRESHOLD : number = 0.001;
 
@@ -134,6 +152,9 @@ export class Projectile extends CollisionObject {
         this.exist = true;
 
         this.ignoreEvenSlopes = Math.abs(this.speed.y) < IGNORE_EVEN_THRESHOLD;
+
+        this.targetObject = targetObject;
+        this.followSpeed = followSpeed;
     }
 
 

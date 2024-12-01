@@ -296,4 +296,14 @@ export class Stage {
 
         this.background.changeType(newType);
     }
+
+
+    public reset() : void {
+
+        this.changeBackground();
+
+        this.topLayerDisabled = false;
+        this.topLayerFadeTimer = 0;
+        this.topLayerInitialFadeTime = 0;
+    }
 }

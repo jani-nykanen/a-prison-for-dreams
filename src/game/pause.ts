@@ -135,6 +135,7 @@ export class Pause {
 
         if (event.input.getAction("back") == InputState.Pressed) {
 
+            event.audio.resumeMusic();
             this.deactivate();
             event.audio.playSample(event.assets.getSample("pause"), 0.80);
             return;
