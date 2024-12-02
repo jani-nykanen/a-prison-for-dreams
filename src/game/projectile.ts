@@ -64,9 +64,21 @@ export class Projectile extends CollisionObject {
 
         this.stats = progress;
 
-        // TODO: Pass in spawn or store in array
-        this.friction.x = 0.0125;
-        this.friction.y = 0.0125;
+        this.computeFriction();
+    }
+
+
+    private computeFriction() : void {
+
+        if (this.id == 4) {
+
+            this.friction.x = 0.0125;
+            this.friction.y = 0.0125;
+            return;
+        }
+
+        this.friction.x = 0.125;
+        this.friction.y = 0.125;
     }
 
 
@@ -104,6 +116,8 @@ export class Projectile extends CollisionObject {
             this.target.x = this.followSpeed*dir.x;
             this.target.y = this.followSpeed*dir.y;
         }
+
+        this.computeFriction();
     }
 
 
@@ -128,9 +142,10 @@ export class Projectile extends CollisionObject {
         friendly : boolean = true,
         attackID : number = -1,
         targetObject : GameObject | undefined = undefined,
-        followSpeed : number = 0.0) : void {
+        followSpeed : number = 0.0, getGravity : boolean = false) : void {
 
         const IGNORE_EVEN_THRESHOLD : number = 0.001;
+        const BASE_GRAVITY : number = 4.0;
 
         this.oldPos = new Vector(originx, originy);
         this.pos = new Vector(x, y);
@@ -155,6 +170,11 @@ export class Projectile extends CollisionObject {
 
         this.targetObject = targetObject;
         this.followSpeed = followSpeed;
+
+        if (getGravity) {
+
+            this.target.y = BASE_GRAVITY;
+        }
     }
 
 

@@ -669,7 +669,7 @@ export class ObjectManager {
 
     public initiateMiniBoss(stage : Stage, camera : Camera, event : ProgramEvent) : void {
 
-        const MUSIC_VOL : number = 0.50;
+        const MUSIC_VOL : number = 0.40;
 
         stage.toggleTopLayerRendering(false);
         stage.changeBackground(BackgroundType.StarField);
@@ -694,5 +694,11 @@ export class ObjectManager {
         }
 
         camera.shake(60, 4);
+    }
+
+
+    public getMinibossHealth() : number | undefined {
+
+        return this.miniboss?.getHealthbarHealth();
     }
 }

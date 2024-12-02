@@ -9,7 +9,6 @@ export const GAME_SAVE_ANIMATION_TIME : number = 120;
 export const GAME_SAVE_ICON_APPEAR_TIME : number = 15;
 
 
-const HEALTH_BAR_WIDTH : number = 64;
 const HEALTH_BAR_HEIGHT : number = 10;
 
 const HEALTH_BAR_COLORS : number[][] = [
@@ -23,19 +22,18 @@ const HEALTH_BAR_PORTION_HEIGHTS : number[] = [
 const HEALTH_BAR_Y_OFF : number[] = [0, 1, 2];
 
 
-const drawHealthBar = (canvas : Canvas, bmpFont : Bitmap | undefined, 
-    dx : number, dy : number, stats : Progress) : void => {
+const drawHealthBar = (canvas : Canvas, dx : number, dy : number, width : number, value : number) : void => {
 
-    const foregroundWidth : number = Math.round(stats.getHealthBarPos()*(HEALTH_BAR_WIDTH - 4));
+    const foregroundWidth : number = Math.round(value*(width - 4));
 
     canvas.setColor(255, 255, 255);
-    canvas.fillRect(dx, dy, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
+    canvas.fillRect(dx, dy, width, HEALTH_BAR_HEIGHT);
 
     canvas.setColor(0, 0, 0);
-    canvas.fillRect(dx + 1, dy + 1, HEALTH_BAR_WIDTH - 2, HEALTH_BAR_HEIGHT - 2);
+    canvas.fillRect(dx + 1, dy + 1, width - 2, HEALTH_BAR_HEIGHT - 2);
 
     canvas.setColor(109, 109, 109);
-    canvas.fillRect(dx + 2, dy + 2, HEALTH_BAR_WIDTH - 4, HEALTH_BAR_HEIGHT - 4);
+    canvas.fillRect(dx + 2, dy + 2, width - 4, HEALTH_BAR_HEIGHT - 4);
 
     for (let i : number = 0; i < HEALTH_BAR_COLORS.length; ++ i) {
 
@@ -51,6 +49,8 @@ const drawHealthBar = (canvas : Canvas, bmpFont : Bitmap | undefined,
 
 export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : void => {
 
+    const HEALTH_BAR_WIDTH : number = 64;
+
     canvas.moveTo();
 
     const bmpHUD : Bitmap | undefined = assets.getBitmap("hud");
@@ -59,7 +59,7 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
     // Health
     let dx : number = 11;
     const strHealth : string = String(stats.getHealth()) + "/" + String(stats.getMaxHealth());
-    drawHealthBar(canvas, bmpFontOutlines, dx, 5, stats);
+    drawHealthBar(canvas, dx, 5, HEALTH_BAR_WIDTH, stats.getHealthBarPos());
     canvas.drawBitmap(bmpHUD, Flip.None, 1, 1, 0, 0, 16, 16);
     canvas.drawText(bmpFontOutlines, strHealth, dx + HEALTH_BAR_WIDTH/2, 0, -7, 0, Align.Center);
     
@@ -139,4 +139,19 @@ export const drawGameSavingIcon = (canvas : Canvas, assets : Assets, timer : num
     const dy : number = canvas.height - YOFF;
 
     canvas.drawBitmap(bmpHUD, Flip.None, dx, dy, frame*16, 16, 16, 16);
+}
+
+
+export const drawMinibossHealthbar = (canvas : Canvas, assets : Assets, value : number, name : string) : void => {
+
+    const WIDTH : number = 128;
+    const BOTTOM_OFFSET : number = 14;
+
+    const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
+
+    drawHealthBar(canvas, canvas.width/2 - WIDTH/2, canvas.height - BOTTOM_OFFSET, WIDTH, value);
+
+    canvas.drawText(bmpFontOutlines, name, 
+        canvas.width/2, canvas.height - BOTTOM_OFFSET - 6, 
+        -8, 0, Align.Center);
 }

@@ -8,7 +8,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { ObjectManager } from "./objectmanager.js";
 import { Assets } from "../core/assets.js";
 import { Progress } from "./progress.js";
-import { drawGameSavingIcon, drawHUD, GAME_SAVE_ANIMATION_TIME } from "./hud.js";
+import { drawGameSavingIcon, drawHUD, drawMinibossHealthbar, GAME_SAVE_ANIMATION_TIME } from "./hud.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
 import { Pause } from "./pause.js";
@@ -60,6 +60,8 @@ export class Game implements Scene {
     private baseTrackVolume : number = 1.0;
 
     private bossBattleConfirmationBox : ConfirmationBox;
+
+    private minibossName : string = "";
 
    
     constructor(event : ProgramEvent) { 
@@ -356,6 +358,8 @@ export class Game implements Scene {
 
         this.gameSaveMode = 0;
         this.gameSaveTimer = 0;
+
+        this.minibossName = event.localization?.getItem("miniboss")?.[0] ?? "null";
     }
 
 
@@ -502,6 +506,12 @@ export class Game implements Scene {
             // (this.dialogueBox.isActive() && this.transitionActive) ) {
             
             drawHUD(canvas, assets, this.progress!);
+
+            const bossHealth : number | undefined = this.objects?.getMinibossHealth();
+            if (bossHealth !== undefined) {
+
+                drawMinibossHealthbar(canvas, assets, bossHealth, this.minibossName);
+            }
         }
 
         this.pause.draw(canvas, assets);
