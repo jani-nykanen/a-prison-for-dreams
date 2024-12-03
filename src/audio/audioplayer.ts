@@ -125,4 +125,7 @@ export class AudioPlayer {
             callback(new AudioSample(this.ctx as AudioContext, data));
         });
     }
+
+
+    public isMusicPlaying = () : boolean => this.musicTrack !== undefined;
 }

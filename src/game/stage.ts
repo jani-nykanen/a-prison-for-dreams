@@ -224,8 +224,11 @@ export class Stage {
                 event, false);
         }
 
-        o.wallCollision(0, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, -1, event);
-        o.wallCollision(totalWidth, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, 1, event);
+        if (o.doesTakeCollisions()) {
+
+            o.wallCollision(0, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, -1, event);
+            o.wallCollision(totalWidth, EDGE_OFFSET_Y, totalHeight - EDGE_OFFSET_Y, 1, event);
+        }
 
         if (o.getPosition().y + hbox.y - hbox.h/2 > this.height*TILE_HEIGHT) {
 

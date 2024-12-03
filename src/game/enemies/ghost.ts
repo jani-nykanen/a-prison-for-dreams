@@ -5,7 +5,7 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
-const BASE_SPEED : number = 0.33;
+const BASE_SPEED : number = 0.50;
 
 
 export class Ghost extends Enemy {
@@ -20,10 +20,11 @@ export class Ghost extends Enemy {
 
         this.sprite.setFrame(0, 10);
 
-        this.health = 8;
-        this.attackPower = 3;
+        this.health = 1;
+        this.attackPower = 2;
 
-        this.dropProbability = 0.25;
+        this.dropProbability = 0.50;
+        this.doesNotDropCoins = true;
 
         this.dir = dir;
 
@@ -37,21 +38,23 @@ export class Ghost extends Enemy {
         this.cameraCheckArea.y = 1024;
 
         this.flip = dir < 0 ? Flip.None : Flip.Horizontal;
+
+        this.bodyOpacity = 0.75;
+
+        this.speed.x = BASE_SPEED*this.dir;
+        this.target.x = this.speed.x;
     }
 
 
     protected updateLogic(event : ProgramEvent) : void {
         
         const ANIMATION_SPEED : number = 8;
-        const WAVE_SPEED : number = Math.PI*2/60.0;
-        const AMPLITUDE : number = 8.0;
+        const WAVE_SPEED : number = Math.PI*2/120.0;
+        const AMPLITUDE : number = 16.0;
         // TODO: Obtain from... somewhere?
         const RIGHT_END : number = 352;
 
         this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
-
-        this.target.x = BASE_SPEED*this.dir;
-        // this.speed.x = this.target.x;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
         this.pos.y = this.initialPos.y + Math.sin(this.wave)*AMPLITUDE;

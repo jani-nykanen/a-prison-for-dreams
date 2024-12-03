@@ -3,16 +3,20 @@ import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Canvas, Effect, Flip } from "../../gfx/interface.js";
 import { sampleInterpolatedWeightedUniform, sampleWeightedUniform } from "../../math/random.js";
 import { Rectangle } from "../../math/rectangle.js";
+import { clamp } from "../../math/utility.js";
 import { Vector } from "../../math/vector.js";
 import { Player } from "../player.js";
+import { updateSpeedAxis } from "../utility.js";
 import { Enemy } from "./enemy.js";
 
 
 const INITIAL_Y : number = 80;
+const HEALTH : number = 128;
 
+const BASE_ATTACK_TIME : number = 240;
+const MIN_ATTACK_TIME : number = 90;
 
-const BASE_ATTACK_TIME : number = 210;
-const MIN_ATTACK_TIME : number = 30;
+const DEATH_TIME : number = 120;
 
 
 const enum Attack {
@@ -30,8 +34,8 @@ const enum Attack {
 
 const ATTACK_WEIGHTS_INITIAL : number[] = [
     0.40,
-    0.15,
-    0.15,
+    0.10,
+    0.20,
     0.30
 ];
 
@@ -56,6 +60,7 @@ export class Eye extends Enemy {
     private flickerTimer : number = 0;
 
     private initialHealth : number = 0;
+    private healthBarPos : number = 1.0;
 
     private playerRef : Player | undefined = undefined;
 
@@ -70,15 +75,28 @@ export class Eye extends Enemy {
     private waveTimer : number = 0;
     private bodyWave : number = 0;
 
+    private ghostSpawnTimer : number = 0;
+    private previousDirection : number = 0;
+    private spawnGhostCallback : (dir : number) => void; 
+    private deathEvent : (event : ProgramEvent) => void;
+    private triggerDeathEvent : (event : ProgramEvent) => void;
 
-    constructor(x : number, y : number) {
+    private deathTimer : number = 0;
+
+    private deathTriggered : boolean = false;
+
+
+    constructor(x : number, y : number, 
+        spawnGhostCallback : (dir : number) => void,
+        deathEvent : (event : ProgramEvent) => void,
+        triggerDeathEvent : (event : ProgramEvent) => void) {
 
         super(x, y);
 
         this.sprite.resize(64, 64);
         this.sprite.setFrame(1, 0);
 
-        this.health = 128;
+        this.health = HEALTH;
         this.initialHealth = this.health;
         this.attackPower = 3;
 
@@ -99,6 +117,15 @@ export class Eye extends Enemy {
         this.knockbackFactor = 1.0;
 
         this.dashDirection = new Vector();
+
+        this.spawnGhostCallback = spawnGhostCallback;
+        this.deathEvent = deathEvent;
+        this.triggerDeathEvent = triggerDeathEvent;
+
+        this.cameraCheckArea.x = 1024;
+        this.cameraCheckArea.y = 1024;
+
+        this.deathSound = "eye_death";
     }
 
 
@@ -113,16 +140,20 @@ export class Eye extends Enemy {
 
         const PROJECTILE_SPEED : number = 2.0;
 
-        for (let i : number = 0; i < 8; ++ i) {
+        const count : number = this.health < this.initialHealth/2 ? 8 : 6;
+        const angleOff : number = count == 6 ? Math.PI/12 : 0;
 
-            const angle = Math.PI*2/8*i;
+        for (let i : number = 0; i < count; ++ i) {
+
+            const angle = angleOff + Math.PI*2/count*i;
             const dx : number = Math.cos(angle);
             const dy : number = Math.sin(angle);
 
             this.projectiles.next().spawn(
                 this.pos.x, this.pos.y, this.pos.x, this.pos.y,
-                dx*PROJECTILE_SPEED, dy*PROJECTILE_SPEED, 3, 2, false);
+                 dx*PROJECTILE_SPEED, dy*PROJECTILE_SPEED, 3, 2, false);
         }
+        
     }
 
 
@@ -139,7 +170,8 @@ export class Eye extends Enemy {
         this.projectiles.next().spawn(
             this.pos.x, this.pos.y, this.pos.x, this.pos.y,
             dir.x*PROJECTILE_SPEED, dir.y*PROJECTILE_SPEED, 
-            4, 4, false, -1, this.playerRef, PROJECTILE_SPEED);
+            4, 3, false, -1, this.playerRef, PROJECTILE_SPEED);
+        
     }
 
 
@@ -387,6 +419,56 @@ export class Eye extends Enemy {
     }
 
 
+    private updateGhostGenerator(event : ProgramEvent) : void {
+
+        const BASE_GHOST_TIME : number = 240;
+
+        const count : number = this.health < this.initialHealth/2 ? 2 : 1;
+
+        this.ghostSpawnTimer += event.tick;
+        if (this.ghostSpawnTimer < BASE_GHOST_TIME) {
+
+            return;
+        }
+
+        let dir : number = 0;
+        if (this.previousDirection == 0) {
+
+            dir = Math.random() < 0.5 ? 1 : -1;
+        }
+        else {
+
+            dir = -this.previousDirection;
+        }
+        this.previousDirection = dir;
+
+        for (let i : number = 0; i < count; ++ i) {
+
+            this.spawnGhostCallback(this.previousDirection);
+            this.previousDirection *= -1;
+        }
+
+        this.ghostSpawnTimer -= BASE_GHOST_TIME;
+    }
+
+
+    private updateHealthbarPos(event : ProgramEvent) : void {
+
+        this.healthBarPos = clamp(updateSpeedAxis(
+            this.healthBarPos, this.health/this.initialHealth, 0.005*event.tick), 
+            0.0, 1.0);
+    }
+
+
+    private drawDeath(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const t : number = this.deathTimer/DEATH_TIME;
+
+        canvas.drawFunnilyAppearingBitmap(bmp, Flip.None, 
+            this.pos.x - 32, this.pos.y - 32, 64, 0, 64, 64, t, 128, 4, 4);
+    }
+
+
     protected slopeCollisionEvent(direction : -1 | 1, event : ProgramEvent) : void {
         
         const CRUSH_JUMP_SPEED : number = -5.0;
@@ -400,6 +482,7 @@ export class Eye extends Enemy {
             this.speed.y = CRUSH_JUMP_SPEED;
 
             this.spawnCrushProjectiles();
+            this.shakeEvent?.(30, 4);
         }
         
         if (this.dashing) {
@@ -425,7 +508,9 @@ export class Eye extends Enemy {
 
     protected updateLogic(event : ProgramEvent) : void {
         
+        this.updateGhostGenerator(event);
         this.updateBodyWave(event);
+        this.updateHealthbarPos(event);
 
         if (!this.initialPosReached) {
 
@@ -499,6 +584,53 @@ export class Eye extends Enemy {
             this.speed.zeros();
         }
     }
+
+
+    protected downAttackEvent(player : Player, event : ProgramEvent) : void {
+        
+        const KNOCKBACK : number = 2.0;
+
+        /*
+        if (this.dashing || this.crushing) {
+
+            return;
+        }
+        */
+
+        this.speed.x = (this.pos.x - player.getPosition().x)/24*KNOCKBACK;
+        this.speed.y = KNOCKBACK;
+
+        this.attackTimer = Math.min(this.attackTimer, 30);
+    }
+
+
+    protected die(event : ProgramEvent) : boolean {
+        
+        if (event.audio.isMusicPlaying()) {
+                
+            event.audio.stopMusic();
+        }
+
+        if (!this.deathTriggered) {
+
+            this.triggerDeathEvent?.(event);
+            this.deathTriggered = true;
+        }
+
+        const shakeAmount : number = Math.floor(this.deathTimer/6);
+        this.shakeEvent?.(2, shakeAmount);
+
+        this.updateHealthbarPos(event);
+
+        this.deathTimer += event.tick;
+
+        if (this.deathTimer >= DEATH_TIME) {
+
+            this.deathEvent(event);
+            return true;
+        }
+        return false;
+    }
     
 
     protected playerEvent(player : Player, event : ProgramEvent) : void {
@@ -515,6 +647,12 @@ export class Eye extends Enemy {
         }
 
         const bmpEye : Bitmap | undefined = assets.getBitmap("eye");
+
+        if (this.dying) {
+
+            this.drawDeath(canvas, bmpEye);
+            return;
+        }
 
         const hurtFlicker : boolean = !this.dying && 
             this.hurtTimer > 0 &&
@@ -566,6 +704,6 @@ export class Eye extends Enemy {
 
     public getHealthbarHealth() : number {
 
-        return Math.max(0.0, this.health/this.initialHealth);
+        return Math.max(0.0, this.healthBarPos);
     }
 }

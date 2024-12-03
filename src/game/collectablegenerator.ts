@@ -11,7 +11,7 @@ import { FlyingText } from "./flyingtext.js";
 import { Progress } from "./progress.js";
 
 
-export const sampleTypeFromProgress = (progress : Progress) : CollectableType => {
+export const sampleTypeFromProgress = (progress : Progress, noCoins : boolean = false) : CollectableType => {
 
     const HEART_MAX_WEIGHT : number = 0.33;
     const AMMO_MAX_WEIGHT : number = 0.33;

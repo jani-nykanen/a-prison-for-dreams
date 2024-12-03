@@ -28,6 +28,7 @@ export const BASE_GRAVITY : number = 5.0;
 export class Enemy extends CollisionObject {
 
     private hurtID : number = -1;
+    private projectileHurtID : number = -1;
     private underWater : boolean = false;
    
     private flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
@@ -39,12 +40,14 @@ export class Enemy extends CollisionObject {
 
     protected sprite : Sprite;
     protected flip : Flip = Flip.None;
+    protected bodyOpacity : number = 1.0;
 
     protected attackPower : number = 1;
     protected health : number = 5;
 
     protected dropProbability : number = 0.5;
     protected coinTypeWeights : number[];
+    protected doesNotDropCoins : boolean = false;
 
     protected canBeMoved : boolean = true;
     protected canBeHurt : boolean = true;
@@ -58,6 +61,10 @@ export class Enemy extends CollisionObject {
     protected projectiles : ProjectileGenerator | undefined = undefined;
 
     protected overriddenHurtbox : Rectangle | undefined = undefined;
+
+    protected deathSound : string = "kill";
+
+    protected shakeEvent : ((shakeTime : number, shakeAmount : number) => void) | undefined = undefined;
 
 
     constructor(x : number, y : number) {
@@ -90,6 +97,11 @@ export class Enemy extends CollisionObject {
         let baseType : CollectableType = sampleTypeFromProgress(stats);
         if (baseType == CollectableType.Coin) {
 
+            if (this.doesNotDropCoins) {
+
+                return;
+            }
+
             baseType = COIN_TYPE_LOOKUP[sampleWeightedUniform(this.coinTypeWeights)] ?? CollectableType.Coin;
         }
 
@@ -119,7 +131,7 @@ export class Enemy extends CollisionObject {
                 this.spawnCollectables(dir ?? new Vector(), stats);
             }
 
-            event.audio.playSample(event.assets.getSample("kill"), 0.60);
+            event.audio.playSample(event.assets.getSample(this.deathSound), 0.60);
 
             this.dying = true;
             this.sprite.setFrame(0, 0);
@@ -134,6 +146,7 @@ export class Enemy extends CollisionObject {
     protected updateLogic?(event : ProgramEvent) : void;
     protected playerEvent?(player : Player, event : ProgramEvent) : void;
     protected enemyCollisionEvent?(enemy : Enemy, event : ProgramEvent) : void;
+    protected downAttackEvent?(player : Player, event : ProgramEvent) : void;
 
 
     protected die(event: ProgramEvent): boolean {
@@ -211,7 +224,18 @@ export class Enemy extends CollisionObject {
         const dx : number = this.pos.x - this.sprite.width/2;
         const dy : number = this.pos.y - this.sprite.height/2;
 
+        const changeAlpha : boolean = this.bodyOpacity < 1.0;
+        if (changeAlpha) {
+
+            canvas.setAlpha(this.bodyOpacity);
+        }
+
         this.sprite.draw(canvas, bmp, dx, dy, this.flip);
+
+        if (changeAlpha) {
+
+            canvas.setAlpha();
+        }
     }
 
 
@@ -250,6 +274,7 @@ export class Enemy extends CollisionObject {
 
             if (player.performDownAttackJump()) {
 
+                this.downAttackEvent?.(player, event);
                 return;
             }
 
@@ -278,7 +303,7 @@ export class Enemy extends CollisionObject {
         }   
 
         const attackID : number = p.getAttackID();
-        if (p.overlayObject(this) && (p.destroyOnTouch() || attackID != this.hurtID )) {
+        if (p.overlayObject(this) && (p.destroyOnTouch() || attackID != this.projectileHurtID )) {
 
             const ppos : Vector = p.getPosition();
 
@@ -288,7 +313,7 @@ export class Enemy extends CollisionObject {
             }
             else {
 
-                this.hurtID = attackID;
+                this.projectileHurtID = attackID;
             }
 
             if (this.canBeMoved) {
@@ -345,5 +370,18 @@ export class Enemy extends CollisionObject {
         this.flyingText = flyingText;
         this.collectables = collectables;
         this.projectiles = projectiles;
+    }
+
+
+    public passShakeEvent(shakeEvent : (shakeTime : number, shakeAmount : number) => void) : void {
+
+        this.shakeEvent = shakeEvent;
+    }
+    
+
+    public softKill() : void {
+
+        this.dying = true;
+        this.health = 0;
     }
 }

@@ -308,11 +308,11 @@ export class WebGLCanvas implements Canvas {
 
         const offset : number = 1 + maxOffset * t;
 
-        for (let y = 0; y < sh; ++ y) {
+        for (let y : number = 0; y < sh; ++ y) {
 
             this.drawBitmap(bmp, flip,
-                Math.round(dx + Math.sin((Math.PI*2*latitude)/sh*y + t*(Math.PI*latitude))*amplitude*t), 
-                Math.round(dy + y*offset - sh*maxOffset*t/2),
+                (dx + Math.sin((Math.PI*2*latitude)/sh*y + t*(Math.PI*latitude))*amplitude*t), 
+                (dy + y*offset - sh*maxOffset*t/2),
                 sx, sy + y, sw, 1);
         }
     }

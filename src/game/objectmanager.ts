@@ -39,6 +39,9 @@ import { EyeTrigger } from "./interactables/eyetrigger.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { BackgroundType } from "./background.js";
 import { Eye } from "./enemies/eye.js";
+import { Ghost } from "./enemies/ghost.js";
+import { TransitionType } from "../core/transition.js";
+import { RGBA } from "../math/rgba.js";
 
 
 export class ObjectManager {
@@ -310,6 +313,7 @@ export class ObjectManager {
                     this.enemies.push(o);
 
                     o.passGenerators(this.flyingText, this.collectables, this.projectiles);
+                    o.passShakeEvent((shakeTime : number, shakeAmount : number) : void => camera.shake(shakeTime, shakeAmount));
                 }
                 break;
             }
@@ -671,6 +675,45 @@ export class ObjectManager {
 
         const MUSIC_VOL : number = 0.40;
 
+        const spawnGhost = (dir : number) : void => {
+            
+            const minY : number = 32 + 12;
+            const maxY : number = minY + (stage.height - 4)*TILE_HEIGHT - 12;
+
+            const dx : number = dir > 0 ? -12 : stage.width*TILE_WIDTH + 12;
+            const dy : number = minY + Math.random()*(maxY - minY);
+
+            const o : Ghost = new Ghost(dx, dy, dir);
+            o.passGenerators(this.flyingText, this.collectables, this.projectiles);
+            this.enemies.push(o);
+        };
+
+        const deathEvent = (event : ProgramEvent) : void => {
+
+            const spawnIndex : number = stage.baseMap.getNumericProperty("boss_defeat_pos");
+            const mapName : string = stage.baseMap.getProperty("boss_defeat_map");
+
+            event.transition.activate(true, TransitionType.Fade, 1.0/60.0, event,
+                (event : ProgramEvent) : void => {
+
+                    this.mapTransition(mapName, 
+                        spawnIndex, Pose.Sit, true, event, true);
+                },
+                new RGBA(255, 255, 255));
+        }
+
+
+        const triggerDeathEvent = (event : ProgramEvent) : void => {
+
+            for (const e of this.enemies) {
+
+                if (e !== this.miniboss) {
+
+                    e.softKill();
+                }
+            }
+        }
+
         stage.toggleTopLayerRendering(false);
         stage.changeBackground(BackgroundType.StarField);
 
@@ -679,12 +722,15 @@ export class ObjectManager {
         this.player.startHarmlessKnockback(60);
 
         const playerPos : Vector = this.player.getPosition();
-        this.miniboss = new Eye(playerPos.x, playerPos.y - 24);
+        this.miniboss = new Eye(playerPos.x, playerPos.y - 24, 
+            spawnGhost, deathEvent, triggerDeathEvent);
         this.enemies.push(this.miniboss);
 
         this.miniboss.passGenerators(this.flyingText, this.collectables, this.projectiles);
+        this.miniboss.passShakeEvent(
+            (shakeTime : number, shakeAmount : number) : void => camera.shake(shakeTime, shakeAmount));
 
-        event.audio.playSample(event.assets.getSample("thwomp"), 0.70);
+        event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
         event.audio.fadeInMusic(event.assets.getSample("miniboss"), MUSIC_VOL, 1000);
 
         // Create platforms

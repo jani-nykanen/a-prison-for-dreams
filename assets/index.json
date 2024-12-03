@@ -107,6 +107,7 @@
 
         {"name": "hurt", "path": "hurt.wav"},
         {"name": "die", "path": "die.wav"},
+        {"name": "eye_death", "path": "eye_death.wav"},
         
         {"name": "break", "path": "break.wav"},
         {"name": "coin", "path": "coin.wav"},
