@@ -690,7 +690,7 @@ export class ObjectManager {
         // Create platforms
         for (let i : number = 0; i < 2; ++ i) {
 
-            this.platforms.push(new Platform(playerPos.x, 112, PlatformType.RectangularSwing, i));
+            this.platforms.push(new Platform(playerPos.x, 120, PlatformType.RectangularSwing, i));
         }
 
         camera.shake(60, 4);

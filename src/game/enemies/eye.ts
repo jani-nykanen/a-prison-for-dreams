@@ -11,8 +11,8 @@ import { Enemy } from "./enemy.js";
 const INITIAL_Y : number = 80;
 
 
-const BASE_ATTACK_TIME : number = 240;
-const MIN_ATTACK_TIME : number = 90;
+const BASE_ATTACK_TIME : number = 210;
+const MIN_ATTACK_TIME : number = 30;
 
 
 const enum Attack {
@@ -68,6 +68,7 @@ export class Eye extends Enemy {
     private recoveringFromCrush : boolean = false;
 
     private waveTimer : number = 0;
+    private bodyWave : number = 0;
 
 
     constructor(x : number, y : number) {
@@ -375,6 +376,17 @@ export class Eye extends Enemy {
     }
 
 
+    private updateBodyWave(event : ProgramEvent) : void {
+
+        const BODY_WAVE : number = Math.PI*2/120.0;
+
+        const t : number = 1.0 - this.health/this.initialHealth;
+        const bonus : number = 1.0 + t;
+
+        this.bodyWave = (this.bodyWave + BODY_WAVE*bonus*event.tick) % (Math.PI*2);
+    }
+
+
     protected slopeCollisionEvent(direction : -1 | 1, event : ProgramEvent) : void {
         
         const CRUSH_JUMP_SPEED : number = -5.0;
@@ -413,6 +425,8 @@ export class Eye extends Enemy {
 
     protected updateLogic(event : ProgramEvent) : void {
         
+        this.updateBodyWave(event);
+
         if (!this.initialPosReached) {
 
             this.reachInitialPos(event);
@@ -522,7 +536,19 @@ export class Eye extends Enemy {
         const dx : number = this.pos.x - this.sprite.width/2;
         const dy : number = this.pos.y - this.sprite.height/2;
 
-        this.sprite.draw(canvas, bmpEye, dx, dy, this.flip);
+        // this.sprite.draw(canvas, bmpEye, dx, dy, this.flip);
+
+        const sx : number = this.sprite.getColumn()*64;
+        const sy : number = this.sprite.getRow()*64;
+
+        const t : number = (1.0 - this.health/this.initialHealth);
+        const amplitude : number = t*8;
+        const period : number = 32 + 32*(1.0 - t);
+
+        canvas.drawHorizontallyWavingBitmap(bmpEye, 
+            amplitude, period, this.bodyWave, 
+            Flip.None, dx, dy, sx, sy, 64, 64);
+
 
         if (hurtFlicker || chargeFlicker) {
 
