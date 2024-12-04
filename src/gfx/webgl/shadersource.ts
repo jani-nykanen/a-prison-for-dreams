@@ -126,6 +126,35 @@ export const FragmentSource = {
       }
         gl_FragColor = vec4(vec3(1.0, 1.0, 1.0) - res.xyz, res.w);
     }`,
+
+
+    TexturedSwapRedBlue : 
+    
+    `
+    precision mediump float;
+         
+    uniform sampler2D texSampler;
+    
+    uniform vec4 color;
+    
+    uniform vec2 texPos;
+    uniform vec2 texScale;
+    
+    varying vec2 uv;
+    
+    
+    void main() {
+    
+        vec2 tex = uv * texScale + texPos;    
+        vec4 buffer = texture2D(texSampler, tex)*color;
+        vec4 res = vec4(buffer.b, buffer.g, buffer.r, buffer.a);
+        
+        // Needed to make the stencil buffer work
+        if (res.a < 1.0/255.0) {
+              discard;
+        }
+        gl_FragColor = res;
+    }`,
     
     
     NoTexture : 

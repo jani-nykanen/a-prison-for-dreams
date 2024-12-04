@@ -2,7 +2,7 @@ import { ProgramEvent } from "../core/event.js";
 import { Shop } from "./shop.js";
 
 
-const ITEM_START_INDEX : number = 16;
+const ITEM_START_INDEX : number = 32;
 
 
 const PRICES : number[][] = [

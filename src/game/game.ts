@@ -63,6 +63,12 @@ export class Game implements Scene {
 
     private minibossName : string = "";
 
+    // To-be-removed from the final version
+    private inProgressMessage : string = "";
+    private showInProgressMessage : boolean = false;
+    private inProgressMessageWidth : number = 0;
+    private inProgressMessageHeight : number = 0;
+
    
     constructor(event : ProgramEvent) { 
 
@@ -240,6 +246,9 @@ export class Game implements Scene {
         // Set area name
         this.mapName = baseMap.getProperty("name") ?? "null";
         this.mapNameTimer = MAP_NAME_APPEAR_TIME;
+
+        // Check if "in progress"
+        this.showInProgressMessage = baseMap.getBooleanProperty("in_progress");
     }
 
 
@@ -338,6 +347,32 @@ export class Game implements Scene {
     }
 
 
+    private drawInProgressMessage(canvas : Canvas, assets : Assets) : void {
+
+        const POS_Y : number = 28;
+
+        const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
+
+        const dx : number = canvas.width/2 - this.inProgressMessageWidth*4;
+        const dy : number = POS_Y;
+
+        const dw : number = (this.inProgressMessageWidth + 1)*8;
+        const dh : number = (this.inProgressMessageHeight + 0.5)*12;
+
+        canvas.setColor(0, 0, 0, 0.50);
+        canvas.fillRect(dx - 2, dy - 2, dw + 4, dh + 4);
+
+        canvas.setColor(255, 255, 182);
+        canvas.drawText(bmpFontOutlines, this.inProgressMessage, dx, dy, -8, -4);
+
+        canvas.setColor();
+        canvas.fillRect(dx - 3, dy - 3, dw + 6, 1);
+        canvas.fillRect(dx - 3, dy + dh + 1, dw + 6, 1);
+        canvas.fillRect(dx - 3, dy - 2, 1, dh + 3);
+        canvas.fillRect(dx + dw + 2, dy - 2, 1, dh + 3);
+    }
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
         
         this.fileIndex = typeof(param) == "number" ? param : this.fileIndex;
@@ -360,6 +395,12 @@ export class Game implements Scene {
         this.gameSaveTimer = 0;
 
         this.minibossName = event.localization?.getItem("miniboss")?.[0] ?? "null";
+
+        this.inProgressMessage = event.localization?.getItem("inprogress")?.[0] ?? "null";
+
+        const lines : string[] = this.inProgressMessage.split("\n");
+        this.inProgressMessageWidth = Math.max(...lines.map((s : string) : number => s.length));
+        this.inProgressMessageHeight = lines.length;
     }
 
 
@@ -530,6 +571,10 @@ export class Game implements Scene {
         if (!this.pause.isActive() && !this.dialogueBox.isActive()) {
         
             this.hints.draw(canvas, assets);
+            if (this.showInProgressMessage) {
+
+                this.drawInProgressMessage(canvas, assets);
+            }
         }
 
     }

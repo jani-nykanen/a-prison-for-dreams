@@ -319,6 +319,10 @@ export class Player extends CollisionObject {
             return;
         }
 
+        const hasRocketPack : boolean = 
+            this.stats.hasItem(Item.WeakRocketPack) || 
+            this.stats.hasItem(Item.StrongRocketPack);
+
         const jumpButton : InputState = event.input.getAction("jump");
         if (jumpButton == InputState.Pressed && !this.highJumping) {
 
@@ -340,21 +344,22 @@ export class Player extends CollisionObject {
 
                 event.audio.playSample(event.assets.getSample("jump"), 0.80);
             }
-            else if (this.canUseRocketPack) {
+            else if (hasRocketPack && this.canUseRocketPack) {
 
                 this.canUseRocketPack = false;
-
-                this.rocketPackReleased = false;
+                this.rocketPackReleased = !this.stats.hasItem(Item.StrongRocketPack);
                 this.rocketPackActive = true;
 
-                this.jumpTimer = ROCKET_PACK_JUMP;
+                if (this.stats.hasItem(Item.StrongRocketPack)) {
 
-                this.speed.y = Math.min(MINIMUM_ROCKET_JUMP_SPEED, this.speed.y);
+                    this.jumpTimer = ROCKET_PACK_JUMP;
+                    this.speed.y = Math.min(MINIMUM_ROCKET_JUMP_SPEED, this.speed.y);
+                }
             
                 // To make the sound effect appear immediately
                 this.dustCount = 0;
             }
-            else if (this.rocketPackReleased) {
+            else if (hasRocketPack && this.rocketPackReleased) {
 
                 this.jumpTimer = 0;
                 this.rocketPackActive = true;

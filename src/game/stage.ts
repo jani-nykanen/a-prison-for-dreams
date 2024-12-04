@@ -13,6 +13,28 @@ import { Rectangle } from "../math/rectangle.js";
 import { Background, BackgroundType } from "./background.js";
 
 
+const enum MapEffect {
+
+    None = 0,
+    Frozen = 1,
+}
+
+
+const mapEffectFromString = (str : string) : MapEffect => {
+
+    switch (str) {
+
+    case "frozen":
+        return MapEffect.Frozen;
+
+    default:
+        break;
+    }
+
+    return MapEffect.None;
+}
+
+
 export class Stage {
 
 
@@ -35,6 +57,8 @@ export class Stage {
     private topLayerDisabled : boolean = false;
     private topLayerFadeTimer : number = 0;
     private topLayerInitialFadeTime : number = 0;
+
+    private effect : MapEffect;
 
     public readonly width : number;
     public readonly height : number;
@@ -68,6 +92,8 @@ export class Stage {
         this.baseMap = baseMap;
     
         this.switches = (new Array<boolean> (3)).fill(false);
+
+        this.effect = mapEffectFromString(this.baseMap.getProperty("effect") ?? "none");
     }
 
 
@@ -133,6 +159,21 @@ export class Stage {
     }
 
 
+    private applyMapEffect(canvas : Canvas) : void {
+
+        switch (this.effect) {
+
+        case MapEffect.Frozen:
+
+            canvas.applyEffect(Effect.SwapRedAndBlue);
+            break;
+
+        default:
+            break;
+        }
+    }
+
+
     public update(camera : Camera, event : ProgramEvent) : void {
 
         const WATER_ANIMATION_SPEED : number = 8;
@@ -150,7 +191,15 @@ export class Stage {
 
     public drawBackground(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
+        this.applyMapEffect(canvas);
+
         this.background.draw(canvas, assets, camera);
+        
+        if (this.effect != MapEffect.None) {
+
+            canvas.applyEffect(Effect.None);
+            canvas.setColor();
+        }
     }
 
 
@@ -177,7 +226,14 @@ export class Stage {
             topLayerOpacity = this.topLayerDisabled ? t : 1.0 - t;
         }
 
+        this.applyMapEffect(canvas);
         this.renderlayer.draw(canvas, tileset, camera, topLayerOpacity);
+
+        if (this.effect != MapEffect.None) {
+
+            canvas.applyEffect(Effect.None);
+            canvas.setColor();
+        }
     }
 
 

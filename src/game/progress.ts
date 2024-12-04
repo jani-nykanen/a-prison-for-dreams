@@ -130,13 +130,12 @@ export class Progress {
         // output["maxHealth"] = this.maxHealth;
         // output["maxBullets"] = this.maxBullets;
 
-        output["items"] = Array.from(this.obtainedItems);
-        output["healthups"] = Array.from(this.obtainedHealthUps);
-        output["ammoups"] = Array.from(this.obtainedAmmoUps);
-        output["dreamorbs"] = Array.from(this.obtainedDreamOrbs);
-
-        output["hints"] = Array.from(this.hintShown);
-        output["cutscenes"] = Array.from(this.cutsceneWatched);
+        output["items"] = booleanArrayToListOfTrueValues(this.obtainedItems);
+        output["healthups"] = booleanArrayToListOfTrueValues(this.obtainedHealthUps);
+        output["ammoups"] = booleanArrayToListOfTrueValues(this.obtainedAmmoUps);
+        output["dreamorbs"] = booleanArrayToListOfTrueValues(this.obtainedDreamOrbs);
+        output["hints"] = booleanArrayToListOfTrueValues(this.hintShown);
+        output["cutscenes"] = booleanArrayToListOfTrueValues(this.cutsceneWatched);
         output["levers"] = booleanArrayToListOfTrueValues(this.leversPulled);
         output["doors"] = booleanArrayToListOfTrueValues(this.doorsOpened);
 
@@ -497,13 +496,13 @@ export class Progress {
             // this.maxHealth = Number(json["maxHealth"] ?? this.maxHealth);
             // this.maxBullets = Number(json["maxBullets"] ?? this.maxBullets);
 
-            this.obtainedItems = Array.from(json["items"] ?? []) as boolean[];
-            this.obtainedHealthUps = Array.from(json["healthups"] ?? []) as boolean[];
-            this.obtainedAmmoUps = Array.from(json["ammoups"] ?? []) as boolean[];
-            this.obtainedDreamOrbs = Array.from(json["dreamorbs"] ?? []) as boolean[];
+            this.obtainedItems = listOfTrueValuesToBooleanArray(json["items"] ?? []);
+            this.obtainedHealthUps = listOfTrueValuesToBooleanArray(json["healthups"] ?? []);
+            this.obtainedAmmoUps = listOfTrueValuesToBooleanArray(json["ammoups"] ?? []);
+            this.obtainedDreamOrbs = listOfTrueValuesToBooleanArray(json["dreamorbs"] ?? []);
 
-            this.hintShown = Array.from(json["hints"] ?? []) as boolean[];
-            this.cutsceneWatched = Array.from(json["cutscenes"] ?? []) as boolean[];
+            this.hintShown = listOfTrueValuesToBooleanArray(json["hints"] ?? []);
+            this.cutsceneWatched =listOfTrueValuesToBooleanArray(json["cutscenes"] ?? []);
             this.leversPulled = listOfTrueValuesToBooleanArray(json["levers"] ?? []);
             this.doorsOpened = listOfTrueValuesToBooleanArray(json["doors"] ?? []);
 

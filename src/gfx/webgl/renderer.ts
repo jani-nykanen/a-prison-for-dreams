@@ -77,6 +77,7 @@ export const enum ShaderType {
     NoTexture = 1,
     FixedColorTextured = 2,
     InvertTextured = 3,
+    SwapRedAndBlue = 4,
 };
 
 
@@ -193,6 +194,8 @@ export class WebGLRenderer implements Renderer {
             new Shader(gl, VertexSource.Textured, FragmentSource.TexturedFixedColor));
         this.shaders.set(ShaderType.InvertTextured, 
             new Shader(gl, VertexSource.Textured, FragmentSource.TexturedInvert));
+        this.shaders.set(ShaderType.SwapRedAndBlue, 
+            new Shader(gl, VertexSource.Textured, FragmentSource.TexturedSwapRedBlue));   
         this.activeShader = this.shaders.get(ShaderType.Textured);
         this.activeShader.use();
 

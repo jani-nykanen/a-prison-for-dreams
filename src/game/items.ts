@@ -15,13 +15,19 @@ export const enum Item {
     PurpleKey = 8,
     ThumbDown = 9,
     ChargeShot = 10,
+    WeakRocketPack = 11,
+    StrongRocketPack = 12,
+    PowerfulSword = 13,
+    PowerfulGun = 14,
+    PlatinumKey = 15,
+
     
 
     // Shop items
-    ExtraHealth = 16,
-    ExtraAmmo = 17,
-    Bracelet = 18,
-    Spectacles = 19,
-    RunningShoes = 20,
-    Shield = 21
+    ExtraHealth = 32,
+    ExtraAmmo = 33,
+    Bracelet = 34,
+    Spectacles = 35,
+    RunningShoes = 36,
+    Shield = 37
 };

@@ -36,6 +36,7 @@ export const enum Effect {
     None = 0,
     FixedColor = 1,
     InvertColors = 2,
+    SwapRedAndBlue = 3,
 }
 
 

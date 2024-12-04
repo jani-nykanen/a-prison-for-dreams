@@ -48,7 +48,8 @@ const createCircleOutMesh = (gl : WebGLRenderingContext, quality : number) : Mes
 const getShaderTypeFromEffect = (eff : Effect) : ShaderType => 
     [ShaderType.Textured, 
      ShaderType.FixedColorTextured, 
-     ShaderType.InvertTextured][eff] ?? ShaderType.Textured;
+     ShaderType.InvertTextured,
+     ShaderType.SwapRedAndBlue][eff] ?? ShaderType.Textured;
 
 
 export class WebGLCanvas implements Canvas {

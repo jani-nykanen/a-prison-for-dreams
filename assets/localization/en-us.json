@@ -305,5 +305,8 @@
 
         "You obtain a RECHARGABLE BAT-\nTERY!",
         "Now you can store some energy\nplasma thing in your gun and\nrelease it as a powerful\ncharge attack!"
-    ]
+    ],
+
+
+    "inprogress": "This area is still work\nin progress. Come back\nafter the next (major)\nupdate!"
 }
