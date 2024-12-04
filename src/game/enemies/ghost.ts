@@ -43,6 +43,8 @@ export class Ghost extends Enemy {
 
         this.speed.x = BASE_SPEED*this.dir;
         this.target.x = this.speed.x;
+
+        this.canBeMoved = false;
     }
 
 
@@ -62,7 +64,6 @@ export class Ghost extends Enemy {
         if ((this.dir < 0 && this.pos.x < -this.sprite.width/2) || 
             (this.dir > 0 && this.pos.x > RIGHT_END + this.sprite.width/2)) {
 
-            console.log("Gone.");
             this.exist = false;
         }
     }

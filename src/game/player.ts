@@ -1610,6 +1610,7 @@ export class Player extends CollisionObject {
             return false;
         }
         this.bounce(JUMP_SPEED);
+        this.highJumping = true;
 
         return true;
     }

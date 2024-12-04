@@ -14,7 +14,7 @@ const INITIAL_Y : number = 80;
 const HEALTH : number = 128;
 
 const BASE_ATTACK_TIME : number = 240;
-const MIN_ATTACK_TIME : number = 90;
+const MIN_ATTACK_TIME : number = 120;
 
 const DEATH_TIME : number = 120;
 
@@ -72,7 +72,7 @@ export class Eye extends Enemy {
     private crushCount : number = 0;
     private recoveringFromCrush : boolean = false;
 
-    private waveTimer : number = 0;
+    private verticalDirection : number = 0;
     private bodyWave : number = 0;
 
     private ghostSpawnTimer : number = 0;
@@ -126,6 +126,11 @@ export class Eye extends Enemy {
         this.cameraCheckArea.y = 1024;
 
         this.deathSound = "eye_death";
+
+        this.dir = Math.random() > 0.5 ? 1 : -1;
+        this.verticalDirection = 1;
+
+        this.canBeMoved = false;
     }
 
 
@@ -138,7 +143,7 @@ export class Eye extends Enemy {
 
     private multishot(event : ProgramEvent) : void {
 
-        const PROJECTILE_SPEED : number = 2.0;
+        const PROJECTILE_SPEED : number = 1.5;
 
         const count : number = this.health < this.initialHealth/2 ? 8 : 6;
         const angleOff : number = count == 6 ? Math.PI/12 : 0;
@@ -375,7 +380,7 @@ export class Eye extends Enemy {
         const t : number = 1.0 - this.health/this.initialHealth;
 
         this.friction.x = 0.15*(1.0 + 0.5*t);
-        this.friction.y = this.friction.x;
+        this.friction.y = 0.025*(1.0 + 0.5*t); //this.friction.x;
 
         this.knockbackFactor = 1.0;
         this.bounceFactor.x = 1.0;
@@ -389,22 +394,27 @@ export class Eye extends Enemy {
 
     private updateWaving(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/120.0;
-        const HORIZONTAL_SPEED : number = 0.25; 
-        const AMPLITUDE : number = 0.5;
+        const VERTICAL_SPEED : number = 0.25;
+        const HORIZONTAL_SPEED : number = 0.33; 
+        const TRIGGER_DISTANCE : number = 16;
+        const MIDDLE_Y : number = 7*16;
 
         const t : number = 1.0 - this.health/this.initialHealth;
-        const bonus : number = 1.0 + 0.5*t;
-
-        this.waveTimer = (this.waveTimer + WAVE_SPEED*bonus*event.tick) % (Math.PI*2);
-        this.target.y = Math.sin(this.waveTimer)*AMPLITUDE*bonus;
+        const bonus : number = 1.0 + 0.5*t; 
 
         if (this.dir == 0) {
 
             this.dir = (this.playerRef?.getPosition().x ?? 0) > this.pos.x ? 1 : -1;
+            this.verticalDirection = this.pos.y > MIDDLE_Y ? -1 : 1;
         }
-
         this.target.x = this.dir*HORIZONTAL_SPEED*bonus;
+
+        if ((this.verticalDirection > 0 && this.pos.y - MIDDLE_Y > TRIGGER_DISTANCE) ||
+            (this.verticalDirection < 0 && MIDDLE_Y - this.pos.y > TRIGGER_DISTANCE)) {
+
+            this.verticalDirection *= -1;
+        }
+        this.target.y = this.verticalDirection*VERTICAL_SPEED*bonus;
     }
 
 
@@ -557,15 +567,12 @@ export class Eye extends Enemy {
             }
             this.previousAttack = this.attackType;
             */
-
            
             this.attackTimer += t*BASE_ATTACK_TIME + (1.0 - t)*MIN_ATTACK_TIME;
             this.attacking = true;
             this.phase = 0;
-
             this.flickerTimer = 0;
 
-            this.waveTimer = 0.0;
             this.dir = 0;
 
             this.bounceFactor.zeros();
@@ -588,7 +595,7 @@ export class Eye extends Enemy {
 
     protected downAttackEvent(player : Player, event : ProgramEvent) : void {
         
-        const KNOCKBACK : number = 2.0;
+        const KNOCKBACK : number = 1.5;
 
         /*
         if (this.dashing || this.crushing) {
@@ -597,7 +604,7 @@ export class Eye extends Enemy {
         }
         */
 
-        this.speed.x = (this.pos.x - player.getPosition().x)/24*KNOCKBACK;
+        // this.speed.x = (this.pos.x - player.getPosition().x)/24*KNOCKBACK;
         this.speed.y = KNOCKBACK;
 
         this.attackTimer = Math.min(this.attackTimer, 30);

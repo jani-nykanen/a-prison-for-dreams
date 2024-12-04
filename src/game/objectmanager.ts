@@ -279,11 +279,14 @@ export class ObjectManager {
             case 74:
             case 75:
             case 76:
+            case 80:
 
                 this.interactables.push(new Door(dx, dy, id - 1,
                     stage.baseMap.getProperty(`door${id - 1}`), 
                     this.mapTransition, this.dialogueBox,
-                    objID - 74, bmpDoors));
+                    objID != 80 ? objID - 74 : undefined, 
+                    objID == 80,
+                    bmpDoors));
                 if (!resetPlayer && id - 1 == this.spawnId) {
 
                     this.player.setPosition(dx, dy, resetPlayer);
@@ -692,6 +695,8 @@ export class ObjectManager {
 
             const spawnIndex : number = stage.baseMap.getNumericProperty("boss_defeat_pos");
             const mapName : string = stage.baseMap.getProperty("boss_defeat_map");
+
+            this.player.stats.markMinibossDefeated();
 
             event.transition.activate(true, TransitionType.Fade, 1.0/60.0, event,
                 (event : ProgramEvent) : void => {

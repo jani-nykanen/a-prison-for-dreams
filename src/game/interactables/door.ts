@@ -20,6 +20,7 @@ export class Door extends Interactable {
     private id : number = 0;
     private requiredKey : number | undefined = undefined;
     private opened : boolean = true;
+    private requireMinibossDefeat : boolean = false;
 
 
     private mapTransition : MapTransitionCallback;
@@ -31,6 +32,7 @@ export class Door extends Interactable {
         mapTransition : MapTransitionCallback,
         dialogueBox : TextBox,
         requiredKey : number | undefined = undefined,
+        requireMinibossDefeat : boolean = false,
         bmp : Bitmap | undefined = undefined) {
 
         super(x, y, bmp);
@@ -48,17 +50,31 @@ export class Door extends Interactable {
         this.mapTransition = mapTransition;
 
         this.targetMap = targetMap;
+
+        this.requireMinibossDefeat = requireMinibossDefeat;
     }
 
 
     protected playerEvent(player : Player, event : ProgramEvent, initialEvent : boolean) : void {
         
-        if (!initialEvent || this.requiredKey === undefined) {
+        if (!initialEvent) {
 
             return;
         }
 
-        this.opened = player.stats.isDoorOpen(this.requiredKey);
+        if (this.requireMinibossDefeat) {
+
+            this.opened = !player.stats.hasDefeatedMiniboss();
+            if (!this.opened) {
+
+                this.canBeInteracted = false;
+            }
+        }
+        else if (this.requiredKey !== undefined) {
+
+            this.opened = player.stats.isDoorOpen(this.requiredKey);
+        }
+
         if (initialEvent && this.opened) {
 
             this.sprite.setFrame(0, 0);
@@ -120,7 +136,11 @@ export class Door extends Interactable {
             return;
         }
 
-        const id : number = this.requiredKey ?? 0;
+        let id : number = this.requiredKey ?? 0;
+        if (this.requireMinibossDefeat) {
+
+            id = 3;
+        }
 
         canvas.drawBitmap(this.bitmap, Flip.None, this.pos.x - 8, this.pos.y - 24, id*16, 0, 16, 32);
     }

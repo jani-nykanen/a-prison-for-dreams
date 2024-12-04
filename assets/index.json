@@ -77,6 +77,7 @@
         {"name": "old_graveyard", "path": "old_graveyard.tmx"},
         {"name": "puzzle2", "path": "puzzle2.tmx"},
         {"name": "boss_room", "path": "boss_room.tmx"},
+        {"name": "frozen_caverns", "path": "frozen_caverns.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

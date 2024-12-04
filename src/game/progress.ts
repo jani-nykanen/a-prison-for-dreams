@@ -79,6 +79,8 @@ export class Progress {
     private leversPulled : boolean[];
     private doorsOpened : boolean[];
 
+    private minibossDefeated : boolean = false;
+
     private checkpointPosition : Vector;
 
     private gameSaved : boolean = false;
@@ -137,6 +139,8 @@ export class Progress {
         output["cutscenes"] = Array.from(this.cutsceneWatched);
         output["levers"] = booleanArrayToListOfTrueValues(this.leversPulled);
         output["doors"] = booleanArrayToListOfTrueValues(this.doorsOpened);
+
+        output["miniboss"] = String(this.minibossDefeated);
 
         output["checkpoint"] = {
             "x": this.checkpointPosition.x,
@@ -410,6 +414,15 @@ export class Progress {
     public getHealthBarPos = () : number => this.healthBarPos;
 
 
+    public markMinibossDefeated() : void {
+
+        this.minibossDefeated = true;
+    }
+
+
+    public hasDefeatedMiniboss = () : boolean => this.minibossDefeated;
+
+
     public reset() : void {
 
         this.health = this.maxHealth;
@@ -496,6 +509,8 @@ export class Progress {
 
             this.money = Number(json["money"] ?? this.money);
 
+            this.minibossDefeated = json["miniboss"] === "true";
+
             const checkpoint : unknown = json["checkpoint"];
             if (checkpoint !== undefined) {
 
@@ -524,4 +539,5 @@ export class Progress {
 
 
     public getAreaName = () : string => this.areaName;
+    
 }
