@@ -56,8 +56,8 @@
     "hints": [
         "Use ARROW KEYS or\nWASD to walk.",
         "Press SPACE, Z or J to jump.",
-        "Press Ctrl, X or K to attack.",
-        "Press Shift, C or L to shoot.",
+        "Press Ctrl, X, K\nor \u0005 to attack.",
+        "Press Shift, C, L\nor \u0006 to shoot.",
         "Press DOWN to crouch and then\nJUMP to high jump.",
         "Hold down the ATTACK button\nto CHARGE a power attack.",
         "Hit bricks with your head\nto break them.",
@@ -238,7 +238,7 @@
 
     "npc7": [
         "There are many broken\nportals in this island.\nThey used to connect\nthe Dream to the outer\nworlds.",
-        "I think this particular\nportal took you to\nthe Graveyard, or\nperhaps the Entrance\nHall."
+        "I think this particular\nportal took you to\nthe Graveyard, or\nperhaps the Inner Dream."
     ],
 
     "npc8": [
@@ -256,15 +256,14 @@
     "item1": [
 
         "You obtain a SWORD!",
-        "It is a trusty (or was it\nrusty?) old sword for all\ntypes of unjustified\nviolence."
+        "It is a trusty (or was it rus-\nty?) old sword for all types\nof unjustified violence."
     ],
 
     "item2": [
 
         "You obtain a HAND CANNON!",
-        "It is one of those novelty\nfirearms where you put\nyour hand inside. Not\nvery practical, though."
+        "It is one of those novelty\nfirearms where you put your\nhand inside. Not very practi-\ncal, but looks cool."
     ],
-
 
     "item3": [
 

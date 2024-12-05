@@ -112,7 +112,7 @@ export class Transition {
 
             canvas.clear(this.color.r, this.color.g, this.color.b);
             canvas.drawHorizontallyWavingBitmap(canvas.getCloneBufferBitmap(),
-                amplitude, period, shift, 0, 0, Flip.Vertical);
+                amplitude, period, shift, Flip.Vertical, 0, 0);
         }
         // Fallthrough
         case TransitionType.Fade:

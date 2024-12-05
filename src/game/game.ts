@@ -134,6 +134,8 @@ export class Game implements Scene {
                 // Need to deactivate to get the proper frame to the
                 // buffer for the wave effect.
                 this.cutscene.deactivate();
+                this.camera.update(event);
+                this.stage.update(this.camera, event);
                 if (event.transition.getEffectType() == TransitionType.Waves) {
 
                     event.cloneCanvasToBufferTexture(true);
@@ -515,6 +517,8 @@ export class Game implements Scene {
 
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();
+
+        canvas.transform.apply();
 
         if (this.cutscene.isActive()) {
 
