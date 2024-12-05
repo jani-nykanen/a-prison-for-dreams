@@ -9,14 +9,32 @@ const DEACTIVATION_DISTANCE : number = 160;
 const FADE_TIME : number = 20;
 
 
+class Message {
+
+    public body : string = "";
+    public width : number = 0;
+    public height : number = 0;
+
+
+    constructor(body : string) {
+
+        this.body = body;
+
+        const lines : string[] = body.split("\n");
+        this.width = Math.max(...lines.map((s : string) => s.length));
+        this.height = lines.length;
+    }
+}
+
+
 export class HintRenderer {
 
 
-    private message : string = "";
+    private activeMessage : Message | undefined = undefined;
+    private messages : Message[];
+
     private startPos : Vector;
     private active : boolean = false;
-    private width : number = 0;
-    private height : number = 0;
 
     private fadeTimer : number = 0;
     private fadeMode : number = 0;
@@ -25,6 +43,8 @@ export class HintRenderer {
     constructor() {
 
         this.startPos = new Vector();
+
+        this.messages = new Array<Message> (2);
     }
 
 
@@ -40,6 +60,16 @@ export class HintRenderer {
             return;
         }
 
+        // The third option hopefully never happens!
+        if (event.input.isGamepadActive()) {
+
+            this.activeMessage = this.messages[1];
+        }
+        else if (event.input.isKeyboardActive()) {
+
+            this.activeMessage = this.messages[0];
+        }
+
         const playerPos : Vector = player.getPosition();
         if (Vector.distance(playerPos, this.startPos) > DEACTIVATION_DISTANCE) {
 
@@ -52,10 +82,10 @@ export class HintRenderer {
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
-        const TOP_OFF : number = 28;
+        const TOP_OFF : number = 36;
         const TEXT_YOFF_MODIFIER : number = -4;
 
-        if (!this.active && this.fadeTimer <= 0) {
+        if ((!this.active && this.fadeTimer <= 0) || this.activeMessage === undefined) {
 
             return;
         }
@@ -69,27 +99,34 @@ export class HintRenderer {
             alpha = this.fadeMode == 0 ? t : 1.0 - t;
         }
 
-        const dx : number = canvas.width/2 - this.width*4;
-        const dy : number = TOP_OFF - this.height*(16 + TEXT_YOFF_MODIFIER)/2;
+        const width : number = (this.activeMessage.width + 1)*8;
+        const height : number = this.activeMessage.height*(16 + TEXT_YOFF_MODIFIER);
 
-        canvas.setColor(255, 255, 73, alpha);
-        canvas.drawText(bmpFont, this.message, dx, dy, -8, TEXT_YOFF_MODIFIER, Align.Left);
+        const dx : number = canvas.width/2 - width/2;
+        const dy : number = TOP_OFF - height/2;
+
+        canvas.setColor(0, 0, 0, 0.33*alpha);
+        canvas.fillRect(dx - 2, dy - 2, width + 4, height + 8)
         canvas.setColor();
+
+        canvas.setAlpha(alpha);
+        canvas.drawText(bmpFont, this.activeMessage.body, 
+            dx, dy, -8, TEXT_YOFF_MODIFIER, Align.Left);
+        canvas.setAlpha();
     }
 
 
-    public activate(startPos : Vector, message : string) : void {
+    public activate(startPos : Vector, keyboardMessage : string, gamepadMessage? : string) : void {
+
+        this.messages[0] = new Message(keyboardMessage);
+        this.messages[1] = new Message(gamepadMessage ?? keyboardMessage);
+        this.activeMessage = this.messages[0];
 
         this.startPos = startPos.clone();
-        this.message = message;
 
         this.active = true;
         this.fadeTimer = FADE_TIME;
         this.fadeMode = 1;
-
-        const lines : string[] = this.message.split("\n");
-        this.width = Math.max(...lines.map((s : string) => s.length));
-        this.height = lines.length;
     }
 
 

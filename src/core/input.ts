@@ -35,6 +35,8 @@ export class Input {
     private stickDelta : Vector;
 
     private anyPressed : boolean = false;
+    private keyboardActive : boolean = true;
+    private gamepadActive : boolean = false;
 
     public readonly keyboard : Keyboard;
     public readonly gamepad : GamePad;
@@ -134,7 +136,21 @@ export class Input {
         this.stickDelta.x = this.vstick.x - this.oldStick.x;
         this.stickDelta.y = this.vstick.y - this.oldStick.y;
 
-        this.anyPressed = this.keyboard.isAnyPressed() || this.gamepad.isAnyPressed() || this.mouse.isAnyPressed();
+        this.anyPressed = this.keyboard.isAnyPressed() || 
+            this.gamepad.isAnyPressed() || 
+            this.mouse.isAnyPressed();
+
+        if (this.gamepad.wasUsed()) {
+
+            this.gamepadActive = true;
+            this.keyboardActive = false;
+        }
+        
+        if (this.keyboard.wasUsed()) {
+
+            this.keyboardActive = true;
+            this.gamepadActive = false;
+        }
     }
 
 
@@ -216,4 +232,8 @@ export class Input {
 
 
     public isAnyPressed = () : boolean => this.anyPressed;
+
+
+    public isKeyboardActive = () : boolean => this.keyboardActive;
+    public isGamepadActive = () : boolean => this.gamepadActive;
 }

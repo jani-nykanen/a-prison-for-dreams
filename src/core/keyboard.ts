@@ -9,6 +9,8 @@ export class Keyboard {
 
     private anyPressed : boolean = false;
 
+    private used : boolean = false;
+
 
     constructor() {
 
@@ -36,6 +38,8 @@ export class Keyboard {
 
 
     private keyEvent(down : boolean, key : string) : void {
+
+        this.used = true;
 
         if (down) {
 
@@ -69,7 +73,9 @@ export class Keyboard {
                 this.states.set(k, InputState.Up);
             }
         }
+
         this.anyPressed = false;
+        this.used = false;
     }
 
 
@@ -80,6 +86,7 @@ export class Keyboard {
 
 
     public isAnyPressed = () : boolean => this.anyPressed;
+    public wasUsed = () : boolean => this.used;
 
 
     public preventKey(key : string) : void {

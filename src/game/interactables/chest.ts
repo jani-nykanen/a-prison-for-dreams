@@ -209,7 +209,10 @@ export class Chest extends Interactable {
                     const hintID : number | undefined = ITEM_HINT_LOOKUP[this.id];
                     if (hintID !== undefined) {
 
-                        this.hints.activate(this.pos, (event.localization?.getItem("hints") ?? [])[hintID] ?? "null");
+                        const textKeyboard : string = event.localization?.getItem("hints")?.[hintID] ?? "null";
+                        const textGamepad : string | undefined = event.localization?.getItem("hints_gamepad")?.[hintID];
+
+                        this.hints.activate(this.pos, textKeyboard, textGamepad);
 
                         // This is actually redundant now
                         player.stats.markHintAsShown(hintID);

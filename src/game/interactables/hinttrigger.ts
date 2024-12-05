@@ -50,9 +50,10 @@ export class HintTrigger extends Interactable {
 
     protected playerCollisionEvent(player: Player, event: ProgramEvent, initialCollision?: boolean): void {
         
-        const text : string = (event.localization?.getItem("hints") ?? [])[this.id] ?? "null";
+        const textKeyboard : string = event.localization?.getItem("hints")?.[this.id] ?? "null";
+        const textGamepad : string | undefined = event.localization?.getItem("hints_gamepad")?.[this.id];
 
-        this.hints.activate(this.pos, text);
+        this.hints.activate(this.pos, textKeyboard, textGamepad);
         this.exist = false;
 
         player.stats.markHintAsShown(this.id);

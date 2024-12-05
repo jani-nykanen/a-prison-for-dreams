@@ -659,8 +659,10 @@ export class ObjectManager {
             this.dialogueBox.addText(event.localization?.getItem("npc0") ?? ["null"]);
             this.dialogueBox.activate(false, 1);
 
-            this.hints.activate(this.player.getPosition(), 
-                ((event.localization?.getItem("hints") ?? [])[0]) ?? "null");
+            const keyboardHint : string = event.localization?.getItem("hints")?.[0] ?? "null";
+            const gamepadHint : string | undefined = event.localization?.getItem("hints_gamepad")?.[0];
+
+            this.hints.activate(this.player.getPosition(), keyboardHint, gamepadHint);
         });
     }
 

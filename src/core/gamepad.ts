@@ -19,6 +19,8 @@ export class GamePad {
 
     private buttons : Map<number, InputState>;
 
+    private used : boolean = false;
+
 
     public get stick() : Vector {
 
@@ -99,24 +101,30 @@ export class GamePad {
 
             this.leftStick.x = this.activePad.axes[0];
             noLeftStick = false;
+
+            this.used = true;
         }
         if (Math.abs(this.activePad.axes[1]) >= DEADZONE) {
 
             this.leftStick.y = this.activePad.axes[1];
             noLeftStick = false;
+
+            this.used = true;
         }
 
         // On Firefox dpad is considered
-        // axes, not buttons
+        // axes, not buttons (not sure if any more, though)
         if (this.activePad.axes.length >= 8 && noLeftStick) {
 
             if (Math.abs(this.activePad.axes[6]) >= DEADZONE) {
 
                 this.leftStick.x = this.activePad.axes[6];
+                this.used = true;
             }
             if (Math.abs(this.activePad.axes[7]) >= DEADZONE) {
                 
                 this.leftStick.y = this.activePad.axes[7];
+                this.used = true;
             }
         }
     }
@@ -133,6 +141,8 @@ export class GamePad {
 
                 this.buttons.set(Number(k), newState ? InputState.Pressed : InputState.Released);
                 this.anyPressed = this.anyPressed || newState;
+
+                this.used = true;
             }
         }
     }
@@ -149,6 +159,7 @@ export class GamePad {
 
     public update() : void {
 
+        this.used = false;
         this.anyPressed = false;
 
         this.leftStick.x = 0.0;
@@ -166,4 +177,5 @@ export class GamePad {
 
 
     public isAnyPressed = () : boolean => this.anyPressed;
+    public wasUsed = () : boolean => this.used;
 }

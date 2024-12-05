@@ -54,11 +54,24 @@
 
 
     "hints": [
-        "Use ARROW KEYS or WASD to walk.",
+        "Use ARROW KEYS or\nWASD to walk.",
         "Press SPACE, Z or J to jump.",
         "Press Ctrl, X or K to attack.",
         "Press Shift, C or L to shoot.",
-        "Press DOWN to crouch and then\nSPACE, Z or J to high jump.",
+        "Press DOWN to crouch and then\nJUMP to high jump.",
+        "Hold down the ATTACK button\nto CHARGE a power attack.",
+        "Hit bricks with your head\nto break them.",
+        "Press DOWN + ATTACK after\njumping to do a down attack.",
+        "Hold down the SHOOT button\nto CHARGE a power shot."
+    ],
+
+
+    "hints_gamepad": [
+        "Use DPAD or LEFT STICK\nto walk.",
+        "Press \u0001 to jump.",
+        "Press \u0002 to attack.",
+        "Press \u0003 to shoot.",
+        "Press DOWN to crouch and then\nJUMP to high jump.",
         "Hold down the ATTACK button\nto CHARGE a power attack.",
         "Hit bricks with your head\nto break them.",
         "Press DOWN + ATTACK after\njumping to do a down attack.",
