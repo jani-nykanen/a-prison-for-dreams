@@ -57,6 +57,8 @@ export class Brick extends Enemy {
             this.target.zeros();
 
             event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
+
+            this.shakeEvent?.(30, 2);
         }
         else if (direction == -1 && this.mode == 3) {
 
