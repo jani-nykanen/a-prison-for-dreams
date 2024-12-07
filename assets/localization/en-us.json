@@ -198,23 +198,43 @@
     "cutscene4": [
 
         "Running the Dream requires an\nenormous amount of energy.\nIt is, after all, a world\ninside a world.",
-        "If the real world was half\ndying before, now it is\npractically dead.",
-        "The scientists could stop the\nDream if they desire, but\nthey just keep the simulation\nrunning.",
-        "Either they no longer care,\nor they are already dead."
+        "The world outside is dying,\nbut the Dream keeps\nconsuming all the\nremaining resources.",
+        "But there is no one from\noutside who could stop\nthe simulation.",
+        "Even the scientists who\ncreated the Dream died\nlong time ago."
+    ],
+
+
+    "cutscene5": [
+
+        "Lady Alexandra has a\nrecurring nightmare,\nwhere a giant eye was\nchasing her.",
+        "They say that the eye\nbelongs to her father.",
+        "A man who sacrificed here own\ndaughter to create an\nutopia for rich and\npowerful."
+    ],
+
+
+    "cutscene6": [
+        
+        "Lord Dankworth was the\nleading engineer of\nthe \"Project Dream\". It\nwas his lifework. Obsession,\neven.",
+        "Rumors say that he knew\nthat the brain scan could\nkill his daughter.",
+        "But still he let the\nscientists scan Lady\nAlexandra's brain, which\nresulted in her death."
+    ],
+
+
+    "cutscene7": [
+
+        "Each time Lady Alexandra\nhad a nightmare, she\ndreamed of a hero who\nwould banish the bad\ndreams.",
+        "They claim that this hero\nis her unborn child who\ndied with her during\nthe brain scan."
     ],
 
 
     "npc0": [
         "We are the keepers of\nthe Graveyard. Our\njob is to bury dreams\nthat come here to die.",
         "However, the Great\nDreamer told us to dig\nyou up and give you a\nlife. For what reason,\nwe do not know.",
-        "Nonetheless, there is a\nportal east from here.\nIt will take you to\nthe World of Dream.",
-        "You can find some use-\nful items on your way\nthere. You can keep\nthem if you wish."
+        "It has been centuries\nsince she talked to\nus last time. You\nmust be very precious\nto her."
     ],
 
     "npc1": [
-        "This portal will take\nyou to the World of\nDream. It is a one-way\nportal, though, so you\ncannot come back.",
-        "Once you get there...\nwell, our friends\ntry to help you the\nbest they can.",
-        "Which is not much, to\nbe honest."
+        "These portals connect\ndifferent parts of\nthe Dream together.\nSome of them are\none-way only, though."
     ],
 
     "npc2": [
