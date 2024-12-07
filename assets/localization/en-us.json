@@ -131,7 +131,6 @@
         "Iron Shield"
     ],
 
-
     "shopdescription1": [
 
         "Increases your maximum\nhealth by 2.",
@@ -320,5 +319,7 @@
     ],
 
 
-    "inprogress": "This area is still work\nin progress. Come back\nafter the next (major)\nupdate!"
+    "inprogress": "This area is still work\nin progress. Come back\nafter the next (major)\nupdate!",
+
+    "press_enter": "Press SPACE or \u0001 to start"
 }

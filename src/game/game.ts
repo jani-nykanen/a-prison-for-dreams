@@ -251,6 +251,9 @@ export class Game implements Scene {
 
         // Check if "in progress"
         this.showInProgressMessage = baseMap.getBooleanProperty("in_progress");
+
+        // Needed in the case of resize in the title screen
+        this.camera.update(event);
     }
 
 
@@ -437,7 +440,7 @@ export class Game implements Scene {
         }
 
         if (this.pause.isActive() && !event.transition.isActive()) {
-            
+
             this.pause.update(event);
             return;
         }
