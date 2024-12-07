@@ -19,13 +19,13 @@ const MUSIC_VOLUME : number = 0.60;
 
 
 const CORNER_TILEMAP : number[] = [
-    -1, -1, 94, 95, -1,
-    -1, -1, 110, 111, 54,
-    0, 1, 1, 1, 1,
-    16, 17, 17, 17,17,
+    -1,  94, 95, -1,
+    -1,  110, 111, 54,
+     0,  1, 1, 1,
+    16,  17, 17,17,
 ];
 
-const CORNER_TILEMAP_WIDTH : number = 5;
+const CORNER_TILEMAP_WIDTH : number = 4;
 const CORNER_TILEMAP_HEIGHT : number = 4;
 
 
@@ -249,12 +249,16 @@ export class TitleScreen implements Scene {
 
     private drawCornerTilemap(canvas : Canvas, assets : Assets) : void {
 
+        const PLAYER_X : number = -6;
+        const PLAYER_Y : number = 13;
+
         const bmpTileset1 : Bitmap | undefined = assets.getBitmap("tileset_1");
         const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
+        const bmpWeapons : Bitmap | undefined = assets.getBitmap("weapons");
 
         canvas.setColor();
         canvas.moveTo(
-            canvas.width - (CORNER_TILEMAP_WIDTH - 0.5)*TILE_WIDTH, 
+            canvas.width - CORNER_TILEMAP_WIDTH*TILE_WIDTH, 
             canvas.height - CORNER_TILEMAP_HEIGHT*TILE_HEIGHT);
 
         // TODO: Also make the width & height constants
@@ -278,8 +282,10 @@ export class TitleScreen implements Scene {
             }
         }
 
+        // Sword
+        canvas.drawBitmap(bmpWeapons, Flip.Horizontal, PLAYER_X - 7, PLAYER_Y + 14, 139, 18, 16, 16)
         // Player
-        canvas.drawBitmap(bmpPlayer, Flip.None, 8, 13, 192, 72, 24, 24);
+        canvas.drawBitmap(bmpPlayer, Flip.None, PLAYER_X, PLAYER_Y, 192, 72, 24, 24);
 
         canvas.moveTo();
     }
