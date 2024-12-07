@@ -238,14 +238,14 @@
     ],
 
     "npc2": [
-        "Welcome to the World\nof Dream! I'm glad you\nmade it here! You can\nnever trust the\ngraveyard people...",
-        "Your real adventure\nbegins here. You must\nfind the Great Dreamer\nand do... whatever\nyou must.",
-        "If the dream comes to\nthe end, who knows\nwhat happens?"
+        "Welcome, stranger, to\nthe World of Dream!\nWe don't get visitors\nfrom the Graveyard\ntoo often.",
+        "You must be the one\nthe Great Dreamer\nhas summoned. She is\nwaiting for you...\nsomewhere.",
+        "Here whereabouts are\nunknown to us, I'm\nafraid."
     ],
 
     "npc3": [
-        "Did you know there is\nalso the Old Graveyard?\nWe bury the nightmares\nthere. Some of them\nmight even be dead.",
-        "Just pray you never\nneed to go there."
+        "Did you know there is\nalso the Old Graveyard?\nNowadays we only\nbury nightmares\nthere.",
+        "Not all nightmares\nremain dead, though.\nPray you never need\nto go there."
     ],
 
     "npc4": [
@@ -255,26 +255,79 @@
     ],
 
     "npc5": [
-        "The Great Dreamer is\nunable to dream proper\nhouses, so she gave\nus these...\"containers\"\ninstead.",
+        "The Great Dreamer was\nunable to dream proper\nhouses, so she gave\nus these...\"containers\"\ninstead.",
         "This one used to belong\nto the woodcutter, but\nthen he vanished, like\nall the other old\ncitizens.",
         "Now this house is inha-\nbitated by the shop-\nkeeper."
     ],
 
     "npc6": [
         "This part of the Dream\nis now long forgotten,\nhence we call it the\n'Forgotten Coast'.",
-        "There used to be a port\nhere. New people tend\nto arrive the main is-\nland by ship.",
-        "However, people stopped\ncoming here centuries\nago. It makes you\nwonder..."
+        "There used to be a port\nhere. People could\nsail to the smaller\nislands in the Dream.",
+        "Most of these island sunk\nsoon after the\nGreat Dreamer's spi-\nrit was sealed away."
     ],
 
     "npc7": [
         "There are many broken\nportals in this island.\nThey used to connect\nthe Dream to the outer\nworlds.",
-        "I think this particular\nportal took you to\nthe Graveyard, or\nperhaps the Inner Dream."
+        "I think this particular\nportal used to take\nyou to the Inner\nDream."
     ],
 
     "npc8": [
         "The Great Dreamer loves\npuzzles, so she created\nus islands fulls of\npuzzles so we could\n'train our brains'.",
         "This is the only island\nthat hasn't sunken yet.\nShe is not very good\nat making islands...",
         "You can reset the\npuzzle by leaving and\nre-entering this place."
+    ],
+
+    "npc9": [
+
+        "There used to be many\npeople living down\nhere. Some people\njust prefer caves\nto actual houses."
+    ],
+
+
+    "npc10": [
+
+        "This passage used to\nlead to the sewers,\nbut some time ago\nit collapsed and water\nrushed in.",
+        "I never understood why\nwe needed sewers: we\ndo not produce any\nwaste here, this is\na utopia!"
+    ],
+
+    "npc11": [
+
+        "We are not people.\nWe are more like...\nGhosts? Spirits?\nMemories of the past,\nperhaps.",
+        "That's why you can\nfind us standing in\nweird places."
+    ],
+
+    "npc12": [
+
+        "For a long while we\ndid not need a grave-\nyard. You were not\nsupposed to die in\na dream!",
+        "Then the Great Dreamer\nwas sealed away, and\nthings started to happen.",
+        "First we buried people\non this hill, then\nto the Old Grave-\nyard.",
+        "In fact, the portal\nabove should take\nyou to the Old\nGraveyard, but you\nneed to pay a toll."
+    ],
+
+    "npc13": [
+
+        "All those monsters\noutside used to be\ncitizens of the Dream.",
+        "Don't feel bad if you\nhave to kill them,\nthough: they can\nno longer feel\nanything."
+    ],
+
+
+    "npc14": [
+
+        "Long time ago Lady\nAlexandra dreamed of\na nuclear war. It\nmight have been a\nnightmare.",
+        "Anyways, when it was\nover we thought\nwe had better build\na shelter. Just\nin case."
+    ],
+
+    "npc15": [
+
+        "NO MATTER WHAT THEY\nSAY, I AM NOT\nINSANE! THE NIGHT-\nMARES DO NOT AFFECT\nMY PSYCHE AT ALL!",
+        "And that's because I\ndon't even have a\npsyche."
+    ],
+
+    "npc16": [
+
+        "The Eye is possibly\nthe greatest night-\nmare the Great\nDreamer ever had.",
+        "When The Eye came here,\nwe built him this\nbeautiful tomb.",
+        "If you go inside, you\nmight get a sudden\nurge to lick The\nEye.",
+        "But whatever you do,\nNEVER LICK THE EYE!\nBecause it is gross."
     ],
 
     "item0": [

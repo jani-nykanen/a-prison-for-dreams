@@ -3,6 +3,7 @@
  <properties>
   <property name="boss_defeat_map" value="old_graveyard"/>
   <property name="boss_defeat_pos" value="3"/>
+  <property name="cutscene" type="int" value="6"/>
   <property name="door3" value="old_graveyard"/>
   <property name="name" value="Tomb"/>
   <property name="npctype" type="int" value="1"/>
