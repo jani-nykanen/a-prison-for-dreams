@@ -163,33 +163,44 @@
 
     "cutscene0": [
 
-        "The Great Dreamer sleeps.\n",
-        "She dreams of the future,\nshe dreams of the past,\nshe dreams of the things\nthat could have been.",
-        "A whole world exists in her\nmind alone.",
-        "But now the dream is coming\nto the end. And if that\nhappens..."
+        "When the world was dying\nthey needed someone to\ndream them a better\nworld.",
+        "So they created the Great\nDreamer, whose only\npurpose was to dream a\new world.",
+        "She dreamed a perfect utopia\nfor them, but one day she\nstarted to question her own\ncreation.",
+        "They sealed her spirit away\nso she could not destroy\nwhat she had created.",
+        "But now, the seal is broken..."
     ],
 
 
     "cutscene1": [
 
-        "There was a time before\nthe Great Dreamer. Do you\nunderstand what that\nmeans?",
-        "It means that there is a\nworld beyond the World\nof Dream. A real world,\nif you will.",
-        "Or was. One can only wonder\nwhat happened to it."
+        "The new world was called\nthe World of Dream,\nor simply \"The Dream\".",
+        "It was reserved for those\nwho had wealth and power.",
+        "It makes you wonder, what\nhappened to the real world?"
     ],
 
     "cutscene2": [
 
-        "There are people in the\nDream who came from\nthe world outside.",
-        "In the real world they\nwere rich and powerful,\nthe best of their kind.",
-        "So why did they decide\nto live inside a dream\ninstead?"
+        "Lady Alexandra, that was\nthe name of the Great\nDreamer when she was\nstill a human.",
+        "She was chosen to be the\nGreat Dreamer because of\nher outstanding ability\nto dream worlds.",
+        "Or that is what they claimed."
     ],
 
 
     "cutscene3": [
 
-        "The Great Dreamer used\nto be a human. She also\ncame from the world\noutside.",
-        "Lady Alexandra, they called\nher. She had a gift of\ndreaming, so they made\nher a Great Dreamer.",
-        "But... who are 'they'?"
+        "When Lady Alexandra was\nsealed away, there was\nno one left to supervise\nthe Dream.",
+        "The Dream started to decay,\nand people inhabiting it\nvanished or were turned\ninto monsters.",
+        "It seems that the scientists\nwho had created the Great\nDreamer did not understand\nhow the dreams work.",
+        "How can there be a dream\nif there is no dreamer...?"
+    ],
+
+
+    "cutscene4": [
+
+        "Running the Dream requires an\nenormous amount of energy.\nIt is, after all, a world\ninside a world.",
+        "If the real world was half\ndying before, now it is\npractically dead.",
+        "The scientists could stop the\nDream if they desire, but\nthey just keep the simulation\nrunning.",
+        "Either they no longer care,\nor they are already dead."
     ],
 
 
