@@ -167,7 +167,7 @@
         "So they created the Great\nDreamer, whose only\npurpose was to dream a\new world.",
         "She dreamed a perfect utopia\nfor them, but one day she\nstarted to question her own\ncreation.",
         "They sealed her spirit away\nso she could not destroy\nwhat she had created.",
-        "But now, the seal is broken..."
+        "But now, the seal is\nbroken..."
     ],
 
 
@@ -410,13 +410,11 @@
 
     "save_info": [
 
-        "This game saves the progress\nautomatically. If you see\nthis icon:",
-        "it means that the game has\nbeen saved successfully.",
+        "This game saves the progress\nautomatically. If you see this\nicon:",
+        "it means that the game has\nbeen saved successfully. How-\never, if you see this icon\ninstead:",
+        "then something went wrong and\nyour progress was not saved.",
 
-        "However, if you see this\nicon instead:",
-        "then something went wrong\nand your progress was\nnot saved.",
-
-        "You can also save manually\nfrom the pause menu."
+        "You can also save manually\nfrom the pause menu any time."
     ],
 
     "press_any_key": [

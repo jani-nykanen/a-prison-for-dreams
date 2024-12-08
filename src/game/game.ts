@@ -254,6 +254,7 @@ export class Game implements Scene {
 
         // Needed in the case of resize in the title screen
         this.camera.update(event);
+        // this.camera.limit(0, this.stage.width*TILE_WIDTH, 0, this.stage.height*TILE_HEIGHT);
     }
 
 

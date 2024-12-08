@@ -14,6 +14,7 @@ import { Camera } from "./camera.js";
 import { LOCAL_STORAGE_KEY } from "./progress.js";
 import { Settings } from "./settings.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
+import { VERSION } from "./version.js";
 
 
 const MUSIC_VOLUME : number = 0.60;
@@ -362,6 +363,7 @@ export class TitleScreen implements Scene {
 
         const BOX_WIDTH : number = 224;
         const BOX_HEIGHT : number = 160;
+        const EDGE_OFFSET : number = 8;
 
         canvas.clear(0, 0, 0);
 
@@ -375,6 +377,33 @@ export class TitleScreen implements Scene {
         const dy : number = canvas.height/2 - BOX_HEIGHT/2 + yoff;
 
         drawUIBox(canvas, canvas.width/2 - BOX_WIDTH/2, dy, BOX_WIDTH, BOX_HEIGHT);
+
+        if (this.saveInfoText === undefined) {
+
+            return;
+        }
+
+        const bmpFont : Bitmap | undefined = assets.getBitmap("font");
+        const bmpHUD : Bitmap | undefined = assets.getBitmap("hud");
+
+        const dx : number = canvas.width/2 - BOX_WIDTH/2;
+
+        canvas.drawText(bmpFont, this.saveInfoText[0], 
+            dx + EDGE_OFFSET, dy + EDGE_OFFSET, -1, 2);
+        // Save success icon
+        const frame : number = Math.floor(this.enterTimer*8);
+        canvas.drawBitmap(bmpHUD, Flip.None, canvas.width/2 - 16, dy + 32, frame*16, 16, 16, 16);
+
+        canvas.drawText(bmpFont, this.saveInfoText[1], 
+            dx + EDGE_OFFSET, dy + EDGE_OFFSET + 44, -1, 2);
+        // Save failure icon
+        canvas.drawBitmap(bmpHUD, Flip.None, canvas.width/2 - 16, dy + 88, 52, 0, 8, 16);
+        canvas.drawBitmap(bmpHUD, Flip.None, canvas.width/2 - 8, dy + 88, 0, 16, 16, 16);
+        
+        canvas.drawText(bmpFont, this.saveInfoText[2], 
+            dx + EDGE_OFFSET, dy + EDGE_OFFSET + 102, -1, 2);
+        canvas.drawText(bmpFont, this.saveInfoText[3], 
+            dx + EDGE_OFFSET, dy + EDGE_OFFSET + 128, -1, 2);
     }
 
 
@@ -474,6 +503,9 @@ export class TitleScreen implements Scene {
         canvas.drawText(bmpFontOutlines, "\u0008 2024 Jani Nyk\u0007nen", 
             canvas.width/2, canvas.height - 16, -9, 0, Align.Center);
         canvas.setColor();
+
+        // Draw version
+        canvas.drawText(bmpFontOutlines, VERSION, -1, -1, -9, 0);
     }
 
 
