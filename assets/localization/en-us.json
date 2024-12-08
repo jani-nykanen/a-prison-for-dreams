@@ -197,10 +197,10 @@
 
     "cutscene4": [
 
-        "Running the Dream requires an\nenormous amount of energy.\nIt is, after all, a world\ninside a world.",
-        "The world outside is dying,\nbut the Dream keeps\nconsuming all the\nremaining resources.",
-        "But there is no one from\noutside who could stop\nthe simulation.",
-        "Even the scientists who\ncreated the Dream died\nlong time ago."
+        "Running the Dream requires an\nenormous amount of energy\nand resources. It is,\nafter all, a world\ninside another world.",
+        "Thus, creating the Dream\nonly accelerated the\ndesctruction of the\nreal world",
+        "If the real world dies,\nso does the World\nof Dream.",
+        "Unless, of course, someone\nstops the Dream..."
     ],
 
 
@@ -222,8 +222,8 @@
 
     "cutscene7": [
 
-        "Each time Lady Alexandra\nhad a nightmare, she\ndreamed of a hero who\nwould banish the bad\ndreams.",
-        "They claim that this hero\nis her unborn child who\ndied with her during\nthe brain scan."
+        "Each time Lady Alexandra\nhad a nightmare, she\nwould dream a hero\nwho banishes the bad\ndream.",
+        "He shares a strong\nresemblance with her\nlittle brother, who\nwas killed in a fatal\naccident."
     ],
 
 
@@ -405,5 +405,23 @@
 
     "inprogress": "This area is still work\nin progress. Come back\nafter the next (major)\nupdate!",
 
-    "press_enter": "Press SPACE or \u0001 to start"
+    "press_enter": "Press SPACE or \u0001 to start",
+
+
+    "save_info": [
+
+        "This game saves the progress\nautomatically. If you see\nthis icon:",
+        "it means that the game has\nbeen saved successfully.",
+
+        "However, if you see this\nicon instead:",
+        "then something went wrong\nand your progress was\nnot saved.",
+
+        "You can also save manually\nfrom the pause menu."
+    ],
+
+    "press_any_key": [
+
+        "Press ANY KEY to continue.",
+        "Press ANY BUTTON to continue."
+    ]
 }
