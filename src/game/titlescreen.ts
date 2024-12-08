@@ -4,6 +4,7 @@ import { InputState } from "../core/inputstate.js";
 import { Scene, SceneParameter } from "../core/scene.js";
 import { TransitionType } from "../core/transition.js";
 import { Align, Bitmap, Canvas, Flip } from "../gfx/interface.js";
+import { drawUIBox } from "../ui/box.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
@@ -17,16 +18,16 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 
 const MUSIC_VOLUME : number = 0.60;
 
-
 const CORNER_TILEMAP : number[] = [
     -1,  94, 95, -1,
     -1,  110, 111, 54,
      0,  1, 1, 1,
     16,  17, 17,17,
 ];
-
 const CORNER_TILEMAP_WIDTH : number = 4;
 const CORNER_TILEMAP_HEIGHT : number = 4;
+
+const SAVE_INFO_APPEAR_TIME : number = 30;
 
 
 export class TitleScreen implements Scene {
@@ -54,8 +55,17 @@ export class TitleScreen implements Scene {
     private enterTimer : number = 1.0;
     private enterText : string = "null";
 
+    private showSaveInfo : boolean = false;
+    private saveInfoText : string[] | undefined = undefined;
+    private saveInfoAppearTimer : number = 0;
+    private saveInfoAppearPhase : number = 0;
+
+    private disabledButtons : boolean[];
+
 
     constructor(event : ProgramEvent) {
+
+        this.disabledButtons = (new Array<boolean> (3)).fill(false);
 
         const text : string[] = event.localization?.getItem("titlescreen") ?? [];
 
@@ -70,7 +80,17 @@ export class TitleScreen implements Scene {
             new MenuButton(text[0] ?? "null", (event : ProgramEvent) : void => {
 
                 this.setFileMenuButtonNames(this.fileMenu);
-                this.fileMenu.activate(0);
+                let cursorPos : number = 0;
+                for (let i : number = 0; i < this.disabledButtons.length; ++ i) {
+
+                    if (!this.disabledButtons[i]) {
+
+                        cursorPos = i;
+                        break;
+                    }
+                }
+
+                this.fileMenu.activate(cursorPos);
 
                 this.activeMenu = this.fileMenu;
                 this.activeMenuOffset = 1;
@@ -93,6 +113,7 @@ export class TitleScreen implements Scene {
         ], true);
 
         const emptyFileString : string = "--/--/----";
+        // TODO: Create button in for loop to avoid repeating code
         this.fileMenu = new Menu(
         [
             new MenuButton(emptyFileString, (event : ProgramEvent) : void => {
@@ -181,7 +202,10 @@ export class TitleScreen implements Scene {
 
     private setFileMenuButtonNames(menu : Menu, disableNonExisting : boolean = false) : void {
 
+        
         for (let i : number = 0; i < 3; ++ i) {
+
+            this.disabledButtons[i] = true;
 
             let str : string = "--/--/----";
 
@@ -192,6 +216,8 @@ export class TitleScreen implements Scene {
 
                     const json : unknown = JSON.parse(saveFile) ?? {};
                     str = json["date"] ?? str;
+
+                    this.disabledButtons[i] = false;
                 }
 
                 if (disableNonExisting) {
@@ -235,15 +261,57 @@ export class TitleScreen implements Scene {
     private goToGame(file : number, event : ProgramEvent) : void {
 
         this.activeFileIndex = file;
-
         event.audio.stopMusic();
-
         this.menu.deactivate();
-            event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
-            (event : ProgramEvent) : void => {
 
-                event.scenes.changeScene("game", event);
-            });
+        if (this.disabledButtons[file]) {
+
+            this.toggleSaveFileInfo();
+            return;
+        }
+
+        event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
+        (event : ProgramEvent) : void => {
+
+            event.scenes.changeScene("game", event);
+        });
+    }
+
+
+    private toggleSaveFileInfo() : void {
+
+        this.saveInfoAppearPhase = 0;
+        this.saveInfoAppearTimer = 0;
+        this.showSaveInfo = true;
+    }
+
+
+    private updateSaveInfo(event : ProgramEvent) : void {
+
+        if (this.saveInfoAppearPhase != 1) {
+
+            this.saveInfoAppearTimer += event.tick;
+            if (this.saveInfoAppearTimer >= SAVE_INFO_APPEAR_TIME) {
+
+                if (this.saveInfoAppearPhase == 0) {
+                
+                    this.saveInfoAppearPhase = 1;
+                }
+                else {
+
+                    event.transition.activate(false, TransitionType.Circle, 1.0/30.0, event);
+                    event.scenes.changeScene("game", event);
+                }
+            }
+            return;
+        }
+
+        if (event.input.isAnyPressed()) {
+
+            event.audio.playSample(event.assets.getSample("select"), 0.40);
+            this.saveInfoAppearPhase = 2;
+            this.saveInfoAppearTimer = 0.0;
+        }
     }
 
 
@@ -261,7 +329,6 @@ export class TitleScreen implements Scene {
             canvas.width - CORNER_TILEMAP_WIDTH*TILE_WIDTH, 
             canvas.height - CORNER_TILEMAP_HEIGHT*TILE_HEIGHT);
 
-        // TODO: Also make the width & height constants
         for (let y : number = 0; y < CORNER_TILEMAP_HEIGHT; ++ y) {
 
             for (let x : number = 0 ; x < CORNER_TILEMAP_WIDTH; ++ x) {
@@ -291,9 +358,28 @@ export class TitleScreen implements Scene {
     }
 
 
+    private drawSaveInfo(canvas : Canvas, assets : Assets) : void {
+
+        const BOX_WIDTH : number = 224;
+        const BOX_HEIGHT : number = 160;
+
+        canvas.clear(0, 0, 0);
+
+        let t : number = 0.0;
+        if (this.saveInfoAppearPhase != 1) {
+
+            t = this.saveInfoAppearTimer/SAVE_INFO_APPEAR_TIME;;
+        }
+
+        const yoff : number = this.saveInfoAppearPhase == 0 ? (1.0 - t)*canvas.height : -t*canvas.height;
+        const dy : number = canvas.height/2 - BOX_HEIGHT/2 + yoff;
+
+        drawUIBox(canvas, canvas.width/2 - BOX_WIDTH/2, dy, BOX_WIDTH, BOX_HEIGHT);
+    }
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
-        // TODO: Get the position depending on if a save file exist
         this.menu.activate(0);
 
         this.activeMenu = this.menu;
@@ -302,6 +388,11 @@ export class TitleScreen implements Scene {
         event.audio.fadeInMusic(event.assets.getSample("titlescreen"), MUSIC_VOLUME, 1000.0);
 
         this.enterText = event.localization?.getItem("press_enter")?.[0] ?? "null";
+
+        this.saveInfoText = event.localization?.getItem("save_info");
+
+        this.showSaveInfo = false;
+        this.saveInfoAppearPhase = 0;
     }
 
 
@@ -316,11 +407,16 @@ export class TitleScreen implements Scene {
 
         if (event.transition.isActive()) {
 
-            // TODO: Update background
             return;
         }
 
-        this.enterTimer = (this.enterTimer + ENTER_FLICKER_TIME*event.tick) % 1.0;
+        this.enterTimer = (this.enterTimer + ENTER_FLICKER_TIME*event.tick) % 1.0
+
+        if (this.showSaveInfo) {
+
+            this.updateSaveInfo(event);
+            return;
+        }
 
         if (!this.enterPressed) {
 
@@ -341,6 +437,12 @@ export class TitleScreen implements Scene {
         const MENU_YOFF : number = 48;
         const LOGO_YOFF : number = 16;
         const PRESS_ENTER_OFFSET : number = 56;
+
+        if (this.showSaveInfo) {
+
+            this.drawSaveInfo(canvas, assets);
+            return;
+        }
 
         const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
         const bmpLogo : Bitmap | undefined = assets.getBitmap("logo");
