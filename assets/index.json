@@ -7,6 +7,7 @@
         {"name": "font_tiny", "path": "font_tiny.png"},
 
         {"name": "logo", "path": "logo.png"},
+        {"name": "created_by", "path": "created_by.png"},
 
         {"name": "tileset_0", "path": "tileset_0.png"},
         {"name": "tileset_1", "path": "tileset_1.png"},

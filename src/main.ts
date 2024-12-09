@@ -3,6 +3,7 @@ import { Program } from "./core/program.js";
 import { WebGLRenderer } from "./gfx/webgl/renderer.js";
 import { Game } from "./game/game.js";
 import { TitleScreen } from "./game/titlescreen.js";
+import { Intro } from "./game/intro.js";
 
 
 const initialEvent = (event : ProgramEvent) : void => {
@@ -35,7 +36,8 @@ const onloadEvent = (event : ProgramEvent) : void => {
         event.setActiveLocalization("en-us");
     }
 
-    event.scenes.addScene("title", new TitleScreen(event), true);
+    event.scenes.addScene("intro", new Intro(), true);
+    event.scenes.addScene("title", new TitleScreen(event), false);
     event.scenes.addScene("game", new Game(event), false);
 }
 
