@@ -151,6 +151,12 @@ export class Game implements Scene {
     private playSong(name : string, volume : number, event : ProgramEvent) : void {
 
         const theme : AudioSample | undefined = event.assets.getSample(name);
+        if (theme === this.baseTrack && event.audio.isMusicPlaying()) {
+
+            event.audio.resumeMusic(volume);
+            return;
+        }
+
         this.baseTrack = theme;
         
         if (theme === undefined) {
@@ -253,8 +259,9 @@ export class Game implements Scene {
         this.showInProgressMessage = baseMap.getBooleanProperty("in_progress");
 
         // Needed in the case of resize in the title screen
-        this.camera.update(event);
-        // this.camera.limit(0, this.stage.width*TILE_WIDTH, 0, this.stage.height*TILE_HEIGHT);
+        // TODO: Does not work properly...
+        //this.camera.update(event);
+        //this.limitCamera();
     }
 
 

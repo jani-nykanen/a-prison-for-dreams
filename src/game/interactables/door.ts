@@ -114,7 +114,7 @@ export class Door extends Interactable {
             return;
         }
 
-        event.audio.stopMusic();
+        event.audio.pauseMusic();
         event.audio.playSample(event.assets.getSample("transition"), 0.70);
 
         player.setPosition(this.pos.x, this.pos.y, false);

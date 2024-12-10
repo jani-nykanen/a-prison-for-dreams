@@ -173,16 +173,17 @@
 
     "cutscene1": [
 
-        "They decided to call it\nthe World of Dream.",
-        "It was reserved for those\nwho had wealth and power.",
-        "It makes you wonder, what\nhappened to the real world?"
+        "They decided to call it\nthe \"World of Dream\".",
+        "It was reserved for\nthose who had wealth\nand power.",
+        "It makes you wonder,\nwhat happened to\nthe real world?",
+        "What happened to\nthe normal people?"
     ],
 
     "cutscene2": [
 
         "Lady Alexandra, that was\nthe name of the Great\nDreamer when she was\nstill a human.",
         "She was chosen to be the\nGreat Dreamer because of\nher outstanding ability\nto dream worlds.",
-        "Or that is what they claimed."
+        "Or that is what\nthey claimed."
     ],
 
 
@@ -239,12 +240,12 @@
 
     "npc2": [
         "Welcome, stranger, to\nthe World of Dream!\nWe don't get visitors\nfrom the Graveyard\ntoo often.",
-        "You must be the one\nthe Great Dreamer\nhas summoned. She is\nwaiting for you...\nsomewhere.",
-        "Here whereabouts are\nunknown to us, I'm\nafraid."
+        "You must be the one the\nGreat Dreamer has\nsummoned. She must be\nwaiting for you...\nsomewhere.",
+        "Her whereabouts are not\nknown to us, I'm af-\nraid."
     ],
 
     "npc3": [
-        "Did you know there is\nalso the Old Graveyard?\nNowadays we only\nbury nightmares\nthere.",
+        "Did you know there is\nalso the Old Graveyard?\nNowadays we only bury\nnightmares there.",
         "Not all nightmares\nremain dead, though.\nPray you never need\nto go there."
     ],
 
@@ -297,10 +298,9 @@
 
     "npc12": [
 
-        "For a long while we\ndid not need a grave-\nyard. You were not\nsupposed to die in\na dream!",
-        "Then the Great Dreamer\nwas sealed away, and\nthings started to happen.",
-        "First we buried people\non this hill, then\nto the Old Grave-\nyard.",
-        "In fact, the portal\nabove should take\nyou to the Old\nGraveyard, but you\nneed to pay a toll."
+        "This portal will take\nyou to the Old Grave-\nyard.",
+        "To make sure that the\nnightmares won't es-\ncape that place we\nsealed the door.",
+        "If you happen to find\neight Dream Orbs, you\ncan still open it, if\nyou wish."
     ],
 
     "npc13": [

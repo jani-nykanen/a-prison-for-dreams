@@ -78,13 +78,14 @@ export class AudioPlayer {
     }
 
 
-    public resumeMusic() : boolean {
+    public resumeMusic(newVolume? : number) : boolean {
 
         if (this.ctx === undefined || this.musicTrack === undefined) {
 
             return false;
         }
-        this.musicTrack.resume(this.ctx, this.musicVolume/100.0);
+
+        this.musicTrack.resume(this.ctx, this.musicVolume/100.0, newVolume);
         return true;
     }
 

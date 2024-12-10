@@ -17,7 +17,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { VERSION } from "./version.js";
 
 
-const MUSIC_VOLUME : number = 0.60;
+const MUSIC_VOLUME : number = 0.50;
 
 const CORNER_TILEMAP : number[] = [
     -1,  94, 95, -1,
@@ -265,17 +265,23 @@ export class TitleScreen implements Scene {
         event.audio.stopMusic();
         this.menu.deactivate();
 
-        if (this.disabledButtons[file]) {
+        const newGame : boolean = this.disabledButtons[file];
 
-            this.toggleSaveFileInfo();
-            return;
-        }
+        event.transition.activate(true, 
+            newGame ? TransitionType.Fade : TransitionType.Circle, 
+            1.0/30.0, event,
+            (event : ProgramEvent) : void => {
 
-        event.transition.activate(true, TransitionType.Circle, 1.0/30.0, event,
-        (event : ProgramEvent) : void => {
+                if (newGame) {
 
-            event.scenes.changeScene("game", event);
-        });
+                    event.transition.deactivate();
+
+                    this.toggleSaveFileInfo();
+                    return;
+                }
+
+                event.scenes.changeScene("game", event);
+            });
     }
 
 
@@ -457,6 +463,17 @@ export class TitleScreen implements Scene {
             return;
         }
 
+        if (this.activeMenu !== this.menu &&
+            this.activeMenu !== this.confirmClearDataMenu &&
+            event.input.getAction("back") == InputState.Pressed) {
+
+            event.audio.playSample(event.assets.getSample("deny"), 0.70);
+            this.activeMenu = this.menu;
+            this.activeMenuOffset = 1;
+
+            // this.menu.activate()
+            return;
+        }
         this.activeMenu?.update(event);
     }
 

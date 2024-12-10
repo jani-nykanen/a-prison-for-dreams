@@ -91,9 +91,9 @@ export class AudioSample {
     }
 
 
-    public resume(ctx : AudioContext, volumeModifier : number) : void {
+    public resume(ctx : AudioContext, volumeModifier : number, newVolume? : number) : void {
 
-        this.play(ctx, this.baseVolume, volumeModifier, this.loop, this.pauseTime);
+        this.play(ctx, newVolume ?? this.baseVolume, volumeModifier, this.loop, this.pauseTime);
     }
 
 

@@ -16,7 +16,7 @@ export class Intro implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
         
-        event.transition.activate(false, TransitionType.Fade, 1.0/20.0, event, undefined, new RGBA(0));
+        event.transition.activate(false, TransitionType.Fade, 1.0/30.0, event, undefined, new RGBA(0));
     }
 
 
@@ -33,7 +33,7 @@ export class Intro implements Scene {
         if (this.waitTimer >= WAIT_TIME || event.input.isAnyPressed()) {
 
 
-            event.transition.activate(true, TransitionType.Fade, 1.0/20.0, event,
+            event.transition.activate(true, TransitionType.Fade, 1.0/30.0, event,
                 (event : ProgramEvent) : void => {
 
                     ++ this.phase;

@@ -5,6 +5,9 @@ import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
 
 
+export const SETTINGS_LOCAL_STORAGE_KEY : string = "the_end_of_dreams__settings";
+
+
 export class Settings {
 
 
@@ -55,9 +58,29 @@ export class Settings {
 
                     this.deactivate();
                     this.backEvent?.(event);
+                    this.save(event);
                 }
             ),
         ]);   
+    }
+
+
+    private save(event : ProgramEvent) : void {
+
+        try {
+
+            const output : unknown = {};
+
+            output["musicvolume"] = String(event.audio.getMusicVolume());
+            output["soundvolume"] = String(event.audio.getSoundVolume());
+
+            window["localStorage"]["setItem"](SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(output));
+
+        }
+        catch (e) {
+
+            console.error("Not-so-fatal error: failed to save settings: " + e["message"]);
+        }
     }
 
 

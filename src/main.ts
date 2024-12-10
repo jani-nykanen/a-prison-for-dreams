@@ -4,6 +4,34 @@ import { WebGLRenderer } from "./gfx/webgl/renderer.js";
 import { Game } from "./game/game.js";
 import { TitleScreen } from "./game/titlescreen.js";
 import { Intro } from "./game/intro.js";
+import { SETTINGS_LOCAL_STORAGE_KEY } from "./game/settings.js";
+import { clamp } from "./math/utility.js";
+
+
+const loadSetting = (event : ProgramEvent) : void => {
+
+    try {
+
+        const str : string | null = window["localStorage"]["getItem"](SETTINGS_LOCAL_STORAGE_KEY);
+        if (str === null) {
+
+            return;
+        }
+
+        const json : unknown = JSON.parse(str) ?? {};
+
+        const musicVolume : number = clamp(Number(json["musicvolume"]), 0, 100);
+        const soundVolume : number = clamp(Number(json["soundvolume"]), 0, 100);
+
+        event.audio.setMusicVolume(musicVolume);
+        event.audio.setSoundVolume(soundVolume);
+
+    }
+    catch (e) {
+
+        console.error("Not-so-fatal error: failed to load settings: " + e["message"]);
+    }
+}
 
 
 const initialEvent = (event : ProgramEvent) : void => {
@@ -21,9 +49,10 @@ const initialEvent = (event : ProgramEvent) : void => {
     event.input.addAction("select", ["Enter", "Space", "KeyZ", "KeyJ"], [0, 7, 9], [0]);
     event.input.addAction("start", ["Enter", "Space", "KeyZ", "KeyJ"], [0, 7, 9], [0]);
 
-    // TODO: Read from a save file or something?
     event.audio.setMusicVolume(60);
     event.audio.setSoundVolume(60);
+
+    loadSetting(event);
 }
 
 
@@ -36,8 +65,8 @@ const onloadEvent = (event : ProgramEvent) : void => {
         event.setActiveLocalization("en-us");
     }
 
-    event.scenes.addScene("intro", new Intro(), true);
-    event.scenes.addScene("title", new TitleScreen(event), false);
+    event.scenes.addScene("intro", new Intro(), false);
+    event.scenes.addScene("title", new TitleScreen(event), true);
     event.scenes.addScene("game", new Game(event), false);
 }
 

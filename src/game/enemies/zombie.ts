@@ -11,6 +11,9 @@ const BASE_SPEED : number = 0.25;
 export class Zombie extends Enemy {
 
 
+    private initialHealth : number = 0;
+
+
     private risenUp : boolean = false;
     private rising : boolean = false;
 
@@ -22,6 +25,7 @@ export class Zombie extends Enemy {
         this.sprite.setFrame(4, 3);
 
         this.health = 6;
+        this.initialHealth = this.health;
         this.attackPower = 2;
 
         this.dropProbability = 0.15;
@@ -46,7 +50,14 @@ export class Zombie extends Enemy {
         const ANIMATION_SPEED : number = 8;
         const RISE_SPEED : number = 8;
 
+        this.knockbackFactor = this.risenUp ? 1.0 : 0.0;
+
         if (!this.risenUp) {
+
+            if (this.health != this.initialHealth) {
+
+                this.rising = true;
+            }
 
             if (this.rising) {
 

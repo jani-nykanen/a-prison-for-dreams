@@ -152,7 +152,9 @@ export class Stage {
         if (bottomHeight > 0) {
 
             canvas.setColor(30, 109, 219, opacity);
-            canvas.fillRect(camPos.x, dy + 16, canvas.width, bottomHeight);
+            // Note: draw some extra since I have some bugs with camera after
+            // transitions...
+            canvas.fillRect(camPos.x, dy + 16, canvas.width, bottomHeight + 16);
             canvas.setColor();
         }
         
