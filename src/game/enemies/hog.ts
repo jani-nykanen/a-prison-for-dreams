@@ -6,10 +6,14 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
-const BASE_SPEED : number = 0.80;
+const BASE_SPEED : number = 0.65;
+const JUMP_RECOVER_TIME : number = 30;
 
 
 export class Hog extends Enemy {
+
+    
+    private jumpRecoverTimer : number = JUMP_RECOVER_TIME;
 
 
     constructor(x : number, y : number) {
@@ -30,12 +34,15 @@ export class Hog extends Enemy {
         this.knockbackFactor = 0.75;
 
         this.friction.x = 0.05;
+        this.friction.y = 0.10;
+
+        this.target.y = 3.0;
     }
 
 
     private jump(event : ProgramEvent) : void {
 
-        const JUMP_HEIGHT : number = -3.0;
+        const JUMP_HEIGHT : number = -2.5;
 
         this.speed.y = JUMP_HEIGHT;
         event.audio.playSample(event.assets.getSample("jump2"), 0.30);
@@ -50,6 +57,10 @@ export class Hog extends Enemy {
         if (this.touchSurface) {
 
             this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
+            if (this.jumpRecoverTimer > 0) {
+
+                this.jumpRecoverTimer -= event.tick;
+            }
         }
         else {
 
@@ -91,10 +102,12 @@ export class Hog extends Enemy {
 
         this.dir = Math.sign(ppos.x - this.pos.x);
 
-        if (ppos.y < this.pos.y - JUMP_TRIGGER ||
-            (this.hurtTimer <= 0 && player.isAttacking())) {
+        if (this.jumpRecoverTimer <= 0 &&
+            (ppos.y < this.pos.y - JUMP_TRIGGER ||
+            (this.hurtTimer <= 0 && player.isAttacking()))) {
 
             this.jump(event);
+            this.jumpRecoverTimer = JUMP_RECOVER_TIME;
         }
     }
 }

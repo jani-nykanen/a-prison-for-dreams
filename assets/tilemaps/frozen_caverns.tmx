@@ -7,7 +7,7 @@
   <property name="in_progress" type="bool" value="true"/>
   <property name="leftexit" value="old_graveyard"/>
   <property name="music" value="cave"/>
-  <property name="musicvolume" type="float" value="0.5"/>
+  <property name="musicvolume" type="float" value="0.4"/>
   <property name="name" value="Frozen Caverns"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>

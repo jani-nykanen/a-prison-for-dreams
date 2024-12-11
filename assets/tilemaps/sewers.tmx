@@ -7,7 +7,7 @@
   <property name="door2" value="warehouse"/>
   <property name="door4" value="warehouse"/>
   <property name="music" value="cave"/>
-  <property name="musicvolume" type="float" value="0.5"/>
+  <property name="musicvolume" type="float" value="0.4"/>
   <property name="name" value="Ancient Sewers"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="sunken_passage"/>

@@ -91,9 +91,17 @@ export class Sprite {
         dx : number, dy : number, flip : Flip = Flip.None,
         scalex : number = this.width, scaley : number = this.height) : void {
 
+        this.drawWithShiftedRow(canvas, bmp, dx, dy, flip, 0, scalex, scaley);
+    }
+
+
+    public drawWithShiftedRow(canvas : Canvas, bmp : Bitmap | undefined, 
+        dx : number, dy : number, flip : Flip = Flip.None, rowShift : number,
+        scalex : number = this.width, scaley : number = this.height) : void {
+
         canvas.drawBitmap(bmp, flip, 
             dx, dy, 
-            this.column*this.width, this.row*this.height, 
+            this.column*this.width, (this.row + rowShift)*this.height, 
             this.width, this.height, scalex, scaley);
     }
 

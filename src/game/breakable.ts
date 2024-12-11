@@ -152,7 +152,8 @@ export class Breakable extends CollisionObject {
         o.slopeCollision(x1 + X_OFFSET, y1, x2 - X_OFFSET*2, y1, 1, event);
         if (!ignoreBottom) {
             
-            const bottomTouch : boolean = o.slopeCollision(x1 + X_OFFSET, y2, x2 - X_OFFSET*2, y2, -1, event);
+            const bottomTouch : boolean = o.slopeCollision(
+                x1 + X_OFFSET, y2 + 2, x2 - X_OFFSET*2, y2 + 2, -1, event);
             if (bottomTouch && breakFromBottom) {
 
                 this.exist = false;

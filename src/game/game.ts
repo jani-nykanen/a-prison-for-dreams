@@ -159,12 +159,11 @@ export class Game implements Scene {
 
         this.baseTrack = theme;
         
+        event.audio.stopMusic();
         if (theme === undefined) {
             
             return;
         }
-
-        event.audio.stopMusic();
         event.audio.fadeInMusic(theme, volume, 1000);
 
         this.baseTrackVolume = volume;
@@ -234,6 +233,11 @@ export class Game implements Scene {
         if (musicName !== undefined) {
 
             this.playSong(musicName, baseMap.getNumericProperty("musicvolume") ?? 0.50, event);
+        }
+        else {
+
+            this.baseTrack = undefined;
+            event.audio.stopMusic();
         }
 
         // Set cutscene

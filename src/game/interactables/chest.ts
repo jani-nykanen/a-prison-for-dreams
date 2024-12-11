@@ -244,7 +244,7 @@ export class Chest extends Interactable {
             const bmpGuide : Bitmap | undefined = assets.getBitmap("guides");
 
             canvas.drawBitmap(bmpGuide, Flip.None, 
-                this.pos.x - bmpGuide.width/2, this.pos.y - 48, 0, this.guideID*32, 96);
+                this.pos.x - bmpGuide.width/2, this.pos.y - 48, 0, this.guideID*32, 96, 32);
         }
 
         this.sprite.draw(canvas, this.bitmap, 

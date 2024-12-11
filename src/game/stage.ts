@@ -115,7 +115,8 @@ export class Stage {
     }
 
 
-    private drawWater(canvas : Canvas, assets : Assets, camera : Camera, opacity : number) : void {
+    private drawWater(canvas : Canvas, assets : Assets, camera : Camera, 
+        opacity : number, surfaceOpacity : number = 0.0) : void {
 
         const WATER_WIDTH : number = 32;
 
@@ -141,12 +142,22 @@ export class Stage {
         const startx : number = Math.floor(camPos.x/WATER_WIDTH) - 1;
         const endx : number = startx + Math.ceil(camera.width/WATER_WIDTH) + 2;
 
-        canvas.setAlpha(opacity);
-        for (let x = startx; x < endx; ++ x) {
+        // Base water
+        for (let i : number = 0; i < 2; ++ i) {
 
-            this.waterSprite.draw(canvas, bmpWater, x*WATER_WIDTH, dy);
-        }  
-        canvas.setAlpha();
+            canvas.setAlpha(i == 0 ? opacity : surfaceOpacity);
+            for (let x : number = startx; x < endx; ++ x) {
+
+                this.waterSprite.drawWithShiftedRow(canvas, bmpWater, 
+                    x*WATER_WIDTH, dy, Flip.None, i);
+            }  
+            canvas.setAlpha();
+
+            if (opacity >= 1.0 || surfaceOpacity <= 0.0) {
+
+                break;
+            }
+        }
 
         const bottomHeight : number = this.height*TILE_HEIGHT - (dy + 16);
         if (bottomHeight > 0) {
@@ -208,12 +219,14 @@ export class Stage {
     public draw(canvas : Canvas, assets : Assets, tilesetIndex : number, camera : Camera) : void {
 
         const BACKGROUND_WATER_OPACITY : number = 0.33;
+        const BACKGROUND_WATER_SURFACE_OPACITY : number = 0.50;
 
         const tileset : Bitmap | undefined = assets.getBitmap(`tileset_${tilesetIndex}`);
 
         if (this.backgroundWater && this.waterLevel > 0) {
 
-            this.drawWater(canvas, assets, camera, BACKGROUND_WATER_OPACITY);
+            this.drawWater(canvas, assets, camera, 
+                BACKGROUND_WATER_OPACITY, BACKGROUND_WATER_SURFACE_OPACITY);
         }
 
         let topLayerOpacity : number = this.topLayerDisabled ? 0.0 : 1.0;

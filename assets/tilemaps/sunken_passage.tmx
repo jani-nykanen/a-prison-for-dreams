@@ -7,7 +7,7 @@
   <property name="door4" value="puzzle_tower"/>
   <property name="leftexit" value="sewers"/>
   <property name="music" value="cave"/>
-  <property name="musicvolume" type="float" value="0.5"/>
+  <property name="musicvolume" type="float" value="0.4"/>
   <property name="name" value="Sunken Passage"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="cave"/>

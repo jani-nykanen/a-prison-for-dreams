@@ -158,7 +158,7 @@
 
     "lever1": [
         
-        "You pull a lever and suddenly\nit feels like there are\nfewer magical beams in\nthis area than before."
+        "You pull a lever and suddenly\nit feels like there are\nfewer magical beams in this\narea than before."
     ],
 
     "cutscene0": [
@@ -189,10 +189,9 @@
 
     "cutscene3": [
 
-        "When Lady Alexandra was\nsealed away, there was\nno one left to supervise\nthe Dream.",
-        "The Dream started to decay,\nand people inhabiting it\nvanished or were turned\ninto monsters.",
-        "It seems that the scientists\nwho had created the Great\nDreamer did not understand\nhow the dreams work.",
-        "How can there be a dream\nif there is no dreamer...?"
+        "When Lady Alexandra\nwas sealed away, the\nDream started to\ndecay.",
+        "People inhabiting the\nDream either vanished\nor were turned into\nmonsters.",
+        "Without the Dreamer\nthere is no Dream..."
     ],
 
 
@@ -229,50 +228,59 @@
 
 
     "npc0": [
+
         "We are the keepers of\nthe Graveyard. Our\njob is to bury dreams\nthat come here to die.",
         "However, the Great\nDreamer told us to dig\nyou up and give you a\nlife. For what reason,\nwe do not know.",
         "It has been centuries\nsince she talked to\nus last time. You\nmust be very precious\nto her."
     ],
 
     "npc1": [
+
         "These portals connect\ndifferent parts of\nthe Dream together.\nSome of them are\none-way only, though."
     ],
 
     "npc2": [
+
         "Welcome, stranger, to\nthe World of Dream!\nWe don't get visitors\nfrom the Graveyard\ntoo often.",
         "You must be the one the\nGreat Dreamer has\nsummoned. She must be\nwaiting for you...\nsomewhere.",
         "Her whereabouts are not\nknown to us, I'm af-\nraid."
     ],
 
     "npc3": [
+
         "Did you know there is\nalso the Old Graveyard?\nNowadays we only bury\nnightmares there.",
         "Not all nightmares\nremain dead, though.\nPray you never need\nto go there."
     ],
 
     "npc4": [
+
         "In the old times we hid\nDream Orbs around the\nisland. They were\nstored in chests like\nthe one above us.",
         "If you could gather\neight of them, you\nwon a special audience\nwith the Great Dreamer\nherself.",
         "This was when the old\ncitizens were still\nalive..."
     ],
 
     "npc5": [
+
         "The Great Dreamer was\nunable to dream proper\nhouses, so she gave\nus these...\"containers\"\ninstead.",
         "This one used to belong\nto the woodcutter, but\nthen he vanished, like\nall the other old\ncitizens.",
         "Now this house is inha-\nbitated by the shop-\nkeeper."
     ],
 
     "npc6": [
+
         "This part of the Dream\nis now long forgotten,\nhence we call it the\n'Forgotten Coast'.",
-        "There used to be a port\nhere. People could\nsail to the smaller\nislands in the Dream.",
-        "Most of these island sunk\nsoon after the\nGreat Dreamer's spi-\nrit was sealed away."
+        "There used to be a port\nhere. People could sail\nto... hmm... somewhere?",
+        "I don't really know\nwhat exists beyond\nthis island."
     ],
 
     "npc7": [
+        
         "There are many broken\nportals in this island.\nThey used to connect\nthe Dream to the outer\nworlds.",
         "I think this particular\nportal used to take\nyou to the Inner\nDream."
     ],
 
     "npc8": [
+
         "The Great Dreamer loves\npuzzles, so she created\nus islands fulls of\npuzzles so we could\n'train our brains'.",
         "This is the only island\nthat hasn't sunken yet.\nShe is not very good\nat making islands...",
         "You can reset the\npuzzle by leaving and\nre-entering this place."
@@ -280,7 +288,8 @@
 
     "npc9": [
 
-        "There used to be many\npeople living down\nhere. Some people\njust prefer caves\nto actual houses."
+        "There used to be many\npeople living down here\nin these caves.",
+        "It is surprising how\nmany people prefer\nmushrooms to sunlight!"
     ],
 
 
@@ -305,15 +314,15 @@
 
     "npc13": [
 
-        "All those monsters\noutside used to be\ncitizens of the Dream.",
-        "Don't feel bad if you\nhave to kill them,\nthough: they can\nno longer feel\nanything."
+        "All those monsters out-\nside used to be citi-\nzens of the Dream.",
+        "Don't feel bad if you\nhave to kill them,\nthough: they can no\nlonger feel a thing."
     ],
 
 
     "npc14": [
 
-        "Long time ago Lady\nAlexandra dreamed of\na nuclear war. It\nmight have been a\nnightmare.",
-        "Anyways, when it was\nover we thought\nwe had better build\na shelter. Just\nin case."
+        "Long time ago Lady\nAlexandra dreamed of a\nnuclear war. It might\nhave been a nightmare.",
+        "Anyways, when it was\nover we thought we\nhad better build a\nshelter. Just in case."
     ],
 
     "npc15": [
@@ -351,7 +360,7 @@
     "item3": [
 
         "You obtain a MAGIC SNORKEL!",
-        "Its magical capabilities allow\nyou to breathe underwater,\nmaking it possible to dive\nwithout fear or dying."
+        "Its magical capabilities allow\nyou to breathe underwater,\nmaking it possible to dive\nwithout fear of dying."
     ],
 
 
@@ -372,7 +381,7 @@
     "item6": [
 
         "You obtain a RED KEY!",
-        "Knowing that it this key only\nopens red doors makes you\nsee red."
+        "Knowing that this key only\nopens red doors makes you\nsee red."
     ],
 
 
