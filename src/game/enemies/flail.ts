@@ -38,6 +38,9 @@ export class Flail extends Enemy {
 
         this.speed.zeros();
         this.target.zeros();
+
+        this.hitbox.w = 8;
+        this.hitbox.h = 8;
     }
 
 

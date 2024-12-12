@@ -5,7 +5,7 @@
   <property name="door4" value="old_graveyard"/>
   <property name="music" value="cave"/>
   <property name="musicvolume" type="float" value="0.5"/>
-  <property name="name" value="Puzzle Tower"/>
+  <property name="name" value="Puzzle Tower (Optional)"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>
  </properties>

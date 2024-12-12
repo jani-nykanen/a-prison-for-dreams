@@ -64,6 +64,7 @@ export class Beam extends Interactable {
         if (!initial) {
 
             player.wallCollision(this.pos.x - 4, this.pos.y + TILE_HEIGHT/2, TILE_HEIGHT*3, 1, event);
+            player.wallCollision(this.pos.x + 4, this.pos.y + TILE_HEIGHT/2, TILE_HEIGHT*3, -1, event);
         }
     }
 

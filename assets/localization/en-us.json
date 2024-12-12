@@ -197,33 +197,33 @@
 
     "cutscene4": [
 
-        "Running the Dream requires an\nenormous amount of energy\nand resources. It is,\nafter all, a world\ninside another world.",
-        "Thus, creating the Dream\nonly accelerated the\ndesctruction of the\nreal world",
-        "If the real world dies,\nso does the World\nof Dream.",
-        "Unless, of course, someone\nstops the Dream..."
+        "The Dream was created\nbecause the real world\nwas dying.",
+        "But creating the Dream\nonly accelerated the\ndestruction.",
+        "It is, after all, a\nworld inside a world."
     ],
 
 
     "cutscene5": [
 
-        "Lady Alexandra has a\nrecurring nightmare,\nwhere a giant eye was\nchasing her.",
-        "They say that the eye\nbelongs to her father.",
-        "A man who sacrificed here own\ndaughter to create an\nutopia for rich and\npowerful."
+        "Lady Alexandra has a\nrecurring nightmare,\nwhere a giant eye is\nchasing her.",
+        "They say the eye be-\nlongs to her father.",
+        "A man who sacrificed\nher own daughter to\ncreate a utopia for\nrich and powerful."
     ],
 
 
     "cutscene6": [
         
-        "Lord Dankworth was the\nleading engineer of\nthe \"Project Dream\". It\nwas his lifework. Obsession,\neven.",
+        "Lady Alexandra's father\nwas the leading engi-\nneer of the 'Project\nDream'.",
         "Rumors say that he knew\nthat the brain scan could\nkill his daughter.",
-        "But still he let the\nscientists scan Lady\nAlexandra's brain, which\nresulted in her death."
+        "But he thought that the\nsacrifice was worth it."
     ],
 
 
     "cutscene7": [
 
-        "Each time Lady Alexandra\nhad a nightmare, she\nwould dream a hero\nwho banishes the bad\ndream.",
-        "He shares a strong\nresemblance with her\nlittle brother, who\nwas killed in a fatal\naccident."
+        "Each time Lady Alexandra\nhad a bad dream, she\nwould dream a hero.",
+        "The hero would banish\nthe nightmare so that\nthe Dream could\ncontinue.",
+        "But in the end, the\nhero always dies..."
     ],
 
 
@@ -281,7 +281,7 @@
 
     "npc8": [
 
-        "The Great Dreamer loves\npuzzles, so she created\nus islands fulls of\npuzzles so we could\n'train our brains'.",
+        "The Great Dreamer loves\npuzzles, so she created\nus islands full of\npuzzles so we could\n'train our brains'.",
         "This is the only island\nthat hasn't sunken yet.\nShe is not very good\nat making islands...",
         "You can reset the\npuzzle by leaving and\nre-entering this place."
     ],
@@ -301,8 +301,8 @@
 
     "npc11": [
 
-        "We are not people.\nWe are more like...\nGhosts? Spirits?\nMemories of the past,\nperhaps.",
-        "That's why you can\nfind us standing in\nweird places."
+        "We are not people. We\nare more like... Spi-\nrits? Ghosts? Memories\nof the past, perhaps.",
+        "That's why you can find\nus standing in weird\nplaces."
     ],
 
     "npc12": [
@@ -327,16 +327,14 @@
 
     "npc15": [
 
-        "NO MATTER WHAT THEY\nSAY, I AM NOT\nINSANE! THE NIGHT-\nMARES DO NOT AFFECT\nMY PSYCHE AT ALL!",
-        "And that's because I\ndon't even have a\npsyche."
+        "Ever wondered why we\nneed a graveyard in\na dream? In a place\nthat was supposed\nto be a utopia?",
+        "I wish I knew. I guess\nyou cannot dream a\nlife without dream-\ning the death."
     ],
 
     "npc16": [
 
-        "The Eye is possibly\nthe greatest night-\nmare the Great\nDreamer ever had.",
-        "When The Eye came here,\nwe built him this\nbeautiful tomb.",
-        "If you go inside, you\nmight get a sudden\nurge to lick The\nEye.",
-        "But whatever you do,\nNEVER LICK THE EYE!\nBecause it is gross."
+        "Inside that beautiful\ntomb you can find\nThe Eye, the greatest\nnightmare ever lived.",
+        "If you go there, you\nmight get a sudden\nurge to lick the Eye.\nIt might not be a good\nidea, though."
     ],
 
     "item0": [
@@ -374,7 +372,7 @@
     "item5": [
 
         "You obtain an ETERNAL FLAME!",
-        "This magical flames makes\npossible to perform a power-\nful charge attack. Because\nthat's what magic fires\ndo."
+        "This magical flames makes\npossible to perform a power-\nful charge attack. Because\nthat's what magic fires do."
     ],
 
 
