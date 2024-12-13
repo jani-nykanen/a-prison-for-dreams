@@ -12,7 +12,7 @@ const PRICES : number[][] = [
     50, // Power bracelet,
     50, // Spectacles
     35, // Running shoes
-    100, // Shield
+    40, // Potion
 ],
 [
     // TODO: later

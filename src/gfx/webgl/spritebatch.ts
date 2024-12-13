@@ -13,6 +13,7 @@ export class SpriteBatch {
     private prepared : boolean = false;
 
     private maxSize : number;
+    private errorShown : boolean = false;
 
 
     public get outputMesh() : Mesh {
@@ -109,7 +110,13 @@ export class SpriteBatch {
         const max : number = this.bufferMesh.getMaxElementCount();
         if (this.elementPointer > max) {
 
-            console.warn("Sprite batch buffer overflow!");
+            // TODO: Dynamically allocate more memory
+
+            if (!this.errorShown) {
+
+                console.warn("Sprite batch buffer overflow, some sprites will not be drawn.");
+                this.errorShown = true;
+            }
             this.elementPointer = max;
         }
 

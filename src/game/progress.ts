@@ -3,6 +3,7 @@ import { Vector } from "../math/vector.js";
 import { ProgramEvent } from "../core/event.js";
 import { updateSpeedAxis } from "./utility.js";
 import { Item } from "./items.js";
+import { VERSION } from "./version.js";
 
 
 const INITIAL_MAP : string = "graveyard";
@@ -65,6 +66,7 @@ export class Progress {
     private projectilePower : number = 3;
     private armor : number = 0;
     private speedBonus : number = 0;
+    private recoverBonus : number = 0;
 
     private money : number = 0;
     private orbCount : number = 0;
@@ -125,6 +127,7 @@ export class Progress {
             String(date.getFullYear());
 
         output["date"] = dateString;
+        output["version"] = VERSION;
 
         // TODO: Later can be deduced/computed from the item list
         // output["maxHealth"] = this.maxHealth;
@@ -216,16 +219,25 @@ export class Progress {
 
         // Damage reduction
         this.armor = 0;
+        /*
         if (this.obtainedItems[Item.Shield]) {
 
             this.armor += 1;
+        }
+        */
+
+        // Health recovery bonus
+        this.recoverBonus = 0;
+        if (this.obtainedItems[Item.Potion]) {
+
+            this.recoverBonus += 1;
         }
 
         // Speed
         this.speedBonus = 0;
         if (this.obtainedItems[Item.RunningShoes]) {
 
-            this.speedBonus = 1;
+            this.speedBonus += 1;
         }
     }
 
@@ -356,6 +368,10 @@ export class Progress {
         if (change < 0) {
 
             change = Math.min(-1, change + this.armor);
+        }
+        else if (change > 0) {
+
+            change += this.recoverBonus*2;
         }
         
         this.health = clamp(this.health + change, 0, this.maxHealth);

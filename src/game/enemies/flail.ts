@@ -27,6 +27,7 @@ export class Flail extends Enemy {
 
         this.canBeHurt = false;
         this.canBeMoved = false;
+        this.canMoveOthers = false;
         this.takeCollisions = false;
 
         this.cameraCheckArea.x = 64;

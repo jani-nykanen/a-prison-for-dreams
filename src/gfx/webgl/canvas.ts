@@ -210,7 +210,13 @@ export class WebGLCanvas implements Canvas {
             x = dx;
         }
 
-        for (let i = 0; i < text.length; ++ i) {
+        const useBatch : boolean = !this.batchingEnabled;
+        if (useBatch) {
+
+            this.beginSpriteBatching(font);
+        }
+
+        for (let i : number = 0; i < text.length; ++ i) {
 
             const chr : number = text.charCodeAt(i);
             if (chr == '\n'.charCodeAt(0)) {
@@ -225,6 +231,12 @@ export class WebGLCanvas implements Canvas {
                 cw, ch, cw*scalex, ch*scaley);
 
             x += (cw + xoff) * scalex;
+        }
+
+        if (useBatch) {
+
+            this.endSpriteBatching();
+            this.drawSpriteBatch();
         }
     }
 
@@ -274,6 +286,12 @@ export class WebGLCanvas implements Canvas {
         // TODO: Automaticall use sprite batch if not enabled
         // for a better performance
 
+        const useBatch : boolean = !this.batchingEnabled;
+        if (useBatch) {
+
+            this.beginSpriteBatching(bitmap);
+        }
+
         const phaseStep : number = Math.PI*2/period;
 
         for (let y : number = 0; y < sh!; ++ y) {
@@ -284,6 +302,12 @@ export class WebGLCanvas implements Canvas {
 
             this.drawBitmap(bitmap, Flip.Horizontal & flip, x, dy + y, sx, sy! + py, sw!, 1);
         }
+
+        if (useBatch) {
+
+            this.endSpriteBatching();
+            this.drawSpriteBatch();
+        }
     }
 
 
@@ -291,7 +315,11 @@ export class WebGLCanvas implements Canvas {
         dx : number, dy : number, sx : number, sy : number, sw : number, sh : number,
         period : number, amplitude : number, shift : number) : void {
 
-        // TODO: Same here
+        const useBatch : boolean = !this.batchingEnabled;
+        if (useBatch) {
+
+            this.beginSpriteBatching(bmp);
+        }
 
         for (let x = 0; x < sw; ++ x) {
 
@@ -299,6 +327,12 @@ export class WebGLCanvas implements Canvas {
             const y : number = Math.round(Math.sin(t)*amplitude);
 
             this.drawBitmap(bmp, Flip.None, dx + x, dy + y, sx + x, sy, 1, sh);
+        }
+
+        if (useBatch) {
+
+            this.endSpriteBatching();
+            this.drawSpriteBatch();
         }
     }
 
@@ -309,12 +343,24 @@ export class WebGLCanvas implements Canvas {
 
         const offset : number = 1 + maxOffset * t;
 
+        const useBatch : boolean = !this.batchingEnabled;
+        if (useBatch) {
+
+            this.beginSpriteBatching(bmp);
+        }
+
         for (let y : number = 0; y < sh; ++ y) {
 
             this.drawBitmap(bmp, flip,
                 (dx + Math.sin((Math.PI*2*latitude)/sh*y + t*(Math.PI*latitude))*amplitude*t), 
                 (dy + y*offset - sh*maxOffset*t/2),
                 sx, sy + y, sw, 1);
+        }
+
+        if (useBatch) {
+
+            this.endSpriteBatching();
+            this.drawSpriteBatch();
         }
     }
 

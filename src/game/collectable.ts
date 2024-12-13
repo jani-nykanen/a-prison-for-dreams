@@ -165,9 +165,9 @@ export class Collectable extends CollisionObject {
                 symbol = FlyingTextSymbol.Heart;
                 color = new RGBA(182, 255, 0);
 
-                player.stats.updateHealth(5);
+                count = player.stats.updateHealth(5);
                 event.audio.playSample(event.assets.getSample("heal"), 0.70);
-                count = 5;
+                // count = 5;
 
                 break;
 

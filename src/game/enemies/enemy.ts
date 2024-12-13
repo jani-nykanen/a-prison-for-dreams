@@ -52,6 +52,7 @@ export class Enemy extends CollisionObject {
     protected canBeMoved : boolean = true;
     protected canBeHurt : boolean = true;
     protected canHurtPlayer : boolean = true;
+    protected canMoveOthers : boolean = true;
     protected radius : number = 6;
 
     protected didTouchSurface : boolean = false;
@@ -341,6 +342,11 @@ export class Enemy extends CollisionObject {
             return;
         }
             
+        if (!this.canMoveOthers || !enemy.canMoveOthers) {
+
+            return;
+        }
+
         const dir : Vector = Vector.direction(enemy.pos, this.pos);
         const div : number = Number(this.canBeMoved) + Number(enemy.canBeMoved);
 

@@ -29,5 +29,7 @@ export const enum Item {
     Bracelet = 34,
     Spectacles = 35,
     RunningShoes = 36,
-    Shield = 37
+    Potion = 37,
+
+    // Shield = 37
 };

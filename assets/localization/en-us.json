@@ -123,22 +123,22 @@
 
     "shop1": [
 
-        "Health Container",
-        "Ammo Container",
-        "Power Bracelet",
+        "Chocolate Heart",
+        "Bag of Bullets",
+        "Ring of Power",
         "Spectacles",
         "Running Boots",
-        "Iron Shield"
+        "Love Potion"
     ],
 
     "shopdescription1": [
 
         "Increases your maximum\nhealth by 2.",
-        "Increases your maximum\nammocount by 2.",
+        "Increases your maximum\nbullet count by 2.",
         "Slightly increases your\nmelee attack power.",
         "Makes your bullets do\nmore damage.",
         "Increases your running\nspeed.",
-        "Reduces damage taken."
+        "Eating hearts will res-\ntore more health."
     ],
 
 
