@@ -13,7 +13,7 @@ import { Progress } from "./progress.js";
 
 export const sampleTypeFromProgress = (progress : Progress, noCoins : boolean = false) : CollectableType => {
 
-    const HEART_MAX_WEIGHT : number = 0.33;
+    const HEART_MAX_WEIGHT : number = 0.67;
     const AMMO_MAX_WEIGHT : number = 0.33;
 
     const heartWeight : number = HEART_MAX_WEIGHT*(1.0 - progress.getHealth()/progress.getMaxHealth());
