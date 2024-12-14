@@ -1,5 +1,6 @@
 import { Assets } from "../core/assets.js";
 import { ProgramEvent } from "../core/event.js";
+import { InputState } from "../core/inputstate.js";
 import { Canvas } from "../gfx/interface.js";
 import { Menu } from "../ui/menu.js";
 import { MenuButton } from "../ui/menubutton.js";
@@ -96,7 +97,21 @@ export class Settings {
     }
 
 
-    public update(event : ProgramEvent) : void {
+    public update(event : ProgramEvent, allowBack : boolean = false) : void {
+
+        if (!this.isActive()) {
+
+            return;
+        }
+
+        if (allowBack &&
+            event.input.getAction("back") == InputState.Pressed) {
+
+            this.deactivate();
+            event.audio.playSample(event.assets.getSample("deny"), 0.60);
+
+            return;
+        }
 
         this.menu.update(event);
     }

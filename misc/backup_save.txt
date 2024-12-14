@@ -1,0 +1,1 @@
+{"date":"12/14/2024","version":"v.0.5.0","items":[1,2,3,4,5,6,7,8,9,10,32,33,34,35,36,37],"healthups":[0,1,2],"ammoups":[0,1,2],"dreamorbs":[0,1,2,3,4,5,6,7],"hints":[1,2,3,4,5,6,8],"cutscenes":[0,1,2,3,4,5,6,7],"levers":[0,1,2,3,4],"doors":[0,1,2,3],"miniboss":"true","checkpoint":{"x":24,"y":152},"money":64,"area":"frozen_caverns"}

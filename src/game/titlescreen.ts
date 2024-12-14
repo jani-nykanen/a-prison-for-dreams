@@ -467,7 +467,7 @@ export class TitleScreen implements Scene {
             this.activeMenu !== this.confirmClearDataMenu &&
             event.input.getAction("back") == InputState.Pressed) {
 
-            event.audio.playSample(event.assets.getSample("deny"), 0.70);
+            event.audio.playSample(event.assets.getSample("deny"), 0.60);
             this.activeMenu = this.menu;
             this.activeMenuOffset = 1;
 

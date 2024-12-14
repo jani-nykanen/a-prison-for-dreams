@@ -81,7 +81,7 @@ export class Menu {
 
             if (this.buttons[this.cursorPos].isDeactivated()) {
 
-                event.audio.playSample(event.assets.getSample("deny"), 0.70);
+                event.audio.playSample(event.assets.getSample("deny"), 0.60);
             }
             else if (this.buttons[this.cursorPos].evaluateCallback(event)) {
             

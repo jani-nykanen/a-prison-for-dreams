@@ -49,7 +49,6 @@ export class Pause {
             new MenuButton(menuText[1] ?? "null",
             (event : ProgramEvent) => {
                 
-                event.audio.stopMusic();
                 this.respawnBox.activate(1);
             }),
     
@@ -133,32 +132,36 @@ export class Pause {
             return;
         }
 
-        if (event.input.getAction("back") == InputState.Pressed) {
-
-            event.audio.resumeMusic();
-            this.deactivate();
-            event.audio.playSample(event.assets.getSample("pause"), 0.80);
-            return;
-        }
-
         if (this.gameSavedBox.isActive()) {
 
             this.gameSavedBox.update(event);
             return;
         }
+
         if (this.respawnBox.isActive()) {
 
             this.respawnBox.update(event);
             return;
         }
+        
         if (this.settings.isActive()) {
 
-            this.settings.update(event);
+            this.settings.update(event, true);
             return;
         }
+
         if (this.quitBox.isActive()) {
 
             this.quitBox.update(event);
+            return;
+        }
+
+        if (event.input.getAction("back") == InputState.Pressed) {
+
+            event.audio.resumeMusic();
+            this.deactivate();
+            event.audio.playSample(event.assets.getSample("pause"), 0.80);
+
             return;
         }
 
