@@ -12,6 +12,7 @@
         {"name": "tileset_0", "path": "tileset_0.png"},
         {"name": "tileset_1", "path": "tileset_1.png"},
         {"name": "tileset_2", "path": "tileset_2.png"},
+        {"name": "tileset_3", "path": "tileset_3.png"},
 
         {"name": "projectiles", "path": "projectiles.png"},
         {"name": "particles_1", "path": "particles_1.png"},
@@ -81,10 +82,12 @@
         {"name": "puzzle2", "path": "puzzle2.tmx"},
         {"name": "boss_room", "path": "boss_room.tmx"},
         {"name": "frozen_caverns", "path": "frozen_caverns.tmx"},
+        {"name": "inner_dream", "path": "inner_dream.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
-        {"name": "collisions_2", "path": "collisions_2.tmx"}
+        {"name": "collisions_2", "path": "collisions_2.tmx"},
+        {"name": "collisions_3", "path": "collisions_3.tmx"}
 
     ],
 
@@ -137,7 +140,9 @@
         {"name": "titlescreen", "path": "titlescreen.ogg"},
         {"name": "forest", "path": "forest.ogg"},
         {"name": "miniboss", "path": "miniboss.ogg"},
-        {"name": "cave", "path": "cave.ogg"}
+        {"name": "cave", "path": "cave.ogg"},
+        {"name": "winter", "path": "winter.ogg"}
+
     ],
 
     "documentPath": "assets/localization/",

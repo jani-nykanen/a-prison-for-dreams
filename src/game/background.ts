@@ -27,6 +27,7 @@ export const enum BackgroundType {
     Cave = 3,
     NightSky = 4,
     StarField = 5,
+    NightSkyWithForest = 6,
 };
 
 
@@ -42,6 +43,7 @@ export class Background {
 
     private snowflakes : Snowflake[];
     private starfield : Starfield | undefined = undefined;
+    private snowflakeColor : RGBA | undefined = undefined;;
 
 
     constructor(height : number, type : BackgroundType | undefined) {
@@ -52,17 +54,35 @@ export class Background {
 
         this.snowflakes = new Array<Snowflake> ();
 
-        if (type === BackgroundType.StarField) {
+        switch (this.type) {
+
+        case BackgroundType.StarField:
 
             this.starfield = new Starfield();
+            break;
+
+        case BackgroundType.Graveyard:
+
+            this.snowflakeColor = new RGBA(0, 0, 0, 0.5);
+            break;
+
+        case BackgroundType.NightSkyWithForest:
+
+            this.snowflakeColor = new RGBA(255, 255, 255, 0.5);
+            break;
+
+        default:
+            break;
         }
     }
 
 
-    private hasSnowflakes = () : boolean => this.type == BackgroundType.Graveyard;
+    // TODO: Pass from properties
+    private hasSnowflakes = () : boolean => this.type == BackgroundType.Graveyard || 
+        this.type == BackgroundType.NightSkyWithForest;
 
 
-    private initializeGraveyard(camera : Camera) : void {
+    private initializeSnowflakes(camera : Camera) : void {
 
         const area : number = camera.width*camera.height;
         const count : number = area/(32*32);
@@ -198,9 +218,7 @@ export class Background {
     }
 
 
-    private drawForest(canvas : Canvas, assets : Assets, camera : Camera) : void {
-
-        this.drawDefaultSky(canvas, assets);
+    private drawTrees(canvas : Canvas, assets : Assets, camera : Camera, darken : number = 0.0) : void {
 
         const bmpForest : Bitmap | undefined  = assets.getBitmap("forest");
         if (bmpForest === undefined) {
@@ -208,8 +226,15 @@ export class Background {
             return;
         }
 
+        const colorMod : number = 1.0 - darken;
+
         const camPos : Vector = camera.getCorner();
         const count : number = Math.floor(canvas.width/bmpForest.width) + 2;
+
+        if (colorMod > 0) {
+
+            canvas.setColor(255*colorMod, 255*colorMod, 255*colorMod);
+        }
 
         const shiftx : number = -((camPos.x/8) % bmpForest.width);
         const dy : number = 80 - camPos.y/8;
@@ -220,10 +245,17 @@ export class Background {
         const bottomHeight : number = this.height - (dy + bmpForest.height);
         if (bottomHeight > 0) {
 
-            canvas.setColor(0, 146, 219);
+            canvas.setColor(0*colorMod, 146*colorMod, 219*colorMod);
             canvas.fillRect(0, dy + bmpForest.height, canvas.width, bottomHeight);
             canvas.setColor();
         }
+    }
+
+
+    private drawForestBackground(canvas : Canvas, assets : Assets, camera : Camera) : void {
+
+        this.drawDefaultSky(canvas, assets);
+        this.drawTrees(canvas, assets, camera);
     }
 
 
@@ -251,21 +283,35 @@ export class Background {
     private drawNightSky(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
         canvas.clear(0, 0, 0);
-
         this.drawMoon(canvas, assets, 1);
+
         this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_2, -240);
     }
 
 
-    private postDrawGraveyard(canvas : Canvas) : void {
+    private drawNightSkyForest(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        canvas.setColor(0, 0, 0, 0.5);
+        canvas.clear(0, 0, 0);
+        this.drawMoon(canvas, assets, 1);
+
+        this.drawTrees(canvas, assets, camera, 0.5);
+    }
+
+
+    private drawSnowflakes(canvas : Canvas) : void {
+
+        canvas.setColor(
+            this.snowflakeColor.r, 
+            this.snowflakeColor.g, 
+            this.snowflakeColor.b, 
+            this.snowflakeColor.a);
         for (const o of this.snowflakes) {
 
             o.draw(canvas);
         }
         canvas.setColor();
     }
+    
 
 
     public initialize(camera : Camera) : void {
@@ -275,8 +321,9 @@ export class Background {
         switch (this.type) {
 
         case BackgroundType.Graveyard:
+        case BackgroundType.NightSkyWithForest:
 
-            this.initializeGraveyard(camera);
+            this.initializeSnowflakes(camera);
             break;
 
         default:
@@ -345,7 +392,7 @@ export class Background {
 
         case BackgroundType.Forest:
 
-            this.drawForest(canvas, assets, camera);
+            this.drawForestBackground(canvas, assets, camera);
             break;
 
         case BackgroundType.Cave:
@@ -364,6 +411,11 @@ export class Background {
             this.starfield?.draw(canvas);
             break;
 
+        case BackgroundType.NightSkyWithForest:
+
+            this.drawNightSkyForest(canvas, assets, camera);
+            break;
+
         default:
 
             canvas.clear(0, 0, 0);
@@ -374,15 +426,9 @@ export class Background {
 
     public postDraw(canvas : Canvas, assets : Assets) : void {
 
-        switch (this.type) {
-
-        case BackgroundType.Graveyard:
-
-            this.postDrawGraveyard(canvas);
-            break;
-
-        default:
-            break;
+        if (this.snowflakeColor !== undefined) {
+            
+            this.drawSnowflakes(canvas);
         }
     } 
 
