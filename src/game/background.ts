@@ -291,10 +291,10 @@ export class Background {
 
     private drawNightSkyForest(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        canvas.clear(0, 0, 0);
+        canvas.clear(0, 36, 73);
         this.drawMoon(canvas, assets, 1);
 
-        this.drawTrees(canvas, assets, camera, 0.5);
+        this.drawTrees(canvas, assets, camera, 0.40);
     }
 
 
