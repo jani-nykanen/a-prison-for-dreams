@@ -35,6 +35,10 @@ const enum CollisionBit {
     SpikeTop    = 1 << 18,
     SpikeLeft   = 1 << 19,
 
+    RoofTop         = 1 << 20,
+    SlopeShortLeft  = 1 << 21,
+    SlopeShortRight = 1 << 22,
+
 
     ContainsBottomLayer = 1 << 27,
 }
@@ -309,6 +313,31 @@ export class CollisionMap {
             o.slopeCollision(
                 dx + TILE_WIDTH - CORRECTION_SLOPE_LENGTH, dy - CORRECTION_SLOPE_LENGTH, 
                 dx + TILE_WIDTH, dy, 1, event, 
+                0, 0, SLOPE_SAFE_MARGIN_NEAR, SLOPE_SAFE_MARGIN_FAR);
+        }
+
+        // Rooftop
+        if ((colID & CollisionBit.RoofTop) != 0) {
+
+            o.slopeCollision(
+                dx, dy + TILE_HEIGHT, 
+                dx + TILE_WIDTH/2, dy + TILE_HEIGHT/2, 1, event, 
+                0, 0, SLOPE_SAFE_MARGIN_NEAR, SLOPE_SAFE_MARGIN_FAR);
+            o.slopeCollision(
+                dx + TILE_WIDTH/2, dy + TILE_HEIGHT/2, 
+                dx + TILE_WIDTH, dy + TILE_HEIGHT, 1, event, 
+                0, 0, SLOPE_SAFE_MARGIN_NEAR, SLOPE_SAFE_MARGIN_FAR);
+        }
+
+        // Short slopes
+        if ((colID & CollisionBit.SlopeShortLeft) != 0) {
+
+            o.slopeCollision(dx + TILE_WIDTH/2, dy + TILE_HEIGHT/2, dx + TILE_WIDTH, dy, 1, event, 
+                0, 0, SLOPE_SAFE_MARGIN_NEAR, SLOPE_SAFE_MARGIN_FAR);
+        }
+        if ((colID & CollisionBit.SlopeShortRight) != 0) {
+
+            o.slopeCollision(dx, dy, dx + TILE_WIDTH/2, dy + TILE_HEIGHT/2, 1, event, 
                 0, 0, SLOPE_SAFE_MARGIN_NEAR, SLOPE_SAFE_MARGIN_FAR);
         }
     }
