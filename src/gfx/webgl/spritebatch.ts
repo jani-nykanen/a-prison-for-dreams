@@ -52,7 +52,11 @@ export class SpriteBatch {
 
         if (this.elementPointer + 6 >= this.maxSize) {
 
-            console.warn("Sprite batch overflow! Cannot add more objects.");
+            if (!this.errorShown) {
+
+                console.warn("Sprite batch overflow! Cannot add more objects.");
+                this.errorShown = true;
+            }  
             return;
         }
 
@@ -111,12 +115,6 @@ export class SpriteBatch {
         if (this.elementPointer > max) {
 
             // TODO: Dynamically allocate more memory
-
-            if (!this.errorShown) {
-
-                console.warn("Sprite batch buffer overflow, some sprites will not be drawn.");
-                this.errorShown = true;
-            }
             this.elementPointer = max;
         }
 
