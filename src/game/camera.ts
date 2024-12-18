@@ -11,6 +11,7 @@ export class Camera {
     private targetPos : Vector;
     private size : Vector;
     private corner : Vector;
+    private followedPoint : Vector;
 
     private shakeTimer : number = 0;
     private shakeMagnitude : number = 0;
@@ -36,6 +37,8 @@ export class Camera {
         this.corner = new Vector(x - this.size.x/2, y - this.size.y/2);
 
         this.shakeVector = new Vector();
+
+        this.followedPoint = new Vector();
     }
 
 
@@ -158,6 +161,9 @@ export class Camera {
 
             this.targetPos.y = target.y - Math.sign(target.y - this.pos.y)*VERTICAL_THRESHOLD;
         }
+
+        this.followedPoint.x = p.x;
+        this.followedPoint.y = p.y;
     }
 
 
@@ -199,4 +205,7 @@ export class Camera {
         this.shakeTimer = time;
         this.shakeMagnitude = magnitude;
     }
+
+
+    public getFollowedPoint = () : Vector => this.followedPoint.clone();
 }

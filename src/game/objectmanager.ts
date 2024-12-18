@@ -591,6 +591,9 @@ export class ObjectManager {
     }
 
 
+    public getAbsolutePlayerPosition = () : Vector => this.player.getPosition();
+
+
     public getRelativePlayerPosition(stage : Stage, camera : Camera) : Vector {
 
         const v : Vector = new Vector();

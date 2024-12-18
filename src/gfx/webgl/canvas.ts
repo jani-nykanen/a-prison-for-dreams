@@ -243,8 +243,8 @@ export class WebGLCanvas implements Canvas {
 
     public fillCircleOutside(centerx : number, centery : number, radius : number) : void {
 
-        centerx = (centerx + this.translation.x) | 0;
-        centery = (centery + this.translation.y) | 0;
+        centerx += this.translation.x;
+        centery += this.translation.y;
 
         this.renderer.changeShader(ShaderType.NoTexture);
 
@@ -253,10 +253,17 @@ export class WebGLCanvas implements Canvas {
         this.renderer.drawMesh(this.meshCircleOut);
 
         // Borders
+
         const top : number = Math.max(0, centery - radius) | 0;
         const bottom : number = Math.min(this.height, centery + radius) | 0;
         const left : number = Math.max(centerx - radius, 0) | 0;
         const right : number = Math.min(centerx + radius, this.width) | 0;
+
+        // This is a workaround, okay?
+        let bufferx : number = this.translation.x;
+        let buffery : number = this.translation.y;
+
+        this.translation.zeros();
 
         if (top > 0)
             this.fillRect(0, 0, this.width, top);
@@ -266,6 +273,9 @@ export class WebGLCanvas implements Canvas {
             this.fillRect(0, 0, left, this.height);
         if (right < this.width)
             this.fillRect(right, 0, this.width - right, this.height);
+
+        this.translation.x = bufferx;
+        this.translation.y = buffery;
     }
     
 

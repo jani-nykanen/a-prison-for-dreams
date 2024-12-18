@@ -545,7 +545,8 @@ export class Game implements Scene {
         this.camera.apply(canvas);
         this.stage?.draw(canvas, assets, this.tilesetIndex, this.camera);
         this.objects?.draw(canvas, assets);
-        this.stage?.drawForeground(canvas, assets, this.camera);
+        this.stage?.drawForeground(canvas, assets, this.camera, 
+            this.objects.getAbsolutePlayerPosition());
 
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.loadIdentity();
