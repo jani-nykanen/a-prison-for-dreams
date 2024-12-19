@@ -78,8 +78,8 @@ export const enum ShaderType {
     FixedColorTextured = 2,
     InvertTextured = 3,
     SwapRedAndBlue = 4,
+    BlackAndWhite = 5,
 };
-
 
 
 export const enum StencilCondition {
@@ -196,6 +196,8 @@ export class WebGLRenderer implements Renderer {
             new Shader(gl, VertexSource.Textured, FragmentSource.TexturedInvert));
         this.shaders.set(ShaderType.SwapRedAndBlue, 
             new Shader(gl, VertexSource.Textured, FragmentSource.TexturedSwapRedBlue));   
+        this.shaders.set(ShaderType.BlackAndWhite, 
+            new Shader(gl, VertexSource.Textured, FragmentSource.TexturedBlackAndWhite));   
         this.activeShader = this.shaders.get(ShaderType.Textured);
         this.activeShader.use();
 

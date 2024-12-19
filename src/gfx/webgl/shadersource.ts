@@ -156,6 +156,36 @@ export const FragmentSource = {
         gl_FragColor = res;
     }`,
     
+
+    TexturedBlackAndWhite : 
+    
+    `
+    precision mediump float;
+         
+    uniform sampler2D texSampler;
+    
+    uniform vec4 color;
+    
+    uniform vec2 texPos;
+    uniform vec2 texScale;
+    
+    varying vec2 uv;
+    
+    
+    void main() {
+    
+        vec2 tex = uv * texScale + texPos;    
+        vec4 buffer = texture2D(texSampler, tex);
+        
+        float v = (buffer.r + buffer.g + buffer.b)/3.0;
+        vec4 res = vec4(v*color.r, v*color.g, v*color.b, color.a*buffer.a);
+        
+        // Needed to make the stencil buffer work
+        if (res.a < 1.0/255.0) {
+              discard;
+        }
+        gl_FragColor = res;
+    }`,
     
     NoTexture : 
     

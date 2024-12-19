@@ -49,7 +49,8 @@ const getShaderTypeFromEffect = (eff : Effect) : ShaderType =>
     [ShaderType.Textured, 
      ShaderType.FixedColorTextured, 
      ShaderType.InvertTextured,
-     ShaderType.SwapRedAndBlue][eff] ?? ShaderType.Textured;
+     ShaderType.SwapRedAndBlue,
+     ShaderType.BlackAndWhite][eff] ?? ShaderType.Textured;
 
 
 export class WebGLCanvas implements Canvas {

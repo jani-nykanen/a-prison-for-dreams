@@ -17,7 +17,7 @@ const enum MapEffect {
 
     None = 0,
     Frozen = 1,
-    Darkness = 2,
+    FrozenBlackAndWhite = 2,
 }
 
 
@@ -28,8 +28,8 @@ const mapEffectFromString = (str : string) : MapEffect => {
     case "frozen":
         return MapEffect.Frozen;
 
-    case "darkness":
-        return MapEffect.Darkness;
+    case "frozenbw":
+        return MapEffect.FrozenBlackAndWhite;
 
     default:
         break;
@@ -63,7 +63,9 @@ export class Stage {
     private topLayerInitialFadeTime : number = 0;
 
     private effect : MapEffect;
+
     private darknessRadius : number = -1;
+    private darknessRadiusModifier : number = 0;
 
     public readonly width : number;
     public readonly height : number;
@@ -99,10 +101,9 @@ export class Stage {
         this.switches = (new Array<boolean> (3)).fill(false);
 
         this.effect = mapEffectFromString(this.baseMap.getProperty("effect") ?? "none");
-        if (this.effect == MapEffect.Darkness) {
-
-            this.darknessRadius = this.baseMap.getNumericProperty("darkness_radius");
-        }
+        //if (this.effect == MapEffect.Darkness) {
+        this.darknessRadius = this.baseMap.getNumericProperty("darkness_radius");
+        //}
     }
 
 
@@ -183,8 +184,13 @@ export class Stage {
 
     private drawDarkness(canvas : Canvas, playerPosition : Vector) : void {
 
+        const MODIFIER_AMPLITUDE : number = 4;
+
+        const radius : number = this.darknessRadius +
+            Math.sin(this.darknessRadiusModifier)*MODIFIER_AMPLITUDE;
+
         canvas.setColor(0, 0, 0);
-        canvas.fillCircleOutside(playerPosition.x, playerPosition.y, this.darknessRadius);
+        canvas.fillCircleOutside(playerPosition.x, playerPosition.y, radius);
         canvas.setColor();
     }
 
@@ -198,6 +204,12 @@ export class Stage {
             canvas.applyEffect(Effect.SwapRedAndBlue);
             break;
 
+        case MapEffect.FrozenBlackAndWhite:
+
+            canvas.applyEffect(Effect.BlackAndWhite);
+            canvas.setColor(255, 255, 255*1.33);
+            break;
+
         default:
             break;
         }
@@ -207,6 +219,7 @@ export class Stage {
     public update(camera : Camera, event : ProgramEvent) : void {
 
         const WATER_ANIMATION_SPEED : number = 8;
+        const DARKNESS_RADIUS_MODIFIER_SPEED : number = Math.PI*2/180;
 
         this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
 
@@ -215,6 +228,13 @@ export class Stage {
         if (this.topLayerFadeTimer > 0) {
 
             this.topLayerFadeTimer -= event.tick;
+        }
+
+        if (this.darknessRadius > 0) {
+
+            this.darknessRadiusModifier = 
+            (this.darknessRadiusModifier + 
+                DARKNESS_RADIUS_MODIFIER_SPEED*event.tick) % (Math.PI*2);
         }
     }
 
@@ -281,7 +301,7 @@ export class Stage {
 
         this.background.postDraw(canvas, assets);
 
-        if (this.effect == MapEffect.Darkness && this.darknessRadius > 0) {
+        if (this.darknessRadius > 0) {
             
             this.drawDarkness(canvas, playerPosition);
         }

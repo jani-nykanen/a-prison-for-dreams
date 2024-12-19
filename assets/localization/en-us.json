@@ -227,6 +227,14 @@
     ],
 
 
+    "cutscene8": [
+
+        "They did not simply\n'seal away' her spirit\nas they claimed.",
+        "Instead, they built\nher a prison inside\nher own mind.",
+        "For centuries she\nsuffered unspeak-\nable pain."
+    ],
+
+
     "npc0": [
 
         "We are the keepers of\nthe Graveyard. Our\njob is to bury dreams\nthat come here to die.",
@@ -407,6 +415,12 @@
 
         "You obtain a RECHARGABLE BAT-\nTERY!",
         "Now you can store some energy\nplasma thing in your gun and\nrelease it as a powerful\ncharge attack!"
+    ],
+
+    "item15": [
+
+        "You obtain A PLATINUM KEY!",
+        "Now you just need to find a\nplatinum door. Who would have\nguessed!"
     ],
 
 
