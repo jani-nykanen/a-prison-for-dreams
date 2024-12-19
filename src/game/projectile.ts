@@ -11,19 +11,19 @@ import { GameObject } from "./gameobject.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 2, 3, 2, 3
+    3, 2, 3, 2, 3, 3
 ];
 
 const ANIMATION_SPEED : number[] = [
-    4, 4, 4, 4, 4
+    4, 4, 4, 4, 4, 5
 ];
 
 
 const HITBOX_WIDTHS : number[] = [
-    4, 8, 4, 4, 8,
+    4, 8, 4, 4, 8, 10
 ];
 const HITBOX_HEIGHTS : number[] = [
-    4, 8, 4, 4, 8
+    4, 8, 4, 4, 8, 10
 ]
 
 

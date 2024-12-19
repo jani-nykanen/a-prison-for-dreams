@@ -5,10 +5,10 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
-const THROW_TIME : number = 90;
+const THROW_TIME : number = 75;
 
 
-export class Doppelganger extends Enemy {
+export class Miner extends Enemy {
 
 
     private throwTimer : number = 0;
@@ -18,19 +18,19 @@ export class Doppelganger extends Enemy {
 
         super(x, y);
 
-        this.sprite.setFrame(0, 5);
+        this.sprite.setFrame(4, 10);
 
-        this.health = 5;
-        this.attackPower = 1;
+        this.health = 7;
+        this.attackPower = 2;
 
-        this.dropProbability = 0.25;
+        this.dropProbability = 0.35;
 
         this.collisionBox.w = 10;
 
-        this.throwTimer = Math.floor(x/TILE_WIDTH) % 2 == 0 ? THROW_TIME/2 : THROW_TIME;
+        this.throwTimer = Math.floor(x/TILE_WIDTH) % 2 == 0 ? Math.floor(THROW_TIME/2) : THROW_TIME;
 
-        this.coinTypeWeights[0] = 0.85;
-        this.coinTypeWeights[1] = 0.15;
+        this.coinTypeWeights[0] = 0.70;
+        this.coinTypeWeights[1] = 0.30;
     }
 
 
@@ -39,16 +39,17 @@ export class Doppelganger extends Enemy {
         const BASE_THROW_ANIMATION_SPEED : number = 4;
         const FINAL_FRAME_DURATION : number = 16;
 
-        const THROW_SPEED : number = 2.5;
+        const THROW_SPEED_X : number = 1.25;
+        const THROW_SPEED_Y : number = -2.75;
 
-        if (this.sprite.getColumn() != 0) {
+        if (this.sprite.getColumn() != 4) {
 
-            this.sprite.animate(this.sprite.getRow(), 1, 4, 
-                this.sprite.getColumn() != 3 ? BASE_THROW_ANIMATION_SPEED : FINAL_FRAME_DURATION, 
+            this.sprite.animate(this.sprite.getRow(), 4, 8, 
+                this.sprite.getColumn() != 7 ? BASE_THROW_ANIMATION_SPEED : FINAL_FRAME_DURATION, 
                 event.tick);
-            if (this.sprite.getColumn() == 4) {
+            if (this.sprite.getColumn() == 8) {
 
-                this.sprite.setFrame(0, 5);
+                this.sprite.setFrame(4, 10);
             }
         }
         else {
@@ -59,11 +60,12 @@ export class Doppelganger extends Enemy {
                 this.throwTimer += THROW_TIME;
 
                 this.projectiles?.next().spawn(
-                    this.pos.x, this.pos.y, 
+                    this.pos.x, this.pos.y - 4, 
                     this.pos.x + this.dir*8, this.pos.y, 
-                    THROW_SPEED*this.dir, 0.0, 2, 3, false);
+                    THROW_SPEED_X*this.dir, THROW_SPEED_Y, 5, 4, false,
+                    undefined, undefined, undefined, true);
 
-                this.sprite.setFrame(1, 5);
+                this.sprite.setFrame(5, 10);
 
                 event.audio.playSample(event.assets.getSample("throw"), 0.50);
             }
@@ -75,7 +77,7 @@ export class Doppelganger extends Enemy {
         
         this.dir = player.getPosition().x > this.pos.x ? 1 : -1;
 
-        if (this.sprite.getColumn() == 0) {
+        if (this.sprite.getColumn() == 4) {
             
             this.flip = this.dir > 0 ? Flip.Horizontal : Flip.None;
         }
