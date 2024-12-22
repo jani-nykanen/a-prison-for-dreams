@@ -6,7 +6,7 @@
   <property name="door2" value="frozen_caverns"/>
   <property name="door3" value="shop2"/>
   <property name="door4" value="dark_cave"/>
-  <property name="leftexit" value="town2"/>
+  <property name="leftexit" value="fortification"/>
   <property name="music" value="winter"/>
   <property name="musicvolume" type="float" value="0.7"/>
   <property name="name" value="Old Dream"/>

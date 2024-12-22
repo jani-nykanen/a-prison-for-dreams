@@ -85,6 +85,7 @@
         {"name": "inner_dream", "path": "inner_dream.tmx"},
         {"name": "dark_cave", "path": "dark_cave.tmx"},
         {"name": "path_to_smithery", "path": "path_to_smithery.tmx"},
+        {"name": "fortification", "path": "fortification.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
