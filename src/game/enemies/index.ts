@@ -16,6 +16,7 @@ import { PogoStick } from "./pogostick.js";
 import { UFO } from "./ufo.js";
 import { Miner } from "./miner.js";
 import { Spook } from "./spook.js";
+import { Fungus } from "./fungus.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -37,6 +38,7 @@ export const getEnemyByID = (index : number) : Function =>
     PogoStick,
     UFO,
     Miner,
-    Spook
+    Spook,
+    Fungus,
 ]
 [index] ?? Slime;
