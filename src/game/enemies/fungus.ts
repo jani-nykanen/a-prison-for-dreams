@@ -5,9 +5,9 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
-const JUMP_TIME : number = 30;
+const JUMP_TIME : number = 45;
 const GRAVITY : number = 3.0;
-const MOVE_SPEED : number = 1.0;
+const MOVE_SPEED : number = 0.75;
 
 
 export class Fungus extends Enemy {
@@ -48,8 +48,8 @@ export class Fungus extends Enemy {
 
     private shoot(event : ProgramEvent) : void {
 
-        const KNOCKBACK : number = 2.5;
-        const SHOOT_SPEED : number = 2.75;
+        const KNOCKBACK : number = 1.5;
+        const SHOOT_SPEED : number = 2.5;
 
         event.audio.playSample(event.assets.getSample("throw"), 0.50);
 
@@ -71,7 +71,7 @@ export class Fungus extends Enemy {
     protected updateLogic(event : ProgramEvent) : void {
         
         const SHOOT_RECOVER_TIME : number = 16;
-        const JUMP_HEIGHT : number = -2.25;
+        const JUMP_HEIGHT : number = -2.5;
 
         if (this.shootRecover > 0) {
 
@@ -127,18 +127,6 @@ export class Fungus extends Enemy {
 
             this.dir = onRight ? 1 : -1;
             this.flip = onRight ? Flip.Horizontal : Flip.None;
-        }
-    }
-
-
-    protected wallCollisionEvent(direction : -1 | 1, event : ProgramEvent): void {
-
-        this.dir = -direction;
-
-        if (!this.didTouchSurface) {
-
-            this.speed.x = MOVE_SPEED*this.dir;
-            this.flip = direction > 0 ? Flip.None : Flip.Horizontal;
         }
     }
 
