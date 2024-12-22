@@ -328,7 +328,7 @@ export class Stage {
         const opos : Vector = o.getPosition();
         const hbox : Rectangle = o.getCollisionBox();
 
-        if (waterSurface > 0 && o.waterCollision !== undefined) {
+        if (this.waterLevel > 0 && o.waterCollision !== undefined) {
             
             o.waterCollision(opos.x - 16, waterSurface, 
                 32, SURFACE_HEIGHT, 
