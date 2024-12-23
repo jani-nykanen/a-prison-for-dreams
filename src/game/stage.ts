@@ -11,6 +11,7 @@ import { Assets } from "../core/assets.js";
 import { Sprite } from "../gfx/sprite.js";
 import { Rectangle } from "../math/rectangle.js";
 import { Background, BackgroundType } from "./background.js";
+import { negMod } from "../math/utility.js";
 
 
 const enum MapEffect {
@@ -39,6 +40,11 @@ const mapEffectFromString = (str : string) : MapEffect => {
 }
 
 
+const PARTICLE_XOFF : number[] = [0, 2, -1, 1];
+const PARTICLE_YOFF : number[] = [0, 3, -2, 2];
+const PARTICLE_FRAME_SHIFT : number[] = [0, 2, 1, 3];
+
+
 export class Stage {
 
 
@@ -49,6 +55,7 @@ export class Stage {
 
     private hasLava : boolean = false;
     private lavaBrightness : number = 0.0;
+    private lavaParticleTimer : number = 0.0;
     private waterSprite : Sprite;
     private waterLevel : number = 0;
     private backgroundWater : boolean = false;
@@ -128,6 +135,32 @@ export class Stage {
     }
 
 
+    private drawLavaParticles(canvas : Canvas, bmp : Bitmap | undefined, 
+        camPos : Vector, surface : number) : void {
+
+        const XOFF : number = 16;
+        const INITIAL_XOFF : number = 8;
+        const INITIAL_YOFF : number = 11; 
+
+        const baseFrame : number = Math.floor(this.lavaParticleTimer*4.0);
+
+        const startx : number = Math.floor(camPos.x/XOFF) - 1;
+        const endx : number = startx + Math.ceil(canvas.width/XOFF) + 2;
+
+        for (let x : number = startx; x < endx; ++ x) {
+
+            const i : number = negMod(x, 4);
+
+            const dx : number = INITIAL_XOFF + x*XOFF + PARTICLE_XOFF[i];
+            const dy : number = INITIAL_YOFF + surface + PARTICLE_YOFF[i];
+
+            const frame : number = (baseFrame + PARTICLE_FRAME_SHIFT[i]) % 4;
+
+            canvas.drawBitmap(bmp, Flip.None, dx, dy, frame*8, 48, 8, 8);
+        }
+    }
+
+
     private drawWater(canvas : Canvas, assets : Assets, camera : Camera, 
         opacity : number, surfaceOpacity : number = 0.0) : void {
 
@@ -164,16 +197,17 @@ export class Stage {
             brightness = 1.0 + Math.sin(this.lavaBrightness)*BRIGTHNESS_RANGE;
         }
 
-        // Base water
+        if (this.hasLava) {
+
+            canvas.setColor(255*brightness, 255*brightness, 255*brightness);
+        }
+
+        // Base water (or lava)
         for (let i : number = 0; i < 2; ++ i) {
 
             if (!this.hasLava) {
 
                 canvas.setAlpha(i == 0 ? opacity : surfaceOpacity);
-            }
-            else {
-
-                canvas.setColor(255*brightness, 255*brightness, 255*brightness);
             }
 
             for (let x : number = startx; x < endx; ++ x) {
@@ -181,7 +215,11 @@ export class Stage {
                 this.waterSprite.drawWithShiftedRow(canvas, bmpWater, 
                     x*WATER_WIDTH, dy, Flip.None, baseShift + i);
             }  
-            canvas.setAlpha();
+            
+            if (!this.hasLava) {
+            
+                canvas.setAlpha();
+            }
 
             if (this.hasLava || opacity >= 1.0 || surfaceOpacity <= 0.0) {
 
@@ -189,6 +227,7 @@ export class Stage {
             }
         }
 
+        // Bottom 
         const bottomHeight : number = this.height*TILE_HEIGHT - (dy + 16);
         if (bottomHeight > 0) {
 
@@ -207,6 +246,12 @@ export class Stage {
             canvas.setColor();
         }
         
+        if (this.hasLava) {
+
+            canvas.setColor(255*brightness, 255*brightness, 255*brightness);
+            this.drawLavaParticles(canvas, bmpWater, camPos, dy);
+            canvas.setColor();
+        }
     }
 
 
@@ -249,6 +294,7 @@ export class Stage {
         const WATER_ANIMATION_SPEED : number = 8;
         const DARKNESS_RADIUS_MODIFIER_SPEED : number = Math.PI*2/180;
         const LAVA_BRIGHTNESS_SPEED : number = Math.PI*2/120.0;
+        const LAVA_PARTICLE_SPEED : number = 1.0/45.0;
 
         this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
 
@@ -269,6 +315,7 @@ export class Stage {
         if (this.hasLava) {
 
             this.lavaBrightness = (this.lavaBrightness + LAVA_BRIGHTNESS_SPEED*event.tick) % (Math.PI*2);
+            this.lavaParticleTimer = (this.lavaParticleTimer + LAVA_PARTICLE_SPEED*event.tick) % 1.0;
         }
     }
 
