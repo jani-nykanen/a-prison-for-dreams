@@ -6,7 +6,7 @@
   <property name="leftexit" value="inner_dream"/>
   <property name="music" value="winter"/>
   <property name="musicvolume" type="float" value="0.7"/>
-  <property name="name" value="Isolation"/>
+  <property name="name" value="Path to Smithery"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="3"/>
   <property name="water_level" type="int" value="0"/>

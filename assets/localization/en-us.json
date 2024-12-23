@@ -229,9 +229,18 @@
 
     "cutscene8": [
 
-        "They did not simply\n'seal away' her spirit\nas they claimed.",
+        "They did not simply\n'seal away her spirit'\nas they claimed.",
         "Instead, they built\nher a prison inside\nher own mind.",
+        "For centuries she\nwas trapped inside\nher own mind.",
         "For centuries she\nsuffered unspeak-\nable pain."
+    ],
+
+
+    "cutscene9": [
+
+        "Even though the Great\nDreamer was able to\nbreak the seal, she\nis not completely free.",
+        "However, she regained\nher ability to commu-\nnicate with her fol-\nlowers.",
+        "Now she is waiting\nfor you inside her\ncollapsing prison."
     ],
 
 

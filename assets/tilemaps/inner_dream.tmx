@@ -9,7 +9,7 @@
   <property name="leftexit" value="fortification"/>
   <property name="music" value="winter"/>
   <property name="musicvolume" type="float" value="0.7"/>
-  <property name="name" value="Memory"/>
+  <property name="name" value="Snowy Hills"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="path_to_smithery"/>
   <property name="tileset" type="int" value="3"/>

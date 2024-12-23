@@ -2,12 +2,11 @@
 <map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="36" height="48" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
  <properties>
   <property name="background" type="int" value="6"/>
-  <property name="cutscene" type="int" value="8"/>
   <property name="door2" value="another_cavern"/>
-  <property name="leftexit" value="town2"/>
+  <property name="leftexit" value="entrance"/>
   <property name="music" value="winter"/>
   <property name="musicvolume" type="float" value="0.7"/>
-  <property name="name" value="Ascension"/>
+  <property name="name" value="The Climb"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="inner_dream"/>
   <property name="tileset" type="int" value="3"/>
