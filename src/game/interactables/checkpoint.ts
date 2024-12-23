@@ -54,8 +54,8 @@ export class Checkpoint extends Interactable {
 
         const dir : number = id == 0 ? 1 : -1;
 
-        const dx : number = this.pos.x + dir*Math.round(Math.sin(this.orbitalTimer)*H_RADIUS);
-        const dy : number = this.pos.y + Math.round(Math.sin(this.orbitalTimer)*V_RADIUS);
+        const dx : number = this.pos.x + dir*Math.sin(this.orbitalTimer)*H_RADIUS;
+        const dy : number = this.pos.y + Math.sin(this.orbitalTimer)*V_RADIUS;
 
         const sx : number = 56 + id*8 + (behind ? 16 : 0);
 
