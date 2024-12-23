@@ -24,7 +24,7 @@ export class Fungus extends Enemy {
 
         this.sprite.setFrame(5, 9);
 
-        this.health = 9;
+        this.health = 8;
         this.attackPower = 4;
 
         this.dropProbability = 0.50;

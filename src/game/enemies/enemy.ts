@@ -112,6 +112,20 @@ export class Enemy extends CollisionObject {
     }
 
 
+    private initiateDeath(stats : Progress | undefined, event : ProgramEvent, dir? : Vector) : void {
+
+        if (stats !== undefined && Math.random() < this.dropProbability) {
+            
+            this.spawnCollectables(dir ?? new Vector(), stats);
+        }
+
+        event.audio.playSample(event.assets.getSample(this.deathSound), 0.60);
+
+        this.dying = true;
+        this.sprite.setFrame(0, 0);
+    }
+
+
     private takeDamage(amount : number, stats : Progress | undefined,
         event : ProgramEvent, dir? : Vector) : void {
 
@@ -127,15 +141,7 @@ export class Enemy extends CollisionObject {
         this.health -= amount;
         if (this.health <= 0) {
 
-            if (stats !== undefined && Math.random() < this.dropProbability) {
-            
-                this.spawnCollectables(dir ?? new Vector(), stats);
-            }
-
-            event.audio.playSample(event.assets.getSample(this.deathSound), 0.60);
-
-            this.dying = true;
-            this.sprite.setFrame(0, 0);
+            this.initiateDeath(stats, event, dir);
             return;
         }
 
@@ -183,6 +189,23 @@ export class Enemy extends CollisionObject {
             return true;
         }
         return false;
+    }
+
+
+    public lavaCollision(y : number, event : ProgramEvent) : boolean {
+
+        if (!this.isActive()) {
+
+            return false;
+        }
+
+        if (this.pos.y + this.collisionBox.y + this.collisionBox.h/2 < y) {
+
+            return false;
+        }
+
+        this.initiateDeath(undefined, event);
+        return true;
     }
 
 

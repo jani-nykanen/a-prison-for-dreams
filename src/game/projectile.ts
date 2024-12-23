@@ -20,10 +20,10 @@ const ANIMATION_SPEED : number[] = [
 
 
 const HITBOX_WIDTHS : number[] = [
-    4, 8, 4, 4, 8, 10
+    6, 10, 4, 4, 8, 10
 ];
 const HITBOX_HEIGHTS : number[] = [
-    4, 8, 4, 4, 8, 10
+    6, 10, 4, 4, 8, 10
 ]
 
 

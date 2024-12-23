@@ -12,7 +12,7 @@
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="fortification"/>
   <property name="tileset" type="int" value="3"/>
-  <property name="water_level" type="float" value="1.5"/>
+  <property name="water_level" type="float" value="1"/>
  </properties>
  <tileset firstgid="1" source="../../tiled/tileset_3.tsx"/>
  <tileset firstgid="257" source="../../tiled/editor_objects.tsx"/>

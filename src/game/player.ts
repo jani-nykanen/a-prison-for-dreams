@@ -1403,6 +1403,24 @@ export class Player extends CollisionObject {
     }
 
 
+    public lavaCollision(y : number, event : ProgramEvent) : boolean {
+
+        if (!this.isActive()) {
+
+            return false;
+        }
+
+        if (this.pos.y + this.collisionBox.y + this.collisionBox.h/2 < y) {
+
+            return false;
+        }
+
+        this.instantKill(event);
+
+        return true;
+    }
+
+
     public screenTransitionEvent(x : number, direction : -1 | 1, nextMap : string, event : ProgramEvent) : void {
 
         const TRIGGER_WIDTH : number = 16;

@@ -26,6 +26,8 @@ export class Miner extends Enemy {
         this.dropProbability = 0.35;
 
         this.collisionBox.w = 10;
+        this.hitbox.h = 14;
+        this.hitbox.y = 0;
 
         this.throwTimer = Math.floor(x/TILE_WIDTH) % 2 == 0 ? Math.floor(THROW_TIME/2) : THROW_TIME;
 

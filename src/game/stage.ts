@@ -47,6 +47,8 @@ export class Stage {
     private bottomRow : boolean[];
     private objectLayer : number[] | undefined;
 
+    private hasLava : boolean = false;
+    private lavaBrightness : number = 0.0;
     private waterSprite : Sprite;
     private waterLevel : number = 0;
     private backgroundWater : boolean = false;
@@ -87,6 +89,7 @@ export class Stage {
 
         this.objectLayer = baseMap.cloneLayer("objects");
 
+        this.hasLava = baseMap.getBooleanProperty("has_lava") ?? false;
         this.waterLevel = baseMap.getNumericProperty("water_level") ?? 0;
         this.backgroundWater = baseMap.getBooleanProperty("background_water") ?? false;
         this.waterSprite = new Sprite(32, 16);
@@ -111,9 +114,9 @@ export class Stage {
 
         const LAYER_NAMES : string[] = ["bottom", "middle", "top"];
 
-        for (let x = 0; x < this.width; ++ x) {
+        for (let x : number = 0; x < this.width; ++ x) {
 
-            for (let layer of LAYER_NAMES) {
+            for (const layer of LAYER_NAMES) {
 
                 if (baseMap.getTile(layer, x, this.height - 1) != 0) {
 
@@ -129,6 +132,7 @@ export class Stage {
         opacity : number, surfaceOpacity : number = 0.0) : void {
 
         const WATER_WIDTH : number = 32;
+        const BRIGTHNESS_RANGE : number = 0.20;
 
         if (this.waterLevel <= 0) {
 
@@ -152,18 +156,34 @@ export class Stage {
         const startx : number = Math.floor(camPos.x/WATER_WIDTH) - 1;
         const endx : number = startx + Math.ceil(camera.width/WATER_WIDTH) + 2;
 
+        const baseShift : number = this.hasLava ? 2 : 0;
+
+        let brightness : number = 1.0;
+        if (this.hasLava) {
+
+            brightness = 1.0 + Math.sin(this.lavaBrightness)*BRIGTHNESS_RANGE;
+        }
+
         // Base water
         for (let i : number = 0; i < 2; ++ i) {
 
-            canvas.setAlpha(i == 0 ? opacity : surfaceOpacity);
+            if (!this.hasLava) {
+
+                canvas.setAlpha(i == 0 ? opacity : surfaceOpacity);
+            }
+            else {
+
+                canvas.setColor(255*brightness, 255*brightness, 255*brightness);
+            }
+
             for (let x : number = startx; x < endx; ++ x) {
 
                 this.waterSprite.drawWithShiftedRow(canvas, bmpWater, 
-                    x*WATER_WIDTH, dy, Flip.None, i);
+                    x*WATER_WIDTH, dy, Flip.None, baseShift + i);
             }  
             canvas.setAlpha();
 
-            if (opacity >= 1.0 || surfaceOpacity <= 0.0) {
+            if (this.hasLava || opacity >= 1.0 || surfaceOpacity <= 0.0) {
 
                 break;
             }
@@ -172,9 +192,17 @@ export class Stage {
         const bottomHeight : number = this.height*TILE_HEIGHT - (dy + 16);
         if (bottomHeight > 0) {
 
-            canvas.setColor(30, 109, 219, opacity);
+            if (this.hasLava) {
+
+                canvas.setColor(219*brightness, 73*brightness, 0*brightness);
+            }
+            else {
+
+                canvas.setColor(30, 109, 219, opacity);
+            }
             // Note: draw some extra since I have some bugs with camera after
             // transitions...
+            // Another note: not sure if already fixed or not
             canvas.fillRect(camPos.x, dy + 16, canvas.width, bottomHeight + 16);
             canvas.setColor();
         }
@@ -220,6 +248,7 @@ export class Stage {
 
         const WATER_ANIMATION_SPEED : number = 8;
         const DARKNESS_RADIUS_MODIFIER_SPEED : number = Math.PI*2/180;
+        const LAVA_BRIGHTNESS_SPEED : number = Math.PI*2/120.0;
 
         this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
 
@@ -235,6 +264,11 @@ export class Stage {
             this.darknessRadiusModifier = 
             (this.darknessRadiusModifier + 
                 DARKNESS_RADIUS_MODIFIER_SPEED*event.tick) % (Math.PI*2);
+        }
+
+        if (this.hasLava) {
+
+            this.lavaBrightness = (this.lavaBrightness + LAVA_BRIGHTNESS_SPEED*event.tick) % (Math.PI*2);
         }
     }
 
@@ -330,12 +364,20 @@ export class Stage {
 
         if (this.waterLevel > 0 && o.waterCollision !== undefined) {
             
-            o.waterCollision(opos.x - 16, waterSurface, 
-                32, SURFACE_HEIGHT, 
-                event, true);
-            o.waterCollision(opos.x - 16, waterSurface + SURFACE_HEIGHT, 
-                32, this.height*TILE_HEIGHT - waterSurface - SURFACE_HEIGHT, 
-                event, false);
+            if (this.hasLava) {
+
+                o.lavaCollision?.(waterSurface, event);
+                o.slopeCollision(0, waterSurface + 2, this.width*TILE_WIDTH, waterSurface + 2, 1, event);
+            }
+            else {
+
+                o.waterCollision(opos.x - 16, waterSurface, 
+                    32, SURFACE_HEIGHT, 
+                    event, true);
+                o.waterCollision(opos.x - 16, waterSurface + SURFACE_HEIGHT, 
+                    32, this.height*TILE_HEIGHT - waterSurface - SURFACE_HEIGHT, 
+                    event, false);
+            }
         }
 
         if (o.doesTakeCollisions()) {
