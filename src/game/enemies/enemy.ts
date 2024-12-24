@@ -194,7 +194,7 @@ export class Enemy extends CollisionObject {
 
     public lavaCollision(y : number, event : ProgramEvent) : boolean {
 
-        if (!this.isActive()) {
+        if (!this.isActive() || !this.takeCollisions) {
 
             return false;
         }
