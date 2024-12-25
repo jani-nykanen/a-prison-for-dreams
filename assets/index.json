@@ -88,6 +88,7 @@
         {"name": "fortification", "path": "fortification.tmx"},
         {"name": "entrance", "path": "entrance.tmx"},
         {"name": "sky_cave", "path": "sky_cave.tmx"},
+        {"name": "control_room", "path": "control_room.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

@@ -147,7 +147,7 @@ export const FragmentSource = {
     
         vec2 tex = uv * texScale + texPos;    
         vec4 buffer = texture2D(texSampler, tex)*color;
-        vec4 res = vec4(buffer.b, buffer.g, buffer.r, buffer.a);
+        vec4 res = vec4(buffer.b*1.2, buffer.g*1.1, buffer.r*0.90, buffer.a);
         
         // Needed to make the stencil buffer work
         if (res.a < 1.0/255.0) {
