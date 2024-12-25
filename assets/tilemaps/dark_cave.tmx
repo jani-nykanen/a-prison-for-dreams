@@ -8,7 +8,7 @@
   <property name="leftexit" value="sewers"/>
   <property name="music" value="cave"/>
   <property name="musicvolume" type="float" value="0.4"/>
-  <property name="name" value="Darkness"/>
+  <property name="name" value="Dark Cave"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>
  </properties>

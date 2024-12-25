@@ -177,7 +177,7 @@ export const FragmentSource = {
         vec2 tex = uv * texScale + texPos;    
         vec4 buffer = texture2D(texSampler, tex);
         
-        float v = (buffer.r + buffer.g + buffer.b)/3.0;
+        float v = 0.299*buffer.r + 0.587*buffer.g + 0.114*buffer.b;
         vec4 res = vec4(v*color.r, v*color.g, v*color.b, color.a*buffer.a);
         
         // Needed to make the stencil buffer work

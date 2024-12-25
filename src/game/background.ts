@@ -174,6 +174,17 @@ export class Background {
 
                 canvas.drawBitmap(bmpClouds, Flip.None, x*bmpClouds.width + shiftx, dy);
             }  
+
+            const bottom : number = canvas.height - dy;
+            if (y == 0 && bottom > 0) {
+
+                // I made this funny observation that right, I never made fillRect
+                // work with special effects. This is a workaround as I cannot
+                // fillRect the bottom part...
+                canvas.drawBitmap(bmpClouds, Flip.None, 0, dy + bmpClouds.height, 
+                    0, 80, bmpClouds.width, 16,
+                    canvas.width, bottom);
+            }
         }
 
         canvas.setColor();

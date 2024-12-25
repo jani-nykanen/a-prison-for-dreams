@@ -280,7 +280,7 @@ export class Stage {
         case MapEffect.FrozenBlackAndWhite:
 
             canvas.applyEffect(Effect.BlackAndWhite);
-            canvas.setColor(255, 255, 255*1.33);
+            canvas.setColor(255*0.90, 255*1.1, 255*1.25);
             break;
 
         default:
