@@ -26,7 +26,8 @@ export class Fan extends Interactable {
 
 
     private direction : number;
-    private active : boolean = false;
+    private activated : boolean = false;
+    private windTimer : number = 0.0;
 
 
     constructor(x : number, y : number, bitmap : Bitmap | undefined, direction : number) {
@@ -38,6 +39,9 @@ export class Fan extends Interactable {
         this.direction = negMod(Math.floor(direction), 4);
 
         this.computeHitbox();
+
+        this.cameraCheckArea.x = 128;
+        this.cameraCheckArea.y = 128;
     }
 
 
@@ -73,17 +77,19 @@ export class Fan extends Interactable {
     protected updateEvent(event : ProgramEvent) : void {
         
         const FRAME_TIME : number = 3.0;
+        const WIND_SPEED : number = 1.0/8.0;
 
-        if (this.active) {
+        if (this.activated) {
 
             this.sprite.animate(0, 0, 3, FRAME_TIME, event.tick);
+            this.windTimer = (this.windTimer + WIND_SPEED*event.tick) % 1.0;
         }
     }
 
 
     protected playerEvent(player : Player, event : ProgramEvent, initial : boolean) : void {
         
-        this.active = player.stats.hasPulledLever(FAN_LEVER);
+        this.activated = player.stats.hasPulledLever(FAN_LEVER);
     }
 
 
@@ -93,7 +99,7 @@ export class Fan extends Interactable {
         const CAP_X : number = 4.0;
         const CAP_Y : number = 4.0;
 
-        if (!this.active) {
+        if (!this.activated) {
 
             return;
         }
@@ -107,7 +113,7 @@ export class Fan extends Interactable {
 
     public draw(canvas: Canvas, assets? : Assets) : void {
         
-        if (!this.exist) {
+        if (!this.isActive()) {
 
             return;
         }   
@@ -127,9 +133,20 @@ export class Fan extends Interactable {
         canvas.transform.translate(0, -4);
         canvas.transform.apply();
 
+        // Propeller
         this.sprite.draw(canvas, this.bitmap, 
             -this.sprite.width/2, 
             -this.sprite.height/2);
+
+        // Wind
+        const shift : number = this.windTimer*16;
+        for (let i : number = 0; i < 4; ++ i) {
+            
+            canvas.drawBitmap(this.bitmap, Flip.None, 
+                -this.sprite.width/2, 
+                -this.sprite.height/2 - 8 - i*16,
+                0, 24 + shift, 24, 16);
+        }
 
         canvas.transform.pop();
         canvas.transform.apply();

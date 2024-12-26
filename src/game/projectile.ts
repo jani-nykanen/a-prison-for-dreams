@@ -24,7 +24,15 @@ const HITBOX_WIDTHS : number[] = [
 ];
 const HITBOX_HEIGHTS : number[] = [
     6, 10, 4, 4, 8, 10
-]
+];
+
+
+const CAMERA_CHECKAREA_X : number[] = [
+    24, 24, 24, 24, 24, 64,
+];
+const CAMERA_CHECKAREA_Y : number[] = [
+    24, 24, 24, 24, 24, 64,
+];
 
 
 const DEATH_SAMPLE_VOLUME : number = 0.50;
@@ -162,6 +170,9 @@ export class Projectile extends CollisionObject {
 
         this.hitbox.w = HITBOX_WIDTHS[this.id] ?? 4;
         this.hitbox.h = HITBOX_HEIGHTS[this.id] ?? 4;
+
+        this.cameraCheckArea.x = CAMERA_CHECKAREA_X[this.id] ?? 24;
+        this.cameraCheckArea.y = CAMERA_CHECKAREA_Y[this.id] ?? 24;
 
         this.dying = false;
         this.exist = true;
