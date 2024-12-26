@@ -4,7 +4,6 @@
   <property name="background" type="int" value="3"/>
   <property name="cutscene" type="int" value="7"/>
   <property name="door2" value="inner_dream"/>
-  <property name="effect" value="frozen"/>
   <property name="in_progress" type="bool" value="true"/>
   <property name="leftexit" value="old_graveyard"/>
   <property name="music" value="cave"/>
@@ -13,7 +12,7 @@
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="2"/>
  </properties>
- <tileset firstgid="1" source="../../tiled/tileset_2.tsx"/>
+ <tileset firstgid="1" source="../../tiled/tileset_4.tsx"/>
  <tileset firstgid="257" source="../../tiled/editor_objects.tsx"/>
  <layer id="1" name="bottom" width="58" height="12">
   <data encoding="csv">

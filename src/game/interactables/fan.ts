@@ -48,7 +48,7 @@ export class Fan extends Interactable {
     private computeHitbox() : void {
 
         const WIDTH : number = 16;
-        const HEIGHT : number = 64;
+        const HEIGHT : number = 72;
 
         if (this.direction % 2 == 0) {
 
@@ -95,9 +95,7 @@ export class Fan extends Interactable {
 
     protected playerCollisionEvent(player : Player, event : ProgramEvent, initialCollision? : boolean): void {
         
-        const BASE_SPEED : number = 0.5;
-        const CAP_X : number = 4.0;
-        const CAP_Y : number = 4.0;
+        const BASE_SPEED : number = 0.40;
 
         if (!this.activated) {
 
@@ -107,7 +105,7 @@ export class Fan extends Interactable {
         player.alterSpeed(
             BASE_SPEED*DIRX[this.direction % 4], 
             BASE_SPEED*DIRY[this.direction % 4],
-            CAP_X, CAP_Y);
+            -4.0, 4.0, -3.0, 4.0);
     }
 
 

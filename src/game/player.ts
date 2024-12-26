@@ -1826,10 +1826,15 @@ export class Player extends CollisionObject {
     }
 
 
-    public alterSpeed(deltax : number, deltay : number, capx : number, capy : number) : void {
+    public alterSpeed(deltax : number, deltay : number, 
+        minx : number, maxx : number,
+        miny : number, maxy : number) : void {
 
-        this.speed.x = clamp(this.speed.x + deltax, -capx, capx);
-        this.speed.y = clamp(this.speed.y + deltay, -capy, capy);
+        this.speed.x = clamp(this.speed.x + deltax, minx, maxx);
+        this.speed.y = clamp(this.speed.y + deltay, miny, maxy);
+
+        this.downAttacking = false;
+        this.downAttackWait = 0;
     }
 }
 
