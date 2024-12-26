@@ -147,7 +147,12 @@ export const FragmentSource = {
     
         vec2 tex = uv * texScale + texPos;    
         vec4 buffer = texture2D(texSampler, tex)*color;
-        vec4 res = vec4(buffer.b*1.2, buffer.g*1.1, buffer.r*0.90, buffer.a);
+
+        // For whatever reason, this kind of works
+        float oldLuma = 0.299*buffer.r + 0.587*buffer.g + 0.114*buffer.b;
+        float newLuma = 0.299*buffer.b + 0.587*buffer.g + 0.114*buffer.r;
+        float correction = max(0.0, oldLuma - newLuma)*buffer.r;
+        vec4 res = vec4(buffer.b + correction, buffer.g + correction, buffer.r, buffer.a);
         
         // Needed to make the stencil buffer work
         if (res.a < 1.0/255.0) {
