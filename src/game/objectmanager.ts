@@ -42,6 +42,7 @@ import { Eye } from "./enemies/eye.js";
 import { Ghost } from "./enemies/ghost.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
+import { Fan } from "./interactables/fan.js";
 
 
 export class ObjectManager {
@@ -150,6 +151,7 @@ export class ObjectManager {
         const bmpLever : Bitmap | undefined = event.assets.getBitmap("lever");
         const bmpSwitch : Bitmap | undefined = event.assets.getBitmap("switch");
         const bmpDoors : Bitmap | undefined = event.assets.getBitmap("locked_doors");
+        const bmpFan : Bitmap | undefined = event.assets.getBitmap("fan");
 
         stage.iterateObjectLayer((x : number, y : number, objID : number, upperID : number) : void => {
 
@@ -305,6 +307,15 @@ export class ObjectManager {
                 this.interactables.push(new EyeTrigger(dx + 8, dy, 
                     this.bossBattleConfirmationBox,  
                     () : void => this.initiateMiniBoss(stage, camera, event)));
+                break;
+
+            // Fans
+            case 81:
+            case 82:
+            case 83:
+            case 84:
+
+                this.interactables.push(new Fan(dx, dy, bmpFan, objID - 81));
                 break;
 
             default:

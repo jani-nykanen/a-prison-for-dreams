@@ -63,7 +63,8 @@ export class Lever extends Interactable {
         this.canBeInteracted = false;
         this.sprite.setFrame(1, 0);
 
-        const itemText = event.localization?.getItem("lever1") ?? ["null"];
+        const messageID : number = this.id < 5 ? 1 : 2;
+        const itemText = event.localization?.getItem(`lever${messageID}`) ?? ["null"];
 
         player.stats.markLeverPulled(this.id);
 

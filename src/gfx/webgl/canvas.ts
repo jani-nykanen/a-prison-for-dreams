@@ -68,6 +68,7 @@ export class WebGLCanvas implements Canvas {
     private activeEffect : Effect = Effect.None;
 
     private translation : Vector = new Vector(0, 0);
+    private translationActive : boolean = true;
 
     private readonly renderer : WebGLRenderer;
 
@@ -149,8 +150,14 @@ export class WebGLCanvas implements Canvas {
             return;
         }
 
-        dx = (dx + this.translation.x) | 0;
-        dy = (dy + this.translation.y) | 0;
+        if (this.translationActive) {
+
+            dx += this.translation.x;
+            dy += this.translation.y;
+        }
+
+        dx |= 0;
+        dy |= 0;
         dw |= 0;
         dh |= 0;
 
@@ -244,8 +251,11 @@ export class WebGLCanvas implements Canvas {
 
     public fillCircleOutside(centerx : number, centery : number, radius : number) : void {
 
-        centerx += this.translation.x;
-        centery += this.translation.y;
+        if (this.translationActive) {
+
+            centerx += this.translation.x;
+            centery += this.translation.y;
+        }
 
         this.renderer.changeShader(ShaderType.NoTexture);
 
@@ -505,4 +515,13 @@ export class WebGLCanvas implements Canvas {
         this.translation.x = x;
         this.translation.y = y;
     }
+
+
+    public toggleTranslation(state : boolean = true) : void {
+
+        this.translationActive = state;
+    }
+
+
+    public getTranslation = () : Vector => this.translation.clone();
 }

@@ -114,7 +114,10 @@ export interface Canvas {
 
     move(x : number, y : number) : void;
     moveTo(x? : number, y? : number) : void;
-}   
+
+    toggleTranslation(state? : boolean) : void;
+    getTranslation() : Vector;
+}
 
 
 export interface Renderer {

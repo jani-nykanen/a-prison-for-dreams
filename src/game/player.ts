@@ -18,6 +18,7 @@ import { Progress } from "./progress.js";
 import { Item } from "./items.js";
 import { MapTransitionCallback } from "./maptransition.js";
 import { TransitionType } from "../core/transition.js";
+import { clamp } from "../math/utility.js";
 
 
 const GRAVITY_MAGNITUDE : number = 5.0;
@@ -1823,6 +1824,12 @@ export class Player extends CollisionObject {
         this.hurtTimer = HURT_TIME;
         this.speed.zeros();
     }
-    
+
+
+    public alterSpeed(deltax : number, deltay : number, capx : number, capy : number) : void {
+
+        this.speed.x = clamp(this.speed.x + deltax, -capx, capx);
+        this.speed.y = clamp(this.speed.y + deltay, -capy, capy);
+    }
 }
 

@@ -42,6 +42,7 @@
         {"name": "switch", "path": "switch.png"},
         {"name": "locked_doors", "path": "locked_doors.png"},
         {"name": "eye", "path": "eye.png"},
+        {"name": "fan", "path": "fan.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},
