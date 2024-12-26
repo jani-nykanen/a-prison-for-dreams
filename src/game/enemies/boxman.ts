@@ -47,6 +47,9 @@ export class BoxMan extends Enemy {
             this.stonePositions[i] = new Vector();
             this.computeStonePosition(i);
         }
+
+        this.cameraCheckArea.x = 48;
+        this.cameraCheckArea.y = 48;
     }
 
 
