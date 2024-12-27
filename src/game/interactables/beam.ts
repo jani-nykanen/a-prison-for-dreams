@@ -33,7 +33,7 @@ export class Beam extends Interactable {
 
         if ((this.id == 8 && stats.hasDefeatedMiniboss()) ||
             (this.id <= 2 && stats.hasItem(this.id)) ||
-            (this.id >= 3 && this.id <= 7 && stats.hasPulledLever(this.id - 3))) {
+            (this.id >= 3 && stats.hasPulledLever(this.id - 3))) {
 
             this.exist = false;
             return true;
