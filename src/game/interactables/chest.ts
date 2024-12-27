@@ -19,7 +19,8 @@ const ITEM_HINT_LOOKUP : (number | undefined)[] = [
     undefined,
     undefined,
     7,
-    8
+    8,
+    9
 ];
 
 
@@ -35,7 +36,8 @@ const ITEM_GUIDE_LOOKUP : (number | undefined)[] = [
     undefined,
     undefined,
     2,
-    3
+    3,
+    4
 ]
 
 

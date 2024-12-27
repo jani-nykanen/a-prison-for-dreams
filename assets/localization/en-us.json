@@ -62,7 +62,8 @@
         "Hold down the ATTACK button\nto CHARGE a power attack.",
         "Hit bricks with your head\nto break them.",
         "Press DOWN + ATTACK after\njumping to do a down attack.",
-        "Hold down the SHOOT button\nto CHARGE a power shot."
+        "Hold down the SHOOT button\nto CHARGE a power shot.",
+        "Hold JUMP BUTTON while\nin the air to use jetpack."
     ],
 
 
@@ -75,7 +76,8 @@
         "Hold down the ATTACK button\nto CHARGE a power attack.",
         "Hit bricks with your head\nto break them.",
         "Press DOWN + ATTACK after\njumping to do a down attack.",
-        "Hold down the SHOOT button\nto CHARGE a power shot."
+        "Hold down the SHOOT button\nto CHARGE a power shot.",
+        "Hold JUMP BUTTON while\nin the air to use jetpack."
     ],
 
 
@@ -437,6 +439,13 @@
 
         "You obtain a RECHARGABLE BAT-\nTERY!",
         "Now you can store some energy\nplasma thing in your gun and\nrelease it as a powerful\ncharge attack!"
+    ],
+
+
+    "item11": [
+
+        "You obtain a JETPACK!",
+        "It lacks the booster addon,\nso it is no good for flying,\nbut it can... uh, reduce your\nlanding speed, I guess?"
     ],
 
     "item15": [

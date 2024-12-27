@@ -28,6 +28,7 @@ export const enum BackgroundType {
     NightSky = 4,
     StarField = 5,
     NightSkyWithForest = 6,
+    FrozenCave = 7,
 };
 
 
@@ -270,9 +271,10 @@ export class Background {
     }
 
 
-    private drawCaveBackground(canvas : Canvas, assets : Assets, camera : Camera) : void {
+    private drawCaveBackground(canvas : Canvas, assets : Assets, camera : Camera,
+        backgroundName : string = "cave_wall") : void {
 
-        const bmpWall : Bitmap | undefined = assets.getBitmap("cave_wall");
+        const bmpWall : Bitmap | undefined = assets.getBitmap(backgroundName);
         if (bmpWall === undefined) {
 
             return;
@@ -288,6 +290,12 @@ export class Background {
         canvas.drawBitmap(bmpWall, Flip.None, 
             0, 0, shiftx, shifty, canvas.width, canvas.height, canvas.width, canvas.height);
         canvas.setColor();
+    }
+
+
+    private drawFrozenCaveBackground(canvas : Canvas, assets : Assets, camera : Camera) : void {
+
+        this.drawCaveBackground(canvas, assets, camera, "frozen_cave_wall");
     }
 
 
@@ -357,6 +365,7 @@ export class Background {
             this.updateCoast(event);
             break;
 
+        case BackgroundType.FrozenCave:
         case BackgroundType.Cave:
 
             this.updateCave(event);
@@ -425,6 +434,11 @@ export class Background {
         case BackgroundType.NightSkyWithForest:
 
             this.drawNightSkyForest(canvas, assets, camera);
+            break;
+
+        case BackgroundType.FrozenCave:
+
+            this.drawFrozenCaveBackground(canvas, assets, camera);
             break;
 
         default:

@@ -27,6 +27,7 @@
         {"name": "moon", "path": "moon.png"},
         {"name": "stars", "path": "stars.png", "repeatx": "true", "repeaty": "true"},
         {"name": "cave_wall", "path": "cave_wall.png", "repeatx": "true", "repeaty": "true"},
+        {"name": "frozen_cave_wall", "path": "frozen_cave_wall.png", "repeatx": "true", "repeaty": "true"},
 
         {"name": "breakable", "path": "breakable.png"},
         {"name": "splinter", "path": "splinter.png"},
@@ -91,6 +92,7 @@
         {"name": "entrance", "path": "entrance.tmx"},
         {"name": "sky_cave", "path": "sky_cave.tmx"},
         {"name": "control_room", "path": "control_room.tmx"},
+        {"name": "hangar", "path": "hangar.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

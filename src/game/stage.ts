@@ -274,6 +274,7 @@ export class Stage {
 
         switch (this.effect) {
 
+        // Unused
         case MapEffect.Frozen:
 
             canvas.applyEffect(Effect.SwapRedAndBlue);
