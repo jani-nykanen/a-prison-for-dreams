@@ -79,6 +79,8 @@ export class Door extends Interactable {
 
             this.sprite.setFrame(0, 0);
         }
+
+        console.log(this.requiredKey, this.opened);
     }
 
 
@@ -88,7 +90,8 @@ export class Door extends Interactable {
 
             const colors : string[] | undefined = event.localization?.getItem("door_colors");
             
-            if (player.stats.hasItem(Item.RedKey + this.requiredKey)) {
+            if ((this.requiredKey != 4 && player.stats.hasItem(Item.RedKey + this.requiredKey)) ||
+                (this.requiredKey == 4 && player.stats.hasItem(Item.PlatinumKey))) {
 
                 this.dialogueBox.addText(
                     event.localization?.getItem("open_door") ?? ["null"], 

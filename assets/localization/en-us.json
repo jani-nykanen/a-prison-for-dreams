@@ -144,7 +144,7 @@
     ],
 
 
-    "door_colors": ["RED", "BLUE", "PURPLE"],
+    "door_colors": ["RED", "BLUE", "PURPLE", "BANANA?", "PLATINUM"],
     "locked": "You need a %1 KEY to\nopen this door.",
     "open_door": "You open the door with\na %1 KEY.",
 

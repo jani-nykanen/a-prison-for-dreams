@@ -318,6 +318,20 @@ export class ObjectManager {
                 this.interactables.push(new Fan(dx, dy, bmpFan, objID - 81));
                 break;
 
+            // Platinum door
+            case 85:
+
+                this.interactables.push(new Door(dx, dy, id - 1,
+                    stage.baseMap.getProperty("door3"), 
+                    this.mapTransition, this.dialogueBox,
+                    4, false,
+                    bmpDoors));
+                if (!resetPlayer && id - 1 == this.spawnId) {
+
+                    this.player.setPosition(dx, dy, resetPlayer);
+                }    
+                break;
+
             default:
                 
                 // Enemies
