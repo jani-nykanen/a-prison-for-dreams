@@ -94,6 +94,7 @@
         {"name": "control_room", "path": "control_room.tmx"},
         {"name": "hangar", "path": "hangar.tmx"},
         {"name": "abyss", "path": "abyss.tmx"},
+        {"name": "portal_storage", "path": "portal_storage.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
