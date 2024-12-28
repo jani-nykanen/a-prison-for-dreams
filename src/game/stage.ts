@@ -26,11 +26,9 @@ const mapEffectFromString = (str : string) : MapEffect => {
 
     switch (str) {
 
-    /* Does not work properly
     case "frozen":
         return MapEffect.Frozen;
-    */
-
+    
     case "frozenbw":
         return MapEffect.FrozenBlackAndWhite;
 

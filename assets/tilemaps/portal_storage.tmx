@@ -7,7 +7,7 @@
   <property name="musicvolume" type="float" value="0.4"/>
   <property name="name" value="Portal Storage"/>
   <property name="npctype" type="int" value="0"/>
-  <property name="portal2" value="inverted_graveyard"/>
+  <property name="portal2" value="broken_dream"/>
   <property name="tileset" type="int" value="4"/>
   <property name="water_level" type="float" value="4.5"/>
  </properties>

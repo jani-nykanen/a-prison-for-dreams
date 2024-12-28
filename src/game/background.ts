@@ -223,9 +223,11 @@ export class Background {
         const bottomHeight : number = this.height - (dy + bmpClouds.height);
         if (bottomHeight > 0) {
 
-            canvas.setColor(36, 146, 255);
-            canvas.fillRect(0, dy + bmpClouds.height, canvas.width, bottomHeight);
-            canvas.setColor();
+            // canvas.setColor(36, 146, 255);
+            // canvas.fillRect(0, dy + bmpClouds.height, canvas.width, bottomHeight);
+            canvas.drawBitmap(bmpClouds, Flip.None, 0, dy + bmpClouds.height, 0, 
+                bmpClouds.height - 2, bmpClouds.width, 2, canvas.width, bottomHeight);
+            // canvas.setColor();
         }
     }
 
