@@ -79,8 +79,6 @@ export class Door extends Interactable {
 
             this.sprite.setFrame(0, 0);
         }
-
-        console.log(this.requiredKey, this.opened);
     }
 
 

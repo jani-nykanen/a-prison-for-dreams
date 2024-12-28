@@ -4,7 +4,7 @@
   <property name="background" type="int" value="7"/>
   <property name="cutscene" type="int" value="7"/>
   <property name="door2" value="inner_dream"/>
-  <property name="door3" value="lava_reef"/>
+  <property name="door3" value="abyss"/>
   <property name="in_progress" type="bool" value="false"/>
   <property name="leftexit" value="old_graveyard"/>
   <property name="music" value="cave"/>

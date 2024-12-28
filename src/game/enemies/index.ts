@@ -19,6 +19,7 @@ import { Spook } from "./spook.js";
 import { Fungus } from "./fungus.js";
 import { BoxMan } from "./boxman.js";
 import { Fireball } from "./fireball.js";
+import { Piranha } from "./piranha.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -44,5 +45,6 @@ export const getEnemyByID = (index : number) : Function =>
     Fungus,
     BoxMan,
     Fireball,
+    Piranha
 ]
 [index] ?? Slime;

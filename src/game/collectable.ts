@@ -55,7 +55,7 @@ export class Collectable extends CollisionObject {
         this.friction.x = 0.025;
         this.friction.y = 0.075;
 
-        this.cameraCheckArea = new Vector(32, 32);
+        this.cameraCheckArea = new Vector(64, 64);
 
         this.bounceFactor.x = 1.0;
         this.bounceFactor.y = 0.80;
