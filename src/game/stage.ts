@@ -57,7 +57,10 @@ export class Stage {
     private lavaBrightness : number = 0.0;
     private lavaParticleTimer : number = 0.0;
     private waterSprite : Sprite;
-    private waterLevel : number = 0;
+    private surfaceLevel : number = 0;
+    private initialSurfaceLevel : number = 0;
+    private surfaceLevelRange : number | undefined = undefined;
+    private surfaceLevelWave : number = 0.0;
     private backgroundWater : boolean = false;
 
     private background : Background;
@@ -97,7 +100,9 @@ export class Stage {
         this.objectLayer = baseMap.cloneLayer("objects");
 
         this.hasLava = baseMap.getBooleanProperty("has_lava") ?? false;
-        this.waterLevel = baseMap.getNumericProperty("water_level") ?? 0;
+        this.initialSurfaceLevel = baseMap.getNumericProperty("water_level") ?? 0;
+        this.surfaceLevel = this.initialSurfaceLevel;
+    
         this.backgroundWater = baseMap.getBooleanProperty("background_water") ?? false;
         this.waterSprite = new Sprite(32, 16);
 
@@ -114,6 +119,8 @@ export class Stage {
         //if (this.effect == MapEffect.Darkness) {
         this.darknessRadius = this.baseMap.getNumericProperty("darkness_radius");
         //}
+
+        this.surfaceLevelRange = this.baseMap.getNumericProperty("water_move_range");
     }
 
 
@@ -167,7 +174,7 @@ export class Stage {
         const WATER_WIDTH : number = 32;
         const BRIGTHNESS_RANGE : number = 0.20;
 
-        if (this.waterLevel <= 0) {
+        if (this.surfaceLevel <= 0) {
 
             return;
         }
@@ -179,7 +186,7 @@ export class Stage {
         }
 
         const camPos : Vector = camera.getCorner();
-        const dy : number = (this.height - this.waterLevel)*TILE_HEIGHT - TILE_HEIGHT/2;
+        const dy : number = (this.height - this.surfaceLevel)*TILE_HEIGHT - TILE_HEIGHT/2;
 
         if (dy > camPos.y + camera.height) {
 
@@ -296,6 +303,7 @@ export class Stage {
         const DARKNESS_RADIUS_MODIFIER_SPEED : number = Math.PI*2/180;
         const LAVA_BRIGHTNESS_SPEED : number = Math.PI*2/120.0;
         const LAVA_PARTICLE_SPEED : number = 1.0/45.0;
+        const SURFACE_LEVEL_SPEED_FACTOR : number = 180;
 
         this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
 
@@ -317,6 +325,14 @@ export class Stage {
 
             this.lavaBrightness = (this.lavaBrightness + LAVA_BRIGHTNESS_SPEED*event.tick) % (Math.PI*2);
             this.lavaParticleTimer = (this.lavaParticleTimer + LAVA_PARTICLE_SPEED*event.tick) % 1.0;
+        }
+
+        if (this.surfaceLevelRange !== undefined) {
+
+            const surfaceSpeed : number = Math.PI*2/(SURFACE_LEVEL_SPEED_FACTOR*this.surfaceLevelRange);
+            this.surfaceLevelWave = (this.surfaceLevelWave + surfaceSpeed*event.tick) % (Math.PI*2);
+
+            this.surfaceLevel = this.initialSurfaceLevel - Math.sin(this.surfaceLevelWave)*this.surfaceLevelRange;
         }
     }
 
@@ -342,7 +358,7 @@ export class Stage {
 
         const tileset : Bitmap | undefined = assets.getBitmap(`tileset_${tilesetIndex}`);
 
-        if (this.backgroundWater && this.waterLevel > 0) {
+        if (this.backgroundWater && this.surfaceLevel > 0) {
 
             this.drawWater(canvas, assets, camera, 
                 BACKGROUND_WATER_OPACITY, BACKGROUND_WATER_SURFACE_OPACITY);
@@ -376,7 +392,7 @@ export class Stage {
 
         const FOREGROUND_WATER_OPACITY : number = 0.75;
 
-        if (!this.backgroundWater && this.waterLevel > 0) {
+        if (!this.backgroundWater && this.surfaceLevel > 0) {
 
             this.drawWater(canvas, assets, camera, FOREGROUND_WATER_OPACITY);
         }
@@ -405,12 +421,12 @@ export class Stage {
 
         const totalWidth : number = this.width*TILE_WIDTH;
         const totalHeight : number = this.height*TILE_HEIGHT;
-        const waterSurface : number = Math.min(totalHeight, (this.height - this.waterLevel)*TILE_HEIGHT + WATER_OFFSET_Y);
+        const waterSurface : number = Math.min(totalHeight, (this.height - this.surfaceLevel)*TILE_HEIGHT + WATER_OFFSET_Y);
 
         const opos : Vector = o.getPosition();
         const hbox : Rectangle = o.getCollisionBox();
 
-        if (this.waterLevel > 0 && o.waterCollision !== undefined) {
+        if (this.surfaceLevel > 0 && o.waterCollision !== undefined) {
             
             if (this.hasLava) {
 
