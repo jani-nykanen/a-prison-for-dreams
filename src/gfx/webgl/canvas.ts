@@ -15,7 +15,7 @@ const createCircleOutMesh = (gl : WebGLRenderingContext, quality : number) : Mes
 
     let index : number = 0;
 
-    for (let i = 0; i < quality; ++ i) {
+    for (let i : number = 0; i < quality; ++ i) {
 
         const angle1 : number = step*i;
         const angle2 : number = step*(i + 1);
@@ -35,13 +35,23 @@ const createCircleOutMesh = (gl : WebGLRenderingContext, quality : number) : Mes
             c1*2, s1*2,
             c1, s1);
 
-        for (let j = 0; j < 6; ++ j) {
+        for (let j : number = 0; j < 6; ++ j) {
 
             indices.push(index ++);
         }
     }
 
     return new Mesh(gl, new Float32Array(vertices), new Uint16Array(indices));
+}
+
+
+const createEquiangularTriangleMesh = (gl : WebGLRenderingContext) : Mesh => {
+
+    const p : number = Math.SQRT1_2;
+
+    return new Mesh(gl,
+        new Float32Array([-p, -p, p, -p, 0, 1]),
+        new Uint16Array([0, 1, 2]));
 }
 
 
@@ -60,6 +70,7 @@ export class WebGLCanvas implements Canvas {
     private cloneTexture : WebGLBitmap | undefined;
 
     private meshCircleOut : Mesh;
+    private meshEquiangularTriangle : Mesh;
 
     private batch : SpriteBatch;
     private batchingEnabled : boolean = false;
@@ -107,6 +118,7 @@ export class WebGLCanvas implements Canvas {
         this.transform = transform;
 
         this.meshCircleOut = createCircleOutMesh(gl, 64);
+        this.meshEquiangularTriangle = createEquiangularTriangleMesh(gl);
         
         this.batch = new SpriteBatch(gl, 4096);
 
@@ -287,6 +299,20 @@ export class WebGLCanvas implements Canvas {
 
         this.translation.x = bufferx;
         this.translation.y = buffery;
+    }
+
+
+    public fillEquiangularTriangle(centerx : number, centery : number, width : number, height : number) : void {
+
+        if (this.translationActive) {
+
+            centerx += this.translation.x;
+            centery += this.translation.y;
+        }
+
+        this.renderer.changeShader(ShaderType.NoTexture);
+        this.renderer.setVertexTransform(centerx, centery, width/2, height/2);
+        this.renderer.drawMesh(this.meshEquiangularTriangle);
     }
     
 

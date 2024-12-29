@@ -19,7 +19,7 @@ export class Mesh {
     constructor(gl : WebGLRenderingContext, 
             vertices : Float32Array,     
             indices : Uint16Array,
-            textureCoordinates : Float32Array | null | undefined = undefined,
+            textureCoordinates : Float32Array | null | undefined = undefined, // No idea why this can be null
             dynamic : boolean = false) {
 
         this.vertexBuffer = gl.createBuffer();

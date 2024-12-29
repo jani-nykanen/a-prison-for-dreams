@@ -29,6 +29,7 @@ export const enum BackgroundType {
     StarField = 5,
     NightSkyWithForest = 6,
     FrozenCave = 7,
+    BurningSun = 8,
 };
 
 
@@ -41,6 +42,7 @@ export class Background {
 
     private cloudPos : number = 0;
     private lightMagnitude : number = 0;
+    private sunAngle : number = 0;
 
     private snowflakes : Snowflake[];
     private starfield : Starfield | undefined = undefined;
@@ -120,6 +122,14 @@ export class Background {
 
         this.lightMagnitude = (this.lightMagnitude + LIGHT_SPEED*event.tick) % (Math.PI*2);
 
+    }
+
+
+    private updateBurningSky(event : ProgramEvent) : void {
+
+        const ROTATION_SPEED : number = Math.PI*2/600.0;
+
+        this.sunAngle = (this.sunAngle + ROTATION_SPEED*event.tick) % (Math.PI*2);
     }
 
 
@@ -319,6 +329,39 @@ export class Background {
     }
 
 
+    private drawBurningSun(canvas : Canvas, assets : Assets) : void {
+
+        const RAY_COUNT : number = 12;
+        const RAY_LENGTH : number = 576;
+
+        canvas.clear(255, 219, 109);
+
+        const angleStep : number = Math.PI*2/RAY_COUNT;
+
+        canvas.setColor(255, 146, 0);
+        for (let i : number = 0; i < RAY_COUNT; ++ i) {
+
+            if (i % 2 == 0) {
+
+                continue;
+            }
+
+            const angle : number = this.sunAngle + i*angleStep;
+
+            canvas.transform.push();
+            canvas.transform.translate(canvas.width/2, canvas.height/2);
+            canvas.transform.rotate(angle);
+            canvas.transform.apply();
+
+            canvas.fillEquiangularTriangle(0, -RAY_LENGTH/2, RAY_LENGTH/2, RAY_LENGTH);
+            
+            canvas.transform.pop();
+        }
+        canvas.transform.apply();
+        canvas.setColor();
+    }
+
+
     private drawSnowflakes(canvas : Canvas) : void {
 
         canvas.setColor(
@@ -333,7 +376,6 @@ export class Background {
         canvas.setColor();
     }
     
-
 
     public initialize(camera : Camera) : void {
 
@@ -381,6 +423,11 @@ export class Background {
         case BackgroundType.StarField:
 
             this.starfield?.update(event);
+            break;
+
+        case BackgroundType.BurningSun:
+
+            this.updateBurningSky(event);
             break;
 
         default:
@@ -441,6 +488,11 @@ export class Background {
         case BackgroundType.FrozenCave:
 
             this.drawFrozenCaveBackground(canvas, assets, camera);
+            break;
+
+        case BackgroundType.BurningSun:
+
+            this.drawBurningSun(canvas, assets);
             break;
 
         default:
