@@ -7,16 +7,17 @@ import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
 
 
-const JUMP_TIME : number = 15;
+const JUMP_TIME : number = 30;
 const GRAVITY : number = 3.0;
-const MOVE_SPEED : number = 0.65;
+const MOVE_SPEED : number = 0.75;
+const SHOOT_TIME : number = 15;
 
 
 export class Orb extends Enemy {
 
 
     private jumpTimer : number = 0;
-
+    private shootTimer : number = 0;
 
     private flameSprite : Sprite;
 
@@ -27,7 +28,7 @@ export class Orb extends Enemy {
 
         this.sprite.setFrame(0, 13);
 
-        this.health = 9;
+        this.health = 10;
         this.attackPower = 4;
 
         this.dropProbability = 0.60;
@@ -56,9 +57,10 @@ export class Orb extends Enemy {
 
     protected updateLogic(event : ProgramEvent) : void {
         
-        const JUMP_HEIGHT : number = -2.75;
+        const JUMP_HEIGHT : number = -3.0;
         const FRAME_EPS : number = 0.5;
         const FLAME_FRAME_LENGTH : number = 6;
+        const FLAME_PROJECTILE_SPEED : number = 1.0;
 
         //const ANIMATION_SPEED : number = 8;
 
@@ -72,6 +74,7 @@ export class Orb extends Enemy {
             if (this.jumpTimer <= 0) {
 
                 this.jumpTimer = JUMP_TIME;
+                this.shootTimer = 0;
                 this.speed.y = JUMP_HEIGHT;
 
                 this.speed.x = MOVE_SPEED*this.dir;
@@ -95,6 +98,20 @@ export class Orb extends Enemy {
                 frame = 2;
             }
             this.sprite.setFrame(frame, 13);
+
+            if (this.speed.y < FRAME_EPS) {
+
+                this.shootTimer += event.tick;
+                if (this.shootTimer >= SHOOT_TIME) {
+
+                    this.projectiles.next().spawn(this.pos.x, this.pos.y,
+                        this.pos.x, this.pos.y + 8, 0, Math.max(0, this.speed.y) + FLAME_PROJECTILE_SPEED,
+                        6, 3, false, -1, undefined, 0.0, false, true);
+                    this.shootTimer -= SHOOT_TIME;
+
+                    event.audio.playSample(event.assets.getSample("throw"), 0.50);
+                }
+            }
         }
 
         this.flameSprite.animate(this.flameSprite.getRow(), 4, 7, FLAME_FRAME_LENGTH, event.tick);

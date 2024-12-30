@@ -11,27 +11,27 @@ import { GameObject } from "./gameobject.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 2, 3, 2, 3, 3
+    3, 2, 3, 2, 3, 3, 3
 ];
 
 const ANIMATION_SPEED : number[] = [
-    4, 4, 4, 4, 4, 5
+    4, 4, 4, 4, 4, 5, 6
 ];
 
 
 const HITBOX_WIDTHS : number[] = [
-    6, 10, 4, 4, 8, 10
+    6, 10, 4, 4, 8, 10, 4
 ];
 const HITBOX_HEIGHTS : number[] = [
-    6, 10, 4, 4, 8, 10
+    6, 10, 4, 4, 8, 10, 4
 ];
 
 
 const CAMERA_CHECKAREA_X : number[] = [
-    24, 24, 24, 24, 24, 64,
+    24, 24, 24, 24, 24, 64, 24
 ];
 const CAMERA_CHECKAREA_Y : number[] = [
-    24, 24, 24, 24, 24, 64,
+    24, 24, 24, 24, 24, 64, 24
 ];
 
 
@@ -150,7 +150,8 @@ export class Projectile extends CollisionObject {
         friendly : boolean = true,
         attackID : number = -1,
         targetObject : GameObject | undefined = undefined,
-        followSpeed : number = 0.0, getGravity : boolean = false) : void {
+        followSpeed : number = 0.0, getGravity : boolean = false,
+        doNotIgnoreBottomLayer : boolean = false) : void {
 
         const IGNORE_EVEN_THRESHOLD : number = 0.001;
         const BASE_GRAVITY : number = 4.0;
@@ -178,6 +179,7 @@ export class Projectile extends CollisionObject {
         this.exist = true;
 
         this.ignoreEvenSlopes = Math.abs(this.speed.y) < IGNORE_EVEN_THRESHOLD;
+        this.ignoreBottomLayer = !doNotIgnoreBottomLayer;
 
         this.targetObject = targetObject;
         this.followSpeed = followSpeed;
