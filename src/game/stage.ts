@@ -53,6 +53,8 @@ export class Stage {
     private bottomRow : boolean[];
     private objectLayer : number[] | undefined;
 
+    // TODO: adding a class "WaterRenderer" (etc) would probably
+    // simplify things.
     private hasLava : boolean = false;
     private lavaBrightness : number = 0.0;
     private lavaParticleTimer : number = 0.0;
@@ -143,7 +145,7 @@ export class Stage {
 
 
     private drawLavaParticles(canvas : Canvas, bmp : Bitmap | undefined, 
-        camPos : Vector, surface : number) : void {
+        camPos : Vector, surface : number, repeat : number = 1) : void {
 
         const XOFF : number = 16;
         const INITIAL_XOFF : number = 8;
@@ -154,16 +156,21 @@ export class Stage {
         const startx : number = Math.floor(camPos.x/XOFF) - 1;
         const endx : number = startx + Math.ceil(canvas.width/XOFF) + 2;
 
-        for (let x : number = startx; x < endx; ++ x) {
+        for (let y : number = 0; y < repeat; ++ y) {
 
-            const i : number = negMod(x, 4);
+            const shiftx : number = (y % 2)*16;
 
-            const dx : number = INITIAL_XOFF + x*XOFF + PARTICLE_XOFF[i];
-            const dy : number = INITIAL_YOFF + surface + PARTICLE_YOFF[i];
+            for (let x : number = startx; x < endx; ++ x) {
 
-            const frame : number = (baseFrame + PARTICLE_FRAME_SHIFT[i]) % 4;
+                const i : number = negMod(x, 4);
 
-            canvas.drawBitmap(bmp, Flip.None, dx, dy, frame*8, 48, 8, 8);
+                const dx : number = INITIAL_XOFF + x*XOFF + PARTICLE_XOFF[i];
+                const dy : number = INITIAL_YOFF + surface + PARTICLE_YOFF[i];
+
+                const frame : number = (baseFrame + PARTICLE_FRAME_SHIFT[i]) % 4;
+
+                canvas.drawBitmap(bmp, Flip.None, dx + shiftx, dy + y*16, frame*8, 48, 8, 8);
+            }
         }
     }
 
@@ -255,8 +262,10 @@ export class Stage {
         
         if (this.hasLava) {
 
+            const repeat : number = Math.ceil(bottomHeight/16);
+
             canvas.setColor(255*brightness, 255*brightness, 255*brightness);
-            this.drawLavaParticles(canvas, bmpWater, camPos, dy);
+            this.drawLavaParticles(canvas, bmpWater, camPos, dy, repeat);
             canvas.setColor();
         }
     }

@@ -74,6 +74,11 @@ export class Background {
             this.snowflakeColor = new RGBA(255, 255, 255, 0.5);
             break;
 
+        case BackgroundType.BurningSun:
+
+            this.snowflakeColor = new RGBA(182, 36, 0);
+            break;
+
         default:
             break;
         }
@@ -82,7 +87,8 @@ export class Background {
 
     // TODO: Pass from properties
     private hasSnowflakes = () : boolean => this.type == BackgroundType.Graveyard || 
-        this.type == BackgroundType.NightSkyWithForest;
+        this.type == BackgroundType.NightSkyWithForest ||
+        this.type == BackgroundType.BurningSun;
 
 
     private initializeSnowflakes(camera : Camera) : void {
@@ -141,7 +147,7 @@ export class Background {
         const bmpSun : Bitmap | undefined  = assets.getBitmap("sun");
         if (bmpSun !== undefined) {
 
-            canvas.drawBitmap(bmpSun, Flip.None, canvas.width - bmpSun.width - 16, 16);
+            canvas.drawBitmap(bmpSun, Flip.None, canvas.width - 48, 16, 0, 0, 64, 64);
         }
     }
 
@@ -353,12 +359,21 @@ export class Background {
             canvas.transform.rotate(angle);
             canvas.transform.apply();
 
+            // Note: to make the rays equal in size the width of a ray (which is
+            // RAY_LENGTH/2 here) should be computed differently, but I'm just being
+            // lazy here.
             canvas.fillEquiangularTriangle(0, -RAY_LENGTH/2, RAY_LENGTH/2, RAY_LENGTH);
             
             canvas.transform.pop();
         }
         canvas.transform.apply();
         canvas.setColor();
+
+        const bmpSun : Bitmap | undefined  = assets.getBitmap("sun");
+        if (bmpSun !== undefined) {
+
+            canvas.drawBitmap(bmpSun, Flip.None, canvas.width/2 - 32, canvas.height/2 - 32, 64, 0, 64, 64);
+        }
     }
 
 
@@ -381,16 +396,9 @@ export class Background {
 
         this.snowflakes.length = 0;
 
-        switch (this.type) {
-
-        case BackgroundType.Graveyard:
-        case BackgroundType.NightSkyWithForest:
+        if (this.hasSnowflakes()) {
 
             this.initializeSnowflakes(camera);
-            break;
-
-        default:
-            break;
         }
     }
 
