@@ -76,7 +76,7 @@ export class Background {
 
         case BackgroundType.BurningSun:
 
-            this.snowflakeColor = new RGBA(182, 36, 0);
+            this.snowflakeColor = new RGBA(182, 36, 0, 0.5);
             break;
 
         default:
@@ -344,7 +344,7 @@ export class Background {
 
         const angleStep : number = Math.PI*2/RAY_COUNT;
 
-        canvas.setColor(255, 146, 0);
+        canvas.setColor(255, 182, 0);
         for (let i : number = 0; i < RAY_COUNT; ++ i) {
 
             if (i % 2 == 0) {
