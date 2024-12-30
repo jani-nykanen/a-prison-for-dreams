@@ -53,6 +53,8 @@ export class Enemy extends CollisionObject {
     protected canBeHurt : boolean = true;
     protected canHurtPlayer : boolean = true;
     protected canMoveOthers : boolean = true;
+    protected immuneToLava : boolean = false; 
+
     protected radius : number = 6;
 
     protected didTouchSurface : boolean = false;
@@ -194,7 +196,7 @@ export class Enemy extends CollisionObject {
 
     public lavaCollision(y : number, event : ProgramEvent) : boolean {
 
-        if (!this.isActive() || !this.takeCollisions) {
+        if (!this.isActive() || this.immuneToLava || !this.takeCollisions) {
 
             return false;
         }
