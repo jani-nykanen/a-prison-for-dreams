@@ -435,7 +435,7 @@ export class Stage {
         const opos : Vector = o.getPosition();
         const hbox : Rectangle = o.getCollisionBox();
 
-        if (this.surfaceLevel > 0 && o.waterCollision !== undefined) {
+        if (this.surfaceLevel > 0) {
             
             if (this.hasLava) {
 
@@ -444,10 +444,10 @@ export class Stage {
             }
             else {
 
-                o.waterCollision(opos.x - 16, waterSurface, 
+                o.waterCollision?.(opos.x - 16, waterSurface, 
                     32, SURFACE_HEIGHT, 
                     event, true);
-                o.waterCollision(opos.x - 16, waterSurface + SURFACE_HEIGHT, 
+                o.waterCollision?.(opos.x - 16, waterSurface + SURFACE_HEIGHT, 
                     32, this.height*TILE_HEIGHT - waterSurface - SURFACE_HEIGHT, 
                     event, false);
             }

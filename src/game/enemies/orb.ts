@@ -64,6 +64,7 @@ export class Orb extends Enemy {
         const FRAME_EPS : number = 0.5;
         const FLAME_FRAME_LENGTH : number = 6;
         const FLAME_PROJECTILE_SPEED : number = 1.0;
+        const INITIAL_SHOOT_TIME : number = -10;
 
         //const ANIMATION_SPEED : number = 8;
 
@@ -77,7 +78,7 @@ export class Orb extends Enemy {
             if (this.jumpTimer <= 0) {
 
                 this.jumpTimer = JUMP_TIME;
-                this.shootTimer = 0;
+                this.shootTimer = INITIAL_SHOOT_TIME;
                 this.speed.y = JUMP_HEIGHT;
 
                 this.speed.x = MOVE_SPEED*this.dir;
@@ -110,7 +111,7 @@ export class Orb extends Enemy {
                     this.projectiles.next().spawn(this.pos.x, this.pos.y,
                         this.pos.x, this.pos.y + 8, 0, Math.max(0, this.speed.y) + FLAME_PROJECTILE_SPEED,
                         6, 3, false, -1, undefined, 0.0, false, true);
-                    this.shootTimer -= SHOOT_TIME;
+                    this.shootTimer = 0;
 
                     event.audio.playSample(event.assets.getSample("throw"), 0.50);
                 }

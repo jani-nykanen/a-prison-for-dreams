@@ -11,6 +11,7 @@
   <property name="musicvolume" type="float" value="0.4"/>
   <property name="name" value="Frozen Cavern"/>
   <property name="npctype" type="int" value="0"/>
+  <property name="rightexit" value="lava_road"/>
   <property name="tileset" type="int" value="4"/>
  </properties>
  <tileset firstgid="1" source="../../tiled/tileset_4.tsx"/>
