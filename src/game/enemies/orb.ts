@@ -52,6 +52,9 @@ export class Orb extends Enemy {
         this.flameSprite.setFrame(4, 12);
 
         this.immuneToLava = true;
+
+        // To make sure jumping won't make inactive
+        this.cameraCheckArea.y = 80;
     }
 
 

@@ -262,7 +262,7 @@ export class Stage {
         
         if (this.hasLava) {
 
-            const repeat : number = Math.ceil(bottomHeight/16);
+            const repeat : number = Math.ceil(bottomHeight/16) + 1;
 
             canvas.setColor(255*brightness, 255*brightness, 255*brightness);
             this.drawLavaParticles(canvas, bmpWater, camPos, dy, repeat);

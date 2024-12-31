@@ -1406,7 +1406,9 @@ export class Player extends CollisionObject {
 
     public lavaCollision(y : number, event : ProgramEvent) : boolean {
 
-        if (!this.isActive() || this.hurtTimer > 0 || this.knockbackTimer > 0) {
+        if (!this.isActive() || 
+            this.stats.hasItem(Item.CrystalBoots) ||
+            this.hurtTimer > 0 || this.knockbackTimer > 0) {
 
             return false;
         }

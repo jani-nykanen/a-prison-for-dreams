@@ -153,6 +153,7 @@ export class Game implements Scene {
         const theme : AudioSample | undefined = event.assets.getSample(name);
         if (theme === this.baseTrack && event.audio.isMusicPlaying()) {
 
+            this.baseTrackVolume = volume;
             event.audio.resumeMusic(volume);
             return;
         }

@@ -20,9 +20,10 @@ export const enum Item {
     PowerfulSword = 13,
     PowerfulGun = 14,
     PlatinumKey = 15,
+    // Gap
+    CrystalBoots = 19,
 
     
-
     // Shop items
     ExtraHealth = 32,
     ExtraAmmo = 33,
