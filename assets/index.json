@@ -98,6 +98,7 @@
         {"name": "broken_dream", "path": "broken_dream.tmx"},
         {"name": "lava_house", "path": "lava_house.tmx"},
         {"name": "lava_road", "path": "lava_road.tmx"},
+        {"name": "mountain_wall", "path": "mountain_wall.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

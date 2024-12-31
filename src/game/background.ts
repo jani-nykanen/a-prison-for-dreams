@@ -18,6 +18,9 @@ const CLOUD_COLOR_MOD_1 : RGBA = new RGBA(1.0);
 const CLOUD_COLOR_MOD_2 : RGBA = new RGBA(182/255, 219/255, 1.0);
 
 
+const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true];
+
+
 export const enum BackgroundType {
     
     Unspecified = -1,
@@ -30,6 +33,7 @@ export const enum BackgroundType {
     NightSkyWithForest = 6,
     FrozenCave = 7,
     BurningSun = 8,
+    NightSkyWithSnow = 9,
 };
 
 
@@ -69,6 +73,7 @@ export class Background {
             this.snowflakeColor = new RGBA(0, 0, 0, 0.5);
             break;
 
+        case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSkyWithForest:
 
             this.snowflakeColor = new RGBA(255, 255, 255, 0.5);
@@ -85,10 +90,7 @@ export class Background {
     }
 
 
-    // TODO: Pass from properties
-    private hasSnowflakes = () : boolean => this.type == BackgroundType.Graveyard || 
-        this.type == BackgroundType.NightSkyWithForest ||
-        this.type == BackgroundType.BurningSun;
+    private hasSnowflakes = () : boolean => SNOWFLAKE_TABLE[this.type] ?? false;
 
 
     private initializeSnowflakes(camera : Camera) : void {
@@ -423,6 +425,7 @@ export class Background {
             this.updateCave(event);
             break;
 
+        case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSky:
 
             this.updateClouds(2.0, event);
@@ -477,6 +480,7 @@ export class Background {
             this.drawCaveBackground(canvas, assets, camera);
             break;
 
+        case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSky:
 
             this.drawNightSky(canvas, assets, camera);

@@ -412,7 +412,7 @@ export class Progress {
     public getProjectilePower = () : number => this.projectilePower;
 
 
-    public getChargeAttackPower = () : number => Math.ceil(this.attackPower*1.33);
+    public getChargeAttackPower = () : number => Math.ceil(this.attackPower*1.5);
     public getChargeProjectilePower = () : number => Math.ceil(this.projectilePower*1.5);
     public getDownAttackPower = () : number => this.attackPower + 2;
 
