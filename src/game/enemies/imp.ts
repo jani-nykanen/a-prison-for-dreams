@@ -8,7 +8,7 @@ import { Enemy } from "./enemy.js";
 
 
 const FOLLOW_SPEED : number = 0.50;
-const SHOOT_TIME : number = 180;
+const SHOOT_TIME : number = 150;
 const SHOOT_RECOVER_TIME : number = 30;
 
 

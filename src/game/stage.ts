@@ -312,7 +312,7 @@ export class Stage {
         const DARKNESS_RADIUS_MODIFIER_SPEED : number = Math.PI*2/180;
         const LAVA_BRIGHTNESS_SPEED : number = Math.PI*2/120.0;
         const LAVA_PARTICLE_SPEED : number = 1.0/45.0;
-        const SURFACE_LEVEL_SPEED_FACTOR : number = 180;
+        const SURFACE_LEVEL_SPEED : number = 360;
 
         this.waterSprite.animate(0, 0, 3, WATER_ANIMATION_SPEED, event.tick);
 
@@ -338,7 +338,7 @@ export class Stage {
 
         if (this.surfaceLevelRange !== undefined) {
 
-            const surfaceSpeed : number = Math.PI*2/(SURFACE_LEVEL_SPEED_FACTOR*this.surfaceLevelRange);
+            const surfaceSpeed : number = Math.PI*2/SURFACE_LEVEL_SPEED;
             this.surfaceLevelWave = (this.surfaceLevelWave + surfaceSpeed*event.tick) % (Math.PI*2);
 
             this.surfaceLevel = this.initialSurfaceLevel - Math.sin(this.surfaceLevelWave)*this.surfaceLevelRange;
