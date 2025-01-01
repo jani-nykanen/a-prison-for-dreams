@@ -8,6 +8,7 @@ export class CollisionObject extends GameObject {
 
 
     protected collisionBox : Rectangle;
+    protected collisionRadius : number = 8;
 
     protected takeCollisions : boolean = true;
     protected checkVerticalSlope : boolean = false;
@@ -244,4 +245,5 @@ export class CollisionObject extends GameObject {
     public doesIgnoreBottomLayer = () : boolean => this.ignoreBottomLayer;
     public doesIgnoreEvenSlopes = () : boolean => this.ignoreEvenSlopes;
     public doesTouchSurface = () : boolean => this.touchSurface;
+    public getCollisionRadius = () : number => this.collisionRadius;
 }

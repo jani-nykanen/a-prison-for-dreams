@@ -120,6 +120,7 @@
         {"name": "buzz", "path": "buzz.wav"},
         {"name": "thwomp", "path": "thwomp.wav"},
         {"name": "vaporize", "path": "vaporize.wav"},
+        {"name": "bounce", "path": "bounce.wav"},
 
         {"name": "hit", "path": "hit.wav"},
         {"name": "sword", "path": "sword.wav"},

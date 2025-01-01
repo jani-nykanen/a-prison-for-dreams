@@ -1828,6 +1828,7 @@ export class Player extends CollisionObject {
     }
 
 
+    // TODO: Not very good naming here (compare to "setSpeed")...
     public alterSpeed(deltax : number, deltay : number, 
         minx : number, maxx : number,
         miny : number, maxy : number) : void {
@@ -1837,6 +1838,18 @@ export class Player extends CollisionObject {
 
         this.downAttacking = false;
         this.downAttackWait = 0;
+    }
+
+
+    public setSpeed(speedx : number, speedy : number) : void {
+
+        this.speed.x = speedx;
+        this.speed.y = speedy;
+
+        this.downAttacking = false;
+        this.downAttackWait = 0;
+        this.powerAttackTimer = 0;
+        this.rocketPackActive = false;
     }
 }
 

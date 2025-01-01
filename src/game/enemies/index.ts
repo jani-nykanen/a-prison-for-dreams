@@ -21,6 +21,7 @@ import { BoxMan } from "./boxman.js";
 import { Fireball } from "./fireball.js";
 import { Piranha } from "./piranha.js";
 import { Orb } from "./orb.js";
+import { Imp } from "./imp.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -47,6 +48,7 @@ export const getEnemyByID = (index : number) : Function =>
     BoxMan,
     Fireball,
     Piranha,
-    Orb
+    Orb,
+    Imp
 ]
 [index] ?? Slime;

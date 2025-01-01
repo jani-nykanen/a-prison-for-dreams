@@ -154,4 +154,23 @@ export class GameObject implements ExistingObject {
         this.dying = false;
     }
 
+
+    public distanceTo(o : GameObject) : number {
+
+        return Vector.distance(this.pos, o.pos);
+    }
+
+
+    public setSpeed(speedx : number, speedy : number) : void {
+
+        this.speed.x = speedx;
+        this.speed.y = speedy;
+    }
+
+
+    public setPosition(x : number, y : number) : void {
+
+        this.pos.x = x;
+        this.pos.y = y;
+    }
 }

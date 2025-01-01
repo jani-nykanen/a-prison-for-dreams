@@ -172,7 +172,7 @@ export class Eye extends Enemy {
         }
 
         const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
-        this.projectiles.next().spawn(
+        this.projectiles?.next().spawn(
             this.pos.x, this.pos.y, this.pos.x, this.pos.y,
             dir.x*PROJECTILE_SPEED, dir.y*PROJECTILE_SPEED, 
             4, 3, false, -1, this.playerRef, PROJECTILE_SPEED);
@@ -196,7 +196,7 @@ export class Eye extends Enemy {
             const speedx : number = Math.sign(i)*i*i*BASE_SPEED;
             const speedy : number = (Math.abs(i) == 1 ? 1.25 : 1.0)*JUMP_SPEED;
 
-            this.projectiles.next().spawn(
+            this.projectiles?.next().spawn(
                 this.pos.x, this.pos.y + YOFF, 
                 this.pos.x, this.pos.y + YOFF,
                 speedx, speedy, 

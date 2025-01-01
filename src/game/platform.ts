@@ -18,7 +18,7 @@ export const enum PlatformType {
 
     VerticallyMoving = 0,
     HorizontallyMoving = 1,
-    Bouncing = 2, // Unused
+    Bumper = 2, 
     Swing = 3,
     Cloud = 4, 
     RectangularSwing = 5,
@@ -45,6 +45,7 @@ export class Platform extends GameObject {
     private recovering : boolean = false;
 
     private appearTimer : number = 0;
+    private bumpTimer : number = 0;
 
 
     constructor(x : number, y : number, type : PlatformType,
@@ -320,6 +321,44 @@ export class Platform extends GameObject {
     }
 
 
+    private updateBumper(event : ProgramEvent) : void {
+
+        const RECOVER_SPEED : number = 1.0/8.0;
+
+        if (this.bumpTimer > 0) {
+
+            this.bumpTimer = Math.max(0.0, this.bumpTimer - RECOVER_SPEED*event.tick);
+        }
+    }
+
+
+    private checkBumperCollision(o : CollisionObject, event : ProgramEvent) : void {
+
+        const BUMPER_RADIUS : number = 12;
+        const BUMP_WEIGHT_X : number = 5.0;
+        const BUMP_WEIGHT_Y : number = 4.0;
+
+        
+        // TODO: Not stable if object speed is high, but neither is any other
+        // collision in this game.
+
+        const distance : number = o.distanceTo(this);
+        const r : number = o.getCollisionRadius() + BUMPER_RADIUS;
+
+        if (distance < r) {
+
+            const dir : Vector = Vector.direction(this.pos, o.getPosition());
+
+            o.setSpeed(dir.x*BUMP_WEIGHT_X, dir.y*BUMP_WEIGHT_Y);
+            // o.setPosition(this.pos.x + r*dir.x, this.pos.y + r*dir.y);
+
+            this.bumpTimer = 1.0;
+
+            event.audio.playSample(event.assets.getSample("bounce"), 0.50);
+        }
+    }
+
+
     private drawChain(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
         const CHAIN_COUNT = 7;
@@ -341,6 +380,16 @@ export class Platform extends GameObject {
 
             canvas.drawBitmap(bmp, Flip.None, chainx - 8, chainy - 8, 64, 24, 16, 16);
         }
+    }
+
+    
+    private drawBumper(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const frame : number = Math.min(3, Math.floor(this.bumpTimer*4));
+
+        const sx : number = frame == 3 ? 1 : frame;
+
+        canvas.drawBitmap(bmp, Flip.None, this.pos.x - 16, this.pos.y - 16, sx*32, 72, 32, 32);
     }
 
 
@@ -373,6 +422,11 @@ export class Platform extends GameObject {
             this.updateRectangularSwing(event);
             break;
 
+        case PlatformType.Bumper:
+
+            this.updateBumper(event);
+            break;
+
         default:
             break;
         }
@@ -394,8 +448,14 @@ export class Platform extends GameObject {
     public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
 
         if (this.disappeared || this.recovering || !this.isActive() || !o.isActive() ||
-            (this.type != PlatformType.Bouncing && o.doesIgnoreBottomLayer())) {
+            (this.type != PlatformType.Bumper && o.doesIgnoreBottomLayer())) {
 
+            return;
+        }
+
+        if (this.type == PlatformType.Bumper) {
+
+            this.checkBumperCollision(o, event);
             return;
         }
 
@@ -410,6 +470,12 @@ export class Platform extends GameObject {
         
         if (!this.isActive() || (this.disappeared && !this.recovering)) {
 
+            return;
+        }
+
+        if (this.type == PlatformType.Bumper) {
+
+            this.drawBumper(canvas, bmp);
             return;
         }
 

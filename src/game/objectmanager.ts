@@ -332,6 +332,12 @@ export class ObjectManager {
                 }    
                 break;
 
+            // Bumper "platform"
+            case 86:
+
+                this.platforms.push(new Platform(dx, dy, PlatformType.Bumper));
+                break;
+
             default:
                 
                 // Enemies
