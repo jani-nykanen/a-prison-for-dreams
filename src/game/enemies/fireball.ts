@@ -58,7 +58,7 @@ export class Fireball extends Enemy {
                 this.flip = Flip.Vertical;
 
                 // TODO: Proper fireball sound?
-                event.audio.playSample(event.assets.getSample("throw"), 0.50);
+                event.audio.playSample(event.assets.getSample("throw"), 0.40);
             }
 
             this.bodyOpacity = 0.0;
