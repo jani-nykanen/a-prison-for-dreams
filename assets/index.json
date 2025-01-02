@@ -14,6 +14,7 @@
         {"name": "tileset_2", "path": "tileset_2.png"},
         {"name": "tileset_3", "path": "tileset_3.png"},
         {"name": "tileset_4", "path": "tileset_4.png"},
+        {"name": "tileset_5", "path": "tileset_5.png"},
 
         {"name": "projectiles", "path": "projectiles.png"},
         {"name": "particles_1", "path": "particles_1.png"},
@@ -28,6 +29,7 @@
         {"name": "stars", "path": "stars.png", "repeatx": "true", "repeaty": "true"},
         {"name": "cave_wall", "path": "cave_wall.png", "repeatx": "true", "repeaty": "true"},
         {"name": "frozen_cave_wall", "path": "frozen_cave_wall.png", "repeatx": "true", "repeaty": "true"},
+        {"name": "castle_wall", "path": "castle_wall.png", "repeatx": "true", "repeaty": "true"},
 
         {"name": "breakable", "path": "breakable.png"},
         {"name": "splinter", "path": "splinter.png"},
@@ -100,12 +102,14 @@
         {"name": "lava_road", "path": "lava_road.tmx"},
         {"name": "mountain_wall", "path": "mountain_wall.tmx"},
         {"name": "descend", "path": "descend.tmx"},
+        {"name": "tower", "path": "tower.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
         {"name": "collisions_2", "path": "collisions_2.tmx"},
         {"name": "collisions_3", "path": "collisions_3.tmx"},
-        {"name": "collisions_4", "path": "collisions_4.tmx"}
+        {"name": "collisions_4", "path": "collisions_4.tmx"},
+        {"name": "collisions_5", "path": "collisions_5.tmx"}
     ],
 
     "samplePath": "assets/audio/",

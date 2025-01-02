@@ -18,7 +18,7 @@ const CLOUD_COLOR_MOD_1 : RGBA = new RGBA(1.0);
 const CLOUD_COLOR_MOD_2 : RGBA = new RGBA(182/255, 219/255, 1.0);
 
 
-const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true];
+const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, true];
 
 
 export const enum BackgroundType {
@@ -34,6 +34,7 @@ export const enum BackgroundType {
     FrozenCave = 7,
     BurningSun = 8,
     NightSkyWithSnow = 9,
+    CastleWall = 10
 };
 
 
@@ -73,6 +74,7 @@ export class Background {
             this.snowflakeColor = new RGBA(0, 0, 0, 0.5);
             break;
 
+        case BackgroundType.CastleWall:
         case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSkyWithForest:
 
@@ -129,7 +131,6 @@ export class Background {
         const LIGHT_SPEED : number = Math.PI*2/120; // Might want to rename this...
 
         this.lightMagnitude = (this.lightMagnitude + LIGHT_SPEED*event.tick) % (Math.PI*2);
-
     }
 
 
@@ -319,6 +320,12 @@ export class Background {
     }
 
 
+    private drawCastleBackground(canvas : Canvas, assets : Assets, camera : Camera) : void {
+
+        this.drawCaveBackground(canvas, assets, camera, "castle_wall");
+    }
+
+
     private drawNightSky(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
         canvas.clear(0, 0, 0);
@@ -419,6 +426,7 @@ export class Background {
             this.updateCoast(event);
             break;
 
+        case BackgroundType.CastleWall:
         case BackgroundType.FrozenCave:
         case BackgroundType.Cave:
 
@@ -505,6 +513,11 @@ export class Background {
         case BackgroundType.BurningSun:
 
             this.drawBurningSun(canvas, assets);
+            break;
+
+        case BackgroundType.CastleWall:
+
+            this.drawCastleBackground(canvas, assets, camera);
             break;
 
         default:

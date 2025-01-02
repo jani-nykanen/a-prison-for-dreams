@@ -5,10 +5,10 @@
   <property name="cutscene" type="int" value="9"/>
   <property name="door2" value="another_cavern"/>
   <property name="has_lava" type="bool" value="true"/>
-  <property name="leftexit" value="castle"/>
+  <property name="leftexit" value="tower"/>
   <property name="music" value="winter"/>
   <property name="musicvolume" type="float" value="0.7"/>
-  <property name="name" value="Castle Entrance"/>
+  <property name="name" value="Tower Entrance"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="fortification"/>
   <property name="tileset" type="int" value="3"/>
