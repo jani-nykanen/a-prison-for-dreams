@@ -18,7 +18,7 @@ const CLOUD_COLOR_MOD_1 : RGBA = new RGBA(1.0);
 const CLOUD_COLOR_MOD_2 : RGBA = new RGBA(182/255, 219/255, 1.0);
 
 
-const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, true];
+const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, false];
 
 
 export const enum BackgroundType {
@@ -74,7 +74,7 @@ export class Background {
             this.snowflakeColor = new RGBA(0, 0, 0, 0.5);
             break;
 
-        case BackgroundType.CastleWall:
+        // case BackgroundType.CastleWall:
         case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSkyWithForest:
 

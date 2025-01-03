@@ -31,10 +31,10 @@ export class RedGhost extends Enemy {
 
         this.target.y = 0.0;
 
-        this.friction.x = 0.625;
-        this.friction.y = 0.625;
+        this.friction.x = 0.0625;
+        this.friction.y = 0.0625;
 
-        this.knockbackFactor = 0.75;
+        this.knockbackFactor = 0.80;
 
         this.coinTypeWeights[0] = 0.10;
         this.coinTypeWeights[1] = 0.90;
@@ -94,8 +94,6 @@ export class RedGhost extends Enemy {
 
             this.target.zeros();
             this.sprite.setFrame(3 + this.attackPhase, this.sprite.getRow());
-
-            this.target.zeros();
             return;
         }
 
