@@ -113,7 +113,7 @@ export class Orb extends Enemy {
                         6, 3, false, -1, undefined, 0.0, false, true);
                     this.shootTimer = 0;
 
-                    event.audio.playSample(event.assets.getSample("throw"), 0.50);
+                    event.audio.playSample(event.assets.getSample("throw"), 0.40);
                 }
             }
         }

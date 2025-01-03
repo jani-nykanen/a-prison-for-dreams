@@ -11,27 +11,27 @@ import { GameObject } from "./gameobject.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 2, 3, 2, 3, 3, 3
+    3, 2, 3, 2, 3, 3, 3, 3
 ];
 
 const ANIMATION_SPEED : number[] = [
-    4, 4, 4, 4, 4, 5, 6
+    4, 4, 4, 4, 4, 5, 6, 4
 ];
 
 
 const HITBOX_WIDTHS : number[] = [
-    6, 10, 4, 4, 8, 10, 4
+    6, 10, 4, 4, 8, 10, 4, 8,
 ];
 const HITBOX_HEIGHTS : number[] = [
-    6, 10, 4, 4, 8, 10, 4
+    6, 10, 4, 4, 8, 10, 4, 8
 ];
 
 
 const CAMERA_CHECKAREA_X : number[] = [
-    24, 24, 24, 24, 24, 64, 24
+    24, 24, 24, 24, 24, 64, 24, 24,
 ];
 const CAMERA_CHECKAREA_Y : number[] = [
-    24, 24, 24, 24, 24, 64, 24
+    24, 24, 24, 24, 24, 64, 24, 24,
 ];
 
 
@@ -180,6 +180,7 @@ export class Projectile extends CollisionObject {
 
         this.ignoreEvenSlopes = Math.abs(this.speed.y) < IGNORE_EVEN_THRESHOLD;
         this.ignoreBottomLayer = !doNotIgnoreBottomLayer;
+        this.takeCollisions = this.id != 7;
 
         this.targetObject = targetObject;
         this.followSpeed = followSpeed;
@@ -206,10 +207,20 @@ export class Projectile extends CollisionObject {
             return;
         }
 
+        if (this.id == 7) {
+
+            canvas.setAlpha(0.75);
+        }
+
         this.sprite.draw(canvas, bmp, 
             this.pos.x - this.sprite.width/2, 
             this.pos.y - this.sprite.height/2, 
             Flip.None);
+
+        if (this.id == 7) {
+
+            canvas.setAlpha();
+        }
     }
 
 
