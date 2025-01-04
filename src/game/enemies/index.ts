@@ -23,6 +23,7 @@ import { Piranha } from "./piranha.js";
 import { Orb } from "./orb.js";
 import { Imp } from "./imp.js";
 import { RedGhost } from "./redghost.js";
+import { Spearman } from "./spearman.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -51,6 +52,7 @@ export const getEnemyByID = (index : number) : Function =>
     Piranha,
     Orb,
     Imp,
-    RedGhost
+    RedGhost,
+    Spearman
 ]
 [index] ?? Slime;
