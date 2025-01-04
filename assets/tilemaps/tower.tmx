@@ -5,8 +5,8 @@
   <property name="door2" value="actual_tower"/>
   <property name="has_lava" type="bool" value="true"/>
   <property name="music" value="winter"/>
-  <property name="musicvolume" type="float" value="0.7"/>
-  <property name="name" value="Castle"/>
+  <property name="musicvolume" type="float" value="0.4"/>
+  <property name="name" value="Slumbering Castle"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="entrance"/>
   <property name="tileset" type="int" value="5"/>

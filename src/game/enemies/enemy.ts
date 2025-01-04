@@ -415,4 +415,11 @@ export class Enemy extends CollisionObject {
         this.dying = true;
         this.health = 0;
     }
+
+
+    public setSpeed(speedx : number, speedy : number) : void {
+
+        this.speed.x = speedx*this.knockbackFactor;
+        this.speed.y = speedy;
+    }
 }

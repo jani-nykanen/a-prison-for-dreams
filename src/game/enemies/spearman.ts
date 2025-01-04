@@ -9,7 +9,7 @@ import { Enemy } from "./enemy.js";
 
 
 const GRAVITY : number = 4.0;
-const MOVE_SPEED : number = 0.6;
+const MOVE_SPEED : number = 0.7;
 
 
 export class Spearman extends Enemy {
@@ -35,7 +35,7 @@ export class Spearman extends Enemy {
         this.bounceFactor.x = 1.0;
 
         this.collisionBox.y = 13;
-        this.collisionBox.w = 8;
+        this.collisionBox.w = 4;
         this.collisionBox.h = 42;
 
         this.hitbox.y = 0;

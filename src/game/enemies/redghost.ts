@@ -42,10 +42,10 @@ export class RedGhost extends Enemy {
         this.collisionBox.w = 8;
         this.collisionBox.h = 8;
 
-        this.hitbox.w = 10;
-        this.hitbox.h = 10;
+        this.hitbox.w = 12;
+        this.hitbox.h = 12;
 
-        this.overriddenHurtbox = new Rectangle(0, 0, 12, 12);
+        this.overriddenHurtbox = new Rectangle(0, 0, 10, 10);
 
         this.takeCollisions = false;
         this.bodyOpacity = 0.75;
@@ -62,7 +62,7 @@ export class RedGhost extends Enemy {
             this.pos.x, this.pos.y, 
             this.pos.x + this.dir*2, this.pos.y - 1, 
             this.targetDir.x*SHOOT_SPEED, this.targetDir.y*SHOOT_SPEED, 
-            7, 5, false);
+            7, 4, false);
 
         event.audio.playSample(event.assets.getSample("throw"), 0.50);
     }

@@ -1,5 +1,6 @@
 import { ProgramEvent } from "../../core/event.js";
 import { Flip } from "../../gfx/interface.js";
+import { Rectangle } from "../../math/rectangle.js";
 import { Player } from "../player.js";
 import { TILE_WIDTH } from "../tilesize.js";
 import { Enemy } from "./enemy.js";
@@ -45,6 +46,11 @@ export class Ghost extends Enemy {
         this.target.x = this.speed.x;
 
         this.canBeMoved = false;
+    
+        this.hitbox.w = 12;
+        this.hitbox.h = 12;
+        
+        this.overriddenHurtbox = new Rectangle(0, 0, 10, 10);
     }
 
 

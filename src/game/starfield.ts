@@ -26,11 +26,15 @@ export class Starfield {
 
     private seed : number = 1337;
 
+    private color : RGBA;
 
-    constructor() {
+
+    constructor(r : number = 73, g : number = 146, b : number = 0) {
 
         this.initialStars = new Array<Vector> (STAR_COUNT);
         this.generateInitialStars();
+
+        this.color = new RGBA(r, g, b);
     }
 
 
@@ -91,7 +95,7 @@ export class Starfield {
 
     public draw(canvas : Canvas) : void {
 
-        canvas.setColor(73, 146, 0);
+        canvas.setColor(this.color.r, this.color.g, this.color.b);
 
         // canvas.beginSpriteBatching(undefined);
 

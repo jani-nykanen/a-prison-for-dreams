@@ -18,7 +18,7 @@ const CLOUD_COLOR_MOD_1 : RGBA = new RGBA(1.0);
 const CLOUD_COLOR_MOD_2 : RGBA = new RGBA(182/255, 219/255, 1.0);
 
 
-const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, false];
+const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, false, true];
 
 
 export const enum BackgroundType {
@@ -34,7 +34,9 @@ export const enum BackgroundType {
     FrozenCave = 7,
     BurningSun = 8,
     NightSkyWithSnow = 9,
-    CastleWall = 10
+    CastleWall = 10,
+    NightSkyWithSnowSpecialShift = 11,
+    AltStarField = 12,
 };
 
 
@@ -62,6 +64,8 @@ export class Background {
 
         this.snowflakes = new Array<Snowflake> ();
 
+        this.snowflakeColor = new RGBA(255, 255, 255, 0.5);
+
         switch (this.type) {
 
         case BackgroundType.StarField:
@@ -75,6 +79,7 @@ export class Background {
             break;
 
         // case BackgroundType.CastleWall:
+        case BackgroundType.NightSkyWithSnowSpecialShift:
         case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSkyWithForest:
 
@@ -84,6 +89,11 @@ export class Background {
         case BackgroundType.BurningSun:
 
             this.snowflakeColor = new RGBA(182, 36, 0, 0.5);
+            break;
+
+        case BackgroundType.AltStarField:
+
+            this.starfield = new Starfield(36, 109, 219);
             break;
 
         default:
@@ -331,7 +341,9 @@ export class Background {
         canvas.clear(0, 0, 0);
         this.drawMoon(canvas, assets, 1);
 
-        this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_2, -240);
+        const shift : number = this.type == BackgroundType.NightSkyWithSnowSpecialShift ? -720: -240;
+
+        this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_2, shift);
     }
 
 
@@ -433,12 +445,18 @@ export class Background {
             this.updateCave(event);
             break;
 
+        case BackgroundType.NightSkyWithSnowSpecialShift:
+
+            this.updateClouds(4.0, event);
+            break;
+
         case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSky:
 
             this.updateClouds(2.0, event);
             break;
 
+        case BackgroundType.AltStarField:
         case BackgroundType.StarField:
 
             this.starfield?.update(event);
@@ -488,6 +506,7 @@ export class Background {
             this.drawCaveBackground(canvas, assets, camera);
             break;
 
+        case BackgroundType.NightSkyWithSnowSpecialShift:
         case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSky:
 
@@ -495,6 +514,7 @@ export class Background {
             break;
 
         case BackgroundType.StarField:
+        case BackgroundType.AltStarField:
 
             canvas.clear(0, 0, 0);
             this.starfield?.draw(canvas);

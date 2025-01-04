@@ -38,10 +38,10 @@ export class Spook extends Enemy {
         this.collisionBox.w = 8;
         this.collisionBox.h = 8;
 
-        this.hitbox.w = 10;
-        this.hitbox.h = 10;
+        this.hitbox.w = 12;
+        this.hitbox.h = 12;
 
-        this.overriddenHurtbox = new Rectangle(0, 0, 12, 12);
+        this.overriddenHurtbox = new Rectangle(0, 0, 10, 10);
 
         this.takeCollisions = false;
         this.bodyOpacity = 0.75;
