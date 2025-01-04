@@ -1850,6 +1850,12 @@ export class Player extends CollisionObject {
         this.downAttackWait = 0;
         this.powerAttackTimer = 0;
         this.rocketPackActive = false;
+
+        // Just pray we do not want to change the speed in any other place
+        // than the bumpers...
+        this.rocketPackActive = false;
+        this.canUseRocketPack = true;
+        this.rocketPackReleased = false;
     }
 }
 
