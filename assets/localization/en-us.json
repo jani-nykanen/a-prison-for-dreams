@@ -162,6 +162,10 @@
     "miniboss": "The Eye",
 
 
+    "anvil_reject": "You need an OBSIDIAN CHUNK.",
+    "anvil_accept": "You put your OBSIDIAN CHUNK on\nthe anvil and start hammering.",
+
+
     "lever1": [
         
         "You pull the lever and some-\nwhere a magical beam gets\ndeactivated, blocking your\nway no longer."
@@ -462,6 +466,12 @@
 
         "You obtain a BOOSTER ADDON\n(for your JETPACK)!",
         "It makes your jetpack a proper\nrocket pack, allowing you to\nfly... at least for a short\nwhile."
+    ],
+
+    "item13": [
+
+        "You obtain a NIGHTMARE BANISH-\nER!",
+        "It is the most powerful sword\never created. It can even\nbreak walls made of... umm,\n\"nightmare stuff\". That purple\nthing over there."
     ],
 
     "item15": [

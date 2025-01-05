@@ -69,6 +69,7 @@ export const enum Pose {
     EnterRoom = 3,
     EnterRight = 4,
     EnterLeft = 5,
+    Use = 6,
 }
 
 
@@ -1805,6 +1806,12 @@ export class Player extends CollisionObject {
         case Pose.EnterRoom:
 
             this.sprite.setFrame(9, 5);
+            this.flip = Flip.None;
+            break;
+
+        case Pose.Use:
+
+            this.sprite.setFrame(10, 5);
             this.flip = Flip.None;
             break;
 

@@ -47,6 +47,7 @@
         {"name": "locked_doors", "path": "locked_doors.png"},
         {"name": "eye", "path": "eye.png"},
         {"name": "fan", "path": "fan.png"},
+        {"name": "anvil", "path": "anvil.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},
@@ -135,6 +136,7 @@
         {"name": "throw", "path": "throw.wav"},
         {"name": "lever", "path": "lever.wav"},
         {"name": "lick", "path": "lick.wav"},
+        {"name": "hammer", "path": "hammer.wav"},
 
         {"name": "hurt", "path": "hurt.wav"},
         {"name": "die", "path": "die.wav"},

@@ -43,6 +43,7 @@ import { Ghost } from "./enemies/ghost.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
 import { Fan } from "./interactables/fan.js";
+import { Anvil } from "./interactables/anvil.js";
 
 
 export class ObjectManager {
@@ -336,6 +337,12 @@ export class ObjectManager {
             case 86:
 
                 this.platforms.push(new Platform(dx, dy, PlatformType.Bumper));
+                break;
+
+            // Anvil
+            case 87:
+
+                this.interactables.push(new Anvil(dx, dy, this.dialogueBox));
                 break;
 
             default:
