@@ -1665,7 +1665,7 @@ export class Player extends CollisionObject {
 
     public getAttackPower() : number {
 
-        const SECOND_ATTACK_BONUS : number = 1;
+        const SECOND_ATTACK_BONUS : number = 1.2;
 
         if (this.downAttacking && this.downAttackWait <= 0) {
 
@@ -1676,13 +1676,13 @@ export class Player extends CollisionObject {
             return this.stats.getChargeAttackPower();
         }
 
-        let attackBonus : number = 0;
+        let power : number = this.stats.getAttackPower();
         if (this.attackNumber == 1) {
 
-            attackBonus = SECOND_ATTACK_BONUS;
+            power = Math.round(power*SECOND_ATTACK_BONUS);
         }
 
-        return this.stats.getAttackPower() + attackBonus;
+        return power;
     }
 
 

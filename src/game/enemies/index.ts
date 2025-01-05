@@ -24,6 +24,7 @@ import { Orb } from "./orb.js";
 import { Imp } from "./imp.js";
 import { RedGhost } from "./redghost.js";
 import { Spearman } from "./spearman.js";
+import { RedBrick } from "./redbrick.js";
 
 
 export const getEnemyByID = (index : number) : Function => 
@@ -53,6 +54,7 @@ export const getEnemyByID = (index : number) : Function =>
     Orb,
     Imp,
     RedGhost,
-    Spearman
+    Spearman,
+    RedBrick
 ]
 [index] ?? Slime;

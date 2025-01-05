@@ -211,7 +211,7 @@ export class Progress {
         }
         if (this.obtainedItems[Item.PowerfulSword]) {
 
-            this.attackPower += 2;
+            this.attackPower += 3;
         }
 
         // Projectile power
@@ -219,6 +219,10 @@ export class Progress {
         if (this.obtainedItems[Item.Spectacles]) {
 
             this.projectilePower += 1;
+        }
+        if (this.obtainedItems[Item.PowerfulGun]) {
+
+            this.projectilePower += 2;
         }
 
         // Damage reduction
