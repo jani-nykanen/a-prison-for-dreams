@@ -107,6 +107,7 @@
         {"name": "actual_tower", "path": "actual_tower.tmx"},
         {"name": "forge", "path": "forge.tmx"},
         {"name": "underground_passage", "path": "underground_passage.tmx"},
+        {"name": "shop2", "path": "shop2.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

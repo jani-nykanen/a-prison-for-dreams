@@ -15,7 +15,7 @@ export class Piranha extends Enemy {
 
         this.sprite.setFrame(4, 11);
 
-        this.health = 10;
+        this.health = 8;
         this.attackPower = 4;
 
         this.dropProbability = 0.60;
