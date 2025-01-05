@@ -12,6 +12,7 @@ import { Splinter } from "./splinter.js";
 import { CollectableGenerator, sampleTypeFromProgress } from "./collectablegenerator.js";
 import { CollectableType } from "./collectable.js";
 import { Progress } from "./progress.js";
+import { Item } from "./items.js";
 
 
 const BASE_GRAVITY : number = 5.0;
@@ -22,6 +23,7 @@ export const enum BreakableType {
     Unknown = 0,
     Crate = 1,
     Rubble = 2,
+    ScaryFace = 3,
 };
 
 
@@ -191,7 +193,8 @@ export class Breakable extends CollisionObject {
 
         if (player.overlaySwordAttackArea(this)) {
 
-            if (this.type == BreakableType.Rubble && player.isOrdinarilyAttacking()) {
+            if ((this.type == BreakableType.Rubble && player.isOrdinarilyAttacking()) ||
+                (this.type == BreakableType.ScaryFace && !player.stats.hasItem(Item.PowerfulSword))) {
 
                 return;
             }
@@ -213,14 +216,15 @@ export class Breakable extends CollisionObject {
 
         if (p.overlayObject(this)) {
 
-            if (p.destroyOnTouch()) {
+            if (p.destroyOnTouch() || this.type == BreakableType.ScaryFace) { // && p.getId() != something 
 
                 p.kill(event);
             }
 
             // TODO: Also check for more powerful charge attack (if I decide
             // to implement it)
-            if (this.type == BreakableType.Rubble && p.getID() != 1) {
+            if ( (this.type == BreakableType.Rubble && p.getID() != 1) || 
+                 (this.type == BreakableType.ScaryFace)   ) { // && p.getId() != something also here
 
                 return;
             }

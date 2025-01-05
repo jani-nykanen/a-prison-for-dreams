@@ -69,4 +69,21 @@ export class Piranha extends Enemy {
         this.target.x = dir.x*FOLLOW_SPEED;
         this.target.y = dir.y*FOLLOW_SPEED;
     }
+
+
+    public waterCollision(x : number, y : number, w : number, h : number, 
+        event : ProgramEvent, surface : boolean = false) : boolean {
+        
+        const OFFSET_Y : number = -4;
+
+        if (!this.isActive()) {
+
+            return false;
+        }
+    
+        if (surface) {
+
+            this.slopeCollision(x, y + OFFSET_Y, x + w, y + OFFSET_Y, -1, event);
+        }
+    }
 }

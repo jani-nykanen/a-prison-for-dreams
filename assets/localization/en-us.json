@@ -65,7 +65,8 @@
         "Hold down the SHOOT button\nto CHARGE a power shot.",
         "Hold JUMP BUTTON while\nin the air to use jetpack.",
         "Now you can walk on lava!",
-        "Press and hold JUMP BUTTON\nafter a jump to fly."
+        "Press and hold JUMP BUTTON\nafter a jump to fly.",
+        "Now you can break blocks\nwith a scary face!"
     ],
 
 
@@ -81,7 +82,8 @@
         "Hold down the SHOOT button\nto CHARGE a power shot.",
         "Hold JUMP BUTTON while\nin the air to use jetpack.",
         "Now you can walk on lava!",
-        "Press and hold JUMP BUTTON\nafter a jump to fly."
+        "Press and hold JUMP BUTTON\nafter a jump to fly.",
+        "Now you can break blocks\nwith a scary face!"
     ],
 
 
@@ -471,7 +473,7 @@
     "item13": [
 
         "You obtain a NIGHTMARE BANISH-\nER!",
-        "It is the most powerful sword\never created. It can even\nbreak walls made of... umm,\n\"nightmare stuff\". That purple\nthing over there."
+        "It is the most powerful sword\never created. It is so powerful\neven your mother fears it."
     ],
 
     "item15": [

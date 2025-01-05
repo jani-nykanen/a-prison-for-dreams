@@ -342,7 +342,14 @@ export class ObjectManager {
             // Anvil
             case 87:
 
-                this.interactables.push(new Anvil(dx, dy, this.dialogueBox));
+                this.interactables.push(new Anvil(dx, dy, this.dialogueBox, this.hints));
+                break;
+            
+            // Scare face blocks
+            case 88:
+
+                this.breakables.push(new Breakable(dx, dy, BreakableType.ScaryFace, 
+                    this.splinters, this.collectables));
                 break;
 
             default:

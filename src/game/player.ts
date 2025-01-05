@@ -219,7 +219,13 @@ export class Player extends CollisionObject {
         const DOWN_ATTACK_WIDTH : number = 6;
         const DOWN_ATTACK_HEIGHT : number = 16;
 
+        const POWERFUL_SWORD_EXTRA_DIMENSION_X : number = 1.25;
+        const POWERFUL_SWORD_EXTRA_DIMENSION_Y : number = 1.25;
+
         this.swordHitBoxActive = false;
+
+        const factorx : number = this.stats.hasItem(Item.PowerfulSword) ? POWERFUL_SWORD_EXTRA_DIMENSION_X : 1.0;
+        const factory : number = this.stats.hasItem(Item.PowerfulSword) ? POWERFUL_SWORD_EXTRA_DIMENSION_Y : 1.0;
 
         if (this.downAttacking && this.downAttackWait <= 0) {
 
@@ -227,7 +233,7 @@ export class Player extends CollisionObject {
             this.swordHitbox.y = this.pos.y + DOWN_ATTACK_OFFSET_Y;
 
             this.swordHitbox.w = DOWN_ATTACK_WIDTH;
-            this.swordHitbox.h = DOWN_ATTACK_HEIGHT;
+            this.swordHitbox.h = DOWN_ATTACK_HEIGHT*factory;
 
             this.swordHitBoxActive = true;
 
@@ -244,6 +250,9 @@ export class Player extends CollisionObject {
 
         this.swordHitbox.w = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_WIDTH : SWORD_ATTACK_BASE_WIDTH[this.attackNumber];
         this.swordHitbox.h = this.powerAttackTimer > 0 ? SWORD_ATTACK_SPECIAL_HEIGHT : SWORD_ATTACK_BASE_HEIGHT[this.attackNumber];
+
+        this.swordHitbox.w *= factorx;
+        this.swordHitbox.h *= factory;
 
         this.swordHitBoxActive = true;
     }
@@ -1153,8 +1162,8 @@ export class Player extends CollisionObject {
 
     private drawWeapon(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
-        const dx : number = this.pos.x - 16 + this.dir*10;
-        const dy : number = this.pos.y - 14;
+        let dx : number = this.pos.x - 16 + this.dir*10;
+        let dy : number = this.pos.y - 14;
 
         let frame : number = this.attacking ? this.sprite.getColumn() - 3 : 5;
         let row : number = this.downAttacking ? 0 : this.attackNumber*2;
@@ -1169,6 +1178,15 @@ export class Player extends CollisionObject {
 
             frame = 5;
             row = 0;
+        }
+
+        if (this.stats.hasItem(Item.PowerfulSword)) {
+
+            row += 3;
+            if (this.downAttacking || this.downAttackWait > 0) {
+
+                dy += 4;
+            }
         }
 
         canvas.drawBitmap(bmp, this.flip, dx, dy, frame*32, row*32, 32, 32);
@@ -1516,7 +1534,8 @@ export class Player extends CollisionObject {
 
         if (this.attacking || this.powerAttackTimer > 0) {
 
-            this.drawWeapon(canvas, assets.getBitmap("weapons"));
+            const bmpWeapon : Bitmap | undefined = assets.getBitmap("weapons");
+            this.drawWeapon(canvas, bmpWeapon);
         }
         this.sprite.draw(canvas, bmp, px, py, this.flip);
 
@@ -1528,7 +1547,8 @@ export class Player extends CollisionObject {
 
         if (this.downAttacking || this.downAttackWait > 0) {
 
-            this.drawWeapon(canvas, assets.getBitmap("weapons"));
+            const bmpWeapon : Bitmap | undefined = assets.getBitmap("weapons");
+            this.drawWeapon(canvas, bmpWeapon);
         }
 
         if (this.shooting && !this.crouching && this.shootWait > 0) {

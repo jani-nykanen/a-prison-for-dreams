@@ -2,6 +2,7 @@ import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Vector } from "../../math/vector.js";
 import { TextBox } from "../../ui/textbox.js";
+import { Item } from "../items.js";
 import { Player } from "../player.js";
 import { Progress } from "../progress.js";
 import { TILE_HEIGHT } from "../tilesize.js";
@@ -15,6 +16,8 @@ export class Beam extends Interactable {
 
     private width : number = 0;
     private widthModifier : number = 0;
+
+    private disabled : boolean = false;
 
 
     constructor(x : number, y : number, id : number) {
@@ -33,11 +36,19 @@ export class Beam extends Interactable {
 
         if ((this.id == 8 && stats.hasDefeatedMiniboss()) ||
             (this.id <= 2 && stats.hasItem(this.id)) ||
-            (this.id >= 3 && stats.hasPulledLever(this.id - 3))) {
+            (this.id >= 3 && this.id < 16 && stats.hasPulledLever(this.id - 3)) ||
+            (this.id == 16 && !stats.hasItem(Item.PowerfulSword))) {
 
-            this.exist = false;
+            this.disabled = true;
+
+            if (this.id != 16) {
+            
+                this.exist = false;
+            }
             return true;
         } 
+        this.disabled = false;
+
         return false;
     }
 
@@ -48,6 +59,11 @@ export class Beam extends Interactable {
         const MAX_WIDTH : number = 8;
 
         const ANIMATION_SPEED : number = Math.PI*2/12;
+
+        if (this.disabled) {
+
+            return;
+        }
 
         this.widthModifier = (this.widthModifier + ANIMATION_SPEED*event.tick) % (Math.PI);
         this.width = MIN_WIDTH + Math.round((1 + Math.sin(this.widthModifier))*(MAX_WIDTH - MIN_WIDTH));
@@ -71,7 +87,7 @@ export class Beam extends Interactable {
 
     public draw(canvas : Canvas) : void {
         
-        if (!this.isActive()) {
+        if (!this.isActive() || this.disabled) {
 
             return;
         }

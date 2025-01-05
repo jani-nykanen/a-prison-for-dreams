@@ -209,6 +209,10 @@ export class Progress {
 
             this.attackPower += 1;
         }
+        if (this.obtainedItems[Item.PowerfulSword]) {
+
+            this.attackPower += 2;
+        }
 
         // Projectile power
         this.projectilePower = 3;

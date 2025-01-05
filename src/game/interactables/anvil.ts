@@ -9,6 +9,8 @@ import { Player, Pose, WaitType } from "../player.js";
 import { Interactable } from "./interactable.js";
 
 
+const ANVIL_HINT : number = 12;
+
 
 export class Anvil extends Interactable {
 
@@ -20,9 +22,11 @@ export class Anvil extends Interactable {
     private swordObtained : boolean = false;
 
     private readonly dialogueBox : TextBox;
+    private readonly hints : HintRenderer;
 
 
-    constructor(x : number, y : number, dialogueBox : TextBox) {
+    constructor(x : number, y : number, 
+        dialogueBox : TextBox, hints : HintRenderer) {
 
         super(x, y, undefined);
 
@@ -32,6 +36,7 @@ export class Anvil extends Interactable {
         this.cameraCheckArea.y = 64;
 
         this.dialogueBox = dialogueBox;
+        this.hints = hints;
     }
 
 
@@ -49,12 +54,17 @@ export class Anvil extends Interactable {
             this.dialogueBox.addText(itemText);
             this.dialogueBox.activate(false, null, (event : ProgramEvent) : void => {
 
-                // Saving might mess up things
-                // player.stats.save();
+                player.setCheckpointObject(this);
+
+                player.stats.obtainItem(Item.PowerfulSword);
+                player.stats.save();
                 event.audio.resumeMusic();
             }); 
 
-            // player.setCheckpointObject(this);
+            const textKeyboard : string = event.localization?.getItem("hints")?.[ANVIL_HINT] ?? "null";
+            const textGamepad : string | undefined = event.localization?.getItem("hints_gamepad")?.[ANVIL_HINT];
+
+            this.hints.activate(this.pos, textKeyboard, textGamepad);
         });
     }
 
@@ -63,6 +73,11 @@ export class Anvil extends Interactable {
         
         const SHINE_SPEED : number = Math.PI*2/120.0;
 
+        if (this.swordObtained) {
+
+            this.shine = 0.0;
+            return;
+        }
         this.shine = (this.shine + SHINE_SPEED*event.tick) % (Math.PI*2);
     }
 

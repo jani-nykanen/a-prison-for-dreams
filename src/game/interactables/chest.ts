@@ -226,6 +226,7 @@ export class Chest extends Interactable {
                         this.hints.activate(this.pos, textKeyboard, textGamepad);
 
                         // This is actually redundant now
+                        // (Is it? I don't recall...)
                         player.stats.markHintAsShown(hintID);
                     }
 
