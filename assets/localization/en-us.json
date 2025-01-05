@@ -368,10 +368,17 @@
 
     "npc17": [
 
-        "Ah, a visitor from the\nnew world! Welcome to\nthe 'Old Dream'. This\nused to be THE World\nof Dream.",
-        "But then a terrible\ncatastrophe struck us:\nLady Alexandra tried\nto take her own life.",
-        "After that, people\nused the Old Graveyard\nto escape to the new\nworld."
+        "Ah, a visitor from the\nold world! Welcome to\nthe 'New Dream'.",
+        "The Great Dreamer never\nhad chance to finish\nthis part of the Dream,\nunfortunately.",
+        "As you can see, see\nfinally learned to dream\nproper houses!"
     ],
+
+    "npc18": [
+
+        "Welcome to the Magic\nForge! Here you can\ncraft weapons of unbe-\nlievable capabilities!",
+        "Well, only swords at\nthe moment. And you do\nneed obsidian, other\nminerals won't work."
+    ],
+
 
     "item0": [
 
