@@ -193,7 +193,9 @@ export class Breakable extends CollisionObject {
 
         if (player.overlaySwordAttackArea(this)) {
 
-            if ((this.type == BreakableType.Rubble && player.isOrdinarilyAttacking()) ||
+            if ((this.type == BreakableType.Rubble && 
+                    player.isOrdinarilyAttacking() &&
+                    !player.stats.hasItem(Item.PowerfulSword)) ||
                 (this.type == BreakableType.ScaryFace && !player.stats.hasItem(Item.PowerfulSword))) {
 
                 return;
@@ -216,15 +218,16 @@ export class Breakable extends CollisionObject {
 
         if (p.overlayObject(this)) {
 
-            if (p.destroyOnTouch() || this.type == BreakableType.ScaryFace) { // && p.getId() != something 
+            if (p.destroyOnTouch() || 
+                (this.type == BreakableType.ScaryFace && p.getID() < 8)) { // && p.getId() != something 
 
                 p.kill(event);
             }
 
             // TODO: Also check for more powerful charge attack (if I decide
             // to implement it)
-            if ( (this.type == BreakableType.Rubble && p.getID() != 1) || 
-                 (this.type == BreakableType.ScaryFace)   ) { // && p.getId() != something also here
+            if ( (this.type == BreakableType.Rubble && p.getID() != 1 && p.getID() < 8) || 
+                 (this.type == BreakableType.ScaryFace && p.getID() < 8)) { 
 
                 return;
             }

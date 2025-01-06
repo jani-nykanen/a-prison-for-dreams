@@ -486,7 +486,7 @@
     "item14": [
 
         "You obtain a PHANTOM CANNON!",
-        "It is a more powerful version\nof your trusty hand cannon,\nbut that's not all: it can\nshoot bullets that go through\nwalls!"
+        "It is a more powerful version\nof your trusty hand cannon.\nAnd that's... all."
     ],
 
     "item15": [
@@ -505,6 +505,12 @@
 
         "You obtain an OBSIDIAN CHUNK!",
         "You could probably craft a\ncool sword out of it. You\njust need to find a forge..."
+    ],
+
+    "item21": [
+
+        "You obtain a PLUTONIUM SHIELD!",
+        "It reduces the damage you\ntake by one. All this despite\nthe fact it is obviously\npoisonous."
     ],
 
 

@@ -227,12 +227,10 @@ export class Progress {
 
         // Damage reduction
         this.armor = 0;
-        /*
-        if (this.obtainedItems[Item.Shield]) {
+        if (this.obtainedItems[Item.PlutoniumShield]) {
 
             this.armor += 1;
         }
-        */
 
         // Health recovery bonus
         this.recoverBonus = 0;

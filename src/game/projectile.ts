@@ -11,19 +11,19 @@ import { GameObject } from "./gameobject.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 2, 3, 2, 3, 3, 3, 3
+    3, 2, 3, 2, 3, 3, 3, 3, 3, 3
 ];
 
 const ANIMATION_SPEED : number[] = [
-    4, 4, 4, 4, 4, 5, 6, 4
+    4, 4, 4, 4, 4, 5, 5, 4, 5, 5
 ];
 
 
 const HITBOX_WIDTHS : number[] = [
-    6, 10, 4, 4, 8, 10, 4, 8,
+    8, 12, 4, 4, 8, 10, 4, 8, 12, 18
 ];
 const HITBOX_HEIGHTS : number[] = [
-    6, 10, 4, 4, 8, 10, 4, 8
+    8, 12, 4, 4, 8, 10, 4, 8, 12, 18
 ];
 
 
@@ -47,6 +47,7 @@ export class Projectile extends CollisionObject {
     private friendly : boolean = false;
 
     private sprite : Sprite;
+    private flip : Flip = Flip.None;
 
     private targetObject : GameObject | undefined = undefined;
     private followSpeed : number = 0;
@@ -96,6 +97,7 @@ export class Projectile extends CollisionObject {
 
         const lastFrame : number = Math.max(3, LAST_ANIMATION_FRAME[this.id] ?? 0); 
 
+        this.flip = Flip.None;
         this.sprite.animate(this.sprite.getRow(), lastFrame + 1, lastFrame + 5, DEATH_SPEED, event.tick);
 
         return this.sprite.getColumn() == lastFrame + 5;
@@ -126,6 +128,8 @@ export class Projectile extends CollisionObject {
         }
 
         this.computeFriction();
+
+        this.flip = this.speed.x < 0 ? Flip.Horizontal : Flip.None;
     }
 
 
@@ -189,6 +193,8 @@ export class Projectile extends CollisionObject {
 
             this.target.y = BASE_GRAVITY;
         }
+
+        this.flip = this.speed.x < 0 ? Flip.Horizontal : Flip.None;
     }
 
 
@@ -215,7 +221,7 @@ export class Projectile extends CollisionObject {
         this.sprite.draw(canvas, bmp, 
             this.pos.x - this.sprite.width/2, 
             this.pos.y - this.sprite.height/2, 
-            Flip.None);
+            this.flip);
 
         if (this.id == 7) {
 
@@ -239,6 +245,6 @@ export class Projectile extends CollisionObject {
 
     public isFriendly = () : boolean => this.friendly;
     public getID = () : number => this.id;
-    public destroyOnTouch = () : boolean => this.id != 1;
+    public destroyOnTouch = () : boolean => this.id != 1 && this.id != 9;
     public getAttackID = () : number => this.attackID;
 }

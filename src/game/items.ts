@@ -23,6 +23,7 @@ export const enum Item {
     // Gap! Oh no!
     CrystalBoots = 19,
     ObsidianChunk = 20,
+    PlutoniumShield = 21,
 
     
     // Shop items

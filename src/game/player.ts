@@ -409,12 +409,13 @@ export class Player extends CollisionObject {
         const dy : number = this.pos.y + BULLET_YOFF;
 
         const power : number = type == 1 ? this.stats.getChargeProjectilePower() : this.stats.getProjectilePower();
+        const typeShift : number = this.stats.hasItem(Item.PowerfulGun) ? 8 : 0;
 
         this.projectiles.next(this.stats).spawn(
             this.pos.x, dy, dx, dy, 
             this.speed.x*BULLET_SPEED_FACTOR_X + (BULLET_SPEED[type] ?? 0)*this.dir, 
             this.speed.y*BULLET_SPEED_FACTOR_Y, 
-            type, power, true, this.attackID + 1);
+            type + typeShift, power, true, this.attackID + 1);
         if (type == 1) {
 
             ++ this.attackID;
