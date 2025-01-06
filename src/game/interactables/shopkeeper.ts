@@ -13,7 +13,9 @@ export class Shopkeeper extends Interactable {
     private shop : Shop;
 
 
-    constructor(x : number, y : number, shop : Shop, bitmap : Bitmap | undefined) {
+    constructor(x : number, y : number, 
+        shop : Shop, bitmap : Bitmap | undefined,
+        id : number = 0) {
 
         super(x, y - 32, bitmap);
 
@@ -23,6 +25,7 @@ export class Shopkeeper extends Interactable {
         this.shop = shop;
 
         this.sprite = new Sprite(32, 48);
+        this.sprite.setFrame(0, id);
     }
 
 
@@ -30,7 +33,7 @@ export class Shopkeeper extends Interactable {
         
         const ANIMATION_SPEED : number = 10;
 
-        this.sprite.animate(0, 0, 3, ANIMATION_SPEED, event.tick);
+        this.sprite.animate(this.sprite.getRow(), 0, 3, ANIMATION_SPEED, event.tick);
     }
 
 

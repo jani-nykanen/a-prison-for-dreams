@@ -239,7 +239,7 @@ export class ObjectManager {
             // Shopkeeper
             case 13:
 
-                this.interactables.push(new Shopkeeper(dx, dy, this.shops[id - 1], bmpShopkeeper));    
+                this.interactables.push(new Shopkeeper(dx, dy, this.shops[id - 1], bmpShopkeeper, id - 1));    
                 break;
 
             // Moving platforms

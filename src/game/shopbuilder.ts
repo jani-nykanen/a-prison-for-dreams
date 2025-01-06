@@ -15,7 +15,12 @@ const PRICES : number[][] = [
     40, // Potion
 ],
 [
-    // TODO: later
+    100, // Super health container
+    100, // Some gun stuff?
+    100, // Faster attacking
+    150, // No knockback
+    100, // More drops
+    500, // Bag of dice
 ]
 ];
 
@@ -31,8 +36,8 @@ export const constructShop = (index : 1 | 2, event : ProgramEvent) : Shop => {
     for (let i : number = 0; i < PRICES[index - 1].length; ++ i) {
 
         shop.addItem(itemNames?.[i] ?? "null", itemDescriptions?.[i] ?? "null",
-            (PRICES[index - 1] ?? PRICES[0])[i], ITEM_START_INDEX + i,
-            (index - 1)*8 + i);
+            (PRICES[index - 1] ?? PRICES[0])[i], ITEM_START_INDEX + (index - 1)*6 + i,
+            (index - 1)*6 + i);
     }
 
     return shop;

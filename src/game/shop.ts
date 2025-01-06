@@ -278,7 +278,7 @@ export class Shop {
 
             const item : ShopItem = this.items[this.cursorPos]; 
 
-            canvas.drawText(font,item.description, dx + 32, bottomY + 4, 0, 2);
+            canvas.drawText(font,item.description, dx + 28, bottomY + 4, 0, 2);
 
             // Item icon
             const bmpItemIcons : Bitmap | undefined = assets.getBitmap("item_icons");

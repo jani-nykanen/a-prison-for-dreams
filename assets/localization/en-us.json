@@ -150,6 +150,27 @@
     ],
 
 
+    "shop2": [
+
+        "Golden Heart",
+        "Friendly Bees",
+        "Hourglass",
+        "Heavy Weight",
+        "Lucky Charm",
+        "Vampire Fangs"
+    ],
+
+    "shopdescription2": [
+
+        "Increases your maximum\nhealth by 3.",
+        "Restores bullets automa-\ntically over time.",
+        "Increases sword attack\nspeed.",
+        "Removes knockback when\ntaking damage.",
+        "Makes enemies drop goods\nmore often.",
+        "Killing enemies restores\nhealth."
+    ],
+
+
     "door_colors": ["RED", "BLUE", "PURPLE", "BANANA?", "PLATINUM"],
     "locked": "You need a %1 KEY to\nopen this door.",
     "open_door": "You open the door with\na %1 KEY.",
