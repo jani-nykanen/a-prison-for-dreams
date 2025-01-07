@@ -9,7 +9,7 @@ import { VERSION } from "./version.js";
 const INITIAL_MAP : string = "graveyard";
 
 const BASE_HEALTH_UP : number = 2;
-const BASE_BULLETS_UP : number = 2;
+const BASE_BULLETS_UP : number = 3;
 
 
 // No, not "truth" values, but a list of values that a true...
@@ -61,8 +61,10 @@ export class Progress {
 
     private bullets : number = 10;
     private maxBullets : number = 10;
+    private bulletRestoreTime : number = 0.0;
 
     private attackPower : number = 5;
+    private attackSpeedBonus : number = 0;
     private projectilePower : number = 3;
     private armor : number = 0;
     private speedBonus : number = 0;
@@ -159,7 +161,7 @@ export class Progress {
     private computeStats() : void {
 
         this.maxHealth = 10;
-        this.maxBullets = 10;
+        this.maxBullets = 12;
         this.orbCount = 0;
 
         // TODO: Find out if there is a good way to check how many
@@ -178,6 +180,10 @@ export class Progress {
 
             this.maxHealth += 2;
         }
+        if (this.obtainedItems[Item.GoldenHeart]) {
+
+            this.maxHealth += 3;
+        }
         // Correct the health bar
         this.healthBarPos =  this.health/this.maxHealth;
 
@@ -191,7 +197,7 @@ export class Progress {
         }
         if (this.obtainedItems[Item.ExtraAmmo]) {
 
-            this.maxBullets += 2;
+            this.maxBullets += BASE_BULLETS_UP;
         }
 
         // Dream orbs
@@ -222,7 +228,7 @@ export class Progress {
         }
         if (this.obtainedItems[Item.PowerfulGun]) {
 
-            this.projectilePower += 2;
+            this.projectilePower += 3;
         }
 
         // Damage reduction
@@ -244,6 +250,13 @@ export class Progress {
         if (this.obtainedItems[Item.RunningShoes]) {
 
             this.speedBonus += 1;
+        }
+
+        // Attack speed
+        this.attackSpeedBonus = 0;
+        if (this.obtainedItems[Item.Hourglass]) {
+
+            this.attackSpeedBonus += 1;
         }
     }
 
@@ -369,13 +382,13 @@ export class Progress {
     public getMaxHealth = () : number => this.maxHealth;
 
 
-    public updateHealth(change : number) : number {
+    public updateHealth(change : number, ignoreBonus : boolean = false) : number {
 
         if (change < 0) {
 
             change = Math.min(-1, change + this.armor);
         }
-        else if (change > 0) {
+        else if (change > 0 && !ignoreBonus) {
 
             change += this.recoverBonus*2;
         }
@@ -390,6 +403,7 @@ export class Progress {
 
 
     public getSpeedBonus = () : number => this.speedBonus;
+    public getAttackSpeedBonus = () : number => this.attackSpeedBonus;
 
 
     public getMoney = () : number => this.money;
@@ -403,6 +417,23 @@ export class Progress {
 
     public getBulletCount = () : number => this.bullets;
     public getMaxBulletCount = () : number => this.maxBullets;
+
+
+    public getBulletRestoreTime() : number | null {
+
+        if (!this.hasItem(Item.MagicBullets)) {
+
+            return null; 
+        }
+
+        return this.bulletRestoreTime;
+    }
+
+
+    public setBulletRestoreTime(time : number) : void {
+
+        this.bulletRestoreTime = time;
+    }
 
     
     public getOrbCount = () : number => this.orbCount;
@@ -456,10 +487,29 @@ export class Progress {
 
     public update(event : ProgramEvent) : void {
 
+        const BULLET_RESTORE_SPEED : number = 1.0/150.0;
+
         this.healthBarPos = 
             clamp(updateSpeedAxis(
                     this.healthBarPos, this.healthBarTarget, this.healthBarSpeed*event.tick
                 ), 0.0, 1.0);
+
+        if (this.bullets >= this.maxBullets) {
+
+            this.bulletRestoreTime = 1.0;
+        }
+        else if (this.hasItem(Item.MagicBullets)) {
+
+            this.bulletRestoreTime += BULLET_RESTORE_SPEED*event.tick;
+            if (this.bulletRestoreTime >= 1.0) {
+
+                ++ this.bullets;
+                if (this.bullets < this.maxBullets) {
+                    
+                    this.bulletRestoreTime -= 1.0;
+                }
+            }
+        }
     }
 
 

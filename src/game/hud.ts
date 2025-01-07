@@ -3,6 +3,7 @@ import { Align, Bitmap, Canvas, Effect, Flip, TransformTarget } from "../gfx/int
 import { Assets } from "../core/assets.js";
 import { Item } from "./items.js";
 import { LOCKED_HUGE_DOOR_INDEX } from "./interactables/portal.js";
+import { clamp } from "../math/utility.js";
 
 
 export const GAME_SAVE_ANIMATION_TIME : number = 120;
@@ -74,7 +75,20 @@ export const drawHUD = (canvas : Canvas, assets : Assets, stats : Progress) : vo
         
         const strAmmo : string = String(stats.getBulletCount()) + "/" + String(stats.getMaxBulletCount());
         canvas.drawText(bmpFontOutlines, strAmmo, 13, canvas.height - 16, -7, 0);
-        canvas.drawBitmap(bmpHUD, Flip.None, 0, canvas.height - 17, 32, 0, 16, 16);
+
+        const sx : number = stats.hasItem(Item.MagicBullets) ? 80 : 32;
+        canvas.drawBitmap(bmpHUD, Flip.None, 0, canvas.height - 17, sx, 0, 16, 16);
+
+        if (stats.hasItem(Item.MagicBullets)) {
+
+            const t : number = clamp(stats.getBulletRestoreTime(), 0.0, 1.0);
+            const sh : number = Math.floor(t*12);
+
+            if (sh > 0) {
+
+                canvas.drawBitmap(bmpHUD, Flip.None, 0, canvas.height - 15 + (12 - sh), 32, 2 + (12 - sh), 16, sh);
+            }
+        }
     }
 
     // Orbs 

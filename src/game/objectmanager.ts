@@ -217,13 +217,14 @@ export class ObjectManager {
                 break;
 
             // Portal
+            case 89:
             case 77:
             case 10:
 
                 this.interactables.push(new Portal(dx, dy, bmpPortal, 
                     this.mapTransition, this.dialogueBox,
                     id - 1, stage.baseMap.getProperty(`portal${id - 1}`),
-                    objID == 77));
+                    objID == 77, objID == 89));
                 if (!resetPlayer && id - 1 == this.spawnId) {
 
                     this.player.setPosition(dx, dy, resetPlayer);

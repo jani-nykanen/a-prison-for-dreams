@@ -18,9 +18,9 @@ const PRICES : number[][] = [
     100, // Super health container
     100, // Some gun stuff?
     100, // Faster attacking
-    150, // No knockback
-    100, // More drops
-    500, // Bag of dice
+    125, // No knockback
+    75, // More drops
+    300, // Vampirism
 ]
 ];
 

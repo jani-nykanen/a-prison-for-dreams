@@ -34,10 +34,10 @@ export const enum Item {
     RunningShoes = 36,
     Potion = 37,
 
-    MoreExtraHealth = 38,
-    AutoReload = 39,
-    SpeedAttack = 40,
+    GoldenHeart = 38,
+    MagicBullets = 39,
+    Hourglass = 40,
     HeavyWeight = 41,
     LuckyCharm = 42,
-    BagOfDice = 43,
+    VampireFangs = 43,
 };

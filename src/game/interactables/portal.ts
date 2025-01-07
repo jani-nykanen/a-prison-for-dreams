@@ -33,6 +33,7 @@ export class Portal extends Interactable {
     private locked : boolean = false;
     private requirementMet : boolean = false;
     private orbCount : number = 0;
+    private isSpecial : boolean = false;
 
     private mapTransition : MapTransitionCallback;
 
@@ -42,7 +43,7 @@ export class Portal extends Interactable {
     constructor(x : number, y : number, bitmap : Bitmap | undefined, 
         mapTransition : MapTransitionCallback, dialogueBox : TextBox,
         id : number, targetMap : string | undefined,
-        locked : boolean = false) {
+        locked : boolean = false, isSpecial : boolean = false) {
 
         super(x, y - 24, bitmap);
 
@@ -63,6 +64,7 @@ export class Portal extends Interactable {
 
             this.sprite.setFrame(0, 1);
         }
+        this.isSpecial = isSpecial;
 
         this.dialogueBox = dialogueBox;
     }
@@ -82,7 +84,8 @@ export class Portal extends Interactable {
         }
         else {
 
-            this.sprite.animate(0, 0, 7, ANIMATION_SPEED, event.tick);
+            const row : number = this.isSpecial ? 2 : 0;
+            this.sprite.animate(row, 0, 7, ANIMATION_SPEED, event.tick);
         }
     }
 

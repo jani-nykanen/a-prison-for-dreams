@@ -15,6 +15,7 @@ import { CollectableType } from "../collectable.js";
 import { Progress } from "../progress.js";
 import { ProjectileGenerator } from "../projectilegenerator.js";
 import { sampleWeightedUniform } from "../../math/random.js";
+import { Item } from "../items.js";
 
 
 const HURT_TIME : number = 30;
@@ -96,6 +97,15 @@ export class Enemy extends CollisionObject {
         const LAUNCH_SPEED_X : number = 1.0;
         const LAUNCH_SPEED_Y : number = 2.0;
         const BASE_JUMP : number = -1.0;
+        const LUCKY_CHARM_GEM_BONUS : number = 0.25;
+
+        // We don't need to adjust them back since dead enemies are removed
+        // from the list anyway
+        if (stats.hasItem(Item.LuckyCharm)) {
+
+            this.coinTypeWeights[1] *= (1.0 + LUCKY_CHARM_GEM_BONUS);
+            this.coinTypeWeights[0] = 1.0 - this.coinTypeWeights[1];
+        }
 
         let baseType : CollectableType = sampleTypeFromProgress(stats);
         if (baseType == CollectableType.Coin) {
@@ -116,7 +126,15 @@ export class Enemy extends CollisionObject {
 
     private initiateDeath(stats : Progress | undefined, event : ProgramEvent, dir? : Vector) : void {
 
-        if (stats !== undefined && Math.random() < this.dropProbability) {
+        const LUCKY_CHARM_BONUS : number = 0.50;
+        
+        let dropProb : number = this.dropProbability;
+        if (stats?.hasItem(Item.LuckyCharm) ?? false) {
+
+            dropProb *= (1.0 + LUCKY_CHARM_BONUS);
+        }
+
+        if (stats !== undefined && Math.random() < dropProb) {
             
             this.spawnCollectables(dir ?? new Vector(), stats);
         }
@@ -129,7 +147,7 @@ export class Enemy extends CollisionObject {
 
 
     private takeDamage(amount : number, stats : Progress | undefined,
-        event : ProgramEvent, dir? : Vector) : void {
+        event : ProgramEvent, dir? : Vector, player? : Player) : void {
 
         if (!this.canBeHurt) {
 
@@ -144,6 +162,18 @@ export class Enemy extends CollisionObject {
         if (this.health <= 0) {
 
             this.initiateDeath(stats, event, dir);
+            if (player !== undefined) {
+
+                const restoredHealth : number | null = player.checkVampirism();
+                if (restoredHealth !== null) {
+
+                    const playerPos : Vector = player.getPosition();
+                    this.flyingText?.next().spawn(
+                        playerPos.x, playerPos.y - 8, restoredHealth, 
+                        FlyingTextSymbol.Heart, new RGBA(182, 255, 0));
+                }
+            }
+
             return;
         }
 
@@ -292,7 +322,7 @@ export class Enemy extends CollisionObject {
                 dir.y *= POWER_ATTACK_PICKUP_SPEED_FACTOR;
             }
             this.hurtID = attackID;
-            this.takeDamage(player.getAttackPower(), player.stats, event, dir);
+            this.takeDamage(player.getAttackPower(), player.stats, event, dir, player);
             if (!this.dying) {
                 
                 player.stopPowerAttack();

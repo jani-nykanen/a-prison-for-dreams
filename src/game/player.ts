@@ -397,6 +397,8 @@ export class Player extends CollisionObject {
         const BULLET_SPEED_FACTOR_X : number = 0.5;
         const BULLET_SPEED_FACTOR_Y : number = 0.0; // Makes collisions work better...
 
+        const RESTORE_TIME_PENALTY : number = -0.5;
+
         if (this.stats.getBulletCount() <= 0) {
 
             this.flashType = -1;
@@ -427,6 +429,10 @@ export class Player extends CollisionObject {
         }
 
         this.stats.updateBulletCount(-1);
+        if (this.stats.hasItem(Item.MagicBullets)) {
+
+            this.stats.setBulletRestoreTime(RESTORE_TIME_PENALTY);
+        }
     }
 
 
@@ -744,12 +750,14 @@ export class Player extends CollisionObject {
         const LAST_FRAME : number = 8;
         const LAST_FRAME_LENGTH : number = 16;
         const LAST_FRAME_RELEASE = 8;
+        const SPEED_BONUS_FACTOR : number = 0.25; 
 
         const row : number = 1 + this.attackNumber*4;
 
-        this.sprite.animate(row, 3, LAST_FRAME, 
-            this.sprite.getColumn() == LAST_FRAME - 1 ? LAST_FRAME_LENGTH : BASE_ATTACK_SPEED, 
-            event.tick);
+        const baseFrameTime : number = Math.round(BASE_ATTACK_SPEED*(1.0 - SPEED_BONUS_FACTOR*this.stats.getAttackSpeedBonus()));
+        const frameTime : number = this.sprite.getColumn() == LAST_FRAME - 1 ? LAST_FRAME_LENGTH : baseFrameTime;
+
+        this.sprite.animate(row, 3, LAST_FRAME, frameTime, event.tick);
 
         const buttonReleased : boolean = (event.input.getAction("attack") & InputState.DownOrPressed) == 0;
 
@@ -1362,21 +1370,24 @@ export class Player extends CollisionObject {
 
     public applyDamage(damage : number, direction : number, event : ProgramEvent) : void {
 
+        const KNOCKBACK_SPEED : number = 2.5;
+
         if (!this.isActive() || this.hurtTimer > 0) {
 
             return;
         }
 
-        const KNOCKBACK_SPEED : number = 2.5;
+        if (!this.stats.hasItem(Item.HeavyWeight)) {
 
-        this.knockbackTimer = KNOCKBACK_TIME;
+            this.knockbackTimer = KNOCKBACK_TIME;
 
-        const knockbackDirection : number = direction == 0 ? (-this.dir) : direction;
-        this.speed.x = knockbackDirection*KNOCKBACK_SPEED;
-        if (this.underWater) {
+            const knockbackDirection : number = direction == 0 ? (-this.dir) : direction;
+            this.speed.x = knockbackDirection*KNOCKBACK_SPEED;
+            if (this.underWater) {
 
-            // Didn't work as intended
-            // this.speed.x /= UNDERWATER_FRICTION_MODIFIER;
+                // Didn't work as intended
+                // this.speed.x /= UNDERWATER_FRICTION_MODIFIER;
+            }
         }
 
         this.hurt(damage, event);
@@ -1884,6 +1895,22 @@ export class Player extends CollisionObject {
         this.rocketPackActive = false;
         this.canUseRocketPack = true;
         this.rocketPackReleased = false;
+    }
+
+
+    public checkVampirism() : number | null {
+
+        const RESTORE_COUNT : number = 1.0;
+
+        if (!this.stats.hasItem(Item.VampireFangs) ||
+            this.stats.getHealth() >= this.stats.getMaxHealth()) {
+
+            return null;
+        }
+
+        this.stats.updateHealth(RESTORE_COUNT, true);
+
+        return RESTORE_COUNT;
     }
 }
 
