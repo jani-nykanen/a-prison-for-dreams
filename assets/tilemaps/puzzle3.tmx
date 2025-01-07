@@ -4,9 +4,9 @@
   <property name="background" type="int" value="10"/>
   <property name="door3" value="tower"/>
   <property name="has_lava" type="bool" value="true"/>
-  <property name="music" value="winter"/>
-  <property name="musicvolume" type="float" value="0.4"/>
-  <property name="name" value="One Last Puzzle (Optional)"/>
+  <property name="music" value="castle"/>
+  <property name="musicvolume" type="float" value="0.6"/>
+  <property name="name" value="Castle Puzzle (Optional)"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="5"/>
   <property name="water_level" type="float" value="2"/>

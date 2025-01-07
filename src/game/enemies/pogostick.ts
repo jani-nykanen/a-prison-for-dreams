@@ -45,7 +45,7 @@ export class PogoStick extends Enemy {
         
         const JUMP_HEIGHT : number = -2.5;
 
-        if (this.touchSurface) {
+        if (this.touchSurface && !this.didTouchSurface) {
 
             this.speed.y = JUMP_HEIGHT;
             event.audio.playSample(event.assets.getSample("jump2"), 0.30);

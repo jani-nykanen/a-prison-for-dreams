@@ -110,6 +110,7 @@
         {"name": "shop2", "path": "shop2.tmx"},
         {"name": "throneroom", "path": "throneroom.tmx"},
         {"name": "puzzle3", "path": "puzzle3.tmx"},
+        {"name": "prison_entrance", "path": "prison_entrance.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},
@@ -171,7 +172,8 @@
         {"name": "forest", "path": "forest.ogg"},
         {"name": "miniboss", "path": "miniboss.ogg"},
         {"name": "cave", "path": "cave.ogg"},
-        {"name": "winter", "path": "winter.ogg"}
+        {"name": "winter", "path": "winter.ogg"},
+        {"name": "castle", "path": "castle.ogg"}
 
     ],
 

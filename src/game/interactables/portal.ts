@@ -57,6 +57,7 @@ export class Portal extends Interactable {
         this.cameraCheckArea = new Vector(48, 64);
 
         this.sprite = new Sprite(32, 48);
+        this.sprite.setFrame(0, isSpecial ? 2 : 0);
 
         this.mapTransition = mapTransition;
 

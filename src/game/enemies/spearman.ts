@@ -48,7 +48,7 @@ export class Spearman extends Enemy {
         this.coinTypeWeights[0] = 0.10;
         this.coinTypeWeights[1] = 0.90;
 
-        this.cameraCheckArea.y = 80;
+        this.cameraCheckArea.y = 96;
     }
 
 
@@ -56,7 +56,7 @@ export class Spearman extends Enemy {
         
         const JUMP_HEIGHT : number = -2.75;
 
-        if (this.touchSurface) {
+        if (this.touchSurface && !this.didTouchSurface) {
 
             this.speed.y = JUMP_HEIGHT;
             event.audio.playSample(event.assets.getSample("jump2"), 0.30);

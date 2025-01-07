@@ -6,8 +6,8 @@
   <property name="door3" value="puzzle3"/>
   <property name="has_lava" type="bool" value="true"/>
   <property name="leftexit" value="throneroom"/>
-  <property name="music" value="winter"/>
-  <property name="musicvolume" type="float" value="0.4"/>
+  <property name="music" value="castle"/>
+  <property name="musicvolume" type="float" value="0.6"/>
   <property name="name" value="Slumbering Castle"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="entrance"/>

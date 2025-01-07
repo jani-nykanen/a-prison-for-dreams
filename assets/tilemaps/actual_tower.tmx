@@ -3,8 +3,8 @@
  <properties>
   <property name="background" type="int" value="11"/>
   <property name="door2" value="tower"/>
-  <property name="music" value="winter"/>
-  <property name="musicvolume" type="float" value="0.7"/>
+  <property name="music" value="castle"/>
+  <property name="musicvolume" type="float" value="0.6"/>
   <property name="name" value="Fractured Tower"/>
   <property name="npctype" type="int" value="0"/>
   <property name="tileset" type="int" value="5"/>
