@@ -136,14 +136,17 @@ export class Fan extends Interactable {
             -this.sprite.width/2, 
             -this.sprite.height/2);
 
-        // Wind
-        const shift : number = this.windTimer*16;
-        for (let i : number = 0; i < 4; ++ i) {
-            
-            canvas.drawBitmap(this.bitmap, Flip.None, 
-                -this.sprite.width/2, 
-                -this.sprite.height/2 - 8 - i*16,
-                0, 24 + shift, 24, 16);
+        if (this.activated) {
+
+            // Wind
+            const shift : number = this.windTimer*16;
+            for (let i : number = 0; i < 4; ++ i) {
+                
+                canvas.drawBitmap(this.bitmap, Flip.None, 
+                    -this.sprite.width/2, 
+                    -this.sprite.height/2 - 8 - i*16,
+                    0, 24 + shift, 24, 16);
+            }
         }
 
         canvas.transform.pop();

@@ -277,7 +277,7 @@
 
     "cutscene9": [
 
-        "Even though the Great\nDreamer was able to\nbreak the seal, she\nis not completely free.",
+        "Even though the door\nto her prison is now\nopen, she is not\ncompletely free.",
         "However, she regained\nher ability to commu-\nnicate with her fol-\nlowers.",
         "Now she is waiting\nfor you inside her\ncollapsing prison."
     ],
@@ -473,6 +473,15 @@
         "Most of these portals\nstopped working long\ntime ago. They would\ntake you to 'Small\nDreams'.",
         "The Great Dreamer had\nthis idea of smaller\nworlds that were unlike\nany other place in the\nDream.",
         "You can still visit the\nBurning Dream, if you\nwish."
+    ],
+
+
+    "npc25": [
+
+        "This used to be a test-\ning area for various\ntypes of jetpacks.",
+        "Lady Alexandra had this\nfunny obsession with\njetpacks, even though\nshe had never seen one\nin her life.",
+        "Most of them are gone\nnow, but you can pro-\nbably find a working\nprototype in the hangar\nsomewhere nearby."
+        
     ],
 
 

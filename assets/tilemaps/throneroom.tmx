@@ -2,7 +2,6 @@
 <map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="83" height="36" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
  <properties>
   <property name="background" type="int" value="10"/>
-  <property name="cutscene" type="int" value="11"/>
   <property name="has_lava" type="bool" value="true"/>
   <property name="music" value="castle"/>
   <property name="musicvolume" type="float" value="0.6"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="16" height="48" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
  <properties>
-  <property name="cutscene" type="int" value="7"/>
+  <property name="cutscene" type="int" value="10"/>
   <property name="door2" value="mountain_wall"/>
   <property name="has_lava" type="bool" value="true"/>
   <property name="leftexit" value="abyss"/>

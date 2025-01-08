@@ -573,6 +573,11 @@ export class Background {
 
             this.starfield = new Starfield();
         }
+        // Don't ask why is this needed here 'cause I have no idea
+        else if (newType === BackgroundType.AltStarField) {
+
+            this.starfield = new Starfield(36, 109, 219);
+        }
         else {
 
             // Let the garbage collector get rid of the 

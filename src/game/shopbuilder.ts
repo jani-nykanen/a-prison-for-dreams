@@ -15,10 +15,10 @@ const PRICES : number[][] = [
     40, // Potion
 ],
 [
-    100, // Super health container
-    100, // Some gun stuff?
-    100, // Faster attacking
-    125, // No knockback
+    75, // Super health container
+    75, // Some gun stuff?
+    75, // Faster attacking
+    100, // No knockback
     75, // More drops
     300, // Vampirism
 ]

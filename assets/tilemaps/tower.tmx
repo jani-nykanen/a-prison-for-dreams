@@ -2,7 +2,6 @@
 <map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="68" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
  <properties>
   <property name="background" type="int" value="10"/>
-  <property name="cutscene" type="int" value="10"/>
   <property name="door2" value="actual_tower"/>
   <property name="door3" value="puzzle3"/>
   <property name="has_lava" type="bool" value="true"/>

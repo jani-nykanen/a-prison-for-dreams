@@ -5,7 +5,7 @@
   <property name="door2" value="sky_cave"/>
   <property name="leftexit" value="entrance"/>
   <property name="music" value="winter"/>
-  <property name="musicvolume" type="float" value="0.7"/>
+  <property name="musicvolume" type="float" value="0.6"/>
   <property name="name" value="The Climb"/>
   <property name="npctype" type="int" value="0"/>
   <property name="rightexit" value="inner_dream"/>
