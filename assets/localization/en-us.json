@@ -283,6 +283,29 @@
     ],
 
 
+    "cutscene10": [
+
+        "Even if Lady Alexandra\nwas able to break free,\nshe would not regain\nher former strength.",
+        "The Dream would continue\nto decay, and the real\nworld would keep slowly\ndying.",
+        "Thus the Dream\nmust end."
+    ],
+
+
+    "cutscene11": [
+
+        "The only way to end\nthe Dream is, unfor-\ntunately, to kill\nLady Alexandra.",
+        "It is her dream\nafter all."
+    ],
+
+    "cutscene12": [
+
+        "Time has come,\nmy hero.",
+        "Time to destroy the\nnightmare they call\n'The Dream'.",
+        "Time to end\nthe madness.",
+        "And hopefully...\ntime to recover\nthe real world."
+    ],
+
+
     "npc0": [
 
         "We are the keepers of\nthe Graveyard. Our\njob is to bury dreams\nthat come here to die.",
@@ -411,6 +434,45 @@
 
         "This was supposed to\nbe Lady Alexandra's own\nthrone room where she\ncould be the Queen of\nthe Dream.",
         "It is somewhat ironic\nthat the entrance to\nher prison is located\nin this very room."
+    ],
+
+
+    "npc20": [
+
+        "This is the tower Lady\nAlexandra was building\nwhen she finally\nlearned the truth.",
+        "The truth about the\nDream and how it slowly\ndrains the real world,\nleaving only a dying\nplanet behind.",
+        "She almost managed to\ndestroy this tower be-\nfore they were finally\nable to imprison her."
+    ],
+
+
+    "npc21": [
+
+        "I have a feeling that\nLady Alexandra's child-\nhood was not particu-\nlarly happy.",
+        "Look at this 'castle':\nit is more a fortress\nthan a castle you\nsee in fairy tales!",
+        "But perhaps... perhaps\nthis was her intention\nall along?"
+    ],
+
+
+    "npc22": [
+
+        "This path will take you\nto the Forge. Getting\nthere is not that easy,\nthough.",
+        "An ability to fly might\nprove useful."
+    ],
+
+
+    "npc23": [
+
+        "Thank you for beating\nthe Eye. I have never\nbeen in this part of\nthe Dream before.",
+        "In fact, I didn't even\nknow there exists some-\nthing beyond the Old\nGraveyard.",
+        "Why didn't she tell us\nabout this place?"
+    ],
+
+
+    "npc24": [
+
+        "Most of these portals\nstopped working long\ntime ago. They would\ntake you to 'Small\nDreams'.",
+        "The Great Dreamer had\nthis idea of smaller\nworlds that were unlike\nany other place in the\nDream.",
+        "You can still visit the\nBurning Dream, if you\nwish."
     ],
 
 

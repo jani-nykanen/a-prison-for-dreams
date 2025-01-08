@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="36" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
  <properties>
+  <property name="cutscene" type="int" value="12"/>
   <property name="in_progress" type="bool" value="true"/>
   <property name="name" value="Prison Entrance"/>
   <property name="npctype" type="int" value="0"/>
