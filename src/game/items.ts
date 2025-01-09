@@ -24,6 +24,7 @@ export const enum Item {
     CrystalBoots = 19,
     ObsidianChunk = 20,
     PlutoniumShield = 21,
+    RunningPants = 22,
 
     
     // Shop items

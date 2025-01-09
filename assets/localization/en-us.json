@@ -481,7 +481,6 @@
         "This used to be a test-\ning area for various\ntypes of jetpacks.",
         "Lady Alexandra had this\nfunny obsession with\njetpacks, even though\nshe had never seen one\nin her life.",
         "Most of them are gone\nnow, but you can pro-\nbably find a working\nprototype in the hangar\nsomewhere nearby."
-        
     ],
 
 
@@ -603,6 +602,12 @@
 
         "You obtain a PLUTONIUM SHIELD!",
         "It reduces the damage you\ntake by one. All this despite\nthe fact it is obviously\npoisonous."
+    ],
+
+    "item22": [
+
+        "You obtain a PAIR OF RUNNING\nPANTS!",
+        "They are so hideous you want\nto run away from them. Your\nrunning speed is increased."
     ],
 
 

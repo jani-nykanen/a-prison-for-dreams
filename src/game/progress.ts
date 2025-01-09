@@ -8,6 +8,7 @@ import { VERSION } from "./version.js";
 
 const INITIAL_MAP : string = "graveyard";
 
+// No idea why these are here, not in "computeStats"
 const BASE_HEALTH_UP : number = 2;
 const BASE_BULLETS_UP : number = 3;
 
@@ -248,6 +249,10 @@ export class Progress {
         // Speed
         this.speedBonus = 0;
         if (this.obtainedItems[Item.RunningShoes]) {
+
+            this.speedBonus += 1;
+        }
+        if (this.obtainedItems[Item.RunningPants]) {
 
             this.speedBonus += 1;
         }

@@ -4,6 +4,7 @@
   <property name="background_water" type="bool" value="true"/>
   <property name="cutscene" type="int" value="7"/>
   <property name="leftexit" value="abyss"/>
+  <property name="music" value="cave"/>
   <property name="musicvolume" type="float" value="0.4"/>
   <property name="name" value="Portal Storage"/>
   <property name="npctype" type="int" value="0"/>
