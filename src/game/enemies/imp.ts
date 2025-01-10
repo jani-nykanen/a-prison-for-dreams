@@ -54,7 +54,7 @@ export class Imp extends Enemy {
 
     private shoot() : void {
 
-        const PROJECTILE_SPEED : number = 1.75;
+        const PROJECTILE_SPEED : number = 1.5;
 
         if (this.playerRef === undefined) {
 
@@ -66,7 +66,8 @@ export class Imp extends Enemy {
             this.pos.x, this.pos.y, 
             this.pos.x + this.dir*2, this.pos.y - 1, 
             dir.x*PROJECTILE_SPEED, dir.y*PROJECTILE_SPEED, 
-            4, 4, false, -1, this.playerRef, PROJECTILE_SPEED);
+            4, 4, false, -1, this.playerRef, PROJECTILE_SPEED,
+            false, false, 240);
     }
 
 

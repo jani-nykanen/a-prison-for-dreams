@@ -52,6 +52,9 @@ export class Projectile extends CollisionObject {
     private targetObject : GameObject | undefined = undefined;
     private followSpeed : number = 0;
 
+    private timer : number = 0;
+    private maxLifeTime : number = 0;
+
     public readonly stats : Progress | undefined = undefined;
 
 
@@ -115,6 +118,8 @@ export class Projectile extends CollisionObject {
 
     protected updateEvent(event : ProgramEvent) : void {
 
+        const FOLLOWING_BULLET_MAX_LIFETIME : number = 300;
+
         this.sprite.animate(this.id, 0, 
             LAST_ANIMATION_FRAME[this.id] ?? 0, 
             ANIMATION_SPEED[this.id] ?? 0, event.tick);
@@ -130,6 +135,19 @@ export class Projectile extends CollisionObject {
         this.computeFriction();
 
         this.flip = this.speed.x < 0 ? Flip.Horizontal : Flip.None;
+
+        if (this.maxLifeTime > 0) {
+
+            this.timer += event.tick;
+            if (this.timer >= this.maxLifeTime) {
+
+                this.kill(event);
+
+                // Play or not to play (a sound effect), that's the question.
+                // I say not to play.
+                // event.audio.playSample(event.assets.getSample("bullethit"), DEATH_SAMPLE_VOLUME);
+            }
+        }
     }
 
 
@@ -155,7 +173,8 @@ export class Projectile extends CollisionObject {
         attackID : number = -1,
         targetObject : GameObject | undefined = undefined,
         followSpeed : number = 0.0, getGravity : boolean = false,
-        doNotIgnoreBottomLayer : boolean = false) : void {
+        doNotIgnoreBottomLayer : boolean = false,
+        maxLifeTime : number = 0) : void {
 
         const IGNORE_EVEN_THRESHOLD : number = 0.001;
         const BASE_GRAVITY : number = 4.0;
@@ -195,6 +214,9 @@ export class Projectile extends CollisionObject {
         }
 
         this.flip = this.speed.x < 0 ? Flip.Horizontal : Flip.None;
+
+        this.timer = 0;
+        this.maxLifeTime = maxLifeTime;
     }
 
 

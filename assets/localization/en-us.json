@@ -484,6 +484,29 @@
     ],
 
 
+    "npc26": [
+
+        "You probably should not\nattempt this area\nwithout a jetpack.",
+        "Or skis. This was orig-\ninally supposed to be\na skiing center."
+    ],
+
+
+    "npc27": [
+
+        "This path will take you\nto the Great Chasm.\nIf you find a way to\nwalk on lava, that is.",
+        "The Great Dreamer wan-\nted to call this place\nthe 'Flower Path'.",
+        "She never got a chance\nto plant the flowers,\nsadly. Or get rid of\nthe lava."
+    ],
+
+    
+    "npc28": [
+
+        "In the end, the Great\nDreamer want to be\njust like everyone\nelse.",
+        "She wanted to be loved,\nrespected... and build\na huge castle just\nfor herself.",
+        "Keep walking west and\nyou will eventually\nfind it."
+    ],
+
+
     "item0": [
 
         "You obtain a DUMMY ITEM!",
