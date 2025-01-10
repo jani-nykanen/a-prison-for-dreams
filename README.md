@@ -5,7 +5,7 @@
 [Play here](https://jani-nykanen.itch.io/a-prison-for-dreams?secret=OroEZ7JIPtbNggiN50o3q8A4t4)
 
 
-\*Unfinished meaning that it is still in early access, and the full game will be out in early next year. If you want to try the newest development version, there will most likely be a development branch at some point.
+\*Unfinished meaning that it is still in early access, and the full game will be out soon(ish?). If you want to try the newest development version, there will most likely be a development branch at some point.
 
 
 -----
