@@ -973,7 +973,7 @@ export class Player extends CollisionObject {
             this.knockbackTimer -= event.tick;
             if (this.knockbackTimer <= 0 && this.stats.getHealth() <= 0) {
 
-                this.initializeDeath(event);
+                this.initiateDeath(event);
             }
         }
         else if (this.hurtTimer > 0) {
@@ -1108,7 +1108,7 @@ export class Player extends CollisionObject {
     }
 
 
-    private initializeDeath(event : ProgramEvent) : void {
+    private initiateDeath(event : ProgramEvent) : void {
 
         this.dying = true;
         this.sprite.setFrame(4, 8);
@@ -1391,6 +1391,11 @@ export class Player extends CollisionObject {
         }
 
         this.hurt(damage, event);
+
+        if (this.stats.hasItem(Item.HeavyWeight) && this.stats.getHealth() <= 0) {
+            
+            this.initiateDeath(event);
+        }
     }
 
 
@@ -1715,7 +1720,7 @@ export class Player extends CollisionObject {
     public instantKill(event : ProgramEvent) : void {
         
         this.stats.updateHealth(-this.stats.getHealth());
-        this.initializeDeath(event);
+        this.initiateDeath(event);
     }
 
 
