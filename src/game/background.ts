@@ -16,9 +16,21 @@ import { Starfield } from "./starfield.js";
 
 const CLOUD_COLOR_MOD_1 : RGBA = new RGBA(1.0);
 const CLOUD_COLOR_MOD_2 : RGBA = new RGBA(182/255, 219/255, 1.0);
+const CLOUD_COLOR_MOD_3 : RGBA = new RGBA(255/255, 146/255, 109/255);
 
 
-const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, false, true];
+const SPECIAL_SUN_COLORS_1 : RGBA[] = [
+    new RGBA(255, 219, 109),
+    new RGBA(255, 182, 0)
+];
+
+const SPECIAL_SUN_COLORS_2 : RGBA[] = [
+    new RGBA(219, 109, 73),
+    new RGBA(255, 146, 109)
+];
+
+
+const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, false, true, false, true];
 
 
 export const enum BackgroundType {
@@ -37,6 +49,7 @@ export const enum BackgroundType {
     CastleWall = 10,
     NightSkyWithSnowSpecialShift = 11,
     AltStarField = 12,
+    FinalGraveyard = 13,
 };
 
 
@@ -73,6 +86,7 @@ export class Background {
             this.starfield = new Starfield();
             break;
 
+        case BackgroundType.FinalGraveyard:
         case BackgroundType.Graveyard:
 
             this.snowflakeColor = new RGBA(0, 0, 0, 0.5);
@@ -144,7 +158,7 @@ export class Background {
     }
 
 
-    private updateBurningSky(event : ProgramEvent) : void {
+    private updateSpecialSun(event : ProgramEvent) : void {
 
         const ROTATION_SPEED : number = Math.PI*2/600.0;
 
@@ -356,16 +370,17 @@ export class Background {
     }
 
 
-    private drawBurningSun(canvas : Canvas, assets : Assets) : void {
+    private drawSpecialSun(canvas : Canvas, assets : Assets,
+        colors : RGBA[], sunIndex : number = 1, shifty : number = 0) : void {
 
         const RAY_COUNT : number = 12;
         const RAY_LENGTH : number = 576;
 
-        canvas.clear(255, 219, 109);
+        canvas.clear(colors[0].r, colors[0].g, colors[0].b);
 
         const angleStep : number = Math.PI*2/RAY_COUNT;
 
-        canvas.setColor(255, 182, 0);
+        canvas.setColor(colors[1].r, colors[1].g, colors[1].b);
         for (let i : number = 0; i < RAY_COUNT; ++ i) {
 
             if (i % 2 == 0) {
@@ -376,7 +391,7 @@ export class Background {
             const angle : number = this.sunAngle + i*angleStep;
 
             canvas.transform.push();
-            canvas.transform.translate(canvas.width/2, canvas.height/2);
+            canvas.transform.translate(canvas.width/2, canvas.height/2 + shifty);
             canvas.transform.rotate(angle);
             canvas.transform.apply();
 
@@ -393,7 +408,9 @@ export class Background {
         const bmpSun : Bitmap | undefined  = assets.getBitmap("sun");
         if (bmpSun !== undefined) {
 
-            canvas.drawBitmap(bmpSun, Flip.None, canvas.width/2 - 32, canvas.height/2 - 32, 64, 0, 64, 64);
+            canvas.drawBitmap(bmpSun, Flip.None, 
+                canvas.width/2 - 32, canvas.height/2 - 32 + shifty, 
+                sunIndex*64, 0, 64, 64);
         }
     }
 
@@ -462,9 +479,11 @@ export class Background {
             this.starfield?.update(event);
             break;
 
+        case BackgroundType.FinalGraveyard:
         case BackgroundType.BurningSun:
 
-            this.updateBurningSky(event);
+            this.updateSpecialSun(event);
+            this.updateClouds(4.0, event);
             break;
 
         default:
@@ -532,12 +551,18 @@ export class Background {
 
         case BackgroundType.BurningSun:
 
-            this.drawBurningSun(canvas, assets);
+            this.drawSpecialSun(canvas, assets, SPECIAL_SUN_COLORS_1, 1);
             break;
 
         case BackgroundType.CastleWall:
 
             this.drawCastleBackground(canvas, assets, camera);
+            break;
+
+        case BackgroundType.FinalGraveyard:
+
+            this.drawSpecialSun(canvas, assets, SPECIAL_SUN_COLORS_2, 2, -32);
+            this.drawClouds(canvas, assets, camera, CLOUD_COLOR_MOD_3, -192);
             break;
 
         default:

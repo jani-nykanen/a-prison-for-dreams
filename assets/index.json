@@ -111,6 +111,7 @@
         {"name": "throneroom", "path": "throneroom.tmx"},
         {"name": "puzzle3", "path": "puzzle3.tmx"},
         {"name": "prison_entrance", "path": "prison_entrance.tmx"},
+        {"name": "final_graveyard", "path": "final_graveyard.tmx"},
 
         {"name": "collisions_0", "path": "collisions_0.tmx"},
         {"name": "collisions_1", "path": "collisions_1.tmx"},

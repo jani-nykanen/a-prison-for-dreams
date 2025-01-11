@@ -19,6 +19,7 @@ const enum MapEffect {
     None = 0,
     Frozen = 1,
     FrozenBlackAndWhite = 2,
+    Orangish = 3,
 }
 
 
@@ -31,6 +32,9 @@ const mapEffectFromString = (str : string) : MapEffect => {
     
     case "frozenbw":
         return MapEffect.FrozenBlackAndWhite;
+
+    case "orangish":
+        return MapEffect.Orangish;
 
     default:
         break;
@@ -300,6 +304,12 @@ export class Stage {
             canvas.setColor(255*0.90, 255*1.1, 255*1.25);
             break;
 
+        case MapEffect.Orangish:
+
+            canvas.applyEffect(Effect.BlackAndWhite);
+            canvas.setColor(255*1.25, 182*1.25, 146*1.25);
+            break;
+
         default:
             break;
         }
@@ -348,11 +358,15 @@ export class Stage {
 
     public drawBackground(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        this.applyMapEffect(canvas);
+        if (this.effect != MapEffect.Orangish) {
+
+            this.applyMapEffect(canvas);
+        }
 
         this.background.draw(canvas, assets, camera);
         
-        if (this.effect != MapEffect.None) {
+        if (this.effect != MapEffect.None &&
+            this.effect != MapEffect.Orangish) {
 
             canvas.applyEffect(Effect.None);
             canvas.setColor();
