@@ -48,6 +48,7 @@
         {"name": "eye", "path": "eye.png"},
         {"name": "fan", "path": "fan.png"},
         {"name": "anvil", "path": "anvil.png"},
+        {"name": "spirit", "path": "spirit.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},

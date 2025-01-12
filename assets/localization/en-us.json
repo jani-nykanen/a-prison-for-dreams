@@ -181,9 +181,11 @@
 
     "lick": "Lick the Eye? (I know\nyou want to!)",
     "slurp": "SLURP",
-
     "miniboss": "The Eye",
 
+    "touch": "Touch the corrupted\nspirit? (No licking\nthis time, sorry.)",
+    "finallboss": "Undying Dream",
+    
 
     "anvil_reject": "You need an OBSIDIAN CHUNK.",
     "anvil_accept": "You put your OBSIDIAN CHUNK on\nthe anvil and start hammering.",
@@ -303,6 +305,15 @@
         "Time to destroy the\nnightmare they call\n'The Dream'.",
         "Time to end\nthe madness.",
         "And hopefully...\ntime to recover\nthe real world."
+    ],
+    
+    "cutscene13": [
+
+        "I... might have lied\nto you before.",
+        "Lady Alexandra is not\nexactly alive anymore.",
+        "However, her spirit is\nstill here, guarding\nher own grave.",
+        "But the spirit is cor-\nrupted by a nightmare.",
+        "They wanted to make\nsure the Dream won't\nend that easily..."
     ],
 
 

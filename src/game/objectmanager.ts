@@ -44,6 +44,7 @@ import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
 import { Fan } from "./interactables/fan.js";
 import { Anvil } from "./interactables/anvil.js";
+import { FinalBossTrigger } from "./interactables/finalbosstrigger.js";
 
 
 export class ObjectManager {
@@ -77,12 +78,14 @@ export class ObjectManager {
     private readonly dialogueBox : TextBox;
     private readonly hints : HintRenderer;
     private readonly bossBattleConfirmationBox : ConfirmationBox;
+    private readonly finalBossBattleConfirmationBox : ConfirmationBox;
     private readonly mapTransition : MapTransitionCallback;
     private readonly shops : Shop[];
 
 
     constructor(progress : Progress, dialogueBox : TextBox,
         hints : HintRenderer, bossBattleConfirmationBox : ConfirmationBox,
+        finalBossBattleConfirmationBox : ConfirmationBox,
         shops : Shop[], stage : Stage, camera : Camera,
         npcType : number, mapTransition : MapTransitionCallback,
         spawnId : number, pose : Pose, createNewPlayer : boolean, 
@@ -112,6 +115,7 @@ export class ObjectManager {
 
         this.dialogueBox = dialogueBox;
         this.bossBattleConfirmationBox = bossBattleConfirmationBox;
+        this.finalBossBattleConfirmationBox = finalBossBattleConfirmationBox;
         this.hints = hints;
         this.mapTransition = mapTransition;
         this.shops = shops;
@@ -351,6 +355,14 @@ export class ObjectManager {
 
                 this.breakables.push(new Breakable(dx, dy, BreakableType.ScaryFace, 
                     this.splinters, this.collectables));
+                break;
+
+            // Final boss trigger
+            case 90:
+
+                this.interactables.push(new FinalBossTrigger(dx + 8, dy, 
+                    this.finalBossBattleConfirmationBox,  
+                    () : void => this.initiateFinalBoss(stage, camera, event)));
                 break;
 
             default:
@@ -796,6 +808,12 @@ export class ObjectManager {
         }
 
         camera.shake(60, 4);
+    }
+
+
+    public initiateFinalBoss(stage : Stage, camera : Camera, event : ProgramEvent) : void {
+
+        // TODO: EVERYTHING!
     }
 
 

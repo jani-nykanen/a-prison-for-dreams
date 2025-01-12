@@ -60,6 +60,7 @@ export class Game implements Scene {
     private baseTrackVolume : number = 1.0;
 
     private bossBattleConfirmationBox : ConfirmationBox;
+    private finalBossBattleConfirmationBox : ConfirmationBox;
 
     private minibossName : string = "";
 
@@ -107,6 +108,20 @@ export class Game implements Scene {
             (event : ProgramEvent) : void => {
 
                 this.bossBattleConfirmationBox.deactivate();
+            });
+
+
+        // TODO: Use the same box as above?
+        this.finalBossBattleConfirmationBox = new ConfirmationBox(
+            event.localization?.getItem("yesno") ?? ["null", "null"],
+            event.localization?.getItem("touch")?.[0] ?? "null", 
+            (event : ProgramEvent) : void => {
+
+                // This will be overridden
+            },
+            (event : ProgramEvent) : void => {
+
+                this.finalBossBattleConfirmationBox.deactivate();
             });
     }
     
@@ -194,10 +209,10 @@ export class Game implements Scene {
         this.progress.setAreaName(mapName);
 
         this.stage = new Stage(baseMap.getNumericProperty("background"), baseMap, collisionMap);
-        // TODO: Maybe not recreate the whole object, but reset values etc.
+        // TODO: Maybe not recreate the whole object, but reset values etc. (Note: too late!)
         this.objects = new ObjectManager(
-            this.progress, this.dialogueBox, 
-            this.hints, this.bossBattleConfirmationBox,
+            this.progress, this.dialogueBox, this.hints, 
+            this.bossBattleConfirmationBox, this.finalBossBattleConfirmationBox,
             this.shops, this.stage, this.camera,
             Number(baseMap.getProperty("npctype") ?? 0),
             this.mapTransition, spawnPos, pose, 
@@ -477,6 +492,12 @@ export class Game implements Scene {
             return;
         }
 
+        if (this.finalBossBattleConfirmationBox.isActive()) {
+
+            this.finalBossBattleConfirmationBox.update(event);
+            return;
+        }
+
         if (this.dialogueBox.isActive()) {
 
             this.mapNameTimer = 0;
@@ -580,6 +601,10 @@ export class Game implements Scene {
         if (this.bossBattleConfirmationBox.isActive()) {
 
             this.bossBattleConfirmationBox.draw(canvas, assets);
+        }
+        if (this.finalBossBattleConfirmationBox.isActive()) {
+
+            this.finalBossBattleConfirmationBox.draw(canvas, assets);
         }
 
         this.drawDialogueBox(canvas, assets);
