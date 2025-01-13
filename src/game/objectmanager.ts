@@ -361,7 +361,7 @@ export class ObjectManager {
             case 90:
 
                 this.interactables.push(new FinalBossTrigger(dx + 8, dy, 
-                    this.finalBossBattleConfirmationBox,  
+                    this.dialogueBox, this.finalBossBattleConfirmationBox,  
                     () : void => this.initiateFinalBoss(stage, camera, event)));
                 break;
 

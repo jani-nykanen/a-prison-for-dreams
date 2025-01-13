@@ -183,8 +183,15 @@
     "slurp": "SLURP",
     "miniboss": "The Eye",
 
-    "touch": "Touch the corrupted\nspirit? (No licking\nthis time, sorry.)",
-    "finallboss": "Undying Dream",
+
+    "spirit_prelude": [
+
+        "This is the corrupted spirit\nof Lady Alexandra, the Great\nDreamer, guarding her own\ngrave.",
+        "There is sadness in her empty\ngaze. Or madness. You can\nbarely tell difference."
+    ],
+    "touch": "Hug the poor spirit?\n(I know you want to!)",
+    "hug": "HUG",
+    "finalboss": "Undying Dream",
     
 
     "anvil_reject": "You need an OBSIDIAN CHUNK.",

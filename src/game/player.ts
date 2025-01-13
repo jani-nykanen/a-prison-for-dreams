@@ -58,6 +58,7 @@ export const enum WaitType {
     WakingUp = 2,
     ToggleLever = 3,
     Licking = 4, // Don't ask
+    Hugging = 5,
 };
 
 
@@ -135,6 +136,7 @@ export class Player extends CollisionObject {
     private waitCeaseEvent : ((event : ProgramEvent) => void) | undefined = undefined;
 
     private slurpString : string = ""; // Slurp *what now*?
+    private hugString : string = "";
 
     private readonly projectiles : ProjectileGenerator;
     private readonly particles : ObjectGenerator<AnimatedParticle, void>;
@@ -177,6 +179,7 @@ export class Player extends CollisionObject {
         this.mapTransition = mapTransition;
 
         this.slurpString = event.localization?.getItem("slurp")?.[0] ?? "null";
+        this.hugString = event.localization?.getItem("hug")?.[0] ?? "null";
     }
 
 
@@ -1250,9 +1253,11 @@ export class Player extends CollisionObject {
     }
 
 
-    private drawSlurping(canvas : Canvas, assets : Assets) : void {
+    // Sometimes it's better not to ask
+    private drawSlurpingAndHugging(canvas : Canvas, assets : Assets) : void {
 
-        if (!this.waitActive || this.waitType != WaitType.Licking) {
+        if (!this.waitActive || 
+            (this.waitType != WaitType.Licking && this.waitType != WaitType.Hugging)) {
             
             return;
         }
@@ -1260,8 +1265,8 @@ export class Player extends CollisionObject {
         const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
 
         const t : number = 1.0 - this.waitTimer/this.initialWaitTimer;
-
         const count : number = 1 + Math.min(2, Math.floor(t*3));
+        const text : string = this.waitType == WaitType.Licking ? this.slurpString : this.hugString;
 
         canvas.setColor(182, 255, 146);
         for (let i : number = 0; i < count; ++ i) {
@@ -1276,7 +1281,7 @@ export class Player extends CollisionObject {
                 shiftx = -8;
             }
 
-            canvas.drawText(bmpFontOutlines, this.slurpString, 
+            canvas.drawText(bmpFontOutlines, text, 
                 this.pos.x + shiftx, 
                 this.pos.y - 24 - i*12, -8, 0, Align.Center);
         }
@@ -1592,7 +1597,7 @@ export class Player extends CollisionObject {
         }
         
         this.drawHoldingItem(canvas, assets);
-        this.drawSlurping(canvas, assets);
+        this.drawSlurpingAndHugging(canvas, assets);
     }
 
 
@@ -1773,6 +1778,7 @@ export class Player extends CollisionObject {
             break;
 
         case WaitType.Licking:
+        case WaitType.Hugging:
 
             this.sprite.setFrame(10, 5);
             break;

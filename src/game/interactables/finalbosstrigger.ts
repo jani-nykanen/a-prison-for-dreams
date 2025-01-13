@@ -3,6 +3,7 @@ import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Canvas, Flip } from "../../gfx/interface.js";
 import { Sprite } from "../../gfx/sprite.js";
 import { ConfirmationBox } from "../../ui/confirmationbox.js";
+import { TextBox } from "../../ui/textbox.js";
 import { HintRenderer } from "../hintrenderer.js";
 import { Player, WaitType } from "../player.js";
 import { Interactable } from "./interactable.js";
@@ -11,13 +12,15 @@ import { Interactable } from "./interactable.js";
 export class FinalBossTrigger extends Interactable {
 
 
+    private textbox : TextBox;
     private confirmationBox : ConfirmationBox;
     private wave : number = 0;
 
     private readonly triggerEvent : () => void;
 
 
-    constructor(x : number, y : number, confirmationBox : ConfirmationBox,
+    constructor(x : number, y : number, 
+        textbox : TextBox, confirmationBox : ConfirmationBox,
         triggerEvent : () => void) {
 
         super(x, y, undefined);
@@ -27,6 +30,7 @@ export class FinalBossTrigger extends Interactable {
         this.cameraCheckArea.x = 64;
         this.cameraCheckArea.y = 64;
 
+        this.textbox = textbox;
         this.confirmationBox = confirmationBox;
 
         this.triggerEvent = triggerEvent;
@@ -55,15 +59,25 @@ export class FinalBossTrigger extends Interactable {
         
         event.audio.playSample(event.assets.getSample("select"), 0.40);
 
-        this.confirmationBox.activate(1, undefined, 
-            (event : ProgramEvent) : void => {
+        this.textbox.addText(event.localization?.getItem("spirit_prelude") ?? ["null"]);
+        this.textbox.activate(false, null, (event : ProgramEvent) : void => {
 
+            this.confirmationBox.activate(1, undefined, 
+                (event : ProgramEvent) : void => {
+    
                 player.setPosition(this.pos.x, this.pos.y);
 
+                // TODO: This ain't no hugging
+                event.audio.playSample(event.assets.getSample("lick"), 0.60);
+
                 this.confirmationBox.deactivate();
-                this.triggerEvent();
-            }
-        );
+                player.startWaiting(90, WaitType.Hugging, undefined, (event : ProgramEvent) : void => {
+
+                    this.triggerEvent();
+                });
+                }
+            );
+        });
     }
 
 
