@@ -517,7 +517,7 @@ export class TitleScreen implements Scene {
         }
 
         canvas.setColor(146, 255, 73);
-        canvas.drawText(bmpFontOutlines, "\u0008 2024 Jani Nyk\u0007nen", 
+        canvas.drawText(bmpFontOutlines, "\u0008 2024-2025 Jani Nyk\u0007nen", 
             canvas.width/2, canvas.height - 16, -9, 0, Align.Center);
         canvas.setColor();
 
