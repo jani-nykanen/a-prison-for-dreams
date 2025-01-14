@@ -49,6 +49,7 @@
         {"name": "fan", "path": "fan.png"},
         {"name": "anvil", "path": "anvil.png"},
         {"name": "spirit", "path": "spirit.png"},
+        {"name": "finalboss", "path": "finalboss.png"},
 
         {"name": "hud", "path": "hud.png"},
         {"name": "portraits", "path": "portraits.png"},
@@ -177,7 +178,8 @@
         {"name": "miniboss", "path": "miniboss.ogg"},
         {"name": "cave", "path": "cave.ogg"},
         {"name": "winter", "path": "winter.ogg"},
-        {"name": "castle", "path": "castle.ogg"}
+        {"name": "castle", "path": "castle.ogg"},
+        {"name": "finalboss", "path": "finalboss.ogg"}
 
     ],
 

@@ -45,6 +45,7 @@ import { RGBA } from "../math/rgba.js";
 import { Fan } from "./interactables/fan.js";
 import { Anvil } from "./interactables/anvil.js";
 import { FinalBossTrigger } from "./interactables/finalbosstrigger.js";
+import { FinalBoss } from "./enemies/finalboss.js";
 
 
 export class ObjectManager {
@@ -62,6 +63,7 @@ export class ObjectManager {
     private enemies : Enemy[];
     private visibleEnemies : VisibleObjectBuffer<Enemy>;
     private miniboss : Eye | undefined = undefined;
+    private finalboss : FinalBoss | undefined = undefined;
 
     private platforms : Platform[];
     private visiblePlatforms : VisibleObjectBuffer<Platform>;
@@ -698,6 +700,7 @@ export class ObjectManager {
         }
 
         this.miniboss = undefined;
+        this.finalboss = undefined;
 
         // For debugging, if things go wrong
         // this.player.setPosition(128, 64);
@@ -813,12 +816,56 @@ export class ObjectManager {
 
     public initiateFinalBoss(stage : Stage, camera : Camera, event : ProgramEvent) : void {
 
-        // TODO: EVERYTHING!
+        const MUSIC_VOL : number = 0.30;
+
+        const deathEvent = (event : ProgramEvent) : void => {
+
+            event.transition.activate(true, TransitionType.Fade, 1.0/60.0, event,
+                (event : ProgramEvent) : void => {
+
+                    throw new Error("Not yet done.");
+                },
+                new RGBA(255, 255, 255));
+        };
+
+        const triggerDeathEvent = (event : ProgramEvent) : void => {
+
+            for (const e of this.enemies) {
+
+                if (e !== this.finalboss) {
+
+                    e.softKill();
+                }
+            }
+        }
+
+        this.interactables.length = 0;
+
+        this.player.startHarmlessKnockback(60);
+
+        const playerPos : Vector = this.player.getPosition();
+        this.finalboss = new FinalBoss(playerPos.x, playerPos.y - 24, deathEvent, triggerDeathEvent);
+        this.enemies.push(this.finalboss);
+
+        this.finalboss.passGenerators(this.flyingText, this.collectables, this.projectiles);
+        this.finalboss.passShakeEvent(
+            (shakeTime : number, shakeAmount : number) : void => camera.shake(shakeTime, shakeAmount));
+
+        event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
+        event.audio.fadeInMusic(event.assets.getSample("finalboss"), MUSIC_VOL, 1000);
+
+        camera.shake(60, 4);
     }
 
 
     public getMinibossHealth() : number | undefined {
 
         return this.miniboss?.getHealthbarHealth();
+    }
+
+
+    public getFinalBossHealth() : number | undefined {
+
+        return this.finalboss?.getHealthbarHealth();
     }
 }

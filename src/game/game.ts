@@ -8,7 +8,7 @@ import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { ObjectManager } from "./objectmanager.js";
 import { Assets } from "../core/assets.js";
 import { Progress } from "./progress.js";
-import { drawGameSavingIcon, drawHUD, drawMinibossHealthbar, GAME_SAVE_ANIMATION_TIME } from "./hud.js";
+import { drawGameSavingIcon, drawHUD, drawBossHealthbar, GAME_SAVE_ANIMATION_TIME } from "./hud.js";
 import { TransitionType } from "../core/transition.js";
 import { RGBA } from "../math/rgba.js";
 import { Pause } from "./pause.js";
@@ -63,6 +63,7 @@ export class Game implements Scene {
     private finalBossBattleConfirmationBox : ConfirmationBox;
 
     private minibossName : string = "";
+    private finalbossName : string = "";
 
     // To-be-removed from the final version
     private inProgressMessage : string = "";
@@ -428,6 +429,7 @@ export class Game implements Scene {
         this.gameSaveTimer = 0;
 
         this.minibossName = event.localization?.getItem("miniboss")?.[0] ?? "null";
+        this.finalbossName = event.localization?.getItem("finalboss")?.[0] ?? "null";
 
         this.inProgressMessage = event.localization?.getItem("inprogress")?.[0] ?? "null";
 
@@ -590,10 +592,15 @@ export class Game implements Scene {
             
             drawHUD(canvas, assets, this.progress!);
 
-            const bossHealth : number | undefined = this.objects?.getMinibossHealth();
-            if (bossHealth !== undefined) {
+            const miniBossHealth : number | undefined = this.objects?.getMinibossHealth();
+            const finalBossHealth : number | undefined = this.objects?.getFinalBossHealth();
+            if (miniBossHealth !== undefined) {
 
-                drawMinibossHealthbar(canvas, assets, bossHealth, this.minibossName);
+                drawBossHealthbar(canvas, assets, miniBossHealth, this.minibossName, 128);
+            }
+            if (finalBossHealth !== undefined) {
+
+                drawBossHealthbar(canvas, assets, finalBossHealth, this.finalbossName, 160);
             }
         }
 

@@ -154,7 +154,7 @@ export class Eye extends Enemy {
             const dx : number = Math.cos(angle);
             const dy : number = Math.sin(angle);
 
-            this.projectiles.next().spawn(
+            this.projectiles?.next().spawn(
                 this.pos.x, this.pos.y, this.pos.x, this.pos.y,
                  dx*PROJECTILE_SPEED, dy*PROJECTILE_SPEED, 3, 2, false);
         }
@@ -653,7 +653,7 @@ export class Eye extends Enemy {
             return;
         }
 
-        const bmpEye : Bitmap | undefined = assets.getBitmap("eye");
+        const bmpEye : Bitmap | undefined = assets?.getBitmap("eye");
 
         if (this.dying) {
 

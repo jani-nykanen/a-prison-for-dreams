@@ -156,14 +156,13 @@ export const drawGameSavingIcon = (canvas : Canvas, assets : Assets, timer : num
 }
 
 
-export const drawMinibossHealthbar = (canvas : Canvas, assets : Assets, value : number, name : string) : void => {
+export const drawBossHealthbar = (canvas : Canvas, assets : Assets, value : number, name : string, width : number = 128) : void => {
 
-    const WIDTH : number = 128;
     const BOTTOM_OFFSET : number = 14;
 
     const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
 
-    drawHealthBar(canvas, canvas.width/2 - WIDTH/2, canvas.height - BOTTOM_OFFSET, WIDTH, value);
+    drawHealthBar(canvas, canvas.width/2 - width/2, canvas.height - BOTTOM_OFFSET, width, value);
 
     canvas.drawText(bmpFontOutlines, name, 
         canvas.width/2, canvas.height - BOTTOM_OFFSET - 6, 
