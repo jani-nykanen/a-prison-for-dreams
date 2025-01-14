@@ -5,46 +5,94 @@ import { sampleInterpolatedWeightedUniform, sampleWeightedUniform } from "../../
 import { Rectangle } from "../../math/rectangle.js";
 import { clamp } from "../../math/utility.js";
 import { Vector } from "../../math/vector.js";
+import { GameObject } from "../gameobject.js";
 import { Player } from "../player.js";
+import { TILE_WIDTH } from "../tilesize.js";
 import { updateSpeedAxis } from "../utility.js";
 import { Enemy } from "./enemy.js";
 
 
-const INITIAL_Y : number = 256;
-const HEALTH : number = 512;
-
-const BASE_ATTACK_TIME : number = 240;
-const MIN_ATTACK_TIME : number = 120;
+const INITIAL_Y : number = 224;
+const TOTAL_HEALTH : number = 512;
 
 const DEATH_TIME : number = 120;
 
+const BODY_PIECE_SX : number[] = [0, 64, 112, 120];
+const BODY_PIECE_SY : number[] = [0, 0, 0, 40];
+const BODY_PIECE_DIMENSION : number[] = [64, 48, 32, 16];
 
-const enum Attack {
 
-    None = -1,
+class BodyPiece extends GameObject {
 
-    Shoot1 = 0,
-    Shoot2 = 1,
-    Crush = 2,
-    Dash = 3,
 
-    AttackCount = 4,
+    private followedObject : GameObject;
+    private targetRadius : number;
+
+    private id : number;
+
+    public readonly radius : number;
+
+
+    constructor(x : number, y : number, id : number,
+        followedObject : GameObject, selfRadius : number, targetRadius : number) {
+
+        super(x, y, true);
+
+        this.followedObject = followedObject;
+
+        this.targetRadius = targetRadius;
+        this.radius = selfRadius;
+
+        this.friction.x = 0.05;
+        this.friction.y = 0.05;
+
+        this.id = id;
+
+        this.inCamera = true;
+    }
+
+
+    protected updateEvent(event : ProgramEvent) : void {
+        
+        const tpos : Vector = this.followedObject.getPosition();
+        const dir : Vector = Vector.direction(this.pos, tpos);
+
+        const distance : number = Vector.distance(this.pos, tpos);
+        const minDistance : number = this.radius + this.targetRadius;
+        /*
+        if (distance < minDistance) {
+
+            this.pos.x = tpos.x - dir.x*(minDistance);
+            this.pos.y = tpos.y - dir.y*(minDistance);
+            return;
+        }
+        */
+
+        const speed : number = Math.max(0.0, (distance - minDistance)/4.0);
+        
+        this.target.x = dir.x*speed;
+        this.target.y = dir.y*speed;
+    }
+
+
+    public draw(canvas : Canvas, assets : Assets | undefined, bmp : Bitmap | undefined) : void {
+
+        if (!this.isActive() || !this.followedObject.doesExist()) {
+
+            return;
+        }
+
+        const sx : number = BODY_PIECE_SX[this.id] ?? 0;
+        const sy : number = BODY_PIECE_SY[this.id] ?? 0;
+        const dimension : number = BODY_PIECE_DIMENSION[this.id] ?? 64;
+
+        const dx : number = this.pos.x - dimension/2;
+        const dy : number = this.pos.y - dimension/2;
+
+        // Body
+        canvas.drawBitmap(bmp, Flip.None, dx, dy, sx, sy, dimension, dimension);
+    }
 }
-
-
-const ATTACK_WEIGHTS_INITIAL : number[] = [
-    0.40,
-    0.10,
-    0.20,
-    0.30
-];
-
-const ATTACK_WEIGHTS_FINAL : number[] = [
-    0.25,
-    0.25,
-    0.25,
-    0.25
-];
 
 
 export class FinalBoss extends Enemy {
@@ -52,37 +100,22 @@ export class FinalBoss extends Enemy {
 
     private initialPosReached : boolean = false;
 
-    private attackTimer : number = BASE_ATTACK_TIME/2;
-    private attackType : Attack = Attack.None;
-    // private previousAttack : Attack = Attack.None;
-    private attacking : boolean = false;
-    private phase : number = 0;
-    private flickerTimer : number = 0;
-
-    private initialHealth : number = 0;
-    private healthBarPos : number = 1.0;
+    private initialHealth : number = TOTAL_HEALTH;
+    private healthBarPos : number = 0.0;
 
     private playerRef : Player | undefined = undefined;
 
-    private dashing : boolean = false;
-    private dashDirection : Vector;
+    private wave : number = 0.0;
 
-    // Some grade A variable naming here
-    private crushing : boolean = false;
-    private crushCount : number = 0;
-    private recoveringFromCrush : boolean = false;
 
-    private verticalDirection : number = 0;
-    private bodyWave : number = 0;
-
-    private ghostSpawnTimer : number = 0;
-    private previousDirection : number = 0;
     private deathEvent : (event : ProgramEvent) => void;
     private triggerDeathEvent : (event : ProgramEvent) => void;
 
     private deathTimer : number = 0;
 
     private deathTriggered : boolean = false;
+
+    private bodyPieces : BodyPiece[];
 
 
     constructor(x : number, y : number, 
@@ -94,7 +127,7 @@ export class FinalBoss extends Enemy {
         this.sprite.resize(64, 64);
         this.sprite.setFrame(1, 0);
 
-        this.health = HEALTH;
+        this.health = TOTAL_HEALTH;
         this.initialHealth = this.health;
         this.attackPower = 5;
 
@@ -110,12 +143,10 @@ export class FinalBoss extends Enemy {
         this.takeCollisions = false;
         // this.canHurtPlayer = false;
 
-        this.friction.x = 0.15;
-        this.friction.y = 0.15;
+        this.friction.x = 0.05;
+        this.friction.y = 0.05;
 
         this.knockbackFactor = 1.0;
-
-        this.dashDirection = new Vector();
 
         this.deathEvent = deathEvent;
         this.triggerDeathEvent = triggerDeathEvent;
@@ -126,9 +157,19 @@ export class FinalBoss extends Enemy {
         this.deathSound = "eye_death";
 
         this.dir = Math.random() > 0.5 ? 1 : -1;
-        this.verticalDirection = 1;
 
         this.canBeMoved = false;
+
+        this.bodyPieces = new Array<BodyPiece> (3);
+        this.createBodyPieces();
+    }
+
+
+    private createBodyPieces() : void {
+
+        this.bodyPieces[0] = new BodyPiece(this.pos.x, this.pos.y + 24, 1, this, 12, 16);
+        this.bodyPieces[1] = new BodyPiece(this.pos.x, this.pos.y + 48, 2, this.bodyPieces[0], 8, 12);
+        this.bodyPieces[2] = new BodyPiece(this.pos.x, this.pos.y + 64, 3, this.bodyPieces[1], 8, 8);
     }
 
 
@@ -139,47 +180,33 @@ export class FinalBoss extends Enemy {
     }
 
 
-    private updateWaving(event : ProgramEvent) : void {
+    private updateBaseMovement(event : ProgramEvent) : void {
 
-        const VERTICAL_SPEED : number = 0.25;
-        const HORIZONTAL_SPEED : number = 0.33; 
-        const TRIGGER_DISTANCE : number = 16;
-        const MIDDLE_Y : number = 7*16;
+        const HORIZONTAL_RADIUS : number = TILE_WIDTH*7.5; 
 
-        const t : number = 1.0 - this.health/this.initialHealth;
-        const bonus : number = 1.0 + 0.5*t; 
+        const WAVE_SPEED : number = Math.PI*2/240.0;
+        const AMPLITUDE_Y : number = 0.75;
+        const SPEED_X : number = 1.0;
 
-        if (this.dir == 0) {
+        this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
+        this.target.y = Math.sin(this.wave)*AMPLITUDE_Y;
 
-            this.dir = (this.playerRef?.getPosition().x ?? 0) > this.pos.x ? 1 : -1;
-            this.verticalDirection = this.pos.y > MIDDLE_Y ? -1 : 1;
+        this.target.x = SPEED_X*this.dir;
+        if ((this.dir < 0 && this.pos.x < this.initialPos.x - HORIZONTAL_RADIUS) ||
+            (this.dir > 0 && this.pos.x > this.initialPos.x + HORIZONTAL_RADIUS)) {
+
+            this.dir *= -1;
+            this.target.x *= -1;
         }
-        this.target.x = this.dir*HORIZONTAL_SPEED*bonus;
-
-        if ((this.verticalDirection > 0 && this.pos.y - MIDDLE_Y > TRIGGER_DISTANCE) ||
-            (this.verticalDirection < 0 && MIDDLE_Y - this.pos.y > TRIGGER_DISTANCE)) {
-
-            this.verticalDirection *= -1;
-        }
-        this.target.y = this.verticalDirection*VERTICAL_SPEED*bonus;
-    }
-
-
-    private updateBodyWave(event : ProgramEvent) : void {
-
-        const BODY_WAVE : number = Math.PI*2/120.0;
-
-        const t : number = 1.0 - this.health/this.initialHealth;
-        const bonus : number = 1.0 + t;
-
-        this.bodyWave = (this.bodyWave + BODY_WAVE*bonus*event.tick) % (Math.PI*2);
     }
 
 
     private updateHealthbarPos(event : ProgramEvent) : void {
 
+        const speed : number = this.health < this.initialHealth ? 0.005 : 0.015;
+
         this.healthBarPos = clamp(updateSpeedAxis(
-            this.healthBarPos, this.health/this.initialHealth, 0.005*event.tick), 
+            this.healthBarPos, this.health/this.initialHealth, speed*event.tick), 
             0.0, 1.0);
     }
 
@@ -192,14 +219,20 @@ export class FinalBoss extends Enemy {
 
     protected updateLogic(event : ProgramEvent) : void {
         
+        for (const o of this.bodyPieces) {
+
+            o.update(event);
+        }
+
+        this.updateHealthbarPos(event);
+
         if (!this.initialPosReached) {
 
             this.reachInitialPos(event);
             return;
         }
 
-        this.updateBodyWave(event);
-        this.updateWaving(event);
+        this.updateBaseMovement(event);
     }
 
 
@@ -259,6 +292,7 @@ export class FinalBoss extends Enemy {
         }
 
         const bmpFinalboss : Bitmap | undefined = assets?.getBitmap("finalboss");
+        const bmpMouth : Bitmap | undefined = assets?.getBitmap("mouth");
 
         if (this.dying) {
 
@@ -275,10 +309,19 @@ export class FinalBoss extends Enemy {
             canvas.setColor(255, 255, 255);
         }
 
+        // Body pieces
+        for (let i : number = this.bodyPieces.length - 1; i >= 0; -- i) {
+
+            this.bodyPieces[i].draw(canvas, assets, bmpFinalboss);
+        }
+
         const dx : number = this.pos.x - 32;
         const dy : number = this.pos.y - 32;
 
+        // Body
         canvas.drawBitmap(bmpFinalboss, Flip.None, dx, dy, 0, 0, 64, 64);
+        // Mouth
+        canvas.drawBitmap(bmpMouth, Flip.None, dx, dy + 24, 64, 0, 64, 32);
 
         if (hurtFlicker) {
 

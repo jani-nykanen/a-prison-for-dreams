@@ -816,7 +816,7 @@ export class ObjectManager {
 
     public initiateFinalBoss(stage : Stage, camera : Camera, event : ProgramEvent) : void {
 
-        const MUSIC_VOL : number = 0.30;
+        const MUSIC_VOL : number = 0.40;
 
         const deathEvent = (event : ProgramEvent) : void => {
 
@@ -855,6 +855,8 @@ export class ObjectManager {
         event.audio.fadeInMusic(event.assets.getSample("finalboss"), MUSIC_VOL, 1000);
 
         camera.shake(60, 4);
+
+        stage.enableFinalBossArena();
     }
 
 

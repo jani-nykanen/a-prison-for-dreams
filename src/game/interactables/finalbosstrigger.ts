@@ -57,6 +57,9 @@ export class FinalBossTrigger extends Interactable {
 
     protected interactionEvent(player : Player, event : ProgramEvent) : void {
         
+        this.triggerEvent();
+        return;
+
         event.audio.playSample(event.assets.getSample("select"), 0.40);
 
         this.textbox.addText(event.localization?.getItem("spirit_prelude") ?? ["null"]);

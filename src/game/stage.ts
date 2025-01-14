@@ -76,9 +76,10 @@ export class Stage {
 
     private switches : boolean[];
 
+    private finalBossArenaEnabled : boolean = false;
     private topLayerDisabled : boolean = false;
-    private topLayerFadeTimer : number = 0;
-    private topLayerInitialFadeTime : number = 0;
+    private layerFadeTimer : number = 0;
+    private initialLayerFadeTime : number = 0;
 
     private effect : MapEffect;
 
@@ -328,9 +329,9 @@ export class Stage {
 
         this.background.update(camera, event);
 
-        if (this.topLayerFadeTimer > 0) {
+        if (this.layerFadeTimer > 0) {
 
-            this.topLayerFadeTimer -= event.tick;
+            this.layerFadeTimer -= event.tick;
         }
 
         if (this.darknessRadius > 0) {
@@ -388,19 +389,20 @@ export class Stage {
         }
 
         let topLayerOpacity : number = this.topLayerDisabled ? 0.0 : 1.0;
-        if (this.topLayerFadeTimer > 0) {
+        if (this.layerFadeTimer > 0) {
 
             let t : number = 0.0;
-            if (this.topLayerInitialFadeTime > 0) {
+            if (this.initialLayerFadeTime > 0) {
 
-                t = this.topLayerFadeTimer/this.topLayerInitialFadeTime;
+                t = this.layerFadeTimer/this.initialLayerFadeTime;
             }
 
             topLayerOpacity = this.topLayerDisabled ? t : 1.0 - t;
         }
 
         this.applyMapEffect(canvas);
-        this.renderlayer.draw(canvas, tileset, camera, topLayerOpacity);
+        this.renderlayer.draw(canvas, tileset, camera, topLayerOpacity,
+            this.finalBossArenaEnabled ? 2 : 0);
 
         if (this.effect != MapEffect.None) {
 
@@ -440,7 +442,7 @@ export class Stage {
             return;
         }
 
-        this.collisions.objectCollision(o, event);
+        this.collisions.objectCollision(o, event, this.finalBossArenaEnabled);
 
         const totalWidth : number = this.width*TILE_WIDTH;
         const totalHeight : number = this.height*TILE_HEIGHT;
@@ -478,13 +480,16 @@ export class Stage {
             o.instantKill(event);
         }
 
-        if (this.rightExit !== undefined) {
+        if (!this.finalBossArenaEnabled) {
 
-            o.screenTransitionEvent?.(this.width*TILE_WIDTH, 1, this.rightExit, event);
-        }
-        if (this.leftExit !== undefined) {
+            if (this.rightExit !== undefined) {
 
-            o.screenTransitionEvent?.(0, -1, this.leftExit, event);
+                o.screenTransitionEvent?.(this.width*TILE_WIDTH, 1, this.rightExit, event);
+            }
+            if (this.leftExit !== undefined) {
+
+                o.screenTransitionEvent?.(0, -1, this.leftExit, event);
+            }
         }
     }
 
@@ -533,9 +538,17 @@ export class Stage {
 
         this.topLayerDisabled = !state;
 
-        this.topLayerFadeTimer = fadeTime;
-        this.topLayerInitialFadeTime = fadeTime;
+        this.layerFadeTimer = fadeTime;
+        this.initialLayerFadeTime = fadeTime;
     }
+
+
+    public enableFinalBossArena() : void{
+
+        this.finalBossArenaEnabled = true;
+        // this.layerFadeTimer = fadeTime;
+        // this.initialLayerFadeTime = fadeTime;
+    } 
 
 
     public changeBackground(newType? : BackgroundType) : void {
@@ -548,8 +561,9 @@ export class Stage {
 
         this.changeBackground();
 
+        this.finalBossArenaEnabled = false;
         this.topLayerDisabled = false;
-        this.topLayerFadeTimer = 0;
-        this.topLayerInitialFadeTime = 0;
+        this.layerFadeTimer = 0;
+        this.initialLayerFadeTime = 0;
     }
 }

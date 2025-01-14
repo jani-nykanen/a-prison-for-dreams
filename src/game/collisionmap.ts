@@ -343,7 +343,8 @@ export class CollisionMap {
     }
 
 
-    public objectCollision(o : CollisionObject, event : ProgramEvent) : void {
+    public objectCollision(o : CollisionObject, event : ProgramEvent,
+        ignoreBottomLayer : boolean = false) : void {
 
         const MARGIN : number = 2;
 
@@ -375,7 +376,7 @@ export class CollisionMap {
                 const dy : number = clamp(y, 0, this.height);
 
                 const colID : number = this.collisions[dy*this.width + dx] ?? 0;
-                if (colID == 0) {
+                if (colID == 0 || (ignoreBottomLayer && (colID & CollisionBit.ContainsBottomLayer) != 0)) {
 
                     continue;
                 }
