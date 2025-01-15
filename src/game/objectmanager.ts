@@ -854,6 +854,17 @@ export class ObjectManager {
         event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
         event.audio.fadeInMusic(event.assets.getSample("finalboss"), MUSIC_VOL, 1000);
 
+        // Platforms
+        const platformOffsetX : number = TILE_WIDTH*7.5;
+        for (let i : number = 0; i < 2; ++ i) {
+
+            this.platforms.push(new Platform(
+                playerPos.x - (-1 + 2*i)*platformOffsetX, 
+                playerPos.y - 56, 
+                PlatformType.StaticUnmoving));
+        }
+        this.platforms.push(new Platform(playerPos.x, playerPos.y - 96, PlatformType.StaticUnmoving));
+
         camera.shake(60, 4);
 
         stage.enableFinalBossArena();

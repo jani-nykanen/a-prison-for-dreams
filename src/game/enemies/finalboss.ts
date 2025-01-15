@@ -12,7 +12,7 @@ import { updateSpeedAxis } from "../utility.js";
 import { Enemy } from "./enemy.js";
 
 
-const INITIAL_Y : number = 224;
+const INITIAL_Y : number = 192;
 const TOTAL_HEALTH : number = 512;
 
 const DEATH_TIME : number = 120;
@@ -20,6 +20,8 @@ const DEATH_TIME : number = 120;
 const BODY_PIECE_SX : number[] = [0, 64, 112, 120];
 const BODY_PIECE_SY : number[] = [0, 0, 0, 40];
 const BODY_PIECE_DIMENSION : number[] = [64, 48, 32, 16];
+
+const HAND_BASE_DISTANCE : number = 64;
 
 
 class BodyPiece extends GameObject {
@@ -43,8 +45,8 @@ class BodyPiece extends GameObject {
         this.targetRadius = targetRadius;
         this.radius = selfRadius;
 
-        this.friction.x = 0.05;
-        this.friction.y = 0.05;
+        this.friction.x = 0.075;
+        this.friction.y = 0.075;
 
         this.id = id;
 
@@ -95,6 +97,55 @@ class BodyPiece extends GameObject {
 }
 
 
+// TODO: Put "Hand" to an external file if the class
+// gets too long
+class Hand extends GameObject {
+ 
+
+    private side : number = 0;
+
+    private mainBody : GameObject;
+
+
+    constructor(body : GameObject, side : -1 | 1) {
+
+        const bodyPos : Vector = body.getPosition();
+
+        super(bodyPos.x + HAND_BASE_DISTANCE*side, bodyPos.y, true);
+
+        this.mainBody = body;
+        this.side = side;
+
+        this.inCamera = true;
+    }
+
+
+    protected updateEvent(event : ProgramEvent) : void {
+
+        const bodyPos : Vector = this.mainBody.getPosition();
+
+        this.pos.x = bodyPos.x + HAND_BASE_DISTANCE*this.side;
+        this.pos.y = bodyPos.y;
+    }
+
+
+    public draw(canvas : Canvas, assets : Assets | undefined, bmp : Bitmap | undefined) : void {
+        
+        //if (this.isActive()) {
+
+        //    return;
+        //}
+
+        const dx : number = this.pos.x - 24;
+        const dy : number = this.pos.y - 24;
+
+        const flip : Flip = this.side < 0 ? Flip.Horizontal : Flip.None;
+        canvas.drawBitmap(bmp, flip, dx, dy, 0, 64, 48, 48);
+    }
+
+}
+
+
 export class FinalBoss extends Enemy {
 
 
@@ -107,15 +158,13 @@ export class FinalBoss extends Enemy {
 
     private wave : number = 0.0;
 
-
     private deathEvent : (event : ProgramEvent) => void;
     private triggerDeathEvent : (event : ProgramEvent) => void;
-
     private deathTimer : number = 0;
-
     private deathTriggered : boolean = false;
 
     private bodyPieces : BodyPiece[];
+    private hands : Hand[];
 
 
     constructor(x : number, y : number, 
@@ -142,11 +191,12 @@ export class FinalBoss extends Enemy {
         // this.ignoreBottomLayer = true;
         this.takeCollisions = false;
         // this.canHurtPlayer = false;
+        // this.canBeMoved = false;
 
         this.friction.x = 0.05;
         this.friction.y = 0.05;
 
-        this.knockbackFactor = 1.0;
+        this.knockbackFactor = 0.5;
 
         this.deathEvent = deathEvent;
         this.triggerDeathEvent = triggerDeathEvent;
@@ -158,10 +208,12 @@ export class FinalBoss extends Enemy {
 
         this.dir = Math.random() > 0.5 ? 1 : -1;
 
-        this.canBeMoved = false;
-
         this.bodyPieces = new Array<BodyPiece> (3);
         this.createBodyPieces();
+
+        this.hands = new Array<Hand> (2);
+        this.hands[0] = new Hand(this, -1);
+        this.hands[1] = new Hand(this, 1);
     }
 
 
@@ -182,10 +234,10 @@ export class FinalBoss extends Enemy {
 
     private updateBaseMovement(event : ProgramEvent) : void {
 
-        const HORIZONTAL_RADIUS : number = TILE_WIDTH*7.5; 
+        const HORIZONTAL_RADIUS : number = TILE_WIDTH*9; 
 
-        const WAVE_SPEED : number = Math.PI*2/240.0;
-        const AMPLITUDE_Y : number = 0.75;
+        const WAVE_SPEED : number = Math.PI*2/300.0;
+        const AMPLITUDE_Y : number = 1.25;
         const SPEED_X : number = 1.0;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
@@ -220,6 +272,11 @@ export class FinalBoss extends Enemy {
     protected updateLogic(event : ProgramEvent) : void {
         
         for (const o of this.bodyPieces) {
+
+            o.update(event);
+        }
+
+        for (const o of this.hands) {
 
             o.update(event);
         }
@@ -322,10 +379,17 @@ export class FinalBoss extends Enemy {
         canvas.drawBitmap(bmpFinalboss, Flip.None, dx, dy, 0, 0, 64, 64);
         // Mouth
         canvas.drawBitmap(bmpMouth, Flip.None, dx, dy + 24, 64, 0, 64, 32);
+        // Hat
+        canvas.drawBitmap(bmpFinalboss, Flip.None, dx + 8, dy - 16, 0, 112, 48, 24);
 
         if (hurtFlicker) {
 
             canvas.applyEffect(Effect.None);
+        }
+
+        for (const o of this.hands) {
+
+            o.draw(canvas, assets, bmpFinalboss);
         }
     }
 

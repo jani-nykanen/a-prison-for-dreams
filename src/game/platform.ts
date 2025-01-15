@@ -22,6 +22,7 @@ export const enum PlatformType {
     Swing = 3,
     Cloud = 4, 
     RectangularSwing = 5,
+    StaticUnmoving = 6,
 };
 
 
@@ -425,6 +426,11 @@ export class Platform extends GameObject {
         case PlatformType.Bumper:
 
             this.updateBumper(event);
+            break;
+
+        case PlatformType.StaticUnmoving:
+
+            this.animatePropeller(event);
             break;
 
         default:
