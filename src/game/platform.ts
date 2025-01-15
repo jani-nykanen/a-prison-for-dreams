@@ -6,6 +6,7 @@ import { Assets } from "../core/assets.js";
 import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "./tilesize.js";
 import { Vector } from "../math/vector.js";
+import { clamp } from "../math/utility.js";
 
 
 const BASE_FRICTION : number = 0.015;
@@ -22,6 +23,7 @@ export const enum PlatformType {
     Swing = 3,
     Cloud = 4, 
     RectangularSwing = 5,
+    // Misleading since this is not really static. Oh well.
     StaticUnmoving = 6,
 };
 
@@ -360,6 +362,22 @@ export class Platform extends GameObject {
     }
 
 
+    private updateUnmovingPlatform(event : ProgramEvent) : void {
+
+        const MAX_DISTANCE : number = 16.0;
+        const MOVE_DELTA : number = 16.0/30.0;
+
+        const dir : number = this.touched ? 1 : -1;
+
+        this.pos.y = clamp(this.pos.y + MOVE_DELTA*dir*event.tick, 
+            this.initialPos.y, this.initialPos.y + MAX_DISTANCE);
+
+        this.animatePropeller(event);
+
+        this.touched = false;
+    }
+
+
     private drawChain(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
         const CHAIN_COUNT = 7;
@@ -430,7 +448,7 @@ export class Platform extends GameObject {
 
         case PlatformType.StaticUnmoving:
 
-            this.animatePropeller(event);
+            this.updateUnmovingPlatform(event);
             break;
 
         default:
