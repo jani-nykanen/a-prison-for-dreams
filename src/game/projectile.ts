@@ -67,7 +67,7 @@ export class Projectile extends CollisionObject {
         this.hitbox = new Rectangle(0, 0, 4, 4);
         this.collisionBox = new Rectangle(0, 0, 2, 2);
 
-        this.cameraCheckArea = new Vector(24, 24);
+        this.cameraCheckArea = new Vector(32, 32);
 
         this.checkVerticalSlope = true;
         this.ignoreBottomLayer = true;
@@ -117,8 +117,6 @@ export class Projectile extends CollisionObject {
 
 
     protected updateEvent(event : ProgramEvent) : void {
-
-        const FOLLOWING_BULLET_MAX_LIFETIME : number = 300;
 
         this.sprite.animate(this.id, 0, 
             LAST_ANIMATION_FRAME[this.id] ?? 0, 
@@ -173,8 +171,8 @@ export class Projectile extends CollisionObject {
         attackID : number = -1,
         targetObject : GameObject | undefined = undefined,
         followSpeed : number = 0.0, getGravity : boolean = false,
-        doNotIgnoreBottomLayer : boolean = false,
-        maxLifeTime : number = 0) : void {
+        doNotIgnoreBottomLayer : boolean = false, maxLifeTime : number = 0,
+        useWideCameraArea : boolean = false) : void {
 
         const IGNORE_EVEN_THRESHOLD : number = 0.001;
         const BASE_GRAVITY : number = 4.0;
@@ -217,6 +215,17 @@ export class Projectile extends CollisionObject {
 
         this.timer = 0;
         this.maxLifeTime = maxLifeTime;
+
+        if (useWideCameraArea) {
+
+            this.cameraCheckArea.x = 256;
+            this.cameraCheckArea.y = 256;
+        }
+        else {
+
+            this.cameraCheckArea.x = 32;
+            this.cameraCheckArea.y = 32;
+        }
     }
 
 

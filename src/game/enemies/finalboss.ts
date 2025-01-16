@@ -6,8 +6,12 @@ import { Rectangle } from "../../math/rectangle.js";
 import { RGBA } from "../../math/rgba.js";
 import { clamp } from "../../math/utility.js";
 import { Vector } from "../../math/vector.js";
+import { CollectableGenerator } from "../collectablegenerator.js";
+import { FlyingText } from "../flyingtext.js";
 import { GameObject } from "../gameobject.js";
+import { ObjectGenerator } from "../objectgenerator.js";
 import { Player } from "../player.js";
+import { ProjectileGenerator } from "../projectilegenerator.js";
 import { TILE_WIDTH } from "../tilesize.js";
 import { updateSpeedAxis } from "../utility.js";
 import { Enemy } from "./enemy.js";
@@ -28,6 +32,39 @@ const COLOR_MODS : RGBA[] = [
     new RGBA(),
     new RGBA(256, 160, 112),
     new RGBA(256, 112, 64)
+];
+
+
+const enum HandAttack {
+
+    Unknown = -1,
+    ShootFireball = 0,
+    Rush = 1
+};
+
+
+const HAND_ATTACK_WAIT_TIME_MIN : number = 120;
+const HAND_ATTACK_WAIT_TIME_MAX : number = 240;
+
+
+const HAND_ATTACK_PROBABILITIES: number[][] =
+[
+[
+
+    1.0, // Fireball
+    0.0, // Rush
+]
+, 
+[
+
+    1.0, // Fireball
+    0.0, // Rush
+],
+[
+
+    1.0, // Fireball
+    0.0, // Rush
+]
 ];
 
 
@@ -119,7 +156,16 @@ class Hand extends GameObject {
 
     private phase : number = 0;
 
+    private attackPhase : number = 0;
+    private attackType : HandAttack = HandAttack.Unknown;
+    private attackTimer : number = 0;
+    private attackPrepareTimer : number = 0;
+
+    private playerRef : GameObject | undefined = undefined;
+
     private flip : Flip = Flip.None;
+
+    private projectiles : ProjectileGenerator | undefined = undefined;
 
 
     constructor(body : GameObject, side : -1 | 1) {
@@ -139,12 +185,86 @@ class Hand extends GameObject {
         this.friction.y = 0.25;
 
         this.flip = side < 0 ? Flip.Horizontal : Flip.None;
+
+        // Left hand always attacks first
+        this.attackTimer = side < 0 ? HAND_ATTACK_WAIT_TIME_MIN : HAND_ATTACK_WAIT_TIME_MAX;
+    }
+
+
+    private shootFireball(event : ProgramEvent) : void {
+
+        const PROJECTILE_SPEED : number = 2.0;
+
+        if (this.playerRef === undefined) {
+
+            return;
+        }
+
+        const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
+        this.projectiles?.next().spawn(
+            this.pos.x, this.pos.y, 
+            this.pos.x, this.pos.y, 
+            dir.x*PROJECTILE_SPEED, dir.y*PROJECTILE_SPEED, 
+            4, 4, false, -1, undefined, 0.0,
+            false, false, 0, true);
+            
+        event.audio.playSample(event.assets.getSample("throw"), 0.50);
+    }
+
+
+    private performAttack(event : ProgramEvent) : void {
+
+        this.attackPhase = 0;
+
+        switch (this.attackType) {
+
+        case HandAttack.ShootFireball:
+
+            this.shootFireball(event);
+            break;
+
+        case HandAttack.Rush:
+
+            break;
+
+        default:
+            break;
+        }
+
+    }
+
+
+    private updateAttacking(event : ProgramEvent) : void {
+
+        const PREPARE_TIME : number = 60;
+
+        if (this.attackPhase == 1) {
+
+            this.attackPrepareTimer += event.tick;
+            if (this.attackPrepareTimer >= PREPARE_TIME) {
+
+                this.attackPrepareTimer = 0;
+                this.performAttack(event);
+            }
+            return;
+        }
+
+        this.attackTimer -= event.tick;
+        if (this.attackTimer <= 0) {
+
+            this.attackPhase = 1;
+            this.attackTimer = HAND_ATTACK_WAIT_TIME_MIN +
+                Math.random()*(HAND_ATTACK_WAIT_TIME_MAX - HAND_ATTACK_WAIT_TIME_MIN);
+            this.attackPrepareTimer = 0;
+
+            this.attackType = sampleWeightedUniform(HAND_ATTACK_PROBABILITIES[this.phase] ?? [1.0]);
+        }
     }
 
 
     private updateFirstPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/240.0;
+        const WAVE_SPEED : number = Math.PI*2/300.0;
         const AMPLITUDE_Y : number = 24.0;
         const AMPLITUDE_X : number = 12.0;
 
@@ -162,7 +282,7 @@ class Hand extends GameObject {
 
     private updateSecondPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/300.0;
+        const WAVE_SPEED : number = Math.PI*2/360.0;
         const DISTANCE : number = 56;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
@@ -178,8 +298,8 @@ class Hand extends GameObject {
 
     private updateThirdPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/240.0;
-        const DISTANCE_WAVE_SPEED : number = Math.PI*2/480.0;
+        const WAVE_SPEED : number = Math.PI*2/300.0;
+        const DISTANCE_WAVE_SPEED : number = Math.PI*2/430.0;
 
         const BASE_DISTANCE : number = 80;
         const DISTANCE_VARY : number = 24;
@@ -220,6 +340,8 @@ class Hand extends GameObject {
             break;
         }
 
+        this.updateAttacking(event);
+
         const dir : Vector = Vector.direction(this.pos, this.targetPos);
         const distance : number = Vector.distance(this.pos, this.targetPos);
 
@@ -248,16 +370,43 @@ class Hand extends GameObject {
             return;
         }
 
+        const flicker : boolean = this.attackPhase == 1 &&
+            Math.floor(this.attackPrepareTimer/4) % 2 != 0;
+
         const dx : number = this.pos.x - 24;
         const dy : number = this.pos.y - 24;
 
-        canvas.drawBitmap(bmp, this.flip, dx, dy, 0, 64, 48, 48);
+        const frame : number = this.attackPhase == 1 ? 1 : 0;
+
+        if (flicker) {
+
+            canvas.applyEffect(Effect.FixedColor);
+        }
+
+        canvas.drawBitmap(bmp, this.flip, dx, dy, frame*48, 64, 48, 48);
+
+        if (flicker) {
+
+            canvas.applyEffect(Effect.None);
+        }
     }
 
 
     public setPhase(phase : number) : void {
 
         this.phase = clamp(phase, 0, 2);
+    }
+
+
+    public setPlayerReference(player : GameObject) : void {
+
+        this.playerRef = player;
+    }
+
+
+    public passProjectileGenerator(projectiles : ProjectileGenerator | undefined) : void {
+
+        this.projectiles = projectiles;
     }
 
 }
@@ -466,6 +615,11 @@ export class FinalBoss extends Enemy {
     protected playerEvent(player : Player, event : ProgramEvent) : void {
         
         this.playerRef = player;
+
+        for (const o of this.hands) {
+
+            o.setPlayerReference(player);
+        }
     }
 
 
@@ -535,5 +689,22 @@ export class FinalBoss extends Enemy {
     public getHealthbarHealth() : number {
 
         return Math.max(0.0, this.healthBarPos);
+    }
+
+
+    // Override
+    public passGenerators(
+        flyingText : ObjectGenerator<FlyingText, void>, 
+        collectables : CollectableGenerator,
+        projectiles : ProjectileGenerator) : void {
+
+        this.flyingText = flyingText;
+        this.collectables = collectables;
+        this.projectiles = projectiles;
+
+        for (const o of this.hands) {
+
+            o.passProjectileGenerator(this.projectiles);
+        }
     }
 }

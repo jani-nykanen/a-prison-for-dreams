@@ -32,8 +32,8 @@ export class Enemy extends CollisionObject {
     private projectileHurtID : number = -1;
     private underWater : boolean = false;
    
-    private flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
-    private collectables : CollectableGenerator | undefined = undefined;
+    protected flyingText : ObjectGenerator<FlyingText, void> | undefined = undefined;
+    protected collectables : CollectableGenerator | undefined = undefined;
     
     protected hurtTimer : number = 0;
 
