@@ -19,6 +19,13 @@ import { updateSpeedAxis } from "../utility.js";
 import { Enemy } from "./enemy.js";
 
 
+/*
+ * NOTE: I'm perfectly aware of that this whole file is
+ * a big mess. This is the last big thing I needed in the 
+ * game, so I stopped caring if the code is good or not.
+ */
+
+
 const INITIAL_Y : number = 192;
 const TOTAL_HEALTH : number = 32*3;
 
@@ -53,9 +60,9 @@ const HAND_ATTACK_PROBABILITIES: number[][] =
 [
 [
 
-    0.4, // Fireball
-    0.3, // Rush
-    0.3, // Crush
+    0.40, // Fireball
+    0.30, // Rush
+    0.30, // Crush
 ]
 , 
 [
@@ -71,6 +78,9 @@ const HAND_ATTACK_PROBABILITIES: number[][] =
     0.0, // Crush
 ]
 ];
+
+const HAND_RUSH_RECOVER_TIME : number = 30;
+
 
 const BASE_PLATFORM_WIDTH : number = TILE_WIDTH*15;
 
@@ -218,23 +228,23 @@ class Hand extends CollisionObject {
 
     private shootFireball(event : ProgramEvent) : void {
 
-        const PROJECTILE_SPEED : number = 2.0;
+        const PROJECTILE_SPEED : number = 2.5;
 
         if (this.playerRef === undefined) {
 
             return;
         }
 
-        const shiftx : number =  this.pos.x - this.oldPos.x;
-        const shifty : number =  this.pos.y - this.oldPos.y;
+        // const shiftx : number =  this.pos.x - this.oldPos.x;
+        // const shifty : number =  this.pos.y - this.oldPos.y;
 
         const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
         this.projectiles?.next().spawn(
             this.pos.x, this.pos.y, 
             this.pos.x, this.pos.y, 
-            shiftx/2 + dir.x*PROJECTILE_SPEED, 
-            shifty/2 + dir.y*PROJECTILE_SPEED, 
-            4, 4, false, -1, undefined, 0.0,
+            dir.x*PROJECTILE_SPEED, 
+            dir.y*PROJECTILE_SPEED, 
+            7, 4, false, -1, undefined, 0.0,
             false, false, 0, true);
             
         event.audio.playSample(event.assets.getSample("throw"), 0.50);
@@ -327,7 +337,6 @@ class Hand extends CollisionObject {
     private updateRush(event : ProgramEvent) : void {
 
         const MOVE_SPEED : number = 3.5;
-        const RECOVER_TIME : number = 30;
 
         if (this.attackPhase == 4) {
 
@@ -346,7 +355,8 @@ class Hand extends CollisionObject {
             if (this.attackPrepareTimer <= 0) {
 
                 this.positionCorrected = false;
-                this.attackPhase = 4;
+                this.attackPhase = 4; // ???
+                // this.attackType = HandAttack.Unknown;
             }
             return;
         }
@@ -358,7 +368,7 @@ class Hand extends CollisionObject {
         if (Vector.distance(this.pos, this.targetPos) < MOVE_SPEED*2*event.tick) {
 
             this.attackPhase = 3;
-            this.attackPrepareTimer = RECOVER_TIME;
+            this.attackPrepareTimer = HAND_RUSH_RECOVER_TIME;
             this.speed.zeros();
             this.target.zeros();
             return;
@@ -443,12 +453,12 @@ class Hand extends CollisionObject {
             return;
         }
 
+        this.attackTimer -= event.tick;
         if (this.otherHand?.isPreparingAttack()) {
 
-            return;
+            this.attackTimer = Math.max(30, this.attackTimer);
         }
 
-        this.attackTimer -= event.tick;
         if (this.attackTimer <= 0) {
 
             event.audio.playSample(event.assets.getSample("charge3"), 0.70);
@@ -673,6 +683,7 @@ class Hand extends CollisionObject {
         if (flicker) {
 
             canvas.applyEffect(Effect.FixedColor);
+            canvas.setColor();
         }
 
         canvas.drawBitmap(bmp, flip, dx, dy, frame*48, 64, 48, 48);
@@ -680,6 +691,49 @@ class Hand extends CollisionObject {
         if (flicker) {
 
             canvas.applyEffect(Effect.None);
+        }
+    }
+
+
+    public postDraw(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const CROSSHAIR_BASE_OFFSET : number = 14;
+        const CROSSHAIR_VARY : number = 6;
+
+        // Crosshair
+        if (this.attackType == HandAttack.Rush && this.attackPhase < 3) {
+
+            const m : number = HAND_RUSH_RECOVER_TIME/2;
+
+            let t : number = 0;
+            if (this.attackPrepareTimer > 0) {
+
+                t = (this.attackPrepareTimer % m)/m;
+            }
+
+            const p : number = CROSSHAIR_BASE_OFFSET - Math.round((1.0 - Math.sin(t*Math.PI))*CROSSHAIR_VARY);
+
+            let cx : number = this.targetPos.x;
+            let cy : number = this.targetPos.y;
+            if (this.attackPhase == 1) {
+
+                const ppos : Vector = this.playerRef?.getPosition() ?? this.targetPos;
+                cx = ppos.x;
+                cy = ppos.y;
+            }
+
+            canvas.setAlpha(0.75);
+
+            // Top arrow
+            canvas.drawBitmap(bmp, Flip.None, cx - 6, cy - p - 4, 122, 104, 12, 8);
+            // Bottom arrow
+            canvas.drawBitmap(bmp, Flip.None, cx - 6, cy + p - 4, 122, 128, 12, 8);
+            // Left arrow
+            canvas.drawBitmap(bmp, Flip.None, cx - p - 4, cy - 6, 112, 114, 8, 12);
+            // Right arrow
+            canvas.drawBitmap(bmp, Flip.None, cx + p - 4, cy - 6, 136, 114, 8, 12);
+
+            canvas.setAlpha();
         }
     }
 
@@ -975,6 +1029,8 @@ export class FinalBoss extends Enemy {
 
         // Body
         canvas.drawBitmap(bmpFinalboss, Flip.None, dx, dy, 0, 0, 64, 64);
+        canvas.setColor();
+
         // Mouth
         canvas.drawBitmap(bmpMouth, Flip.None, dx, dy + 24, 64, 0, 64, 32);
         // Hat
@@ -985,12 +1041,23 @@ export class FinalBoss extends Enemy {
             canvas.applyEffect(Effect.None);
         }
 
-        for (const o of this.hands) {
+        for (const o of this.hands) {   
 
+            this.setColorMod(canvas);
             o.draw(canvas, assets, bmpFinalboss);
         }
 
         canvas.setColor();
+    }
+
+
+    public postDraw(canvas : Canvas, assets : Assets | undefined) : void {
+
+        const bmpFinalboss : Bitmap | undefined = assets?.getBitmap("finalboss");
+        for (const o of this.hands) {
+
+            o.postDraw(canvas, bmpFinalboss);
+        }
     }
 
 

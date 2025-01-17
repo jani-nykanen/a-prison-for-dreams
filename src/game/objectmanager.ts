@@ -641,6 +641,8 @@ export class ObjectManager {
         }
         this.player.postDraw(canvas, assets);
 
+        this.finalboss?.postDraw(canvas, assets);
+
         this.flyingText.draw(canvas, undefined, assets.getBitmap("font_tiny"));
     }
 
