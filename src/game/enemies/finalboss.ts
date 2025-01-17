@@ -13,7 +13,8 @@ import { GameObject } from "../gameobject.js";
 import { ObjectGenerator } from "../objectgenerator.js";
 import { Player } from "../player.js";
 import { ProjectileGenerator } from "../projectilegenerator.js";
-import { TILE_WIDTH } from "../tilesize.js";
+import { Stage } from "../stage.js";
+import { TILE_HEIGHT, TILE_WIDTH } from "../tilesize.js";
 import { updateSpeedAxis } from "../utility.js";
 import { Enemy } from "./enemy.js";
 
@@ -48,14 +49,13 @@ const enum HandAttack {
 const HAND_ATTACK_WAIT_TIME_MIN : number = 120;
 const HAND_ATTACK_WAIT_TIME_MAX : number = 240;
 
-
 const HAND_ATTACK_PROBABILITIES: number[][] =
 [
 [
 
-    0.0, // Fireball
-    0.0, // Rush
-    1.0, // Crush
+    0.4, // Fireball
+    0.3, // Rush
+    0.3, // Crush
 ]
 , 
 [
@@ -71,6 +71,8 @@ const HAND_ATTACK_PROBABILITIES: number[][] =
     0.0, // Crush
 ]
 ];
+
+const BASE_PLATFORM_WIDTH : number = TILE_WIDTH*15;
 
 
 class BodyPiece extends GameObject {
@@ -154,6 +156,7 @@ class Hand extends CollisionObject {
     private side : number = 0;
 
     private mainBody : GameObject;
+    private otherHand : Hand | undefined = undefined;
 
     private positionCorrected : boolean = true;
     private targetPos : Vector;
@@ -176,10 +179,14 @@ class Hand extends CollisionObject {
 
     private projectiles : ProjectileGenerator | undefined = undefined;
 
-    private readonly bottom : number = 0;
+    private platformLeftSide : number = 0;
+
+    private shakeEvent : ((shakeTime : number, shakeAmount : number) => void) | undefined = undefined;
+
+    private readonly stage : Stage;
 
 
-    constructor(body : GameObject, side : -1 | 1, bottom : number) {
+    constructor(body : GameObject, side : -1 | 1, stage : Stage) {
 
         const bodyPos : Vector = body.getPosition();
 
@@ -200,7 +207,8 @@ class Hand extends CollisionObject {
         // Left hand always attacks first
         this.attackTimer = side < 0 ? HAND_ATTACK_WAIT_TIME_MIN : HAND_ATTACK_WAIT_TIME_MAX;
 
-        this.bottom = bottom;
+        this.stage = stage;
+        this.platformLeftSide = stage.width*TILE_WIDTH/2 - BASE_PLATFORM_WIDTH/2;
 
         this.takeCollisions = true;
 
@@ -217,15 +225,45 @@ class Hand extends CollisionObject {
             return;
         }
 
+        const shiftx : number =  this.pos.x - this.oldPos.x;
+        const shifty : number =  this.pos.y - this.oldPos.y;
+
         const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
         this.projectiles?.next().spawn(
             this.pos.x, this.pos.y, 
             this.pos.x, this.pos.y, 
-            dir.x*PROJECTILE_SPEED, dir.y*PROJECTILE_SPEED, 
+            shiftx/2 + dir.x*PROJECTILE_SPEED, 
+            shifty/2 + dir.y*PROJECTILE_SPEED, 
             4, 4, false, -1, undefined, 0.0,
             false, false, 0, true);
             
         event.audio.playSample(event.assets.getSample("throw"), 0.50);
+    }
+
+
+    private spawnCrushProjectiles() : void {
+
+        const BASE_SPEED : number = 0.4;
+        const JUMP_SPEED : number = -3.5;
+        const YOFF : number = 16;
+
+        for (let i : number = -2; i <= 2; ++ i) {
+
+            if (i == 0) {
+
+                continue;
+            }
+
+            const speedx : number = Math.sign(i)*i*i*BASE_SPEED;
+            const speedy : number = (Math.abs(i) == 1 ? 1.25 : 1.0)*JUMP_SPEED;
+
+            this.projectiles?.next().spawn(
+                this.pos.x, this.pos.y + YOFF, 
+                this.pos.x, this.pos.y + YOFF,
+                speedx, speedy, 
+                3, 3, false, -1, undefined, 0.0, 
+                true);
+        }
     }
 
 
@@ -288,7 +326,7 @@ class Hand extends CollisionObject {
 
     private updateRush(event : ProgramEvent) : void {
 
-        const MOVE_SPEED : number = 3.0;
+        const MOVE_SPEED : number = 3.5;
         const RECOVER_TIME : number = 30;
 
         if (this.attackPhase == 4) {
@@ -338,9 +376,16 @@ class Hand extends CollisionObject {
 
     private updateCrush(event : ProgramEvent) : void {
 
+        
         if (this.attackPhase == 2) {
 
-            if (this.pos.y > this.bottom) {
+            const bottom : number = (this.stage.height - 3)*TILE_HEIGHT;
+            this.slopeCollision(this.platformLeftSide, bottom, 
+                this.platformLeftSide + BASE_PLATFORM_WIDTH, bottom, 
+                1, event);
+
+            // Should never happen, but let's play safe.
+            if (this.pos.y > this.stage.height*TILE_HEIGHT) {
 
                 this.crushing = false;
                 this.attackPhase = 0;
@@ -375,6 +420,15 @@ class Hand extends CollisionObject {
 
         if (this.attackPhase == 1) {
 
+            // This should fix bugs where hand stars moving
+            // horizontally when preparing the attack but
+            // the main body takes damage.
+            if (this.attackType == HandAttack.Crush) {
+
+                this.speed.zeros();
+                this.target.zeros();
+            }
+
             this.attackPrepareTimer += event.tick;
             if (this.attackPrepareTimer >= PREPARE_TIME) {
 
@@ -389,8 +443,15 @@ class Hand extends CollisionObject {
             return;
         }
 
+        if (this.otherHand?.isPreparingAttack()) {
+
+            return;
+        }
+
         this.attackTimer -= event.tick;
         if (this.attackTimer <= 0) {
+
+            event.audio.playSample(event.assets.getSample("charge3"), 0.70);
 
             this.attackPhase = 1;
             this.attackTimer = HAND_ATTACK_WAIT_TIME_MIN +
@@ -398,6 +459,13 @@ class Hand extends CollisionObject {
             this.attackPrepareTimer = 0;
 
             this.attackType = sampleWeightedUniform(HAND_ATTACK_PROBABILITIES[this.phase] ?? [1.0]);
+
+            if (this.attackType == HandAttack.Crush &&
+                (this.pos.x < this.platformLeftSide ||
+                this.pos.x > this.platformLeftSide + BASE_PLATFORM_WIDTH)) {
+
+                this.attackType = HandAttack.ShootFireball;
+            }
         }
     }
 
@@ -551,8 +619,11 @@ class Hand extends CollisionObject {
         
         if (this.positionCorrected) {
 
-            this.pos.x = this.targetPos.x;
-             this.pos.y = this.targetPos.y;
+            if (this.attackType != HandAttack.Crush) {
+
+                this.pos.x = this.targetPos.x;
+                this.pos.y = this.targetPos.y;
+            }
         }
         else {
 
@@ -565,7 +636,7 @@ class Hand extends CollisionObject {
 
     protected slopeCollisionEvent(direction : -1 | 1, event : ProgramEvent) : void {
 
-        const RECOVER_TIME : number = 60;
+        const RECOVER_TIME : number = 30;
 
         if (this.crushing && this.attackPhase == 2) {
 
@@ -575,7 +646,10 @@ class Hand extends CollisionObject {
             this.speed.zeros();
             this.target.zeros();
 
-            // TODO: S H A K E!
+            event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
+            this.shakeEvent?.(60, 4);
+
+            this.spawnCrushProjectiles();
         }
     }
 
@@ -610,6 +684,9 @@ class Hand extends CollisionObject {
     }
 
 
+    public isPreparingAttack = () : boolean => this.attackPhase == 1 && this.attackPrepareTimer > 0;
+
+
     public setPhase(phase : number) : void {
 
         if (this.phase != phase && phase == 1) {
@@ -626,9 +703,21 @@ class Hand extends CollisionObject {
     }
 
 
+    public setOtherHandReference(hand : Hand) : void {
+
+        this.otherHand = hand;
+    }
+
+
     public passProjectileGenerator(projectiles : ProjectileGenerator | undefined) : void {
 
         this.projectiles = projectiles;
+    }
+
+
+    public passCallbacks(shakeEvent : ((shakeTime : number, shakeAmount : number) => void)) : void {
+
+        this.shakeEvent = shakeEvent;
     }
 
 }
@@ -656,7 +745,7 @@ export class FinalBoss extends Enemy {
     private hands : Hand[];
 
 
-    constructor(x : number, y : number, bottom : number,
+    constructor(x : number, y : number, stage : Stage,
         deathEvent : (event : ProgramEvent) => void,
         triggerDeathEvent : (event : ProgramEvent) => void) {
 
@@ -677,8 +766,8 @@ export class FinalBoss extends Enemy {
 
         this.target.zeros();
 
-        this.ignoreBottomLayer = true;
-        this.takeCollisions = true;
+        // this.ignoreBottomLayer = true;
+        this.takeCollisions = false;
         // this.canHurtPlayer = false;
         // this.canBeMoved = false;
 
@@ -701,8 +790,11 @@ export class FinalBoss extends Enemy {
         this.createBodyPieces();
 
         this.hands = new Array<Hand> (2);
-        this.hands[0] = new Hand(this, -1, bottom);
-        this.hands[1] = new Hand(this, 1, bottom);
+        this.hands[0] = new Hand(this, -1, stage);
+        this.hands[1] = new Hand(this, 1, stage);
+
+        this.hands[0].setOtherHandReference(this.hands[1]);
+        this.hands[1].setOtherHandReference(this.hands[0]);
     }
 
 
@@ -931,20 +1023,13 @@ export class FinalBoss extends Enemy {
     }
 
 
-    public slopeCollision(x1 : number, y1 : number, x2 : number, y2 : number, 
-        direction : -1 | 1, event : ProgramEvent, 
-        leftMargin? : number, rightMargin? : number, safeMarginNear? : number, 
-        safeMarginFar? : number, setReference? : GameObject | undefined) : boolean {
-        
+    // Override
+    public passShakeEvent(shakeEvent : (shakeTime : number, shakeAmount : number) => void) : void {
+
+        this.shakeEvent = shakeEvent;
         for (const o of this.hands) {
 
-            o.slopeCollision(
-                x1, y1, x2, y2, 
-                direction, event, 
-                leftMargin, rightMargin, 
-                safeMarginNear, safeMarginFar, 
-                setReference);
+            o.passCallbacks(shakeEvent);
         }
-        return false;
     }
 }

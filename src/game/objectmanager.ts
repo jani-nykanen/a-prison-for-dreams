@@ -845,8 +845,7 @@ export class ObjectManager {
 
         const playerPos : Vector = this.player.getPosition();
         this.finalboss = new FinalBoss(
-            playerPos.x, playerPos.y - 24, 
-            stage.height*TILE_HEIGHT,
+            playerPos.x, playerPos.y - 24, stage,
             deathEvent, triggerDeathEvent);
         this.enemies.push(this.finalboss);
 

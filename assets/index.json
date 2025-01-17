@@ -167,6 +167,7 @@
 
         {"name": "charge", "path": "charge.wav"},
         {"name": "charge2", "path": "charge2.wav"},
+        {"name": "charge3", "path": "charge3.wav"},
         {"name": "charge_attack", "path": "chargeattack.wav"},
         {"name": "charge_shot", "path": "chargeshot.wav"},
 
