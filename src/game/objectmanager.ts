@@ -844,7 +844,10 @@ export class ObjectManager {
         this.player.startHarmlessKnockback(60);
 
         const playerPos : Vector = this.player.getPosition();
-        this.finalboss = new FinalBoss(playerPos.x, playerPos.y - 24, deathEvent, triggerDeathEvent);
+        this.finalboss = new FinalBoss(
+            playerPos.x, playerPos.y - 24, 
+            stage.height*TILE_HEIGHT,
+            deathEvent, triggerDeathEvent);
         this.enemies.push(this.finalboss);
 
         this.finalboss.passGenerators(this.flyingText, this.collectables, this.projectiles);

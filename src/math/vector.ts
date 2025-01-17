@@ -45,6 +45,15 @@ export class Vector {
 	public clone = () : Vector => new Vector(this.x, this.y, this.z, this.w);
 
 
+	public cloneFrom(v : Vector) : void {
+
+		this.x = v.x;
+		this.y = v.y;
+		this.z = v.z;
+		this.w = v.w;
+	}
+
+
 	public zeros() : void {
 
         this.x = 0;
