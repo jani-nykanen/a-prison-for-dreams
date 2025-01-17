@@ -149,6 +149,8 @@ class Hand extends GameObject {
     private side : number = 0;
 
     private mainBody : GameObject;
+
+    private positionCorrected : boolean = true;
     private targetPos : Vector;
 
     private wave : number = 0.0;
@@ -181,8 +183,8 @@ class Hand extends GameObject {
 
         this.inCamera = true;
 
-        this.friction.x = 0.25;
-        this.friction.y = 0.25;
+        this.friction.x = 0;
+        this.friction.y = 0;
 
         this.flip = side < 0 ? Flip.Horizontal : Flip.None;
 
@@ -285,7 +287,10 @@ class Hand extends GameObject {
         const WAVE_SPEED : number = Math.PI*2/360.0;
         const DISTANCE : number = 56;
 
-        this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
+        if (this.positionCorrected) {
+            
+            this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
+        }
 
         const bodyPos : Vector = this.mainBody.getPosition();
         
@@ -317,21 +322,40 @@ class Hand extends GameObject {
     }
 
 
-    protected updateEvent(event : ProgramEvent) : void {
+    private reachTargetPosition(event : ProgramEvent) : void {
 
-        const AUTO_SNAP_DISTANCE : number = 1.0;
+        const MOVE_SPEED : number = 2.0;
+
+        if (Vector.distance(this.pos, this.targetPos) < MOVE_SPEED*2*event.tick) {
+
+            this.pos = this.targetPos.clone();
+            this.positionCorrected = true;
+            return;
+        }
+
+        const dir : Vector = Vector.direction(this.pos, this.targetPos);
+
+        this.speed.x = dir.x*MOVE_SPEED;
+        this.speed.y = dir.y*MOVE_SPEED;
+    }
+
+
+    protected updateEvent(event : ProgramEvent) : void {
 
         switch (this.phase) {
 
         case 0:
+
             this.updateFirstPhase(event);
             break;
 
         case 1:
+
             this.updateSecondPhase(event);
             break;
 
         case 2:
+
             this.updateThirdPhase(event);
             break;
 
@@ -340,26 +364,17 @@ class Hand extends GameObject {
             break;
         }
 
-        this.updateAttacking(event);
-
-        const dir : Vector = Vector.direction(this.pos, this.targetPos);
-        const distance : number = Vector.distance(this.pos, this.targetPos);
-
-        /*
-        // TODO: Only when transitioning!
-        if (distance < AUTO_SNAP_DISTANCE) {
+        if (this.positionCorrected) {
 
             this.pos.x = this.targetPos.x;
             this.pos.y = this.targetPos.y;
-
-            this.target.zeros();
-            return;
         }
-        */
+        else {
 
-        const speed : number = clamp(distance/2.0, 0.0, 4.0);
-        this.target.x = dir.x*speed;
-        this.target.y = dir.y*speed;
+            this.reachTargetPosition(event);
+        }
+
+        this.updateAttacking(event);
     }
 
 
@@ -394,6 +409,10 @@ class Hand extends GameObject {
 
     public setPhase(phase : number) : void {
 
+        if (this.phase != phase && phase == 1) {
+
+            this.positionCorrected = false;
+        }
         this.phase = clamp(phase, 0, 2);
     }
 
@@ -463,7 +482,7 @@ export class FinalBoss extends Enemy {
         this.friction.x = 0.05;
         this.friction.y = 0.05;
 
-        this.knockbackFactor = 0.5;
+        this.knockbackFactor = 0.75;
 
         this.deathEvent = deathEvent;
         this.triggerDeathEvent = triggerDeathEvent;
@@ -514,7 +533,7 @@ export class FinalBoss extends Enemy {
         if ((this.dir < 0 && this.pos.x < this.initialPos.x - HORIZONTAL_RADIUS) ||
             (this.dir > 0 && this.pos.x > this.initialPos.x + HORIZONTAL_RADIUS)) {
 
-            this.dir *= -1;
+            this.dir = this.pos.x < this.initialPos.x ? 1 : -1;
             this.target.x *= -1;
         }
     }
@@ -552,12 +571,6 @@ export class FinalBoss extends Enemy {
             o.update(event);
         }
 
-        for (const o of this.hands) {
-
-            o.update(event);
-            o.setPhase(this.phase);
-        }
-
         this.updateHealthbarPos(event);
 
         if (!this.initialPosReached) {
@@ -579,6 +592,12 @@ export class FinalBoss extends Enemy {
 
             this.target.zeros();
             this.speed.zeros();
+        }
+    
+        for (const o of this.hands) {
+
+            o.update(event);
+            o.setPhase(this.phase);
         }
     }
 
