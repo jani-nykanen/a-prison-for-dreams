@@ -35,7 +35,7 @@ const BODY_PIECE_SX : number[] = [0, 64, 112, 120];
 const BODY_PIECE_SY : number[] = [0, 0, 0, 40];
 const BODY_PIECE_DIMENSION : number[] = [64, 48, 32, 16];
 
-const HAND_BASE_DISTANCE : number = 64;
+const HAND_BASE_DISTANCE : number = 72;
 
 const COLOR_MODS : RGBA[] = [
     new RGBA(),
@@ -50,11 +50,12 @@ const enum HandAttack {
     ShootFireball = 0,
     Rush = 1,
     Crush = 2,
+    FollowingFireball = 3,
 };
 
 
-const HAND_ATTACK_WAIT_TIME_MIN : number = 120;
-const HAND_ATTACK_WAIT_TIME_MAX : number = 240;
+const HAND_ATTACK_WAIT_TIME_MIN : number = 180;
+const HAND_ATTACK_WAIT_TIME_MAX : number = 360;
 
 const HAND_ATTACK_PROBABILITIES: number[][] =
 [
@@ -63,19 +64,22 @@ const HAND_ATTACK_PROBABILITIES: number[][] =
     0.40, // Fireball
     0.30, // Rush
     0.30, // Crush
-]
+    0.0,  // Following fireball
+]   
 , 
 [
 
-    1.0, // Fireball
-    0.0, // Rush
-    0.0, // Crush
+    0.3, // Fireball
+    0.25, // Rush
+    0.25, // Crush
+    0.2,  // Following fireball
 ],
 [
 
-    1.0, // Fireball
-    0.0, // Rush
-    0.0, // Crush
+    0.3, // Fireball
+    0.25, // Rush
+    0.25, // Crush
+    0.2,  // Following fireball
 ]
 ];
 
@@ -229,6 +233,7 @@ class Hand extends CollisionObject {
     private shootFireball(event : ProgramEvent) : void {
 
         const PROJECTILE_SPEED : number = 2.5;
+        const ANGLE_OFF : number = Math.PI/5.0;
 
         if (this.playerRef === undefined) {
 
@@ -238,14 +243,69 @@ class Hand extends CollisionObject {
         // const shiftx : number =  this.pos.x - this.oldPos.x;
         // const shifty : number =  this.pos.y - this.oldPos.y;
 
+        const shootCount : number = this.phase == 0 ? 1 : 3;
+
+        // Don't ask what "p" stands for, 'cause I don't know.
+        const p : number = Math.floor(shootCount/2);
+        const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
+        const baseAngle : number = Math.atan2(dir.y, dir.x);
+
+        for (let i : number = -p; i <= p; ++ i) {
+
+            const angle : number = baseAngle + i*ANGLE_OFF;
+        
+            this.projectiles?.next().spawn(
+                this.pos.x, this.pos.y, 
+                this.pos.x, this.pos.y, 
+                Math.cos(angle)*PROJECTILE_SPEED, 
+                Math.sin(angle)*PROJECTILE_SPEED, 
+                7, 4, false, -1, undefined, 0.0,
+                false, false, 0, true);
+        }
+            
+        event.audio.playSample(event.assets.getSample("throw"), 0.50);
+    }
+
+
+    private shootRushBullets(event : ProgramEvent) : void {
+
+        const PROJECTILE_SPEED : number = 2.0;
+
+        const COUNT : number = 8;
+
+        const step : number = Math.PI*2/8.0;
+        for (let i : number = 0; i < COUNT; ++ i) {
+
+            const angle : number = step*i;
+
+            const dirx : number = Math.cos(angle);
+            const diry : number = Math.sin(angle);
+
+            this.projectiles?.next().spawn(
+                this.pos.x, this.pos.y, this.pos.x, this.pos.y,
+                dirx*PROJECTILE_SPEED, diry*PROJECTILE_SPEED, 3, 3, false,
+                -1, undefined, 0.0, false, true, 0, true);
+        }
+    }
+
+
+    private shootFollowingFireball(event : ProgramEvent) : void {
+
+        const PROJECTILE_SPEED : number = 2.0;
+
+        if (this.playerRef === undefined) {
+
+            return;
+        }
+
         const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
         this.projectiles?.next().spawn(
             this.pos.x, this.pos.y, 
             this.pos.x, this.pos.y, 
             dir.x*PROJECTILE_SPEED, 
             dir.y*PROJECTILE_SPEED, 
-            7, 4, false, -1, undefined, 0.0,
-            false, false, 0, true);
+            4, 4, false, -1, this.playerRef, PROJECTILE_SPEED,
+            false, false, 300, true);
             
         event.audio.playSample(event.assets.getSample("throw"), 0.50);
     }
@@ -256,23 +316,35 @@ class Hand extends CollisionObject {
         const BASE_SPEED : number = 0.4;
         const JUMP_SPEED : number = -3.5;
         const YOFF : number = 16;
+        const SECONDARY_SPEED_BONUS : number = 1.2;
 
-        for (let i : number = -2; i <= 2; ++ i) {
+        const count : number = this.phase == 2 ? 2 : 1
 
-            if (i == 0) {
+        for (let j : number = 0; j < count; ++ j) {
 
-                continue;
+            for (let i : number = -2; i <= 2; ++ i) {
+
+                if (i == 0) {
+
+                    continue;
+                }
+
+                let speedx : number = Math.sign(i)*i*i*BASE_SPEED;
+                let speedy : number = (Math.abs(i) == 1 ? 1.25 : 1.0)*JUMP_SPEED;
+
+                if (j == 1) {
+
+                    speedx *= SECONDARY_SPEED_BONUS;
+                    speedy *= SECONDARY_SPEED_BONUS;
+                }
+
+                this.projectiles?.next().spawn(
+                    this.pos.x, this.pos.y + YOFF, 
+                    this.pos.x, this.pos.y + YOFF,
+                    speedx, speedy, 
+                    3, 3, false, -1, undefined, 0.0, 
+                    true, true, 0, true);
             }
-
-            const speedx : number = Math.sign(i)*i*i*BASE_SPEED;
-            const speedy : number = (Math.abs(i) == 1 ? 1.25 : 1.0)*JUMP_SPEED;
-
-            this.projectiles?.next().spawn(
-                this.pos.x, this.pos.y + YOFF, 
-                this.pos.x, this.pos.y + YOFF,
-                speedx, speedy, 
-                3, 3, false, -1, undefined, 0.0, 
-                true);
         }
     }
 
@@ -327,6 +399,11 @@ class Hand extends CollisionObject {
             this.initiateCrush(event);
             break;
 
+        case HandAttack.FollowingFireball:
+
+            this.shootFollowingFireball(event);
+            break;
+
         default:
             break;
         }
@@ -367,10 +444,17 @@ class Hand extends CollisionObject {
         const dir : Vector = Vector.direction(this.pos, this.targetPos);
         if (Vector.distance(this.pos, this.targetPos) < MOVE_SPEED*2*event.tick) {
 
+            event.audio.playSample(event.assets.getSample("crush"), 0.60);
+
             this.attackPhase = 3;
             this.attackPrepareTimer = HAND_RUSH_RECOVER_TIME;
             this.speed.zeros();
             this.target.zeros();
+
+            if (this.phase > 0) {
+
+                this.shootRushBullets(event);
+            }
             return;
         }
 
@@ -386,7 +470,6 @@ class Hand extends CollisionObject {
 
     private updateCrush(event : ProgramEvent) : void {
 
-        
         if (this.attackPhase == 2) {
 
             const bottom : number = (this.stage.height - 3)*TILE_HEIGHT;
@@ -426,6 +509,7 @@ class Hand extends CollisionObject {
 
     private updateAttacking(event : ProgramEvent) : void {
 
+        const PHASE_SPEED_UP : number = 0.25;
         const PREPARE_TIME : number = 60;
 
         if (this.attackPhase == 1) {
@@ -453,7 +537,9 @@ class Hand extends CollisionObject {
             return;
         }
 
-        this.attackTimer -= event.tick;
+        const attackTimerSpeed : number = 1.0 + this.phase*PHASE_SPEED_UP;
+
+        this.attackTimer -= attackTimerSpeed*event.tick;
         if (this.otherHand?.isPreparingAttack()) {
 
             this.attackTimer = Math.max(30, this.attackTimer);
@@ -470,9 +556,11 @@ class Hand extends CollisionObject {
 
             this.attackType = sampleWeightedUniform(HAND_ATTACK_PROBABILITIES[this.phase] ?? [1.0]);
 
+            const bottom : number = (this.stage.height - 3)*TILE_HEIGHT;
             if (this.attackType == HandAttack.Crush &&
                 (this.pos.x < this.platformLeftSide ||
-                this.pos.x > this.platformLeftSide + BASE_PLATFORM_WIDTH)) {
+                this.pos.x > this.platformLeftSide + BASE_PLATFORM_WIDTH ||
+                this.pos.y > bottom + this.collisionBox.y - this.collisionBox.h/2)) {
 
                 this.attackType = HandAttack.ShootFireball;
             }
@@ -482,9 +570,9 @@ class Hand extends CollisionObject {
 
     private updateFirstPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/300.0;
-        const AMPLITUDE_Y : number = 24.0;
-        const AMPLITUDE_X : number = 12.0;
+        const WAVE_SPEED : number = Math.PI*2/360.0;
+        const AMPLITUDE_Y : number = 48.0;
+        const AMPLITUDE_X : number = 24.0;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
         if (this.rushing) {
@@ -504,7 +592,7 @@ class Hand extends CollisionObject {
 
     private updateSecondPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/360.0;
+        const WAVE_SPEED : number = Math.PI*2/480.0;
         const DISTANCE : number = 56;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
@@ -524,11 +612,11 @@ class Hand extends CollisionObject {
 
     private updateThirdPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/300.0;
-        const DISTANCE_WAVE_SPEED : number = Math.PI*2/430.0;
+        const WAVE_SPEED : number = Math.PI*2/360.0;
+        const DISTANCE_WAVE_SPEED : number = Math.PI*2/210.0;
 
-        const BASE_DISTANCE : number = 80;
-        const DISTANCE_VARY : number = 24;
+        const BASE_DISTANCE : number = 56;
+        const DISTANCE_VARY : number = 12;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
         this.distanceWave = (this.distanceWave + DISTANCE_WAVE_SPEED*event.tick) % (Math.PI*2);
@@ -540,7 +628,7 @@ class Hand extends CollisionObject {
 
         const bodyPos : Vector = this.mainBody.getPosition();
         
-        const distance : number = BASE_DISTANCE - Math.cos(this.distanceWave)*DISTANCE_VARY;
+        const distance : number = BASE_DISTANCE + Math.sin(this.distanceWave)*DISTANCE_VARY;
         this.targetPos.x = bodyPos.x + Math.cos(this.wave)*this.side*distance;
         this.targetPos.y = bodyPos.y + Math.sin(this.wave)*this.side*distance;
 
@@ -550,7 +638,7 @@ class Hand extends CollisionObject {
 
     private reachTargetPosition(event : ProgramEvent) : void {
 
-        const MOVE_SPEED : number = 2.0;
+        const MOVE_SPEED : number = 3.0;
 
         if (Vector.distance(this.pos, this.targetPos) < MOVE_SPEED*2*event.tick) {
 
@@ -569,6 +657,7 @@ class Hand extends CollisionObject {
     private determineFrame() : number {
 
         if ((this.attackPhase == 1 && this.attackType == HandAttack.ShootFireball) ||
+            (this.attackPhase == 1 && this.attackType == HandAttack.FollowingFireball) ||
             (this.attackPhase == 3 && this.attackType == HandAttack.Rush) ||
             (this.attackType == HandAttack.Crush)) {
 
@@ -586,6 +675,17 @@ class Hand extends CollisionObject {
             flip |= Flip.Vertical;
         }
         return flip;
+    }
+
+
+    private determineDamage() : number {
+
+        if ((this.crushing && this.attackPhase == 2) ||
+            ((this.rushing && this.attackPhase == 2))) {
+
+            return 4;
+        }
+        return 0;
     }
 
 
@@ -671,6 +771,7 @@ class Hand extends CollisionObject {
             return;
         }
 
+        const attackFlicker : boolean = this.determineDamage() > 0;
         const flicker : boolean = this.attackPhase == 1 &&
             Math.floor(this.attackPrepareTimer/4) % 2 != 0;
 
@@ -686,11 +787,18 @@ class Hand extends CollisionObject {
             canvas.setColor();
         }
 
+        if (attackFlicker) {
+            
+            canvas.applyEffect(Effect.FixedColor);
+            canvas.setColor(255, 0, 0);
+        }
+
         canvas.drawBitmap(bmp, flip, dx, dy, frame*48, 64, 48, 48);
 
-        if (flicker) {
+        if (flicker || attackFlicker) {
 
             canvas.applyEffect(Effect.None);
+            canvas.setColor();
         }
     }
 
@@ -699,6 +807,11 @@ class Hand extends CollisionObject {
 
         const CROSSHAIR_BASE_OFFSET : number = 14;
         const CROSSHAIR_VARY : number = 6;
+
+        if (!this.isActive()) {
+
+            return;
+        }
 
         // Crosshair
         if (this.attackType == HandAttack.Rush && this.attackPhase < 3) {
@@ -738,6 +851,32 @@ class Hand extends CollisionObject {
     }
 
 
+    public playerCollision(player : Player, event : ProgramEvent) : void {
+
+        const HURT_WIDTH : number = 24;
+        const HURT_HEIGHT : number = 16;
+
+        this.playerRef = player;
+
+        if (!this.isActive() || !player.isActive()) {
+
+            return;
+        }
+
+        const damage : number = this.determineDamage();
+        if (damage == 0) {
+
+            return;
+        }
+
+        player.hurtCollision(
+            this.pos.x - HURT_WIDTH/2, this.pos.y - HURT_HEIGHT/2,
+            HURT_WIDTH, HURT_HEIGHT, 
+            event, Math.sign(player.getPosition().x - this.pos.x), 
+            damage);
+    }
+
+
     public isPreparingAttack = () : boolean => this.attackPhase == 1 && this.attackPrepareTimer > 0;
 
 
@@ -748,12 +887,6 @@ class Hand extends CollisionObject {
             this.positionCorrected = false;
         }
         this.phase = clamp(phase, 0, 2);
-    }
-
-
-    public setPlayerReference(player : GameObject) : void {
-
-        this.playerRef = player;
     }
 
 
@@ -986,7 +1119,8 @@ export class FinalBoss extends Enemy {
 
         for (const o of this.hands) {
 
-            o.setPlayerReference(player);
+            // o.setPlayerReference(player);
+            o.playerCollision(player, event);
         }
     }
 
@@ -1052,6 +1186,11 @@ export class FinalBoss extends Enemy {
 
 
     public postDraw(canvas : Canvas, assets : Assets | undefined) : void {
+
+        if (!this.isActive()) {
+
+            return;
+        }
 
         const bmpFinalboss : Bitmap | undefined = assets?.getBitmap("finalboss");
         for (const o of this.hands) {
