@@ -1,6 +1,7 @@
 import { Assets } from "../../core/assets.js";
 import { ProgramEvent } from "../../core/event.js";
 import { Bitmap, Canvas, Effect, Flip } from "../../gfx/interface.js";
+import { Sprite } from "../../gfx/sprite.js";
 import { sampleInterpolatedWeightedUniform, sampleWeightedUniform } from "../../math/random.js";
 import { Rectangle } from "../../math/rectangle.js";
 import { RGBA } from "../../math/rgba.js";
@@ -27,7 +28,7 @@ import { Enemy } from "./enemy.js";
 
 
 const INITIAL_Y : number = 192;
-const TOTAL_HEALTH : number = 32*3;
+const TOTAL_HEALTH : number = 96*3;
 
 const DEATH_TIME : number = 120;
 
@@ -54,7 +55,7 @@ const enum HandAttack {
 };
 
 
-const HAND_ATTACK_WAIT_TIME_MIN : number = 180;
+const HAND_ATTACK_WAIT_TIME_MIN : number = 240;
 const HAND_ATTACK_WAIT_TIME_MAX : number = 360;
 
 const HAND_ATTACK_PROBABILITIES: number[][] =
@@ -230,9 +231,9 @@ class Hand extends CollisionObject {
     }
 
 
-    private shootFireball(event : ProgramEvent) : void {
+    private shootFireball(typeID : number, speed : number, event : ProgramEvent,
+        count : number = 1, isFollowing : boolean = false, lifetime : number = 0) : void {
 
-        const PROJECTILE_SPEED : number = 2.5;
         const ANGLE_OFF : number = Math.PI/5.0;
 
         if (this.playerRef === undefined) {
@@ -243,12 +244,12 @@ class Hand extends CollisionObject {
         // const shiftx : number =  this.pos.x - this.oldPos.x;
         // const shifty : number =  this.pos.y - this.oldPos.y;
 
-        const shootCount : number = this.phase == 0 ? 1 : 3;
-
         // Don't ask what "p" stands for, 'cause I don't know.
-        const p : number = Math.floor(shootCount/2);
+        const p : number = Math.floor(count/2);
         const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
         const baseAngle : number = Math.atan2(dir.y, dir.x);
+
+        const target : GameObject | undefined = isFollowing ? this.playerRef : undefined;
 
         for (let i : number = -p; i <= p; ++ i) {
 
@@ -257,10 +258,10 @@ class Hand extends CollisionObject {
             this.projectiles?.next().spawn(
                 this.pos.x, this.pos.y, 
                 this.pos.x, this.pos.y, 
-                Math.cos(angle)*PROJECTILE_SPEED, 
-                Math.sin(angle)*PROJECTILE_SPEED, 
-                7, 4, false, -1, undefined, 0.0,
-                false, false, 0, true);
+                Math.cos(angle)*speed, 
+                Math.sin(angle)*speed, 
+                typeID, 4, false, -1, target, speed,
+                false, false, lifetime, true);
         }
             
         event.audio.playSample(event.assets.getSample("throw"), 0.50);
@@ -286,28 +287,6 @@ class Hand extends CollisionObject {
                 dirx*PROJECTILE_SPEED, diry*PROJECTILE_SPEED, 3, 3, false,
                 -1, undefined, 0.0, false, true, 0, true);
         }
-    }
-
-
-    private shootFollowingFireball(event : ProgramEvent) : void {
-
-        const PROJECTILE_SPEED : number = 2.0;
-
-        if (this.playerRef === undefined) {
-
-            return;
-        }
-
-        const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
-        this.projectiles?.next().spawn(
-            this.pos.x, this.pos.y, 
-            this.pos.x, this.pos.y, 
-            dir.x*PROJECTILE_SPEED, 
-            dir.y*PROJECTILE_SPEED, 
-            4, 4, false, -1, this.playerRef, PROJECTILE_SPEED,
-            false, false, 300, true);
-            
-        event.audio.playSample(event.assets.getSample("throw"), 0.50);
     }
 
 
@@ -386,7 +365,7 @@ class Hand extends CollisionObject {
 
         case HandAttack.ShootFireball:
 
-            this.shootFireball(event);
+            this.shootFireball(7, 2.5, event, 1 + this.phase*2, false, 0);
             break;
 
         case HandAttack.Rush:
@@ -401,7 +380,7 @@ class Hand extends CollisionObject {
 
         case HandAttack.FollowingFireball:
 
-            this.shootFollowingFireball(event);
+            this.shootFireball(4, 2.0, event, Math.max(1, 1 + (this.phase - 1)*2), true, 300);
             break;
 
         default:
@@ -570,7 +549,7 @@ class Hand extends CollisionObject {
 
     private updateFirstPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/360.0;
+        const WAVE_SPEED : number = Math.PI*2/480.0;
         const AMPLITUDE_Y : number = 48.0;
         const AMPLITUDE_X : number = 24.0;
 
@@ -592,7 +571,7 @@ class Hand extends CollisionObject {
 
     private updateSecondPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/480.0;
+        const WAVE_SPEED : number = Math.PI*2/600.0;
         const DISTANCE : number = 56;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
@@ -612,7 +591,7 @@ class Hand extends CollisionObject {
 
     private updateThirdPhase(event : ProgramEvent) : void {
 
-        const WAVE_SPEED : number = Math.PI*2/360.0;
+        const WAVE_SPEED : number = Math.PI*2/480.0;
         const DISTANCE_WAVE_SPEED : number = Math.PI*2/210.0;
 
         const BASE_DISTANCE : number = 56;
@@ -683,9 +662,9 @@ class Hand extends CollisionObject {
         if ((this.crushing && this.attackPhase == 2) ||
             ((this.rushing && this.attackPhase == 2))) {
 
-            return 4;
+            return 5;
         }
-        return 0;
+        return 4;
     }
 
 
@@ -771,7 +750,6 @@ class Hand extends CollisionObject {
             return;
         }
 
-        const attackFlicker : boolean = this.determineDamage() > 0;
         const flicker : boolean = this.attackPhase == 1 &&
             Math.floor(this.attackPrepareTimer/4) % 2 != 0;
 
@@ -787,18 +765,11 @@ class Hand extends CollisionObject {
             canvas.setColor();
         }
 
-        if (attackFlicker) {
-            
-            canvas.applyEffect(Effect.FixedColor);
-            canvas.setColor(255, 0, 0);
-        }
-
         canvas.drawBitmap(bmp, flip, dx, dy, frame*48, 64, 48, 48);
 
-        if (flicker || attackFlicker) {
+        if (flicker) {
 
             canvas.applyEffect(Effect.None);
-            canvas.setColor();
         }
     }
 
@@ -863,8 +834,8 @@ class Hand extends CollisionObject {
             return;
         }
 
-        const damage : number = this.determineDamage();
-        if (damage == 0) {
+        // This is ugly, I know
+        if ((this.mainBody as FinalBoss).isShaking()) {
 
             return;
         }
@@ -873,7 +844,7 @@ class Hand extends CollisionObject {
             this.pos.x - HURT_WIDTH/2, this.pos.y - HURT_HEIGHT/2,
             HURT_WIDTH, HURT_HEIGHT, 
             event, Math.sign(player.getPosition().x - this.pos.x), 
-            damage);
+            this.determineDamage());
     }
 
 
@@ -931,6 +902,8 @@ export class FinalBoss extends Enemy {
     private bodyPieces : BodyPiece[];
     private hands : Hand[];
 
+    private shakeTimer : number = 0;
+
 
     constructor(x : number, y : number, stage : Stage,
         deathEvent : (event : ProgramEvent) => void,
@@ -982,6 +955,9 @@ export class FinalBoss extends Enemy {
 
         this.hands[0].setOtherHandReference(this.hands[1]);
         this.hands[1].setOtherHandReference(this.hands[0]);
+
+        this.sprite = new Sprite(64, 32);
+        this.sprite.setFrame(1, 0);
     }
 
 
@@ -1000,13 +976,13 @@ export class FinalBoss extends Enemy {
     }
 
 
-    private updateBaseMovement(event : ProgramEvent) : void {
+    private updateFirstPhase(event : ProgramEvent) : void {
 
         const HORIZONTAL_RADIUS : number = TILE_WIDTH*9; 
 
-        const WAVE_SPEED : number = Math.PI*2/300.0;
-        const AMPLITUDE_Y : number = 1.25;
-        const SPEED_X : number = 1.0;
+        const WAVE_SPEED : number = Math.PI*2/360.0;
+        const AMPLITUDE_Y : number = 1.0;
+        const SPEED_X : number = 0.75;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
         this.target.y = Math.sin(this.wave)*AMPLITUDE_Y;
@@ -1018,6 +994,49 @@ export class FinalBoss extends Enemy {
             this.dir = this.pos.x < this.initialPos.x ? 1 : -1;
             this.target.x *= -1;
         }
+    }
+
+
+    // TODO: This is almost the same first phase, merge & pass parameters?
+    private updateSecondPhase(event : ProgramEvent) : void {
+
+        const HORIZONTAL_TRIGGER : number = 32;
+
+        const WAVE_SPEED : number = Math.PI*2/360.0;
+        const AMPLITUDE_Y : number = 1.0;
+        const SPEED_X : number = 0.75;
+
+        const pposx : number = this.playerRef?.getPosition().x ?? this.initialPos.x;
+
+        this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
+        this.target.y = Math.sin(this.wave)*AMPLITUDE_Y;
+
+        this.target.x = SPEED_X*this.dir;
+        if ((this.dir < 0 && this.pos.x < pposx - HORIZONTAL_TRIGGER) ||
+            (this.dir > 0 && this.pos.x > pposx + HORIZONTAL_TRIGGER)) {
+
+            this.dir = this.pos.x < pposx ? 1 : -1;
+            this.target.x *= -1;
+        }
+    }
+
+
+    private updateThirdPhase(event : ProgramEvent) : void {
+
+        const SPEED : number = 0.5;
+        const MOUTH_ANIMATION_FRAME_TIME : number = 4;
+
+        if (this.playerRef === undefined) {
+
+            return;
+        }
+
+        const dir : Vector = Vector.direction(this.pos, this.playerRef.getPosition());
+
+        this.target.x = dir.x*SPEED;
+        this.target.y = dir.y*SPEED;
+
+        this.sprite.animate(0, 0, 3, MOUTH_ANIMATION_FRAME_TIME, event.tick);
     }
 
 
@@ -1046,7 +1065,26 @@ export class FinalBoss extends Enemy {
 
     protected updateLogic(event : ProgramEvent) : void {
         
+        const SHAKE_TIME : number = 60;
+
+        const oldPhase : number = this.phase;
         this.phase = 2 - Math.min(2, Math.floor(this.health/(TOTAL_HEALTH/3)));
+        if (this.phase > oldPhase) {
+
+            this.shakeTimer = SHAKE_TIME;
+            this.shakeEvent?.(60, 4);
+
+            event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
+        }
+
+        if (this.shakeTimer > 0) {
+
+            this.shakeTimer -= event.tick;
+
+            this.speed.zeros();
+            this.target.zeros();
+            return;
+        }
 
         for (const o of this.bodyPieces) {
 
@@ -1061,7 +1099,28 @@ export class FinalBoss extends Enemy {
             return;
         }
 
-        this.updateBaseMovement(event);
+        switch (this.phase) {
+
+        case 0:
+
+            this.updateFirstPhase(event);
+            break;
+
+        case 1:
+
+            this.updateSecondPhase(event);
+            break;
+
+        case 2:
+
+            this.updateThirdPhase(event);
+            break;
+
+        default:
+
+            this.updateFirstPhase(event);
+            break;
+        }
     }
 
 
@@ -1163,10 +1222,20 @@ export class FinalBoss extends Enemy {
 
         // Body
         canvas.drawBitmap(bmpFinalboss, Flip.None, dx, dy, 0, 0, 64, 64);
+        // Eyes
+        if (this.phase > 0) {
+
+            canvas.drawBitmap(bmpFinalboss, Flip.None, dx, dy, 48, 112, 32, 32);
+        }
+        if (this.phase > 1) {
+
+            canvas.drawBitmap(bmpFinalboss, Flip.None, dx + 32, dy, 80, 112, 32, 32);
+        }
+
         canvas.setColor();
 
         // Mouth
-        canvas.drawBitmap(bmpMouth, Flip.None, dx, dy + 24, 64, 0, 64, 32);
+        this.sprite.draw(canvas, bmpMouth, dx, dy + 24, Flip.None);
         // Hat
         canvas.drawBitmap(bmpFinalboss, Flip.None, dx + 8, dy - 16, 0, 112, 48, 24);
 
@@ -1238,4 +1307,7 @@ export class FinalBoss extends Enemy {
             o.passCallbacks(shakeEvent);
         }
     }
+
+
+    public isShaking = () : boolean => this.shakeTimer > 0;
 }
