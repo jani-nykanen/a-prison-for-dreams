@@ -28,7 +28,7 @@ import { Enemy } from "./enemy.js";
 
 
 const INITIAL_Y : number = 192;
-const TOTAL_HEALTH : number = 96*3;
+const TOTAL_HEALTH : number = 100*3;
 
 const DEATH_TIME : number = 120;
 
@@ -78,9 +78,9 @@ const HAND_ATTACK_PROBABILITIES: number[][] =
 [
 
     0.3, // Fireball
-    0.25, // Rush
-    0.25, // Crush
-    0.2,  // Following fireball
+    0.20, // Rush
+    0.20, // Crush
+    0.3,  // Following fireball
 ]
 ];
 
@@ -260,7 +260,7 @@ class Hand extends CollisionObject {
                 this.pos.x, this.pos.y, 
                 Math.cos(angle)*speed, 
                 Math.sin(angle)*speed, 
-                typeID, 4, false, -1, target, speed,
+                typeID, 3, false, -1, target, speed,
                 false, false, lifetime, true);
         }
             
@@ -284,7 +284,7 @@ class Hand extends CollisionObject {
 
             this.projectiles?.next().spawn(
                 this.pos.x, this.pos.y, this.pos.x, this.pos.y,
-                dirx*PROJECTILE_SPEED, diry*PROJECTILE_SPEED, 3, 3, false,
+                dirx*PROJECTILE_SPEED, diry*PROJECTILE_SPEED, 3, 2, false,
                 -1, undefined, 0.0, false, true, 0, true);
         }
     }
@@ -321,7 +321,7 @@ class Hand extends CollisionObject {
                     this.pos.x, this.pos.y + YOFF, 
                     this.pos.x, this.pos.y + YOFF,
                     speedx, speedy, 
-                    3, 3, false, -1, undefined, 0.0, 
+                    3, 2, false, -1, undefined, 0.0, 
                     true, true, 0, true);
             }
         }
@@ -365,7 +365,7 @@ class Hand extends CollisionObject {
 
         case HandAttack.ShootFireball:
 
-            this.shootFireball(7, 2.5, event, 1 + this.phase*2, false, 0);
+            this.shootFireball(7, 2.25, event, Math.min(3, 1 + this.phase*2), false, 0);
             break;
 
         case HandAttack.Rush:
@@ -380,7 +380,7 @@ class Hand extends CollisionObject {
 
         case HandAttack.FollowingFireball:
 
-            this.shootFireball(4, 2.0, event, Math.max(1, 1 + (this.phase - 1)*2), true, 300);
+            this.shootFireball(4, 1.75, event, Math.max(1, 1 + (this.phase - 1)*2), true, 300);
             break;
 
         default:
@@ -423,7 +423,7 @@ class Hand extends CollisionObject {
         const dir : Vector = Vector.direction(this.pos, this.targetPos);
         if (Vector.distance(this.pos, this.targetPos) < MOVE_SPEED*2*event.tick) {
 
-            event.audio.playSample(event.assets.getSample("crush"), 0.60);
+            event.audio.playSample(event.assets.getSample("crush"), 0.50);
 
             this.attackPhase = 3;
             this.attackPrepareTimer = HAND_RUSH_RECOVER_TIME;
@@ -488,7 +488,7 @@ class Hand extends CollisionObject {
 
     private updateAttacking(event : ProgramEvent) : void {
 
-        const PHASE_SPEED_UP : number = 0.25;
+        const PHASE_SPEED_UP : number = 0.20;
         const PREPARE_TIME : number = 60;
 
         if (this.attackPhase == 1) {
@@ -521,12 +521,12 @@ class Hand extends CollisionObject {
         this.attackTimer -= attackTimerSpeed*event.tick;
         if (this.otherHand?.isPreparingAttack()) {
 
-            this.attackTimer = Math.max(30, this.attackTimer);
+            this.attackTimer = Math.max(60, this.attackTimer);
         }
 
         if (this.attackTimer <= 0) {
 
-            event.audio.playSample(event.assets.getSample("charge3"), 0.70);
+            event.audio.playSample(event.assets.getSample("charge3"), 0.50);
 
             this.attackPhase = 1;
             this.attackTimer = HAND_ATTACK_WAIT_TIME_MIN +
@@ -659,12 +659,11 @@ class Hand extends CollisionObject {
 
     private determineDamage() : number {
 
-        if ((this.crushing && this.attackPhase == 2) ||
-            ((this.rushing && this.attackPhase == 2))) {
+        if ((this.crushing && this.attackPhase == 2)) {
 
             return 5;
         }
-        return 4;
+        return 3;
     }
 
 
@@ -822,7 +821,7 @@ class Hand extends CollisionObject {
     }
 
 
-    public playerCollision(player : Player, event : ProgramEvent) : void {
+    public playerCollision(player : Player, event : ProgramEvent, doNotHarm : boolean = false) : void {
 
         const HURT_WIDTH : number = 24;
         const HURT_HEIGHT : number = 16;
@@ -835,7 +834,7 @@ class Hand extends CollisionObject {
         }
 
         // This is ugly, I know
-        if ((this.mainBody as FinalBoss).isShaking()) {
+        if (doNotHarm) {
 
             return;
         }
@@ -878,6 +877,21 @@ class Hand extends CollisionObject {
         this.shakeEvent = shakeEvent;
     }
 
+
+    public stopAttackingIfPossible() : void {
+
+        if (this.attackPhase == 1 && this.attackPrepareTimer > 0) {
+
+            this.attackPhase = 0;
+            this.attackPrepareTimer = 0;
+
+            this.crushing = false;
+            this.rushing = false;
+
+            this.attackType = HandAttack.Unknown;
+        }
+    }
+
 }
 
 
@@ -894,8 +908,12 @@ export class FinalBoss extends Enemy {
     private wave : number = 0.0;
     private phase : number = 0;
 
+    private ghostSpawnTimer : number = 0;
+    private previousDirection : number = 0;
+
     private deathEvent : (event : ProgramEvent) => void;
     private triggerDeathEvent : (event : ProgramEvent) => void;
+    private spawnGhostCallback : (dir : number) => void; 
     private deathTimer : number = 0;
     private deathTriggered : boolean = false;
 
@@ -907,7 +925,8 @@ export class FinalBoss extends Enemy {
 
     constructor(x : number, y : number, stage : Stage,
         deathEvent : (event : ProgramEvent) => void,
-        triggerDeathEvent : (event : ProgramEvent) => void) {
+        triggerDeathEvent : (event : ProgramEvent) => void,
+        spawnGhostCallback : (dir : number) => void) {
 
         super(x, y);
 
@@ -915,8 +934,8 @@ export class FinalBoss extends Enemy {
         this.sprite.setFrame(1, 0);
 
         this.health = TOTAL_HEALTH;
-        this.initialHealth = this.health;
-        this.attackPower = 5;
+        this.initialHealth = TOTAL_HEALTH;
+        this.attackPower = 4;
 
         this.dropProbability = 0.0;
 
@@ -934,10 +953,11 @@ export class FinalBoss extends Enemy {
         this.friction.x = 0.05;
         this.friction.y = 0.05;
 
-        this.knockbackFactor = 0.75;
+        this.knockbackFactor = 0.5;
 
         this.deathEvent = deathEvent;
         this.triggerDeathEvent = triggerDeathEvent;
+        this.spawnGhostCallback = spawnGhostCallback;
 
         this.cameraCheckArea.x = 1024;
         this.cameraCheckArea.y = 1024;
@@ -973,6 +993,89 @@ export class FinalBoss extends Enemy {
 
         this.speed.y = -0.5 - (this.pos.y - INITIAL_Y)/64;
         this.target.y = this.speed.y;
+    }
+
+
+    private updateGhostGenerator(event : ProgramEvent) : void {
+
+        const BASE_GHOST_TIME : number = 360;
+        const PHASE_SPEED_FACTOR : number = 0.25;
+
+        const count : number = this.phase == 2 ? 2 : 1;
+
+        const speed : number = 1.0 + PHASE_SPEED_FACTOR*this.phase;
+
+        this.ghostSpawnTimer += speed*event.tick;
+        if (this.ghostSpawnTimer < BASE_GHOST_TIME) {
+
+            return;
+        }
+
+        let dir : number = 0;
+        if (this.previousDirection == 0) {
+
+            dir = Math.random() < 0.5 ? 1 : -1;
+        }
+        else {
+
+            dir = -this.previousDirection;
+        }
+        this.previousDirection = dir;
+
+        for (let i : number = 0; i < count; ++ i) {
+
+            this.spawnGhostCallback(this.previousDirection);
+            if (count > 0) {
+                
+                this.previousDirection *= -1;
+            }
+        }
+
+        this.ghostSpawnTimer -= BASE_GHOST_TIME;
+    }
+
+
+    private shootTooth(event : ProgramEvent) : void {
+
+        const RADIUS : number = 16;
+        const SPEED_X_RADIUS : number = 1.75;
+        const SPEED_Y_MIN : number = 2.5;
+        const SPEED_Y_MAX : number = 3.5;
+
+        const dx : number = this.pos.x + (Math.random()*2 - 1.0)*RADIUS;
+        const dy : number = this.pos.y + 12;
+
+        const speedx : number = (Math.random()*2 - 1.0)*SPEED_X_RADIUS;
+        const speedy : number = -(SPEED_Y_MIN + Math.random()*(SPEED_Y_MAX - SPEED_Y_MIN));
+
+        this.projectiles?.next().spawn(
+            dx, dy, dx, dy,
+            speedx, speedy, 10, 3, false,
+            -1, undefined, 0.0, true, false, 0, 
+            true);
+
+        event.audio.playSample(event.assets.getSample("tooth"), 0.60);
+    }
+
+
+    private updateMouth(event : ProgramEvent) : void {
+        
+        const MOUTH_ANIMATION_BASE_TIME : number = 6;
+        const MOUTH_ANIMATION_WAIT_TIME_1 : number = 60;
+        const MOUTH_ANIMATION_WAIT_TIME_2 : number = 24;
+
+        const oldFrame : number = this.sprite.getColumn();
+        let frameTime : number = MOUTH_ANIMATION_BASE_TIME;
+        if (oldFrame == 0) {
+
+            frameTime = this.phase == 1 ? MOUTH_ANIMATION_WAIT_TIME_1 : MOUTH_ANIMATION_WAIT_TIME_2;
+        }
+
+        this.sprite.animate(0, 0, 3, frameTime, event.tick);
+        if (this.sprite.getColumn() == 2 && oldFrame == 1) {
+
+            this.shootTooth(event);
+        }
     }
 
 
@@ -1018,13 +1121,14 @@ export class FinalBoss extends Enemy {
             this.dir = this.pos.x < pposx ? 1 : -1;
             this.target.x *= -1;
         }
+
+        this.updateMouth(event);
     }
 
 
     private updateThirdPhase(event : ProgramEvent) : void {
 
         const SPEED : number = 0.5;
-        const MOUTH_ANIMATION_FRAME_TIME : number = 4;
 
         if (this.playerRef === undefined) {
 
@@ -1036,7 +1140,7 @@ export class FinalBoss extends Enemy {
         this.target.x = dir.x*SPEED;
         this.target.y = dir.y*SPEED;
 
-        this.sprite.animate(0, 0, 3, MOUTH_ANIMATION_FRAME_TIME, event.tick);
+        this.updateMouth(event);
     }
 
 
@@ -1067,14 +1171,21 @@ export class FinalBoss extends Enemy {
         
         const SHAKE_TIME : number = 60;
 
+        this.updateGhostGenerator(event);
+
         const oldPhase : number = this.phase;
         this.phase = 2 - Math.min(2, Math.floor(this.health/(TOTAL_HEALTH/3)));
         if (this.phase > oldPhase) {
 
+            for (const o of this.hands) {
+
+                o.stopAttackingIfPossible();
+            }
+
             this.shakeTimer = SHAKE_TIME;
             this.shakeEvent?.(60, 4);
 
-            event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
+            event.audio.playSample(event.assets.getSample("thwomp"), 0.40);
         }
 
         if (this.shakeTimer > 0) {
@@ -1179,7 +1290,7 @@ export class FinalBoss extends Enemy {
         for (const o of this.hands) {
 
             // o.setPlayerReference(player);
-            o.playerCollision(player, event);
+            o.playerCollision(player, event, this.hurtTimer > 0 && this.shakeTimer > 0);
         }
     }
 
@@ -1307,7 +1418,4 @@ export class FinalBoss extends Enemy {
             o.passCallbacks(shakeEvent);
         }
     }
-
-
-    public isShaking = () : boolean => this.shakeTimer > 0;
 }

@@ -148,6 +148,7 @@
         {"name": "lick", "path": "lick.wav"},
         {"name": "hammer", "path": "hammer.wav"},
         {"name": "crush", "path": "crush.wav"},
+        {"name": "tooth", "path": "tooth.wav"},
 
         {"name": "hurt", "path": "hurt.wav"},
         {"name": "die", "path": "die.wav"},

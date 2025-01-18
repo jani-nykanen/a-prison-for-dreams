@@ -754,7 +754,7 @@ export class ObjectManager {
             const dx : number = dir > 0 ? -12 : stage.width*TILE_WIDTH + 12;
             const dy : number = minY + Math.random()*(maxY - minY);
 
-            const o : Ghost = new Ghost(dx, dy, dir);
+            const o : Ghost = new Ghost(dx, dy, dir, stage.width*TILE_WIDTH, 0);
             o.passGenerators(this.flyingText, this.collectables, this.projectiles);
             this.enemies.push(o);
         };
@@ -818,7 +818,20 @@ export class ObjectManager {
 
     public initiateFinalBoss(stage : Stage, camera : Camera, event : ProgramEvent) : void {
 
-        const MUSIC_VOL : number = 0.40;
+        const MUSIC_VOL : number = 0.30;
+
+        const spawnGhost = (dir : number) : void => {
+            
+            const minY : number = TILE_HEIGHT*10;
+            const maxY : number = (stage.height - 4)*TILE_HEIGHT;
+
+            const dx : number = dir > 0 ? -12 : stage.width*TILE_WIDTH + 12;
+            const dy : number = minY + Math.random()*(maxY - minY);
+
+            const o : Ghost = new Ghost(dx, dy, dir, stage.width*TILE_WIDTH, 1);
+            o.passGenerators(this.flyingText, this.collectables, this.projectiles);
+            this.enemies.push(o);
+        };
 
         const deathEvent = (event : ProgramEvent) : void => {
 
@@ -848,7 +861,7 @@ export class ObjectManager {
         const playerPos : Vector = this.player.getPosition();
         this.finalboss = new FinalBoss(
             playerPos.x, playerPos.y - 24, stage,
-            deathEvent, triggerDeathEvent);
+            deathEvent, triggerDeathEvent, spawnGhost);
         this.enemies.push(this.finalboss);
 
         this.finalboss.passGenerators(this.flyingText, this.collectables, this.projectiles);

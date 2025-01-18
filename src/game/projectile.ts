@@ -11,27 +11,27 @@ import { GameObject } from "./gameobject.js";
 
 
 const LAST_ANIMATION_FRAME : number[] = [
-    3, 2, 3, 2, 3, 3, 3, 3, 3, 3
+    3, 2, 3, 2, 3, 3, 3, 3, 3, 3, 3
 ];
 
 const ANIMATION_SPEED : number[] = [
-    4, 4, 4, 4, 4, 5, 5, 4, 5, 5
+    4, 4, 4, 4, 4, 5, 5, 4, 5, 5, 5
 ];
 
 
 const HITBOX_WIDTHS : number[] = [
-    8, 12, 4, 4, 8, 10, 4, 8, 12, 18
+    8, 12, 4, 4, 8, 10, 4, 8, 12, 18, 10,
 ];
 const HITBOX_HEIGHTS : number[] = [
-    8, 12, 4, 4, 8, 10, 4, 8, 12, 18
+    8, 12, 4, 4, 8, 10, 4, 8, 12, 18, 10
 ];
 
 
 const CAMERA_CHECKAREA_X : number[] = [
-    24, 24, 24, 24, 24, 64, 24, 24,
+    24, 24, 24, 24, 24, 64, 24, 24, 96,
 ];
 const CAMERA_CHECKAREA_Y : number[] = [
-    24, 24, 24, 24, 24, 64, 24, 24,
+    24, 24, 24, 24, 24, 64, 24, 24, 96,
 ];
 
 
@@ -195,13 +195,18 @@ export class Projectile extends CollisionObject {
 
         this.cameraCheckArea.x = CAMERA_CHECKAREA_X[this.id] ?? 24;
         this.cameraCheckArea.y = CAMERA_CHECKAREA_Y[this.id] ?? 24;
+        if (useWideCameraArea) {
+
+            this.cameraCheckArea.x = 256;
+            this.cameraCheckArea.y = 256;
+        }
 
         this.dying = false;
         this.exist = true;
 
         this.ignoreEvenSlopes = Math.abs(this.speed.y) < IGNORE_EVEN_THRESHOLD;
         this.ignoreBottomLayer = !doNotIgnoreBottomLayer;
-        this.takeCollisions = this.id != 7;
+        this.takeCollisions = this.id != 7 && this.id != 10;
 
         this.targetObject = targetObject;
         this.followSpeed = followSpeed;
@@ -215,17 +220,6 @@ export class Projectile extends CollisionObject {
 
         this.timer = 0;
         this.maxLifeTime = maxLifeTime;
-
-        if (useWideCameraArea) {
-
-            this.cameraCheckArea.x = 256;
-            this.cameraCheckArea.y = 256;
-        }
-        else {
-
-            this.cameraCheckArea.x = 32;
-            this.cameraCheckArea.y = 32;
-        }
     }
 
 

@@ -455,7 +455,10 @@ export class Eye extends Enemy {
         for (let i : number = 0; i < count; ++ i) {
 
             this.spawnGhostCallback(this.previousDirection);
-            this.previousDirection *= -1;
+            if (count > 0) {
+                
+                this.previousDirection *= -1;
+            }
         }
 
         this.ghostSpawnTimer -= BASE_GHOST_TIME;
