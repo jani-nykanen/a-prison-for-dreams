@@ -134,13 +134,18 @@ export class Ending implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
+        const MUSIC_VOLUME : number = 0.40;
+
+        event.audio.fadeInMusic(event.assets.getSample("winter"), MUSIC_VOLUME, 1000.0);
+
         this.text.addText(event.localization?.getItem("ending") ?? ["null"]);
         this.text.activate(false, null, (event : ProgramEvent) : void => {
 
             event.transition.activate(true, TransitionType.Fade, 1.0/60.0, event,
                 (event : ProgramEvent) : void => {
 
-                    event.scenes.changeScene("title", event);
+                    event.audio.stopMusic();
+                    event.scenes.changeScene("credits", event);
                 }
             )
         });

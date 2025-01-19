@@ -690,5 +690,26 @@
         "For those questions\nI have no answer.",
         "But one thing I know:\nwhen another world\nneeds to be destroyed,\nI will summon you\nagain.",
         "Before that... just\nkeep walking."
-    ]
+    ],
+
+
+    "credits_titles": [
+
+        "CREDITS",
+        "Everything (excluding music):",
+        "Music:",
+        "Free software used:",
+        "Special thanks:"
+    ],
+
+    "credits_names": [
+        
+        "",
+        "Jani Nyk\u0007nen",
+        "H0dari",
+        "Visual Studio Code\nTypeScript\nGIMP\nTiled\nAudacity\nBFXR\nMuseScore\nLMMS\nLinux Mint\n...and many more!",
+        "You\nYour cat\n(I really hope you\n have a cat!)     "
+    ],
+
+    "the_end": "THE END"
 }
