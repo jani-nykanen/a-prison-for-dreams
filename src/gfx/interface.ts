@@ -79,6 +79,7 @@ export interface Canvas {
         dx : number, dy : number, xoff? : number, yoff? : number, 
         align? : Align, scalex? : number, scaley? : number) : void;
     fillCircleOutside(centerx : number, centery : number, radius : number) : void;
+    fillEllipse(centerx : number, centery : number, width : number, height : number) : void;
     fillEquiangularTriangle(centerx : number, centery : number, width : number, height : number) : void;
 
     drawHorizontallyWavingBitmap(bitmap : Bitmap | undefined, 

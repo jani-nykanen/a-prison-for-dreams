@@ -27,6 +27,8 @@ import { constructShop } from "./shopbuilder.js";
 const MAP_NAME_APPEAR_TIME : number = 90;
 const MAP_NAME_FADE_TIME : number = 30;
 
+const WORLD_DESTRUCTION_TIMER : number = 120;
+
 
 export class Game implements Scene {
 
@@ -55,6 +57,7 @@ export class Game implements Scene {
     private mapNameTimer : number = 0;
 
     private mapTransition : MapTransitionCallback;
+    private destroyWorldCallback : () => void;
 
     private baseTrack : AudioSample | undefined = undefined;
     private baseTrackVolume : number = 1.0;
@@ -70,6 +73,9 @@ export class Game implements Scene {
     private showInProgressMessage : boolean = false;
     private inProgressMessageWidth : number = 0;
     private inProgressMessageHeight : number = 0;
+
+    private worldDestructionStarted : boolean = false;
+    private worldDestructionTimer : number = 0;
 
    
     constructor(event : ProgramEvent) { 
@@ -124,8 +130,17 @@ export class Game implements Scene {
 
                 this.finalBossBattleConfirmationBox.deactivate();
             });
+
+        this.destroyWorldCallback = () : void => this.initiateWorldDestruction();
     }
     
+
+    private initiateWorldDestruction() : void {
+
+        this.worldDestructionStarted = true;
+        this.worldDestructionTimer = 0;
+    }
+
 
     private triggerNPC(index : number, npcType : number, event : ProgramEvent) : void {
 
@@ -216,8 +231,8 @@ export class Game implements Scene {
             this.bossBattleConfirmationBox, this.finalBossBattleConfirmationBox,
             this.shops, this.stage, this.camera,
             Number(baseMap.getProperty("npctype") ?? 0),
-            this.mapTransition, spawnPos, pose, 
-            createPlayer, event);
+            this.mapTransition, this.destroyWorldCallback,
+            spawnPos, pose, createPlayer, event);
         this.objects.centerCamera(this.camera);
         this.limitCamera();
 
@@ -304,6 +319,10 @@ export class Game implements Scene {
 
     private reset(event : ProgramEvent) : void {
 
+        this.worldDestructionStarted = false;
+
+        this.camera.shake(0, 0);
+
         // this.stage.toggleTopLayerRendering(true);
         this.stage.reset();
 
@@ -352,9 +371,44 @@ export class Game implements Scene {
     }
     
 
+    private updateWorldDestruction(event : ProgramEvent) : void {
+
+        this.worldDestructionTimer += event.tick;
+        if (this.worldDestructionTimer >= WORLD_DESTRUCTION_TIMER) {
+
+            event.transition.activate(true, TransitionType.Fade, 1.0/30.0, event,
+                (event : ProgramEvent) : void => {
+
+                    throw new Error("Not yet!");
+
+                }, new RGBA(255, 255, 255));
+            this.camera.shake(30, WORLD_DESTRUCTION_TIMER/6);
+            return;
+        }
+
+        const shakeAmount : number = Math.floor(this.worldDestructionTimer/6);
+        this.camera.shake(2, shakeAmount);
+    }
+
+
     private limitCamera() : void {
 
         this.camera.limit(0, this.stage.width*TILE_WIDTH, 0, this.stage.height*TILE_HEIGHT);
+    }
+
+
+    private drawWorldDestruction(canvas : Canvas) : void {
+
+        const MAX_RADIUS : number = 288;
+
+        const cx : number = canvas.width/2;
+        const cy : number = canvas.height/2;
+
+        const t : number = this.worldDestructionTimer/WORLD_DESTRUCTION_TIMER;
+        const radius : number = t*t*MAX_RADIUS;
+
+        canvas.setColor();
+        canvas.fillEllipse(cx, cy, radius*2, radius*2);
     }
 
 
@@ -444,6 +498,18 @@ export class Game implements Scene {
         if (this.cutscene.isActive()) {
 
             this.cutscene.update(event);
+            return;
+        }
+
+        if (this.worldDestructionStarted) {
+
+            this.camera.update(event);
+            if (event.transition.isActive()) {
+
+                this.transitionActive = true;
+                return;
+            }
+            this.updateWorldDestruction(event);
             return;
         }
 
@@ -565,6 +631,10 @@ export class Game implements Scene {
         }
 
         this.stage.drawBackground(canvas, assets, this.camera);
+        if (this.worldDestructionStarted) {
+
+            this.drawWorldDestruction(canvas);
+        }
 
         this.camera.apply(canvas);
         this.stage?.draw(canvas, assets, this.tilesetIndex, this.camera);

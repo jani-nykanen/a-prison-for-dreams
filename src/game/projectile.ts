@@ -268,6 +268,12 @@ export class Projectile extends CollisionObject {
     }
 
 
+    public makeIgnoreCollision() : void {
+
+        this.takeCollisions = false;
+    }
+
+
     public isFriendly = () : boolean => this.friendly;
     public getID = () : number => this.id;
     public destroyOnTouch = () : boolean => this.id != 1 && this.id != 9;

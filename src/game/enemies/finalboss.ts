@@ -13,6 +13,7 @@ import { FlyingText } from "../flyingtext.js";
 import { GameObject } from "../gameobject.js";
 import { ObjectGenerator } from "../objectgenerator.js";
 import { Player } from "../player.js";
+import { Projectile } from "../projectile.js";
 import { ProjectileGenerator } from "../projectilegenerator.js";
 import { Stage } from "../stage.js";
 import { TILE_HEIGHT, TILE_WIDTH } from "../tilesize.js";
@@ -27,6 +28,8 @@ import { Enemy } from "./enemy.js";
  */
 
 
+const APPEAR_TIME : number = 60;
+
 const INITIAL_Y : number = 192;
 const TOTAL_HEALTH : number = 100*3;
 
@@ -36,7 +39,7 @@ const BODY_PIECE_SX : number[] = [0, 64, 112, 120];
 const BODY_PIECE_SY : number[] = [0, 0, 0, 40];
 const BODY_PIECE_DIMENSION : number[] = [64, 48, 32, 16];
 
-const HAND_BASE_DISTANCE : number = 72;
+const HAND_BASE_DISTANCE : number = 80;
 
 const COLOR_MODS : RGBA[] = [
     new RGBA(),
@@ -51,7 +54,7 @@ const enum HandAttack {
     ShootFireball = 0,
     Rush = 1,
     Crush = 2,
-    FollowingFireball = 3,
+    TripleShot = 3,
 };
 
 
@@ -61,26 +64,23 @@ const HAND_ATTACK_WAIT_TIME_MAX : number = 360;
 const HAND_ATTACK_PROBABILITIES: number[][] =
 [
 [
-
     0.40, // Fireball
     0.30, // Rush
     0.30, // Crush
-    0.0,  // Following fireball
+    0.0,  // Triple shot
 ]   
 , 
 [
-
     0.3, // Fireball
     0.25, // Rush
     0.25, // Crush
-    0.2,  // Following fireball
+    0.2,  // Triple shot
 ],
 [
-
-    0.3, // Fireball
-    0.20, // Rush
-    0.20, // Crush
-    0.3,  // Following fireball
+    0.0, // Fireball
+    0.25, // Rush
+    0.25, // Crush
+    0.5,  // Triple shot
 ]
 ];
 
@@ -140,6 +140,20 @@ class BodyPiece extends GameObject {
         
         this.target.x = dir.x*speed;
         this.target.y = dir.y*speed;
+    }
+
+
+    public drawDeath(canvas : Canvas, bmp : Bitmap | undefined, t : number) : void {
+
+        const sx : number = BODY_PIECE_SX[this.id] ?? 0;
+        const sy : number = BODY_PIECE_SY[this.id] ?? 0;
+        const dimension : number = BODY_PIECE_DIMENSION[this.id] ?? 64;
+
+        const dx : number = this.pos.x - dimension/2;
+        const dy : number = this.pos.y - dimension/2;
+
+        canvas.drawFunnilyAppearingBitmap(bmp, Flip.None, 
+            dx, dy, sx, sy, dimension, dimension, t, dimension*2, 4, 4);
     }
 
 
@@ -282,10 +296,12 @@ class Hand extends CollisionObject {
             const dirx : number = Math.cos(angle);
             const diry : number = Math.sin(angle);
 
-            this.projectiles?.next().spawn(
+            const p : Projectile = this.projectiles?.next();
+            p.spawn(
                 this.pos.x, this.pos.y, this.pos.x, this.pos.y,
                 dirx*PROJECTILE_SPEED, diry*PROJECTILE_SPEED, 3, 2, false,
                 -1, undefined, 0.0, false, true, 0, true);
+            p.makeIgnoreCollision();
         }
     }
 
@@ -317,12 +333,13 @@ class Hand extends CollisionObject {
                     speedy *= SECONDARY_SPEED_BONUS;
                 }
 
-                this.projectiles?.next().spawn(
-                    this.pos.x, this.pos.y + YOFF, 
+                const p : Projectile = this.projectiles?.next();
+                p.spawn(this.pos.x, this.pos.y + YOFF, 
                     this.pos.x, this.pos.y + YOFF,
                     speedx, speedy, 
                     3, 2, false, -1, undefined, 0.0, 
                     true, true, 0, true);
+                p.makeIgnoreCollision();
             }
         }
     }
@@ -365,7 +382,7 @@ class Hand extends CollisionObject {
 
         case HandAttack.ShootFireball:
 
-            this.shootFireball(7, 2.25, event, Math.min(3, 1 + this.phase*2), false, 0);
+            this.shootFireball(7, 2.5, event, 1, false, 0);
             break;
 
         case HandAttack.Rush:
@@ -378,9 +395,9 @@ class Hand extends CollisionObject {
             this.initiateCrush(event);
             break;
 
-        case HandAttack.FollowingFireball:
+        case HandAttack.TripleShot:
 
-            this.shootFireball(4, 1.75, event, Math.max(1, 1 + (this.phase - 1)*2), true, 300);
+        this.shootFireball(7, 2.0, event, 3, false, 0);
             break;
 
         default:
@@ -572,7 +589,7 @@ class Hand extends CollisionObject {
     private updateSecondPhase(event : ProgramEvent) : void {
 
         const WAVE_SPEED : number = Math.PI*2/600.0;
-        const DISTANCE : number = 56;
+        const DISTANCE : number = 64;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
         if (this.rushing) {
@@ -594,8 +611,8 @@ class Hand extends CollisionObject {
         const WAVE_SPEED : number = Math.PI*2/480.0;
         const DISTANCE_WAVE_SPEED : number = Math.PI*2/210.0;
 
-        const BASE_DISTANCE : number = 56;
-        const DISTANCE_VARY : number = 12;
+        const BASE_DISTANCE : number = 64;
+        const DISTANCE_VARY : number = 16;
 
         this.wave = (this.wave + WAVE_SPEED*event.tick) % (Math.PI*2);
         this.distanceWave = (this.distanceWave + DISTANCE_WAVE_SPEED*event.tick) % (Math.PI*2);
@@ -636,7 +653,7 @@ class Hand extends CollisionObject {
     private determineFrame() : number {
 
         if ((this.attackPhase == 1 && this.attackType == HandAttack.ShootFireball) ||
-            (this.attackPhase == 1 && this.attackType == HandAttack.FollowingFireball) ||
+            (this.attackPhase == 1 && this.attackType == HandAttack.TripleShot) ||
             (this.attackPhase == 3 && this.attackType == HandAttack.Rush) ||
             (this.attackType == HandAttack.Crush)) {
 
@@ -739,6 +756,16 @@ class Hand extends CollisionObject {
 
             this.spawnCrushProjectiles();
         }
+    }
+
+
+    public drawDeath(canvas : Canvas, bmp : Bitmap | undefined, t : number) : void {
+
+        const dx : number = this.pos.x - 24;
+        const dy : number = this.pos.y - 24;
+
+        canvas.drawFunnilyAppearingBitmap(bmp, this.determineFlip(), 
+            dx, dy, 0, 64, 48, 48, t, 96, 4, 4);
     }
 
 
@@ -921,6 +948,7 @@ export class FinalBoss extends Enemy {
     private hands : Hand[];
 
     private shakeTimer : number = 0;
+    private appearTimer : number = APPEAR_TIME;
 
 
     constructor(x : number, y : number, stage : Stage,
@@ -1156,7 +1184,35 @@ export class FinalBoss extends Enemy {
 
     private drawDeath(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
-        // const t : number = this.deathTimer/DEATH_TIME;
+        const dx : number = this.pos.x - 32;
+        const dy : number = this.pos.y - 32;
+        const t : number = this.deathTimer/DEATH_TIME;
+        
+        this.setColorMod(canvas);
+        canvas.setAlpha(1.0 - t);
+
+        // Body parts
+        for (const o of this.bodyPieces) {
+
+            o.drawDeath(canvas, bmp, t);
+        }
+        // Main body
+        canvas.drawFunnilyAppearingBitmap(bmp, Flip.None, 
+            dx, dy, 0, 0, 64, 64, t, 256, 4, 4);
+        // Hands
+        for (const o of this.hands) {
+
+            o.drawDeath(canvas, bmp, t);
+        }
+
+        canvas.setColor();
+        canvas.setAlpha(1.0 - t);
+
+        // Hat
+        canvas.drawFunnilyAppearingBitmap(bmp, Flip.None, 
+            dx + 8, dy - 16, 0, 112, 48, 24, t, 128, 4, 4);
+
+        canvas.setColor();
     }
 
 
@@ -1170,6 +1226,11 @@ export class FinalBoss extends Enemy {
     protected updateLogic(event : ProgramEvent) : void {
         
         const SHAKE_TIME : number = 60;
+
+        if (this.appearTimer > 0) {
+
+            this.appearTimer -= event.tick;
+        }
 
         this.updateGhostGenerator(event);
 
@@ -1267,8 +1328,8 @@ export class FinalBoss extends Enemy {
             this.deathTriggered = true;
         }
 
-        const shakeAmount : number = Math.floor(this.deathTimer/6);
-        this.shakeEvent?.(2, shakeAmount);
+        // const shakeAmount : number = Math.floor(this.deathTimer/6);
+        // this.shakeEvent?.(2, shakeAmount);
 
         this.updateHealthbarPos(event);
 
@@ -1311,7 +1372,14 @@ export class FinalBoss extends Enemy {
             return;
         }
 
+        let alpha : number = 1.0;
+        if (this.appearTimer > 0) {
+
+            alpha = 1.0 - this.appearTimer/APPEAR_TIME;
+        }
+
         this.setColorMod(canvas);
+        canvas.setAlpha(alpha);
 
         const hurtFlicker : boolean = !this.dying && 
             this.hurtTimer > 0 &&
@@ -1343,7 +1411,7 @@ export class FinalBoss extends Enemy {
             canvas.drawBitmap(bmpFinalboss, Flip.None, dx + 32, dy, 80, 112, 32, 32);
         }
 
-        canvas.setColor();
+        canvas.setColor(255, 255, 255, alpha);
 
         // Mouth
         this.sprite.draw(canvas, bmpMouth, dx, dy + 24, Flip.None);
@@ -1358,6 +1426,7 @@ export class FinalBoss extends Enemy {
         for (const o of this.hands) {   
 
             this.setColorMod(canvas);
+            canvas.setAlpha(alpha);
             o.draw(canvas, assets, bmpFinalboss);
         }
 

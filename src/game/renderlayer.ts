@@ -86,7 +86,7 @@ export class RenderLayer {
 
     public draw(canvas : Canvas, tileset : Bitmap | undefined, 
         camera : Camera, topLayerOpacity : number = 1.0,
-        firstLayer : number = 0) : void {
+        firstLayer : number = 0, lastLayer : number = this.layers.length) : void {
 
         const MIN_OPACITY : number = 0.001;
         const CAMERA_MARGIN : number = 1;   
@@ -99,7 +99,7 @@ export class RenderLayer {
         const endx : number = startx + ((camera.width/TILE_WIDTH) | 0) + CAMERA_MARGIN*2;
         const endy : number = starty + ((camera.height/TILE_HEIGHT) | 0) + CAMERA_MARGIN*2;
 
-        for (let i : number = firstLayer; i < this.layers.length; ++ i) {
+        for (let i : number = firstLayer; i < lastLayer; ++ i) {
 
             if (i == 2) {
 

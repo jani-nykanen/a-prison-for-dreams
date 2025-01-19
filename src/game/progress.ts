@@ -53,6 +53,10 @@ export const LOCAL_STORAGE_KEY : string = "the_end_of_dreams__savedata_";
 export class Progress {
 
 
+    // These are not saved to a file, but persist
+    // even if the player dies
+    private temporaryFlags : string[];
+
     private health : number = 10;
     private maxHealth : number = 10;
     // Don't ask why these are here
@@ -97,6 +101,8 @@ export class Progress {
 
 
     constructor(fileIndex : number) {
+
+        this.temporaryFlags = new Array<string> ();
 
         this.obtainedItems = (new Array<boolean> (32)).fill(false);
         this.obtainedHealthUps = (new Array<boolean> (8)).fill(false);
@@ -616,4 +622,19 @@ export class Progress {
 
     public getAreaName = () : string => this.areaName;
     
+
+    public setTemporaryFlag(flag : string) : void {
+
+        if (this.temporaryFlags.includes(flag)) {
+
+            return;
+        }
+        this.temporaryFlags.push(flag);
+    }
+
+
+    public hasTemporaryFlag(flag : string) : boolean {
+
+        return this.temporaryFlags.includes(flag);
+    }
 }

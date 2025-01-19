@@ -122,6 +122,11 @@ export class Platform extends GameObject {
 
             break;
 
+        case PlatformType.StaticUnmoving:
+
+            this.appearTimer = APPEAR_TIME;
+            break;
+
         default:
             break;
         }
@@ -233,11 +238,6 @@ export class Platform extends GameObject {
 
         this.speed.zeros();
         this.target.zeros();
-
-        if (this.appearTimer > 0) {
-
-            this.appearTimer -= event.tick;
-        }
     }
 
 
@@ -413,6 +413,11 @@ export class Platform extends GameObject {
 
 
     protected updateEvent(event : ProgramEvent) : void {
+
+        if (this.appearTimer > 0) {
+
+            this.appearTimer -= event.tick;
+        }
 
         switch (this.type) {
 

@@ -139,6 +139,7 @@
         {"name": "thwomp", "path": "thwomp.wav"},
         {"name": "vaporize", "path": "vaporize.wav"},
         {"name": "bounce", "path": "bounce.wav"},
+        {"name": "destroy", "path": "destroy.wav"},
 
         {"name": "hit", "path": "hit.wav"},
         {"name": "sword", "path": "sword.wav"},

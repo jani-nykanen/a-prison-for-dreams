@@ -45,6 +45,42 @@ const createCircleOutMesh = (gl : WebGLRenderingContext, quality : number) : Mes
 }
 
 
+
+const createCircleMesh = (gl : WebGLRenderingContext, quality : number) : Mesh => {
+
+    const step : number = Math.PI*2/quality;
+
+    const vertices : number[] = new Array<number> ();
+    const indices : number[] = new Array<number> ();
+
+    let index : number = 0;
+
+    for (let i : number = 0; i < quality; ++ i) {
+
+        const angle1 : number = step*i;
+        const angle2 : number = step*(i + 1);
+
+        const c1 : number = Math.cos(angle1);
+        const c2 : number = Math.cos(angle2);
+
+        const s1 : number = Math.sin(angle1);
+        const s2 : number = Math.sin(angle2);
+
+        vertices.push(
+            0, 0,
+            c1, s1, 
+            c2, s2);
+
+        for (let j : number = 0; j < 3; ++ j) {
+
+            indices.push(index ++);
+        }
+    }
+
+    return new Mesh(gl, new Float32Array(vertices), new Uint16Array(indices));
+}
+
+
 const createEquiangularTriangleMesh = (gl : WebGLRenderingContext) : Mesh => {
 
     const p : number = Math.SQRT1_2;
@@ -70,6 +106,7 @@ export class WebGLCanvas implements Canvas {
     private cloneTexture : WebGLBitmap | undefined;
 
     private meshCircleOut : Mesh;
+    private meshCircle : Mesh;
     private meshEquiangularTriangle : Mesh;
 
     private batch : SpriteBatch;
@@ -118,6 +155,7 @@ export class WebGLCanvas implements Canvas {
         this.transform = transform;
 
         this.meshCircleOut = createCircleOutMesh(gl, 64);
+        this.meshCircle = createCircleMesh(gl, 64);
         this.meshEquiangularTriangle = createEquiangularTriangleMesh(gl);
         
         this.batch = new SpriteBatch(gl, 4096);
@@ -299,6 +337,20 @@ export class WebGLCanvas implements Canvas {
 
         this.translation.x = bufferx;
         this.translation.y = buffery;
+    }
+
+
+    public fillEllipse(centerx : number, centery : number, width : number, height : number) : void{
+
+        if (this.translationActive) {
+
+            centerx += this.translation.x;
+            centery += this.translation.y;
+        }
+
+        this.renderer.changeShader(ShaderType.NoTexture);
+        this.renderer.setVertexTransform(centerx, centery, width/2, height/2);
+        this.renderer.drawMesh(this.meshCircle);
     }
 
 

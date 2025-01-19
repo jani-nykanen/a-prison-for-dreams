@@ -83,15 +83,16 @@ export class ObjectManager {
     private readonly finalBossBattleConfirmationBox : ConfirmationBox;
     private readonly mapTransition : MapTransitionCallback;
     private readonly shops : Shop[];
+    private readonly destroyWorldCallback : () => void;
 
 
     constructor(progress : Progress, dialogueBox : TextBox,
         hints : HintRenderer, bossBattleConfirmationBox : ConfirmationBox,
         finalBossBattleConfirmationBox : ConfirmationBox,
-        shops : Shop[], stage : Stage, camera : Camera,
-        npcType : number, mapTransition : MapTransitionCallback,
+        shops : Shop[], stage : Stage, camera : Camera, npcType : number, 
+        mapTransition : MapTransitionCallback, destroyWorldCallback : () => void,
         spawnId : number, pose : Pose, createNewPlayer : boolean, 
-        event : ProgramEvent,) {
+        event : ProgramEvent) {
 
         this.flyingText = new ObjectGenerator<FlyingText, void> (FlyingText);
         this.projectiles = new ProjectileGenerator();
@@ -121,6 +122,7 @@ export class ObjectManager {
         this.hints = hints;
         this.mapTransition = mapTransition;
         this.shops = shops;
+        this.destroyWorldCallback = destroyWorldCallback;
 
         this.npcType = npcType;
         this.spawnId = spawnId;
@@ -835,12 +837,8 @@ export class ObjectManager {
 
         const deathEvent = (event : ProgramEvent) : void => {
 
-            event.transition.activate(true, TransitionType.Fade, 1.0/60.0, event,
-                (event : ProgramEvent) : void => {
-
-                    throw new Error("Not yet done.");
-                },
-                new RGBA(255, 255, 255));
+            event.audio.playSample(event.assets.getSample("destroy"), 0.50);
+            this.destroyWorldCallback();
         };
 
         const triggerDeathEvent = (event : ProgramEvent) : void => {
@@ -854,7 +852,7 @@ export class ObjectManager {
             }
         }
 
-        this.interactables.length = 0;
+        // this.interactables.length = 0;
 
         this.player.startHarmlessKnockback(60);
 

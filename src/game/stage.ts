@@ -48,6 +48,8 @@ const PARTICLE_XOFF : number[] = [0, 2, -1, 1];
 const PARTICLE_YOFF : number[] = [0, 3, -2, 2];
 const PARTICLE_FRAME_SHIFT : number[] = [0, 2, 1, 3];
 
+const FINAL_BOSS_ARENA_FADE_TIME : number = 60;
+
 
 export class Stage {
 
@@ -401,6 +403,17 @@ export class Stage {
         }
 
         this.applyMapEffect(canvas);
+
+        // A stupid workaround, the first two layers were never
+        // supposed to fade...
+        if (this.finalBossArenaEnabled && this.layerFadeTimer > 0) {
+
+            const alpha : number = this.layerFadeTimer/FINAL_BOSS_ARENA_FADE_TIME;
+            canvas.setAlpha(alpha);
+            this.renderlayer.draw(canvas, tileset, camera, 1.0, 0, 1);
+            canvas.setAlpha();
+        }
+
         this.renderlayer.draw(canvas, tileset, camera, topLayerOpacity,
             this.finalBossArenaEnabled ? 2 : 0);
 
@@ -548,6 +561,8 @@ export class Stage {
         this.finalBossArenaEnabled = true;
         // this.layerFadeTimer = fadeTime;
         // this.initialLayerFadeTime = fadeTime;
+
+        this.layerFadeTimer = FINAL_BOSS_ARENA_FADE_TIME;
     } 
 
 
