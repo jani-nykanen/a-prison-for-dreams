@@ -379,7 +379,7 @@ export class Game implements Scene {
             event.transition.activate(true, TransitionType.Fade, 1.0/30.0, event,
                 (event : ProgramEvent) : void => {
 
-                    throw new Error("Not yet!");
+                    event.scenes.changeScene("ending", event);
 
                 }, new RGBA(255, 255, 255));
             this.camera.shake(30, WORLD_DESTRUCTION_TIMER/6);

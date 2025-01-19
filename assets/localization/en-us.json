@@ -676,5 +676,19 @@
 
         "Press ANY KEY to continue.",
         "Press ANY BUTTON to continue."
+    ],
+
+
+    "ending": [
+
+        "So dies the Dream\nDevourer, the True\nNightmare.",
+        "The World of Dream\nmay finally perish.",
+        "You, my hero, are left\nalone in a void between\nthe worlds.",
+        "There are numerous\nquestions in your\nmind.",
+        "Was Lady Alexandra ever\nthe Great Dreamer, or\njust a vessel like you?",
+        "Is there a 'real world',\nor just different worlds,\nnone of them more real\nthan the others?",
+        "For those questions\nI have no answer.",
+        "But one thing I know:\nwhen another world\nneeds to be destroyed,\nI will summon you\nagain.",
+        "Before that... just\nkeep walking."
     ]
 }

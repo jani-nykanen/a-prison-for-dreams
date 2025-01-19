@@ -4,6 +4,7 @@ import { WebGLRenderer } from "./gfx/webgl/renderer.js";
 import { Game } from "./game/game.js";
 import { TitleScreen } from "./game/titlescreen.js";
 import { Intro } from "./game/intro.js";
+import { Ending } from "./game/ending.js";
 import { SETTINGS_LOCAL_STORAGE_KEY } from "./game/settings.js";
 import { clamp } from "./math/utility.js";
 
@@ -68,6 +69,7 @@ const onloadEvent = (event : ProgramEvent) : void => {
     event.scenes.addScene("intro", new Intro(), false);
     event.scenes.addScene("title", new TitleScreen(event), true);
     event.scenes.addScene("game", new Game(event), false);
+    event.scenes.addScene("ending", new Ending(event), false);
 }
 
 
