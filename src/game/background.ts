@@ -613,4 +613,12 @@ export class Background {
         }
     }
     
+
+    public setCloudPosition(value : number) : void {
+
+        this.cloudPos = Math.abs(value) % 1.0;
+    } 
+
+
+    public getCloudPosition = () : number => this.cloudPos;
 }

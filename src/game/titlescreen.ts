@@ -4,6 +4,7 @@ import { InputState } from "../core/inputstate.js";
 import { Scene, SceneParameter } from "../core/scene.js";
 import { TransitionType } from "../core/transition.js";
 import { Align, Bitmap, Canvas, Flip } from "../gfx/interface.js";
+import { Vector } from "../math/vector.js";
 import { drawUIBox } from "../ui/box.js";
 import { ConfirmationBox } from "../ui/confirmationbox.js";
 import { Menu } from "../ui/menu.js";
@@ -29,6 +30,8 @@ const CORNER_TILEMAP_WIDTH : number = 4;
 const CORNER_TILEMAP_HEIGHT : number = 4;
 
 const SAVE_INFO_APPEAR_TIME : number = 30;
+
+const APPEAR_TIME : number = 60;
 
 
 export class TitleScreen implements Scene {
@@ -63,7 +66,7 @@ export class TitleScreen implements Scene {
 
     private disabledButtons : boolean[];
 
-    private appearTimer : number = 0;
+    private appearTimer : number = APPEAR_TIME;
 
 
     constructor(event : ProgramEvent) {
@@ -199,7 +202,7 @@ export class TitleScreen implements Scene {
             });
 
         this.background = new Background(event.screenHeight, BackgroundType.Graveyard);
-        this.dummyCamera = new Camera(0, -128, event);
+        this.dummyCamera = new Camera(0, -256, event);
     }
 
 
@@ -328,13 +331,13 @@ export class TitleScreen implements Scene {
 
         const PLAYER_X : number = -6;
         const PLAYER_Y : number = 13;
-        const APPEAR_OFFSET : number = 80;
+        const APPEAR_OFFSET : number = 64;
 
         const bmpTileset1 : Bitmap | undefined = assets.getBitmap("tileset_1");
         const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
         const bmpWeapons : Bitmap | undefined = assets.getBitmap("weapons");
 
-        const shifty : number = (1.0 - this.appearTimer)*APPEAR_OFFSET;
+        const shifty : number = (this.appearTimer/APPEAR_TIME)*APPEAR_OFFSET;
 
         canvas.setColor();
         canvas.moveTo(
@@ -421,9 +424,9 @@ export class TitleScreen implements Scene {
     private drawLogo(canvas : Canvas, bmp : Bitmap | undefined) : void {
 
         const LOGO_YOFF : number = 16;
-        const APPEAR_OFFSET : number = 80;
+        const APPEAR_OFFSET : number = 96;
 
-        const posy : number = LOGO_YOFF - APPEAR_OFFSET*(1.0 - this.appearTimer);
+        const posy : number = LOGO_YOFF - APPEAR_OFFSET*(this.appearTimer/APPEAR_TIME);
 
         canvas.drawHorizontallyWavingBitmap(bmp, 2, 48, this.logoWave,
             Flip.None, canvas.width/2 - (bmp?.width ?? 0)/2, posy);
@@ -431,6 +434,11 @@ export class TitleScreen implements Scene {
 
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
+
+        if (typeof(param) === "number") {
+
+            this.background.setCloudPosition(param);
+        }
 
         this.menu.activate(0);
 
@@ -453,19 +461,25 @@ export class TitleScreen implements Scene {
         const LOGO_WAVE_SPEED : number = Math.PI*2/120.0;
         const ENTER_FLICKER_TIME : number = 1.0/60.0;
 
+        this.dummyCamera.forceCenter(new Vector(0, -128 - this.appearTimer/APPEAR_TIME*128));
         this.dummyCamera.update(event);
         this.logoWave = (this.logoWave + LOGO_WAVE_SPEED*event.tick) % (Math.PI*2);
         this.background.update(this.dummyCamera, event);
 
         if (event.transition.isActive()) {
 
-            if (!this.enterPressed && !event.transition.isFadingOut()) {
+            return;
+        }
 
-                this.appearTimer = 1.0 - event.transition.getTimer();
+        if (this.appearTimer > 0) {
+
+            this.appearTimer -= event.tick;
+            if (this.appearTimer < 0) {
+
+                this.appearTimer = 0;
             }
             return;
         }
-        this.appearTimer = 1.0;
 
         this.enterTimer = (this.enterTimer + ENTER_FLICKER_TIME*event.tick) % 1.0
 
@@ -504,6 +518,7 @@ export class TitleScreen implements Scene {
         
         const MENU_YOFF : number = 48;
         const PRESS_ENTER_OFFSET : number = 56;
+        const BACKGROUND_MASK_ALPHA : number = 0.25;
 
         if (this.showSaveInfo) {
 
@@ -514,9 +529,17 @@ export class TitleScreen implements Scene {
         const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
         const bmpLogo : Bitmap | undefined = assets.getBitmap("logo");
 
-        this.background.draw(canvas, assets, this.dummyCamera);
-        this.drawCornerTilemap(canvas, assets);
+        const t : number = this.appearTimer/APPEAR_TIME;
 
+        this.background.draw(canvas, assets, this.dummyCamera);
+        if (this.appearTimer > 0) {
+
+            canvas.setColor(0, 0, 0, BACKGROUND_MASK_ALPHA*t);
+            canvas.fillRect();
+            canvas.setColor();
+        }
+
+        this.drawCornerTilemap(canvas, assets);
         this.drawLogo(canvas, bmpLogo);
 
         if (!this.enterPressed) {
@@ -533,13 +556,16 @@ export class TitleScreen implements Scene {
             this.activeMenu?.draw(canvas, assets, 0, this.activeMenuOffset*MENU_YOFF);
         }
 
+        const copyRightOffset : number = t*32;
         canvas.setColor(146, 255, 73);
         canvas.drawText(bmpFontOutlines, "\u0008 2024-2025 Jani Nyk\u0007nen", 
-            canvas.width/2, canvas.height - 16, -9, 0, Align.Center);
+            canvas.width/2, canvas.height - 16 + copyRightOffset, -9, 0, Align.Center);
         canvas.setColor();
 
         // Draw version
-        canvas.drawText(bmpFontOutlines, VERSION, -1, -1, -9, 0);
+        const versionOffset : number = t*16;
+        canvas.drawText(bmpFontOutlines, VERSION, -1, -1 - versionOffset, -9, 0);
+        
     }
 
 
