@@ -4,4 +4,5 @@ Short animation in the title screen added.
 
 Sun position corrected in early areas.
 
+Gem color changed from green to purple to make it less like to get lost in the background.
 
