@@ -174,7 +174,7 @@ export class Background {
         const bmpSun : Bitmap | undefined  = assets.getBitmap("sun");
         if (bmpSun !== undefined) {
 
-            canvas.drawBitmap(bmpSun, Flip.None, canvas.width - 48, 16, 0, 0, 64, 64);
+            canvas.drawBitmap(bmpSun, Flip.None, canvas.width - 80, 16, 0, 0, 64, 64);
         }
     }
 

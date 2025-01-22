@@ -1,0 +1,7 @@
+Bolder text in "Created by" screen in the beginning added.
+
+Short animation in the title screen added.
+
+Sun position corrected in early areas.
+
+

@@ -39,7 +39,7 @@ export class Intro implements Scene {
                     if (this.phase == 2) {
 
                         event.scenes.changeScene("title", event);
-                        event.transition.activate(false, TransitionType.Circle, 1.0/30.0, event);
+                        event.transition.activate(false, TransitionType.Circle, 1.0/60.0, event);
                         return;
                     }
                     this.waitTimer = 0;

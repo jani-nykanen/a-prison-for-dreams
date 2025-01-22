@@ -149,6 +149,7 @@ export class Transition {
     public isActive = () : boolean => this.active;
     public isFadingOut = () : boolean => this.active && this.fadeOut;
     public getEffectType = () : TransitionType => this.effectType;
+    public getTimer = () : number => this.timer;
 
     
     public deactivate() : void {

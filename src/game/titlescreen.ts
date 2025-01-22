@@ -63,6 +63,8 @@ export class TitleScreen implements Scene {
 
     private disabledButtons : boolean[];
 
+    private appearTimer : number = 0;
+
 
     constructor(event : ProgramEvent) {
 
@@ -326,15 +328,18 @@ export class TitleScreen implements Scene {
 
         const PLAYER_X : number = -6;
         const PLAYER_Y : number = 13;
+        const APPEAR_OFFSET : number = 80;
 
         const bmpTileset1 : Bitmap | undefined = assets.getBitmap("tileset_1");
         const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
         const bmpWeapons : Bitmap | undefined = assets.getBitmap("weapons");
 
+        const shifty : number = (1.0 - this.appearTimer)*APPEAR_OFFSET;
+
         canvas.setColor();
         canvas.moveTo(
             canvas.width - CORNER_TILEMAP_WIDTH*TILE_WIDTH, 
-            canvas.height - CORNER_TILEMAP_HEIGHT*TILE_HEIGHT);
+            canvas.height - CORNER_TILEMAP_HEIGHT*TILE_HEIGHT + shifty);
 
         for (let y : number = 0; y < CORNER_TILEMAP_HEIGHT; ++ y) {
 
@@ -413,6 +418,18 @@ export class TitleScreen implements Scene {
     }
 
 
+    private drawLogo(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const LOGO_YOFF : number = 16;
+        const APPEAR_OFFSET : number = 80;
+
+        const posy : number = LOGO_YOFF - APPEAR_OFFSET*(1.0 - this.appearTimer);
+
+        canvas.drawHorizontallyWavingBitmap(bmp, 2, 48, this.logoWave,
+            Flip.None, canvas.width/2 - (bmp?.width ?? 0)/2, posy);
+    }
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         this.menu.activate(0);
@@ -442,8 +459,13 @@ export class TitleScreen implements Scene {
 
         if (event.transition.isActive()) {
 
+            if (!this.enterPressed && !event.transition.isFadingOut()) {
+
+                this.appearTimer = 1.0 - event.transition.getTimer();
+            }
             return;
         }
+        this.appearTimer = 1.0;
 
         this.enterTimer = (this.enterTimer + ENTER_FLICKER_TIME*event.tick) % 1.0
 
@@ -481,7 +503,6 @@ export class TitleScreen implements Scene {
     public redraw(canvas: Canvas, assets: Assets) : void {
         
         const MENU_YOFF : number = 48;
-        const LOGO_YOFF : number = 16;
         const PRESS_ENTER_OFFSET : number = 56;
 
         if (this.showSaveInfo) {
@@ -492,15 +513,11 @@ export class TitleScreen implements Scene {
 
         const bmpFontOutlines : Bitmap | undefined = assets.getBitmap("font_outlines");
         const bmpLogo : Bitmap | undefined = assets.getBitmap("logo");
-        // const bmpMouth : Bitmap | undefined = assets.getBitmap("mouth");
 
-        // canvas.clear(219, 219, 219);
         this.background.draw(canvas, assets, this.dummyCamera);
         this.drawCornerTilemap(canvas, assets);
 
-        canvas.drawHorizontallyWavingBitmap(bmpLogo, 2, 48, this.logoWave,
-            Flip.None, canvas.width/2 - (bmpLogo?.width ?? 0)/2, LOGO_YOFF);
-        // canvas.drawBitmap(bmpMouth, Flip.None, canvas.width/2 - 32, 8, 0, 0, 64, 32);
+        this.drawLogo(canvas, bmpLogo);
 
         if (!this.enterPressed) {
 

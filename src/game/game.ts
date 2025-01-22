@@ -349,6 +349,7 @@ export class Game implements Scene {
             (event : ProgramEvent) : void => {
 
                 event.scenes.changeScene("title", event);
+                // event.transition.activate(false, TransitionType.Circle, 1.0/60.0, event);
             });
     }
 
