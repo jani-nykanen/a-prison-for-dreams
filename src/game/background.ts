@@ -71,6 +71,8 @@ export class Background {
 
     constructor(height : number, type : BackgroundType | undefined) {
 
+        this.cloudPos = Math.random();
+
         this.height = height;
         this.type = type ?? BackgroundType.Unspecified;
         this.oldType = this.type;

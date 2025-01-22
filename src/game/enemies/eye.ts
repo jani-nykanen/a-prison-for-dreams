@@ -60,7 +60,7 @@ export class Eye extends Enemy {
     private flickerTimer : number = 0;
 
     private initialHealth : number = 0;
-    private healthBarPos : number = 1.0;
+    private healthBarPos : number = 0.0;
 
     private playerRef : Player | undefined = undefined;
 
@@ -467,8 +467,10 @@ export class Eye extends Enemy {
 
     private updateHealthbarPos(event : ProgramEvent) : void {
 
+        const speed : number = this.health < this.initialHealth ? 0.005 : 0.015;
+
         this.healthBarPos = clamp(updateSpeedAxis(
-            this.healthBarPos, this.health/this.initialHealth, 0.005*event.tick), 
+            this.healthBarPos, this.health/this.initialHealth, speed*event.tick), 
             0.0, 1.0);
     }
 

@@ -6,3 +6,9 @@ Sun position corrected in early areas.
 
 Gem color changed from green to purple to make it less like to get lost in the background.
 
+Pig sprite changed to resemble an actual pig, not whatever it was initially supposed to be.
+
+Minor dialogue changes.
+
+Removed some accidentally placed tiles in certain tilemaps.
+
