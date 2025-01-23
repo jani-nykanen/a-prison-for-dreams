@@ -1,5 +1,6 @@
 js
 *.jar
 *.zip
+*.nw
 temp
 closure

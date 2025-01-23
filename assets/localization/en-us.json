@@ -31,8 +31,9 @@
     "quit": "Return to the main menu?\nYour progress will be\nsaved.",
 
     "settings": [
-        "Sound Volume",
-        "Music Volume",
+        "Sound volume",
+        "Music volume",
+        "Toggle fullscreen",
         "Back"
     ],
 
@@ -41,7 +42,8 @@
 
         "Start game",
         "Clear data",
-        "Settings"
+        "Settings",
+        "Quit game"
     ],
 
 

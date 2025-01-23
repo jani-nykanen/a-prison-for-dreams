@@ -24,7 +24,7 @@ pack_raw:
 	cp -r assets temp/assets
 	cp -r js temp/js
 	cp index.html temp/index.html
-	cp style.css temp/style.css
+	cp style.css templates/style.css
 	(cd temp; zip -r ../dist.zip .)
 	rm -rf ./temp
 
@@ -49,9 +49,22 @@ pack_assets:
 	cp templates/index.html temp/index.html
 	cp style.css temp/style.css
 
+.PHONY: pack_assets_nw
+pack_assets_nw:
+	mkdir -p temp
+	cp -r assets temp/assets
+	cp -r js temp/js
+	cp templates/index.html temp/index.html
+	cp templates/package.json temp/package.json
+	cp style.css temp/style.css
+
 .PHONY: zip
 zip: 
 	(cd temp; zip -r ../dist.zip .)
+
+.PHONY: zipnw
+zipnw: 
+	(cd temp; zip -r ../package.nw .)
 
 .PHONY: clear_temp
 clear_temp:
@@ -60,6 +73,9 @@ clear_temp:
 
 .PHONY: dist 
 dist: compress pack_assets zip clear_temp
+
+.PHONY: nwpackage
+nwpackage: compress pack_assets_nw zipnw clear_temp
 
 
 .PHONY: test_temp

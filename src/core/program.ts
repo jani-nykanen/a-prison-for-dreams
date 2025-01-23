@@ -1,5 +1,6 @@
 import { Canvas, Renderer, TransformTarget } from "../gfx/interface.js";
 import { ProgramEvent } from "./event.js";
+import { InputState } from "./inputstate.js";
 
 
 export class Program {
@@ -66,6 +67,17 @@ export class Program {
     }
 
 
+    private checkDefaultKeyShortcuts() : void {
+
+        // nw.js only
+        if ((this.event.input.keyboard.getKeyState("AltLeft") & InputState.DownOrPressed) != 0 &&
+             this.event.input.keyboard.getKeyState("Enter") == InputState.Pressed) {
+
+            window["nw"]?.["Window"]?.["get"]?.()?.["toggleFullscreen"]?.();
+        }
+    }
+
+
     private loop(ts : number, errorEvent? : (e : Error) => void) : void {
 
         const MAX_REFRESH_COUNT : number = 5; // Needed in the case that window gets deactivated and reactivated much later
@@ -101,6 +113,11 @@ export class Program {
                 }
                 
                 if (firstFrame) {
+
+                    if (window["nw"] !== undefined) {
+
+                        this.checkDefaultKeyShortcuts();
+                    }
 
                     this.event.input.update(this.event);
                     firstFrame = false;

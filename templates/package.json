@@ -1,0 +1,9 @@
+{
+  "name": "A Prison for Dreams",
+  "main": "index.html",
+  "window": {
+      "width": 768,
+      "height": 576,
+      "fullscreen": false
+  }
+}

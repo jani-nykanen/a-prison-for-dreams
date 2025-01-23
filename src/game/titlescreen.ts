@@ -81,42 +81,7 @@ export class TitleScreen implements Scene {
             this.activeMenuOffset = 1;
         });
 
-        this.menu = new Menu(
-        [
-            new MenuButton(text[0] ?? "null", (event : ProgramEvent) : void => {
-
-                this.setFileMenuButtonNames(this.fileMenu);
-                let cursorPos : number = 0;
-                for (let i : number = 0; i < this.disabledButtons.length; ++ i) {
-
-                    if (!this.disabledButtons[i]) {
-
-                        cursorPos = i;
-                        break;
-                    }
-                }
-
-                this.fileMenu.activate(cursorPos);
-
-                this.activeMenu = this.fileMenu;
-                this.activeMenuOffset = 1;
-            }),
-            new MenuButton(text[1] ?? "null", (event : ProgramEvent) : void => {
-
-                this.setFileMenuButtonNames(this.clearDataMenu, true);
-                this.clearDataMenu.activate(3);
-
-                this.activeMenu = this.clearDataMenu;
-                this.activeMenuOffset = 1;
-            }),
-            new MenuButton(text[2] ?? "null", (event : ProgramEvent) : void => {
-
-                this.settings.activate(event);
-
-                this.activeMenu =  this.settings;
-                this.activeMenuOffset = 1;
-            }),
-        ], true);
+        this.menu = new Menu(this.constructInitialButtons(text), true);
 
         const emptyFileString : string = "--/--/----";
         // TODO: Create button in for loop to avoid repeating code
@@ -203,6 +168,63 @@ export class TitleScreen implements Scene {
 
         this.background = new Background(event.screenHeight, BackgroundType.Graveyard);
         this.dummyCamera = new Camera(0, -256, event);
+    }
+
+
+    private constructInitialButtons(text : string[]) : MenuButton[] {
+
+        const buttons : MenuButton[] = [
+            new MenuButton(text[0] ?? "null", (event : ProgramEvent) : void => {
+
+                this.setFileMenuButtonNames(this.fileMenu);
+                let cursorPos : number = 0;
+                for (let i : number = 0; i < this.disabledButtons.length; ++ i) {
+
+                    if (!this.disabledButtons[i]) {
+
+                        cursorPos = i;
+                        break;
+                    }
+                }
+
+                this.fileMenu.activate(cursorPos);
+
+                this.activeMenu = this.fileMenu;
+                this.activeMenuOffset = 1;
+            }),
+            new MenuButton(text[1] ?? "null", (event : ProgramEvent) : void => {
+
+                this.setFileMenuButtonNames(this.clearDataMenu, true);
+                this.clearDataMenu.activate(3);
+
+                this.activeMenu = this.clearDataMenu;
+                this.activeMenuOffset = 1;
+            }),
+            new MenuButton(text[2] ?? "null", (event : ProgramEvent) : void => {
+
+                this.settings.activate(event);
+
+                this.activeMenu =  this.settings;
+                this.activeMenuOffset = 1;
+            }),
+        ];
+
+        // Only in nw.js
+        if (window["nw"] !== undefined) {
+
+            buttons.push(new MenuButton(text[3] ?? "null", (event : ProgramEvent) : void => {
+
+                event.transition.activate(true, TransitionType.Circle, 1.0/20.0, event,
+                    (event : ProgramEvent) : void => {
+
+                        this.settings.save(event);
+                        window["nw"]?.["App"]?.["quit"]?.();
+                    }
+                );
+            }));
+        }
+
+        return buttons;
     }
 
 

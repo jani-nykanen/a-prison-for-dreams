@@ -25,6 +25,11 @@ const loadSetting = (event : ProgramEvent) : void => {
         const musicVolume : number = clamp(Number(json["musicvolume"]), 0, 100);
         const soundVolume : number = clamp(Number(json["soundvolume"]), 0, 100);
 
+        if (window["nw"] !== undefined && json["fullscreen"] === "true") {
+
+            window["nw"]?.["Window"]?.["get"]?.()?.["toggleFullscreen"]?.();
+        }
+
         event.audio.setMusicVolume(musicVolume);
         event.audio.setSoundVolume(soundVolume);
 
@@ -106,18 +111,41 @@ function waitForInitialEvent() : Promise<AudioContext> {
 }
 
 
-window.onload = () => (async () => {
+
+if (window["nw"] !== undefined) {
+
+    document.body.style.setProperty("cursor", "none");
+
+    window.onload = () : void => {
+
+        const ctx : AudioContext = new AudioContext();
+        document.getElementById("div_initialize")?.remove();
+        try {
+
+            (new Program(ctx, WebGLRenderer, 256, 192, false, true, false, 576, 192)).run(initialEvent, onloadEvent, printError);
+        }
+        catch (e : any) {
     
-    document.getElementById("init_text")!.innerText = "Press Any Key to Start";
-
-    const ctx : AudioContext = await waitForInitialEvent();
-
-    try {
-
-        (new Program(ctx, WebGLRenderer, 256, 192, false, true, false, 576, 192)).run(initialEvent, onloadEvent, printError);
+            printError(e);
+        }
     }
-    catch (e : any) {
+}
+else {
 
-        printError(e);
-    }
-}) ();
+    window.onload = () => (async () => {
+        
+
+        document.getElementById("init_text")!.innerText = "Press Any Key to Start";
+
+        const ctx : AudioContext = await waitForInitialEvent();
+
+        try {
+
+            (new Program(ctx, WebGLRenderer, 256, 192, false, true, false, 576, 192)).run(initialEvent, onloadEvent, printError);
+        }
+        catch (e : any) {
+
+            printError(e);
+        }
+    }) ();
+}

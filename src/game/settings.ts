@@ -22,8 +22,13 @@ export class Settings {
 
         const text : string[] = event.localization?.getItem("settings") ?? [];
 
-        this.menu = new Menu(
-        [
+        this.menu = new Menu(this.createMenuButtons(text));   
+    }
+
+
+    private createMenuButtons(text : string[]) : MenuButton[] {
+
+        const buttons : MenuButton[] = [
             // NOTE: The actual button text will be set by the "activate" function, we just
             // pass something here to compute the correct size for the menu box.
             new MenuButton((text[0] ?? "null") + ": 100%",
@@ -53,35 +58,29 @@ export class Settings {
                     this.updateSoundButtonText(event);
                 }
             ),
+        ];
+        
 
-            new MenuButton(text[2] ?? "null",
-                (event : ProgramEvent) : void => {
-
-                    this.deactivate();
-                    this.backEvent?.(event);
-                    this.save(event);
-                }
-            ),
-        ]);   
-    }
-
-
-    private save(event : ProgramEvent) : void {
-
-        try {
-
-            const output : unknown = {};
-
-            output["musicvolume"] = String(event.audio.getMusicVolume());
-            output["soundvolume"] = String(event.audio.getSoundVolume());
-
-            window["localStorage"]["setItem"](SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(output));
-
+         // Only in nw.js
+        if (window["nw"] !== undefined) {
+        
+            buttons.push(new MenuButton(text[2] ?? "null", (event : ProgramEvent) : void => {
+        
+                window["nw"]?.["Window"]?.["get"]?.()?.["toggleFullscreen"]?.();
+            }));
         }
-        catch (e) {
 
-            console.error("Not-so-fatal error: failed to save settings: " + e["message"]);
-        }
+
+        buttons.push(new MenuButton(text[3] ?? "null",
+            (event : ProgramEvent) : void => {
+
+                this.deactivate();
+                this.backEvent?.(event);
+                this.save(event);
+            }
+        ));
+
+        return buttons;
     }
 
 
@@ -94,6 +93,29 @@ export class Settings {
 
         this.menu.changeButtonText(0, `${text[0]}: ${soundVolume}%`);
         this.menu.changeButtonText(1, `${text[1]}: ${musicVolume}%`);
+    }
+
+
+    public save(event : ProgramEvent) : void {
+
+        try {
+
+            const output : unknown = {};
+
+            output["musicvolume"] = String(event.audio.getMusicVolume());
+            output["soundvolume"] = String(event.audio.getSoundVolume());
+            if (window["nw"] !== undefined) {
+
+                output["fullscreen"] = String(window["nw"]?.["Window"]?.["get"]?.()?.["isFullscreen"]);
+            }
+
+            window["localStorage"]["setItem"](SETTINGS_LOCAL_STORAGE_KEY, JSON.stringify(output));
+
+        }
+        catch (e) {
+
+            console.error("Not-so-fatal error: failed to save settings: " + e["message"]);
+        }
     }
 
 
