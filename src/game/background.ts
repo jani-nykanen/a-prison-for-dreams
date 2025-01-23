@@ -30,7 +30,7 @@ const SPECIAL_SUN_COLORS_2 : RGBA[] = [
 ];
 
 
-const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, false, true, false, true];
+const SNOWFLAKE_TABLE : boolean[] = [true, false, false, false, false, false, true, false, true, true, false, true, false, true, true];
 
 
 export const enum BackgroundType {
@@ -50,6 +50,7 @@ export const enum BackgroundType {
     NightSkyWithSnowSpecialShift = 11,
     AltStarField = 12,
     FinalGraveyard = 13,
+    AltNightSkyWithForest = 14,
 };
 
 
@@ -98,6 +99,7 @@ export class Background {
         case BackgroundType.NightSkyWithSnowSpecialShift:
         case BackgroundType.NightSkyWithSnow:
         case BackgroundType.NightSkyWithForest:
+        case BackgroundType.AltNightSkyWithForest:
 
             this.snowflakeColor = new RGBA(255, 255, 255, 0.5);
             break;
@@ -277,7 +279,8 @@ export class Background {
     }
 
 
-    private drawTrees(canvas : Canvas, assets : Assets, camera : Camera, darken : number = 0.0) : void {
+    private drawTrees(canvas : Canvas, assets : Assets, camera : Camera, 
+        darken : number = 0.0, offset : number = 0) : void {
 
         const bmpForest : Bitmap | undefined  = assets.getBitmap("forest");
         if (bmpForest === undefined) {
@@ -296,7 +299,7 @@ export class Background {
         }
 
         const shiftx : number = -((camPos.x/8) % bmpForest.width);
-        const dy : number = 80 - camPos.y/8;
+        const dy : number = 80 - (camPos.y + offset)/8;
         for (let x : number = -1; x < count; ++ x) {
 
             canvas.drawBitmap(bmpForest, Flip.None, x*bmpForest.width + shiftx, dy);
@@ -363,12 +366,13 @@ export class Background {
     }
 
 
-    private drawNightSkyForest(canvas : Canvas, assets : Assets, camera : Camera) : void {
+    private drawNightSkyForest(canvas : Canvas, assets : Assets, camera : Camera, 
+        offset : number = 0.0) : void {
 
         canvas.clear(0, 36, 73);
         this.drawMoon(canvas, assets, 1);
 
-        this.drawTrees(canvas, assets, camera, 0.40);
+        this.drawTrees(canvas, assets, camera, 0.40, offset);
     }
 
 
@@ -541,9 +545,11 @@ export class Background {
             this.starfield?.draw(canvas);
             break;
 
+        case BackgroundType.AltNightSkyWithForest:
         case BackgroundType.NightSkyWithForest:
 
-            this.drawNightSkyForest(canvas, assets, camera);
+            this.drawNightSkyForest(canvas, assets, camera,
+                this.type == BackgroundType.AltNightSkyWithForest ? -384 : 0);
             break;
 
         case BackgroundType.FrozenCave:

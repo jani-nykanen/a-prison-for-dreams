@@ -55,6 +55,8 @@ export class Projectile extends CollisionObject {
     private timer : number = 0;
     private maxLifeTime : number = 0;
 
+    private volumeFactor : number = 1.0;
+
     public readonly stats : Progress | undefined = undefined;
 
 
@@ -143,7 +145,7 @@ export class Projectile extends CollisionObject {
 
                 // Play or not to play (a sound effect), that's the question.
                 // I say not to play.
-                // event.audio.playSample(event.assets.getSample("bullethit"), DEATH_SAMPLE_VOLUME);
+                event.audio.playSample(event.assets.getSample("bullethit"), DEATH_SAMPLE_VOLUME*0.75);
             }
         }
     }
@@ -152,14 +154,14 @@ export class Projectile extends CollisionObject {
     protected wallCollisionEvent(direction: -1 | 1, event : ProgramEvent) : void {
         
         this.kill(event);
-        event.audio.playSample(event.assets.getSample("bullethit"), DEATH_SAMPLE_VOLUME);
+        event.audio.playSample(event.assets.getSample("bullethit"), this.volumeFactor*DEATH_SAMPLE_VOLUME);
     }
 
 
     protected slopeCollisionEvent(direction : -1 | 1, event : ProgramEvent): void {
 
         this.kill(event);
-        event.audio.playSample(event.assets.getSample("bullethit"), DEATH_SAMPLE_VOLUME);
+        event.audio.playSample(event.assets.getSample("bullethit"), this.volumeFactor*DEATH_SAMPLE_VOLUME);
     }
 
 
@@ -220,6 +222,13 @@ export class Projectile extends CollisionObject {
 
         this.timer = 0;
         this.maxLifeTime = maxLifeTime;
+
+        this.volumeFactor = 1.0;
+        if (this.id == 6) {
+
+            // A quick fix
+            this.volumeFactor = 0.75;
+        }
     }
 
 

@@ -187,7 +187,7 @@
     "spirit_prelude": [
 
         "This is the corrupted spirit\nof Lady Alexandra, the Great\nDreamer, guarding her own\ngrave.",
-        "There is sadness in her empty\ngaze. Or madness. You can\nbarely tell difference."
+        "There is sadness in her empty\ngaze. Or maybe she just needs\na warm hug?"
     ],
     "touch": "Hug the poor spirit?\n(I know you want to!)",
     "hug": "HUG",
@@ -519,7 +519,7 @@
     
     "npc28": [
 
-        "In the end, the Great\nDreamer want to be\njust like everyone\nelse.",
+        "In the end, the Great\nDreamer wanted to be\njust like everyone\nelse.",
         "She wanted to be loved,\nrespected... and build\na huge castle just\nfor herself.",
         "Keep walking west and\nyou will eventually\nfind it."
     ],
@@ -648,7 +648,7 @@
     "item21": [
 
         "You obtain a PLUTONIUM SHIELD!",
-        "It reduces the damage you\ntake by one. All this despite\nthe fact it is obviously\npoisonous."
+        "It reduces the damage you\ntake by one. And gives you\nradiation sickness."
     ],
 
     "item22": [

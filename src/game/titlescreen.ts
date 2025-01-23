@@ -31,7 +31,7 @@ const CORNER_TILEMAP_HEIGHT : number = 4;
 
 const SAVE_INFO_APPEAR_TIME : number = 30;
 
-const APPEAR_TIME : number = 60;
+const APPEAR_TIME : number = 45;
 
 
 export class TitleScreen implements Scene {
