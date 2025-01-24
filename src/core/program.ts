@@ -74,6 +74,7 @@ export class Program {
              this.event.input.keyboard.getKeyState("Enter") == InputState.Pressed) {
 
             window["nw"]?.["Window"]?.["get"]?.()?.["toggleFullscreen"]?.();
+            this.event.input.keyboard.flush();
         }
     }
 
@@ -106,6 +107,11 @@ export class Program {
 
                 this.event.input.preUpdate();
 
+                if (firstFrame && window["nw"] !== undefined) {
+                    
+                    this.checkDefaultKeyShortcuts();
+                }
+
                 if (loaded) {
 
                     this.event.scenes.update(this.event);
@@ -113,11 +119,6 @@ export class Program {
                 }
                 
                 if (firstFrame) {
-
-                    if (window["nw"] !== undefined) {
-
-                        this.checkDefaultKeyShortcuts();
-                    }
 
                     this.event.input.update(this.event);
                     firstFrame = false;

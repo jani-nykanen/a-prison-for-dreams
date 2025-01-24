@@ -93,4 +93,13 @@ export class Keyboard {
 
         this.prevent.push(key);
     } 
+
+
+    public flush() : void {
+
+        for (const k of this.states.keys()) {
+
+            this.states.set(k, InputState.Up);
+        }
+    }
 }
