@@ -1,11 +1,9 @@
 ## A Prison for Dreams
 
-*A Prison for Dreams* is maybe not-so-surprisingly a yet another 2D metroidvania thing, in the style of my previous games, except better and bigger and more unfinished\* than ever before!
+*A Prison for Dreams* is maybe not-so-surprisingly a yet another 2D metroidvania thing, in the style of my previous games, except bigger and better than ever before!
 
 [Play here](https://jani-nykanen.itch.io/a-prison-for-dreams?secret=OroEZ7JIPtbNggiN50o3q8A4t4)
 
-
-\*Unfinished meaning that it is still in early access, and the full game will be out soon(ish?). If you want to try the newest development version, there will most likely be a development branch at some point.
 
 
 -----
@@ -36,6 +34,14 @@ make CLOSURE_PATH=<path to closure jar file> dist
 
 If you want to make a lot of changes to the source, it is recommended to compile the source in watch mode (`tsc -w` or `make watch`).
 
+
+-----
+
+
+## Building a desktop version
+
+Run `make CLOSURE_PATH=<path to closure jar file> nwpackage`. It will create a file called `package.nw`. Then download [nw.js](https://nwjs.io/), unpack it and put `package.nw` to the root.
+
 -----
 
 
@@ -50,4 +56,4 @@ In short: if you want to modify the game and distribute it, then go ahead, but *
 
 -----
 
-(c) 2024 Jani Nykänen
+(c) 2024-2025 Jani Nykänen
