@@ -1,8 +1,14 @@
+![I am a banana](https://img.itch.zone/aW1nLzE5MDIzMTI5LnBuZw==/original/PRjGRg.png)
+
+
+-------
+
+
 ## A Prison for Dreams
 
 *A Prison for Dreams* is maybe not-so-surprisingly a yet another 2D metroidvania thing, in the style of my previous games, except bigger and better than ever before!
 
-[Play here](https://jani-nykanen.itch.io/a-prison-for-dreams?secret=OroEZ7JIPtbNggiN50o3q8A4t4)
+### [Play here](https://jani-nykanen.itch.io/a-prison-for-dreams)
 
 
 
